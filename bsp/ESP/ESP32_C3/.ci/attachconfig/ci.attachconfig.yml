@@ -24,8 +24,11 @@ devices.swi2c:
     depends:
       - devices.i2c
     kconfig:
-      - CONFIG_BSP_USING_SW_I2C=y
-      - CONFIG_BSP_USING_SW_I2C0=y
+      - CONFIG_RT_USING_SOFT_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C0=y
+      - CONFIG_RT_SOFT_I2C0_SCL_PIN=19
+      - CONFIG_RT_SOFT_I2C0_SDA_PIN=18
+      - CONFIG_RT_SOFT_I2C0_BUS_NAME="swi2c0"
 devices.spi:
     kconfig:
       - CONFIG_RT_USING_SPI=y

@@ -46,19 +46,19 @@ void init_uart_pin_as_gpio(UART_Type *ptr)
     }
 }
 
-void init_i2c_pins_as_gpio(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins_as_gpio(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         /* I2C0 */
         HPM_IOC->PAD[IOC_PAD_PC13].FUNC_CTL = IOC_PC13_FUNC_CTL_GPIO_C_13;
         HPM_IOC->PAD[IOC_PAD_PC14].FUNC_CTL = IOC_PC14_FUNC_CTL_GPIO_C_14;
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
-void init_i2c_pins(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         HPM_IOC->PAD[IOC_PAD_PC13].FUNC_CTL = IOC_PC13_FUNC_CTL_I2C0_SCL
@@ -75,9 +75,9 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PC11].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
         HPM_IOC->PAD[IOC_PAD_PC12].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
 void init_femc_pins(void)

@@ -16,7 +16,7 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define CODEC_I2C_NAME  ("i2c1")
+#define CODEC_I2C_NAME ("swi2c1")
 
 #define TX_DMA_FIFO_SIZE (2048)
 

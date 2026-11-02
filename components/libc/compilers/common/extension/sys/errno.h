@@ -38,8 +38,30 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    0
 #endif
 
-#if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
+#if defined(__ARMCC_VERSION)
+#ifndef EDOM
+#define EDOM    1
+#endif
+#ifndef ERANGE
+#define ERANGE  2
+#endif
+#ifndef ESIGNUM
+#define ESIGNUM 3
+#endif
+#ifndef EILSEQ
+#define EILSEQ  4
+#endif
+#ifndef EINVAL
+#define EINVAL  5
+#endif
+#ifndef ENOMEM
+#define ENOMEM  6
+#endif
+#elif defined(__IAR_SYSTEMS_ICC__)
 #include <errno.h>
+#endif
+
+#if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
 
 #ifndef EPERM
 #define EPERM            (ERROR_BASE_NO + 1)

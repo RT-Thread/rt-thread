@@ -8,5 +8,8 @@ menuconfig RT_USING_PHY_V2
     default n
 
 if RT_USING_DM && RT_USING_PHY_V2
+    config RT_PHY_V2_REALTEK
+        bool "Realtek"
+
     osource "$(SOC_DM_PHY_DIR)/Kconfig"
 endif

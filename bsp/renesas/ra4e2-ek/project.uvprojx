@@ -66,9 +66,9 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --generate --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" 2&gt; "%%TEMP%%\rasc_stderr.out" &amp;&amp; echo. &gt; "$Poutput.rasc""</UserProg1Name>
+            <UserProg1Name />
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -76,9 +76,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out""</UserProg1Name>
+            <UserProg1Name />
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -332,10 +332,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>@via/rasc_armclang.via</MiscControls>
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC</Define>
+              <MiscControls />
+              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\drivers\config;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\drivers\phy;.;..\..\..\components\drivers\smp_call;..\..\..\components\net\utest;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;board\ports</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers\config;ra\fsp\inc;..\libraries\HAL_Drivers\drivers;board;..\..\..\components\drivers\smp_call;ra\arm\CMSIS_6\CMSIS\Core\Include;ra_gen;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;.;board\ports;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\cortex-m33;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;ra_cfg\fsp_cfg\bsp;..\..\..\components\finsh;ra_cfg\fsp_cfg;..\..\..\components\net\utest;..\..\..\include;ra\fsp\inc\api;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;ra\fsp\inc\instances</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -350,7 +350,7 @@
             <useXO>0</useXO>
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
-              <MiscControls>--via=via/rasc_armasm.via</MiscControls>
+              <MiscControls />
               <Define />
               <Undefine />
               <IncludePath />
@@ -376,6 +376,16 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_entry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>src\hal_entry.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
@@ -1113,17 +1123,177 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>ra</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_delay.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_group_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_group_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_guard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_guard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_macl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_macl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_register_protection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_register_protection.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sbrk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sbrk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_security.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_security.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_linker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\ra4e2\bsp_linker.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_ioport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_ioport\r_ioport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_sci_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_sci_uart\r_sci_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ra_gen</GroupName>
+          <Files>
+            <File>
+              <FileName>common_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\common_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hal_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\hal_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\main.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\pin_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vector_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\vector_data.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
   <RTE>
-    <gpdscs>
-      <gpdsc name="buildinfo.gpdsc">
-        <targetInfos>
-          <targetInfo name="Target_1" />
-        </targetInfos>
-      </gpdsc>
-    </gpdscs>
     <apis />
     <components>
       <component Cvendor="Renesas" Cclass="Flex Software" Cgroup="RA Configuration" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

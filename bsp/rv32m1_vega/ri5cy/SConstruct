@@ -25,7 +25,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-objs += SConscript('../rv32m1_sdk_riscv/SConscript')
+objs += SConscript('../rv32m1_sdk_riscv/SConscript', variant_dir='build/rv32m1_sdk_riscv', duplicate=0)
 
 # make a building
 DoBuilding(TARGET, objs)

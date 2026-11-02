@@ -182,7 +182,7 @@ rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
 
     if (ep && ep->ops && func_no < ep->max_functions)
     {
-        if (ep->ops->set_msix)
+        if (ep->ops->set_msi)
         {
             err = -RT_EINVAL;
 
@@ -193,6 +193,7 @@ rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
                     rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
                     err = ep->ops->set_msi(ep, func_no, log2);
                     rt_mutex_release(&ep->lock);
+                    break;
                 }
             }
         }

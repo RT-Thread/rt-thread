@@ -26,6 +26,12 @@
 #include "lwp.h"
 #include "lwp_pid.h"
 #include <lwp_user_mm.h>
+#ifdef ARCH_MM_MMU
+#include <stdint.h>
+#include <mm_aspace.h>
+#include <mm_flag.h>
+#include <mmu.h>
+#endif
 
 struct pid_dentry
 {
@@ -40,14 +46,384 @@ struct pid_dentry
 
 static char stat_transform(int __stat)
 {
-    switch (__stat)
+    int stat = __stat & RT_THREAD_STAT_MASK;
+
+    if (stat == RT_THREAD_RUNNING)
     {
-    case RT_THREAD_RUNNING:
         return 'R';
+    }
+    if (stat == RT_THREAD_READY)
+    {
+        return 'R';
+    }
+    if (stat == RT_THREAD_CLOSE)
+    {
+        return 'Z';
+    }
+    if (stat & RT_THREAD_SUSPEND_MASK)
+    {
+        return 'S';
+    }
+    return 'T';
+}
+
+static const char *proc_state_desc(char state)
+{
+    switch (state)
+    {
+    case 'R':
+        return "running";
+    case 'S':
+        return "sleeping";
+    case 'Z':
+        return "zombie";
+    case 'T':
+        return "stopped";
     default:
-        return 'T';
+        return "unknown";
     }
 }
+
+static char proc_lwp_state(struct rt_lwp *lwp)
+{
+    rt_list_t *node;
+    char state = 'S';
+
+    if (!lwp || lwp->terminated)
+    {
+        return 'Z';
+    }
+
+    node = lwp->t_grp.next;
+    while (node != &lwp->t_grp)
+    {
+        rt_thread_t thread = rt_list_entry(node, struct rt_thread, sibling);
+        char thread_state = stat_transform(RT_SCHED_CTX(thread).stat);
+
+        if (thread_state == 'R')
+        {
+            return 'R';
+        }
+        if (thread_state == 'T')
+        {
+            state = 'T';
+        }
+        node = node->next;
+    }
+
+    return state;
+}
+
+#ifdef ARCH_MM_MMU
+#define PROC_MAP_GROW 32
+
+struct proc_map_entry
+{
+    uintptr_t start;
+    uintptr_t end;
+    uintptr_t offset;
+    rt_size_t resident_pages;
+    rt_bool_t writable;
+    rt_bool_t shared;
+    rt_bool_t executable;
+    char name[DFS_PATH_MAX];
+};
+
+struct proc_map_context
+{
+    struct rt_lwp *lwp;
+    struct proc_map_entry *entries;
+    rt_size_t count;
+    rt_size_t capacity;
+    rt_bool_t count_resident;
+    rt_bool_t smaps;
+};
+
+static void proc_map_permissions(rt_varea_t varea, struct proc_map_entry *entry)
+{
+    entry->writable = rt_hw_mmu_attr_test_perm(
+        varea->attr, RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER);
+    entry->shared = (varea->flag & MMF_MAP_SHARED) != 0;
+    entry->executable = (varea->flag & MMF_TEXT) != 0;
+}
+
+static void proc_map_name(rt_varea_t varea, struct proc_map_entry *entry)
+{
+    const char *name = RT_NULL;
+
+    if (varea->mem_obj && varea->mem_obj->get_name)
+    {
+        name = varea->mem_obj->get_name(varea);
+    }
+
+    if (!name || !name[0] || !rt_strcmp(name, "anonymous") ||
+        !rt_strcmp(name, "reference") || !rt_strcmp(name, "null"))
+    {
+        name = "[anon]";
+    }
+    rt_strncpy(entry->name, name, sizeof(entry->name) - 1);
+    entry->name[sizeof(entry->name) - 1] = '\0';
+}
+
+static int proc_map_grow(struct proc_map_context *context)
+{
+    struct proc_map_entry *entries;
+    rt_size_t capacity;
+
+    if (context->count < context->capacity)
+    {
+        return 0;
+    }
+
+    capacity = context->capacity ? context->capacity * 2 : PROC_MAP_GROW;
+    entries = rt_realloc(context->entries, capacity * sizeof(*entries));
+    if (!entries)
+    {
+        return -RT_ENOMEM;
+    }
+
+    rt_memset(entries + context->capacity, 0,
+              (capacity - context->capacity) * sizeof(*entries));
+    context->entries = entries;
+    context->capacity = capacity;
+    return 0;
+}
+
+static rt_size_t proc_map_count_resident(rt_varea_t varea)
+{
+    uintptr_t address;
+    uintptr_t end;
+    rt_size_t resident_pages = 0;
+
+    if (!varea || varea->size == 0)
+    {
+        return 0;
+    }
+
+    address = (uintptr_t)varea->start;
+    end = address + varea->size;
+    while (address < end)
+    {
+        if (rt_hw_mmu_v2p(varea->aspace, (void *)address) != ARCH_MAP_FAILED)
+        {
+            resident_pages++;
+        }
+        address += ARCH_PAGE_SIZE;
+    }
+
+    return resident_pages;
+}
+
+static int proc_map_collect(rt_varea_t varea, void *arg)
+{
+    struct proc_map_context *context = (struct proc_map_context *)arg;
+    struct proc_map_entry *entry;
+
+    if (!varea || varea->size == 0)
+    {
+        return 0;
+    }
+    if (proc_map_grow(context) != 0)
+    {
+        return -RT_ENOMEM;
+    }
+
+    entry = &context->entries[context->count++];
+    entry->start = (uintptr_t)varea->start;
+    entry->end = entry->start + varea->size;
+    entry->offset = (uintptr_t)varea->offset * ARCH_PAGE_SIZE;
+    entry->resident_pages = 0;
+    proc_map_permissions(varea, entry);
+    proc_map_name(varea, entry);
+
+    if (context->count_resident)
+    {
+        entry->resident_pages = proc_map_count_resident(varea);
+    }
+
+    return 0;
+}
+
+static rt_size_t proc_lwp_resident_pages(struct rt_lwp *lwp)
+{
+    rt_varea_t varea;
+    rt_size_t resident_pages = 0;
+
+    if (!lwp || !lwp->aspace)
+    {
+        return 0;
+    }
+
+    RD_LOCK(lwp->aspace);
+    varea = ASPACE_VAREA_FIRST(lwp->aspace);
+    while (varea)
+    {
+        resident_pages += proc_map_count_resident(varea);
+        varea = ASPACE_VAREA_NEXT(varea);
+    }
+    RD_UNLOCK(lwp->aspace);
+
+    return resident_pages;
+}
+
+static void proc_map_context_free(struct proc_map_context *context)
+{
+    if (context)
+    {
+        if (context->lwp)
+        {
+            lwp_from_pid_release_lock(context->lwp);
+        }
+        if (context->entries)
+        {
+            rt_free(context->entries);
+        }
+        rt_free(context);
+    }
+}
+
+static void *proc_maps_start(struct dfs_seq_file *seq, off_t *index)
+{
+    struct proc_map_context *context = (struct proc_map_context *)seq->data;
+
+    return context && *index < (off_t)context->count ? &context->entries[*index] : RT_NULL;
+}
+
+static void *proc_maps_next(struct dfs_seq_file *seq, void *data, off_t *index)
+{
+    struct proc_map_context *context = (struct proc_map_context *)seq->data;
+
+    RT_UNUSED(data);
+    *index += 1;
+    return context && *index < (off_t)context->count ? &context->entries[*index] : RT_NULL;
+}
+
+static void proc_maps_stop(struct dfs_seq_file *seq, void *data)
+{
+    RT_UNUSED(seq);
+    RT_UNUSED(data);
+}
+
+static int proc_maps_show(struct dfs_seq_file *seq, void *data)
+{
+    struct proc_map_entry *entry = (struct proc_map_entry *)data;
+    char permissions[5];
+
+    permissions[0] = 'r';
+    permissions[1] = entry->writable ? 'w' : '-';
+    permissions[2] = entry->executable ? 'x' : '-';
+    permissions[3] = entry->shared ? 's' : 'p';
+    permissions[4] = '\0';
+
+    dfs_seq_printf(seq, "%0*lx-%0*lx %s %0*lx 00:00 0",
+                   (int)(sizeof(uintptr_t) * 2), (unsigned long)entry->start,
+                   (int)(sizeof(uintptr_t) * 2), (unsigned long)entry->end,
+                   permissions, (int)(sizeof(uintptr_t) * 2),
+                   (unsigned long)entry->offset);
+    if (entry->name[0])
+    {
+        dfs_seq_printf(seq, " %s", entry->name);
+    }
+    dfs_seq_puts(seq, "\n");
+
+    if (((struct proc_map_context *)seq->data)->smaps)
+    {
+        rt_size_t resident_kb = entry->resident_pages * (ARCH_PAGE_SIZE / 1024);
+        rt_size_t private_dirty = entry->writable && !entry->shared ? resident_kb : 0;
+
+        dfs_seq_printf(seq, "Size: %lu kB\n", (unsigned long)((entry->end - entry->start) / 1024));
+        dfs_seq_printf(seq, "Rss: %lu kB\n", (unsigned long)resident_kb);
+        dfs_seq_printf(seq, "Pss: %lu kB\n", (unsigned long)resident_kb);
+        dfs_seq_puts(seq, "Shared_Clean: 0 kB\n");
+        dfs_seq_puts(seq, "Shared_Dirty: 0 kB\n");
+        dfs_seq_puts(seq, "Private_Clean: 0 kB\n");
+        dfs_seq_printf(seq, "Private_Dirty: %lu kB\n", (unsigned long)private_dirty);
+        dfs_seq_printf(seq, "Anonymous: %lu kB\n", entry->name[0] == '[' ? (unsigned long)resident_kb : 0UL);
+        dfs_seq_puts(seq, "Swap: 0 kB\n\n");
+    }
+
+    return 0;
+}
+
+static const struct dfs_seq_ops proc_maps_seq_ops = {
+    .start = proc_maps_start,
+    .stop = proc_maps_stop,
+    .next = proc_maps_next,
+    .show = proc_maps_show,
+};
+
+static int proc_maps_open(struct dfs_file *file)
+{
+    struct proc_dentry *dentry = (struct proc_dentry *)file->vnode->data;
+    struct proc_map_context *context;
+    struct dfs_seq_file *seq;
+    rt_varea_t varea;
+    int ret;
+
+    context = rt_calloc(1, sizeof(*context));
+    if (!context)
+    {
+        return -RT_ENOMEM;
+    }
+    context->lwp = lwp_from_pid_and_lock(dentry->pid);
+    if (!context->lwp || !context->lwp->aspace)
+    {
+        proc_map_context_free(context);
+        return -RT_ENOENT;
+    }
+    context->smaps = !rt_strcmp(dentry->name, "smaps");
+    context->count_resident = context->smaps;
+    context->capacity = PROC_MAP_GROW;
+    context->entries = rt_calloc(context->capacity, sizeof(*context->entries));
+    if (!context->entries)
+    {
+        proc_map_context_free(context);
+        return -RT_ENOMEM;
+    }
+
+    RD_LOCK(context->lwp->aspace);
+    varea = ASPACE_VAREA_FIRST(context->lwp->aspace);
+    while (varea)
+    {
+        if (proc_map_collect(varea, context) != 0)
+        {
+            RD_UNLOCK(context->lwp->aspace);
+            proc_map_context_free(context);
+            return -RT_ENOMEM;
+        }
+        varea = ASPACE_VAREA_NEXT(varea);
+    }
+    RD_UNLOCK(context->lwp->aspace);
+
+    ret = dfs_seq_open(file, &proc_maps_seq_ops);
+    if (ret != RT_EOK)
+    {
+        proc_map_context_free(context);
+        return ret;
+    }
+    seq = (struct dfs_seq_file *)file->data;
+    seq->data = context;
+    return RT_EOK;
+}
+
+static int proc_maps_close(struct dfs_file *file)
+{
+    struct dfs_seq_file *seq = (struct dfs_seq_file *)file->data;
+    struct proc_map_context *context = seq ? (struct proc_map_context *)seq->data : RT_NULL;
+    int ret = dfs_seq_release(file);
+
+    proc_map_context_free(context);
+    file->data = RT_NULL;
+    return ret;
+}
+
+static const struct dfs_file_ops proc_maps_fops = {
+    .open = proc_maps_open,
+    .read = dfs_seq_read,
+    .lseek = dfs_seq_lseek,
+    .close = proc_maps_close,
+};
+#endif /* ARCH_MM_MMU */
 
 static int stat_single_show(struct dfs_seq_file *seq, void *data)
 {
@@ -60,56 +436,53 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
     int lwp_oncpu = RT_CPUS_NR;
     int lwp_oncpu_ok = 0;
     struct rt_lwp *lwp = RT_NULL;
-    char** argv = RT_NULL;
+    char **argv = RT_NULL;
     char *filename = RT_NULL;
     char *dot = RT_NULL;
 
-    lwp_pid_lock_take();
-
-    lwp = lwp_from_pid_locked(dentry->pid);
-    argv = lwp_get_command_line_args(lwp);
+    lwp = lwp_from_pid_and_lock(dentry->pid);
+    argv = lwp ? lwp_get_command_line_args(lwp) : RT_NULL;
 
     if (lwp)
     {
-        dfs_seq_printf(seq,"%d ",dentry->pid);
+        dfs_seq_printf(seq, "%d ", dentry->pid);
         if (argv)
         {
-            filename = strrchr(argv[0], '/');
-            dot = strchr(argv[0], '.');
-
-            if (filename != NULL)
+            if (argv[0])
             {
-                filename++;
+                filename = strrchr(argv[0], '/');
+
+                if (filename != NULL)
+                {
+                    filename++;
+                }
+                else
+                {
+                    filename = argv[0];
+                }
+
+                dot = strchr(filename, '.');
+                if (dot != NULL)
+                {
+                    *dot = '\0';
+                }
+
+                dfs_seq_printf(seq, "(%s) ", filename);
             }
             else
             {
-                filename = argv[0];
+                dfs_seq_printf(seq, "(%s) ", "");
             }
-
-            if (dot != NULL)
-            {
-                *dot = '\0';
-            }
-
-            if (filename != NULL)
-            {
-                dfs_seq_printf(seq,"(%s) ", filename);
-            }
-            else
-            {
-                dfs_seq_printf(seq,"(%s) ", argv[0]);
-            }
-
             lwp_free_command_line_args(argv);
         }
         else
         {
-            dfs_seq_printf(seq,"(%s) ", "");
+            dfs_seq_printf(seq, "(%s) ", "");
         }
 
         if (lwp->terminated)
         {
-            dfs_seq_printf(seq,"%c ",'Z');
+            dfs_seq_printf(seq, "%c ", 'Z');
         }
         else
         {
@@ -120,11 +493,11 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
                 user_time_lwp = user_time_lwp + thread->user_time;
                 system_time_lwp = system_time_lwp + thread->system_time;
 
-                #if RT_CPUS_NR > 1
-                    #define ONCPU(thread) RT_SCHED_CTX(thread).oncpu
-                #else
-                    #define ONCPU(thread) 0
-                #endif
+#if RT_CPUS_NR > 1
+#define ONCPU(thread) RT_SCHED_CTX(thread).oncpu
+#else
+#define ONCPU(thread) 0
+#endif
                 if (lwp_oncpu_ok == 0)
                 {
                     lwp_oncpu = ONCPU(thread);
@@ -140,34 +513,37 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
 
             if (mask == 1)
             {
-                dfs_seq_printf(seq,"%c ",'R');
+                dfs_seq_printf(seq, "%c ", 'R');
             }
             else
             {
-                dfs_seq_printf(seq,"%c ",'S');
+                dfs_seq_printf(seq, "%c ", 'S');
             }
         }
-        lwp_pid_lock_release();
-
         if (lwp->parent != NULL)
-            dfs_seq_printf(seq,"%d ",lwp->parent->pid);
+        {
+            dfs_seq_printf(seq, "%d ", lwp->parent->pid);
+        }
         else
-            dfs_seq_printf(seq,"0 ");
+        {
+            dfs_seq_printf(seq, "0 ");
+        }
 
         dfs_seq_printf(seq, "1 1 0 -1 4194560 48245 133976064 732 425574 ");
-        dfs_seq_printf(seq,"%llu ",user_time_lwp);//utime
-        dfs_seq_printf(seq,"%llu ",system_time_lwp);//stime
+        dfs_seq_printf(seq, "%llu ", user_time_lwp);//utime
+        dfs_seq_printf(seq, "%llu ", system_time_lwp);//stime
         dfs_seq_printf(seq, "1204291 518742 20 0 1 0 50 ");
-        dfs_seq_printf(seq, "%d ",rt_aspace_count_vsz(lwp->aspace));//VSZ
+#ifdef ARCH_MM_MMU
+        dfs_seq_printf(seq, "%lu ", lwp->aspace ? (unsigned long)rt_aspace_count_vsz(lwp->aspace) : 0UL);//VSZ
+#else
+        dfs_seq_puts(seq, "0 ");
+#endif
         dfs_seq_printf(seq, "1422 18446744073709551615 ");
         dfs_seq_printf(seq, "1 1 0 0 0 0 671173123 4096 1260 0 0 0 17 ");
         dfs_seq_printf(seq, "%d ", lwp_oncpu);//CPU
         dfs_seq_printf(seq, "0 0 0 0 0 0 0 0 0 0 0 0 0");
-        dfs_seq_printf(seq,"\n");
-    }
-    else
-    {
-        lwp_pid_lock_release();
+        dfs_seq_printf(seq, "\n");
+        lwp_from_pid_release_lock(lwp);
     }
 
     return 0;
@@ -177,12 +553,10 @@ static int cmdline_single_show(struct dfs_seq_file *seq, void *data)
 {
     struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
     struct rt_lwp *lwp;
-    char** argv;
+    char **argv;
 
-    lwp_pid_lock_take();
-    lwp = lwp_from_pid_locked(dentry->pid);
-    argv = lwp_get_command_line_args(lwp);
-    lwp_pid_lock_release();
+    lwp = lwp_from_pid_and_lock(dentry->pid);
+    argv = lwp ? lwp_get_command_line_args(lwp) : RT_NULL;
 
     if (argv)
     {
@@ -198,7 +572,82 @@ static int cmdline_single_show(struct dfs_seq_file *seq, void *data)
     {
         dfs_seq_puts(seq, "error\n");
     }
+    lwp_from_pid_release_lock(lwp);
 
+    return 0;
+}
+
+static int proc_pid_status_show(struct dfs_seq_file *seq, void *data)
+{
+    struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
+    struct rt_lwp *lwp = lwp_from_pid_and_lock(dentry->pid);
+    rt_size_t vm_size = 0;
+    rt_size_t vm_rss = 0;
+    rt_size_t thread_count = 0;
+    rt_list_t *node;
+    char state;
+
+    RT_UNUSED(data);
+    if (!lwp)
+    {
+        return -RT_ENOENT;
+    }
+
+#ifdef ARCH_MM_MMU
+    if (lwp->aspace)
+    {
+        vm_size = rt_aspace_count_vsz(lwp->aspace);
+        vm_rss = proc_lwp_resident_pages(lwp) * ARCH_PAGE_SIZE;
+    }
+#endif
+    node = lwp->t_grp.next;
+    while (node != &lwp->t_grp)
+    {
+        thread_count++;
+        node = node->next;
+    }
+    state = proc_lwp_state(lwp);
+    dfs_seq_printf(seq, "Name:\t%s\n", lwp->cmd);
+    dfs_seq_printf(seq, "State:\t%c (%s)\n", state, proc_state_desc(state));
+    dfs_seq_printf(seq, "Pid:\t%d\n", lwp->pid);
+    dfs_seq_printf(seq, "PPid:\t%d\n", lwp->parent ? lwp->parent->pid : 0);
+    dfs_seq_puts(seq, "Uid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\n");
+    dfs_seq_printf(seq, "Threads:\t%lu\n", (unsigned long)thread_count);
+    dfs_seq_printf(seq, "VmSize:\t%lu kB\n", (unsigned long)(vm_size / 1024));
+    dfs_seq_printf(seq, "VmRSS:\t%lu kB\n", (unsigned long)(vm_rss / 1024));
+    dfs_seq_puts(seq, "VmData:\t0 kB\nVmStk:\t0 kB\nVmExe:\t0 kB\nVmLib:\t0 kB\n");
+    lwp_from_pid_release_lock(lwp);
+    return 0;
+}
+
+static int proc_pid_statm_show(struct dfs_seq_file *seq, void *data)
+{
+    struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
+    struct rt_lwp *lwp = lwp_from_pid_and_lock(dentry->pid);
+    rt_size_t size_pages = 0;
+    rt_size_t resident_pages = 0;
+    rt_size_t text_pages = 0;
+    rt_size_t data_pages = 0;
+
+    RT_UNUSED(data);
+    if (!lwp)
+    {
+        return -RT_ENOENT;
+    }
+
+#ifdef ARCH_MM_MMU
+    if (lwp->aspace)
+    {
+        size_pages = (rt_aspace_count_vsz(lwp->aspace) + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
+        resident_pages = proc_lwp_resident_pages(lwp);
+    }
+    text_pages = (lwp->text_size + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
+    data_pages = (lwp->data_size + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
+#endif
+    dfs_seq_printf(seq, "%lu %lu 0 %lu 0 %lu 0\n",
+                   (unsigned long)size_pages, (unsigned long)resident_pages,
+                   (unsigned long)text_pages, (unsigned long)data_pages);
+    lwp_from_pid_release_lock(lwp);
     return 0;
 }
 
@@ -240,13 +689,21 @@ struct proc_dentry *proc_pid_fd_lookup(struct proc_dentry *parent, const char *n
                     {
                         //todo add vnode->data
                         if (file->vnode->type == FT_SOCKET)
+                        {
                             dentry->data = (void *)rt_strdup("socket");
+                        }
                         else if (file->vnode->type == FT_USER)
+                        {
                             dentry->data = (void *)rt_strdup("user");
+                        }
                         else if (file->vnode->type == FT_DEVICE)
+                        {
                             dentry->data = (void *)rt_strdup("device");
+                        }
                         else
+                        {
                             dentry->data = (void *)rt_strdup("unknown");
+                        }
                     }
 
                     dentry->pid = parent->pid;
@@ -337,8 +794,9 @@ int proc_pid_exe_readlink(struct proc_dentry *dentry, char *buf, int len)
 {
     struct rt_lwp *lwp;
 
-    lwp = lwp_self();
-    len = rt_snprintf(buf, len, "%s", lwp ? lwp->exe_file : "null");
+    lwp = lwp_from_pid_and_lock(dentry->pid);
+    len = rt_snprintf(buf, len, "%s", lwp && lwp->exe_file ? lwp->exe_file : "null");
+    lwp_from_pid_release_lock(lwp);
 
     return len;
 }
@@ -351,8 +809,9 @@ int proc_pid_cwd_readlink(struct proc_dentry *dentry, char *buf, int len)
 {
     struct rt_lwp *lwp;
 
-    lwp = lwp_self();
+    lwp = lwp_from_pid_and_lock(dentry->pid);
     len = rt_snprintf(buf, len, "%s", lwp ? lwp->working_directory : "null");
+    lwp_from_pid_release_lock(lwp);
 
     return len;
 }
@@ -362,17 +821,23 @@ static const struct proc_ops proc_pid_cwd_ops = {
 };
 
 static struct pid_dentry pid_dentry_base[] = {
-    {"cmdline", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, cmdline_single_show, 0},
-    {"cwd", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_cwd_ops, 0, 0},
-    {"exe", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_exe_ops, 0, 0},
-    {"fd", S_IFDIR | S_IRUSR | S_IXUSR, &proc_pid_fd_fops, &proc_pid_fd_ops, 0, 0, 0},
-    {"mounts", S_IFLNK | S_IRUSR | S_IXUSR, 0, 0, 0, 0, "/proc/mounts"},
-    {"stat", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, stat_single_show, 0},
+    { "cmdline", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, cmdline_single_show, 0 },
+    { "status", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_status_show, 0 },
+    { "statm", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_statm_show, 0 },
+    { "cwd", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_cwd_ops, 0, 0 },
+    { "exe", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_exe_ops, 0, 0 },
+    { "fd", S_IFDIR | S_IRUSR | S_IXUSR, &proc_pid_fd_fops, &proc_pid_fd_ops, 0, 0, 0 },
+    { "mounts", S_IFLNK | S_IRUSR | S_IXUSR, 0, 0, 0, 0, "/proc/mounts" },
+    { "stat", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, stat_single_show, 0 },
+#ifdef ARCH_MM_MMU
+    { "maps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0 },
+    { "smaps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0 },
+#endif
 };
 
 int proc_pid(int pid)
 {
-    char pid_str[64] = {0};
+    char pid_str[64] = { 0 };
     struct proc_dentry *dentry;
 
     rt_snprintf(pid_str, 64, "%d", pid);

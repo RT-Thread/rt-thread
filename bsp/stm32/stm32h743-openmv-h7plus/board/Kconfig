@@ -107,6 +107,38 @@ menu "Hardware Drivers Config"
 
         source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 24
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 25
+            endif
+
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 26
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 27
+            endif
+        endif
     endmenu
 
     menu "Onboard Peripheral Drivers"
@@ -137,8 +169,9 @@ menu "Hardware Drivers Config"
         config BSP_USING_OV5640
             bool "Enable camera (ov5640)"
             select BSP_USING_DCMI
-            select BSP_USING_I2C
-            select BSP_USING_I2C1
+            select RT_USING_I2C
+            select BSP_USING_SOFT_I2C
+            select BSP_USING_SOFT_I2C1
             select BSP_USING_PWM
             select BSP_USING_PWM1
             select BSP_USING_PWM1_CH1
@@ -147,44 +180,6 @@ menu "Hardware Drivers Config"
         config BSP_USING_DCMI
             bool "Enable DCMI"
             default n
-
-        menuconfig BSP_USING_I2C
-            bool "Enable I2C BUS (software simulation)"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
-            select RT_USING_PIN
-            default n
-            if BSP_USING_I2C
-                menuconfig BSP_USING_I2C1
-                    bool "Enable I2C1 BUS (software simulation)"
-                    default n
-                    if BSP_USING_I2C1
-                        comment "Notice: PB8 --> 24; PB9 --> 25"
-                        config BSP_I2C1_SCL_PIN
-                            int "i2c1 scl pin number"
-                            range 1 176
-                            default 24
-                        config BSP_I2C1_SDA_PIN
-                            int "I2C1 sda pin number"
-                            range 1 176
-                            default 25
-                    endif
-
-                menuconfig BSP_USING_I2C2
-                    bool "Enable I2C2 BUS (software simulation)"
-                    default n
-                    if BSP_USING_I2C2
-                        comment "Notice: PB10 --> 26; PB11 --> 27"
-                        config BSP_I2C2_SCL_PIN
-                            int "i2c2 scl pin number"
-                            range 1 176
-                            default 26
-                        config BSP_I2C2_SDA_PIN
-                            int "I2C2 sda pin number"
-                            range 1 176
-                            default 27
-                    endif
-            endif
 
         menuconfig BSP_USING_PWM
             bool "Enable PWM"
@@ -201,6 +196,30 @@ menu "Hardware Drivers Config"
                 endif
             endif
 
+        config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+            bool
+            default y if RT_USING_SOFT_I2C1
+
+        config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+            int
+            default 24 if RT_USING_SOFT_I2C1
+
+        config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+            int
+            default 25 if RT_USING_SOFT_I2C1
+
     endmenu
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 26 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 27 if RT_USING_SOFT_I2C2
 
 endmenu

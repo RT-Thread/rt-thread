@@ -15,7 +15,7 @@
 #include <board.h>
 #include <rtthread.h>
 #ifdef RT_USING_DEVICE
-    #include <rtdevice.h>
+#include <rtdevice.h>
 #endif /* RT_USING_DEVICE */
 
 #ifdef __cplusplus

@@ -1,0 +1,95 @@
+menuconfig RT_UTEST_TC_USING_DFS_V2_AF_UNIX
+    bool "DFSv2 AF_UNIX Test"
+    default n
+    depends on RT_USING_DFS_V2
+    depends on RT_USING_AF_UNIX
+    depends on SAL_USING_POSIX
+    help
+        Enable DFSv2 AF_UNIX unit tests. Sources are compiled only when
+        this option and the selected test groups below are enabled.
+
+        Coverage includes socket-node creation, transferable file
+        references, datagram and stream IPC, poll readiness, pathname
+        lifetime, namespace cleanup, and SCM_RIGHTS handling.
+
+if RT_UTEST_TC_USING_DFS_V2_AF_UNIX
+
+config RT_UTEST_DFS_V2_AF_UNIX_DIR
+    string "Directory for AF_UNIX pathname tests"
+    default "/dev"
+    help
+        Directory used to create temporary AF_UNIX pathname nodes.
+        The filesystem mounted here must support S_IFSOCK nodes
+        through create_vnode(), such as tmpfs or devtmpfs.
+
+config RT_UTEST_DFS_V2_AF_UNIX_NODE
+    bool "Socket node and file-reference tests"
+    default y
+    help
+        Build tests for DFSv2 socket nodes and transferable file
+        references:
+        * dfs_file_mknod(FT_SOCKET) creates an S_ISSOCK node
+        * creating the same path again returns EEXIST
+        * unlink() removes the socket node
+        * dfs_file_get_refs() rejects an invalid fd
+        * get_refs() + put_ref() keeps the original fd usable
+        * get_refs() + install_refs() transfers a pipe and shares
+          the open file description
+
+config RT_UTEST_DFS_V2_AF_UNIX_IPC
+    bool "Datagram, stream and socketpair IPC tests"
+    default y
+    help
+        Build tests for AF_UNIX IPC operations:
+        * SOCK_DGRAM bind, connect, send and recvfrom
+        * SOCK_STREAM listen, accept, send, recv and shutdown
+        * socketpair() for both SOCK_DGRAM and SOCK_STREAM
+        * sendmsg()/recvmsg() scatter-gather I/O
+        * connected sendmsg() with a NULL msg_name
+        * sendmsg() with a NULL msg_control and nonzero length
+        * listen() on SOCK_DGRAM returns EOPNOTSUPP
+        * connect() to a missing pathname returns ENOENT
+        * non-blocking recv() returns EAGAIN
+
+config RT_UTEST_DFS_V2_AF_UNIX_POLL
+    bool "Poll readiness and peer-close tests"
+    default y
+    help
+        Build tests for AF_UNIX poll/select readiness:
+        * empty stream socket reports POLLOUT and not POLLIN
+        * received data reports POLLIN
+        * filling the stream buffer clears POLLOUT; a peer recv
+          makes POLLOUT ready again
+        * blocking poll(POLLIN) wakes with POLLHUP/POLLIN when
+          the peer is closed (covers the peer-queue UAF case)
+        * datagram queue-full and POLLIN readiness
+
+config RT_UTEST_DFS_V2_AF_UNIX_NAMESPACE
+    bool "Pathname bind, unlink and namespace tests"
+    default y
+    help
+        Build tests for pathname lifetime and namespace cleanup:
+        * bind() creates a persistent S_IFSOCK node
+        * close() leaves the pathname in the filesystem
+        * rebinding without unlink() returns EADDRINUSE
+        * unlink() then bind() succeeds
+        * connect() after close without unlink() returns
+          ECONNREFUSED
+        * connect() after unlink() returns ENOENT
+        * repeated bind/close/unlink on distinct paths does not
+          leak namespace entries
+
+config RT_UTEST_DFS_V2_AF_UNIX_RIGHTS
+    bool "SCM_RIGHTS transfer and rejection tests"
+    default y
+    help
+        Build tests for SCM_RIGHTS descriptor passing:
+        * transfer pipe descriptors over SOCK_DGRAM and
+          SOCK_STREAM
+        * recvmsg() without a control buffer reports MSG_CTRUNC
+        * MSG_PEEK does not install or consume descriptors
+        * an invalid fd returns EBADF
+        * passing an AF_UNIX socket descriptor returns
+          EOPNOTSUPP and does not create a reference cycle
+
+endif

@@ -52,9 +52,9 @@ c28x_library = 'tms320f28379d'
 rtconfig.BSP_LIBRARY_TYPE = c28x_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, c28x_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, c28x_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', c28x_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 # make a building
 DoBuilding(TARGET, objs)

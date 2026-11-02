@@ -20,8 +20,7 @@
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*******************************************************************************
@@ -29,43 +28,43 @@ extern "C"
  ******************************************************************************/
 
 /* The bit of the diepint/doepint */
-#define XFER_COMPL           (1UL)
-#define EPDISABLED           (1UL<<1)
-#define TIME_OUT             (1UL<<3)
-#define SETUP_BIT            (1UL<<3)
-#define INTKNTXFEMP          (1UL<<4)
-#define INEPNAKEFF           (1UL<<6)
-#define TXFEMP               (1UL<<7)
+#define XFER_COMPL  (1UL)
+#define EPDISABLED  (1UL << 1)
+#define TIME_OUT    (1UL << 3)
+#define SETUP_BIT   (1UL << 3)
+#define INTKNTXFEMP (1UL << 4)
+#define INEPNAKEFF  (1UL << 6)
+#define TXFEMP      (1UL << 7)
 
 /* The bit of the GINTSTS */
-#define MODEMIS_INT          (1UL<<1)
-#define SOF_INT              (1UL<<3)
-#define RXFLVL_INT           (1UL<<4)
-#define USBSUSP_INT          (1UL<<11)
-#define USBRST_INT           (1UL<<12)
-#define ENUMDONE_INT         (1UL<<13)
-#define INEP_INT             (1UL<<18)
-#define OUTEP_INT            (1UL<<19)
-#define INCOMPLSOIN          (1UL<<20)
-#define INCOMPLSOOUT         (1UL<<21)
-#define VBUSV_INT            (1UL<<30)
-#define WAKEUP_INT           (1UL<<31)
+#define MODEMIS_INT  (1UL << 1)
+#define SOF_INT      (1UL << 3)
+#define RXFLVL_INT   (1UL << 4)
+#define USBSUSP_INT  (1UL << 11)
+#define USBRST_INT   (1UL << 12)
+#define ENUMDONE_INT (1UL << 13)
+#define INEP_INT     (1UL << 18)
+#define OUTEP_INT    (1UL << 19)
+#define INCOMPLSOIN  (1UL << 20)
+#define INCOMPLSOOUT (1UL << 21)
+#define VBUSV_INT    (1UL << 30)
+#define WAKEUP_INT   (1UL << 31)
 
 /* Data packet status for device mode */
-#define STS_GOUT_NAK         (1U)
-#define STS_DATA_UPDT        (2U)
-#define STS_XFER_COMP        (3U)
-#define STS_SETUP_COMP       (4U)
-#define STS_SETUP_UPDT       (6U)
+#define STS_GOUT_NAK   (1U)
+#define STS_DATA_UPDT  (2U)
+#define STS_XFER_COMP  (3U)
+#define STS_SETUP_COMP (4U)
+#define STS_SETUP_UPDT (6U)
 
 /* USB EP0 state */
-#define USB_EP0_IDLE         (0U)
-#define USB_EP0_SETUP        (1U)
-#define USB_EP0_DATA_IN      (2U)
-#define USB_EP0_DATA_OUT     (3U)
-#define USB_EP0_STATUS_IN    (4U)
-#define USB_EP0_STATUS_OUT   (5U)
-#define USB_EP0_STALL        (6U)
+#define USB_EP0_IDLE       (0U)
+#define USB_EP0_SETUP      (1U)
+#define USB_EP0_DATA_IN    (2U)
+#define USB_EP0_DATA_OUT   (3U)
+#define USB_EP0_STATUS_IN  (4U)
+#define USB_EP0_STATUS_OUT (5U)
+#define USB_EP0_STALL      (6U)
 
 /*******************************************************************************
  * Global type definitions ('typedef')
@@ -86,22 +85,22 @@ typedef enum
 
 typedef struct
 {
-    uint8_t   bmRequest;
-    uint8_t   bRequest;
-    uint16_t  wValue;
-    uint16_t  wIndex;
-    uint16_t  wLength;
+    uint8_t bmRequest;
+    uint8_t bRequest;
+    uint16_t wValue;
+    uint16_t wIndex;
+    uint16_t wLength;
 } USB_SETUP_REQ;
 
 typedef struct
 {
-    uint8_t  *(*get_dev_desc)(uint16_t *length);
-    uint8_t  *(*get_dev_langiddesc)(uint16_t *length);
-    uint8_t  *(*get_dev_manufacturerstr)(uint16_t *length);
-    uint8_t  *(*get_dev_productstr)(uint16_t *length);
-    uint8_t  *(*get_dev_serialstr)(uint16_t *length);
-    uint8_t  *(*get_dev_configstr)(uint16_t *length);
-    uint8_t  *(*get_dev_interfacestr)(uint16_t *length);
+    uint8_t *(*get_dev_desc)(uint16_t *length);
+    uint8_t *(*get_dev_langiddesc)(uint16_t *length);
+    uint8_t *(*get_dev_manufacturerstr)(uint16_t *length);
+    uint8_t *(*get_dev_productstr)(uint16_t *length);
+    uint8_t *(*get_dev_serialstr)(uint16_t *length);
+    uint8_t *(*get_dev_configstr)(uint16_t *length);
+    uint8_t *(*get_dev_interfacestr)(uint16_t *length);
 } usb_dev_desc_func;
 
 typedef struct
@@ -111,7 +110,7 @@ typedef struct
     uint8_t (*ep0_setup)(void *pdev, USB_SETUP_REQ *req);
     void (*ep0_datain)(void *pdev);
     void (*ep0_dataout)(void *pdev);
-    uint8_t  *(*class_getconfigdesc)(uint16_t *length);
+    uint8_t *(*class_getconfigdesc)(uint16_t *length);
     uint8_t (*class_sof)(void *pdev);
     void (*class_datain)(void *pdev, uint8_t epnum);
     void (*class_dataout)(void *pdev, uint8_t epnum);
@@ -132,43 +131,43 @@ typedef struct
 
 typedef struct
 {
-    __IO uint8_t           device_config;
-    __IO uint8_t           device_address;
-    __IO uint8_t           device_state;
-    __IO uint8_t           device_old_status;
-    __IO uint8_t           device_cur_status;
-    __IO uint8_t           connection_status;
-    __IO uint8_t           device_remote_wakeup;
-    __IO uint8_t           test_mode;
-    USB_DEV_EP             in_ep[USB_MAX_TX_FIFOS];
-    USB_DEV_EP             out_ep[USB_MAX_TX_FIFOS];
-    uint8_t                setup_pkt_buf[24];
-    usb_dev_class_func     *class_callback;
-    usb_dev_user_func      *user_callback;
-    usb_dev_desc_func      *desc_callback;
+    __IO uint8_t device_config;
+    __IO uint8_t device_address;
+    __IO uint8_t device_state;
+    __IO uint8_t device_old_status;
+    __IO uint8_t device_cur_status;
+    __IO uint8_t connection_status;
+    __IO uint8_t device_remote_wakeup;
+    __IO uint8_t test_mode;
+    USB_DEV_EP in_ep[USB_MAX_TX_FIFOS];
+    USB_DEV_EP out_ep[USB_MAX_TX_FIFOS];
+    uint8_t setup_pkt_buf[24];
+    usb_dev_class_func *class_callback;
+    usb_dev_user_func *user_callback;
+    usb_dev_desc_func *desc_callback;
 } USB_DEV_PARAM;
 
 typedef struct
 {
-    USB_CORE_BASIC_CFGS    basic_cfgs;
-    LL_USB_TypeDef            regs;
+    USB_CORE_BASIC_CFGS basic_cfgs;
+    LL_USB_TypeDef regs;
 #ifdef USE_DEVICE_MODE
-    USB_DEV_PARAM          dev;
+    USB_DEV_PARAM dev;
 #endif
 } usb_core_instance;
 
 typedef struct
 {
-    void (* Reset)(usb_core_instance *pdev);
-    void (* devctrlconnect)(usb_core_instance *pdev, uint8_t conn);
-    void (* Suspend)(usb_core_instance *pdev);
-    void (* Resume)(usb_core_instance *pdev);
-    void (* SOF)(usb_core_instance *pdev);
-    void (* SetupStage)(usb_core_instance *pdev);
-    void (* DataOutStage)(usb_core_instance *pdev, uint8_t epnum);
-    void (* DataInStage)(usb_core_instance *pdev, uint8_t epnum);
-    void (* IsoINIncomplete)(usb_core_instance *pdev);
-    void (* IsoOUTIncomplete)(usb_core_instance *pdev);
+    void (*Reset)(usb_core_instance *pdev);
+    void (*devctrlconnect)(usb_core_instance *pdev, uint8_t conn);
+    void (*Suspend)(usb_core_instance *pdev);
+    void (*Resume)(usb_core_instance *pdev);
+    void (*SOF)(usb_core_instance *pdev);
+    void (*SetupStage)(usb_core_instance *pdev);
+    void (*DataOutStage)(usb_core_instance *pdev, uint8_t epnum);
+    void (*DataInStage)(usb_core_instance *pdev, uint8_t epnum);
+    void (*IsoINIncomplete)(usb_core_instance *pdev);
+    void (*IsoOUTIncomplete)(usb_core_instance *pdev);
 } usb_dev_int_cbk_typedef;
 
 

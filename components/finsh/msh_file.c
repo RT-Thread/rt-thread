@@ -76,7 +76,7 @@ int msh_exec_script(const char *cmd_line, int size)
     if (size == 0) return -RT_ERROR;
 
     /* get the length of command0 */
-    while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
+    while (cmd_length < size && cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t')
         cmd_length ++;
 
     /* get name length */

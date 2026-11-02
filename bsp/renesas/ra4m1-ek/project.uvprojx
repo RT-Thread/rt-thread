@@ -68,7 +68,7 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --generate --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" 2&gt; "%%TEMP%%\rasc_stderr.out" &amp;&amp; echo. &gt; "$Poutput.rasc""</UserProg1Name>
+            <UserProg1Name />
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__</Define>
+              <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\epoll;script\bsp_link\Keil;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;board\ports;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;board;..\..\..\components\net\utest;..\..\..\components\drivers\include;.</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;script\bsp_link\Keil;..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\components\net\utest;..\..\..\components\drivers\phy;..\..\..\components\drivers\include;..\..\..\components\finsh;ra\fsp\inc\instances;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers\config;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;ra_cfg\fsp_cfg\bsp;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board\ports;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;board;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\include;ra_gen;..\..\..\components\libc\compilers\common\extension;ra\fsp\inc;..\..\..\components\drivers\include;ra\fsp\inc\api;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers;ra_cfg\fsp_cfg;ra\arm\CMSIS_6\CMSIS\Core\Include;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,6 +378,16 @@
       </TargetOption>
       <Groups>
         <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_entry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>src\hal_entry.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>CPU</GroupName>
           <Files>
             <File>
@@ -417,6 +427,25 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\adc\adc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>dev_can.c</FileName>
@@ -669,25 +698,6 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\adc.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1328,17 +1338,184 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>ra</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_delay.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_group_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_group_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_guard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_guard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_macl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_macl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_register_protection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_register_protection.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sbrk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sbrk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_security.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_security.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_linker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\ra4m1\bsp_linker.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_icu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_icu\r_icu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_ioport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_ioport\r_ioport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_sci_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_sci_uart\r_sci_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ra_gen</GroupName>
+          <Files>
+            <File>
+              <FileName>common_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\common_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hal_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\hal_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\main.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\pin_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vector_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\vector_data.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
   <RTE>
-    <gpdscs>
-      <gpdsc name="buildinfo.gpdsc">
-        <targetInfos>
-          <targetInfo name="Target_1" />
-        </targetInfos>
-      </gpdsc>
-    </gpdscs>
     <apis />
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

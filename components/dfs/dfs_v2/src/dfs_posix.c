@@ -119,7 +119,7 @@ int openat(int dirfd, const char *path, int flag, ...)
         return -1;
     }
 
-    fullpath = (char*)path;
+    fullpath = (char *)path;
 
     if (path[0] != '/')
     {
@@ -157,9 +157,10 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     struct stat buffer;
     struct dfs_file *d;
     char *fullpath;
+    char *allocated_path = RT_NULL;
     struct dfs_attr attr;
     time_t current_time;
-    char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+    char *link_fn = RT_NULL;
     int err;
 
     if (__path == NULL)
@@ -175,7 +176,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         }
         else
         {
-            fullpath = (char*)__path;
+            fullpath = (char *)__path;
         }
     }
     else
@@ -188,12 +189,13 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
                 return -EBADF;
             }
 
-            fullpath = dfs_dentry_full_path(d->dentry);
-            if (!fullpath)
+            allocated_path = dfs_dentry_full_path(d->dentry);
+            if (!allocated_path)
             {
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
+            fullpath = allocated_path;
         }
     }
 
@@ -217,7 +219,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     {
         attr.ia_mtime.tv_sec = current_time;
     }
-    else if (UTIME_OMIT == __times[1].tv_nsec)
+    else if (UTIME_OMIT != __times[1].tv_nsec)
     {
         attr.ia_mtime.tv_sec = __times[1].tv_sec;
     }
@@ -230,30 +232,35 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     {
         if (S_ISLNK(buffer.st_mode) && (__flags != AT_SYMLINK_NOFOLLOW))
         {
-            if (link_fn)
+            link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+            if (!link_fn)
             {
-                err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
-                if (err < 0)
-                {
-                    rt_free(link_fn);
-                    return -ENOENT;
-                }
-                else
-                {
-                    fullpath = link_fn;
-                    if (dfs_file_stat(fullpath, &buffer) != 0)
-                    {
-                        rt_free(link_fn);
-                        return -ENOENT;
-                    }
-                }
+                rt_set_errno(-ENOMEM);
+                ret = -1;
+                goto exit;
             }
 
+            err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
+            if (err < 0)
+            {
+                ret = -ENOENT;
+                goto exit;
+            }
+
+            fullpath = link_fn;
+            if (dfs_file_stat(fullpath, &buffer) != 0)
+            {
+                ret = -ENOENT;
+                goto exit;
+            }
         }
     }
     attr.st_mode = buffer.st_mode;
     ret = dfs_file_setattr(fullpath, &attr);
+
+exit:
     rt_free(link_fn);
+    rt_free(allocated_path);
 
     return ret;
 }
@@ -284,25 +291,14 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_file *file;
 
-    file = fd_get(fd);
-    if (file == NULL)
-    {
-        rt_set_errno(-EBADF);
-
-        return -1;
-    }
-
-    result = dfs_file_close(file);
+    result = dfs_fdtable_drop_fd(dfs_fdtable_get(), fd);
     if (result < 0)
     {
         rt_set_errno(result);
 
         return -1;
     }
-
-    fd_release(fd);
 
     return 0;
 }
@@ -328,17 +324,22 @@ ssize_t read(int fd, void *buf, size_t len)
     ssize_t result;
     struct dfs_file *file;
 
-    if (buf == NULL)
-    {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
-
     file = fd_get(fd);
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
+        return -1;
+    }
+
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EFAULT);
         return -1;
     }
 
@@ -373,17 +374,22 @@ ssize_t write(int fd, const void *buf, size_t len)
     ssize_t result;
     struct dfs_file *file;
 
-    if (buf == NULL)
-    {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
-
     file = fd_get(fd);
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
+        return -1;
+    }
+
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EFAULT);
         return -1;
     }
 
@@ -574,6 +580,10 @@ int fstat(int fildes, struct stat *buf)
     if (dfs_is_mounted(file->dentry->mnt) == 0)
     {
         ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+        if (ret == RT_EOK && buf->st_nlink == 0 && file->vnode != RT_NULL)
+        {
+            buf->st_nlink = file->vnode->nlink;
+        }
     }
 
     return ret;
@@ -605,6 +615,11 @@ int fsync(int fildes)
     }
 
     ret = dfs_file_fsync(file);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
 
     return ret;
 }
@@ -643,10 +658,17 @@ int fcntl(int fildes, int cmd, ...)
         arg = va_arg(ap, void *);
         va_end(ap);
 
-        ret = dfs_file_ioctl(file, cmd, arg);
-        if (ret < 0)
+        if (cmd == F_GETLK || cmd == F_SETLK || cmd == F_SETLKW)
         {
             ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
+        }
+        else
+        {
+            ret = dfs_file_ioctl(file, cmd, arg);
+            if (ret < 0)
+            {
+                ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
+            }
         }
     }
     else
@@ -663,6 +685,32 @@ int fcntl(int fildes, int cmd, ...)
     return ret;
 }
 RTM_EXPORT(fcntl);
+
+int fchmod(int fildes, mode_t mode)
+{
+    int ret;
+    struct dfs_attr attr = { 0 };
+    struct dfs_file *file;
+
+    file = fd_get(fildes);
+    if (file == RT_NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    attr.st_mode = mode;
+    attr.ia_valid = ATTR_MODE_SET;
+    ret = dfs_file_fsetattr(file, &attr);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
+
+    return 0;
+}
+RTM_EXPORT(fchmod);
 
 /**
  * this function is a POSIX compliant version, which shall perform a variety of
@@ -880,7 +928,9 @@ int rmdir(const char *pathname)
         {
             dirent = readdir(dir);
             if (dirent == RT_NULL)
+            {
                 break;
+            }
             if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
             {
@@ -952,7 +1002,7 @@ DIR *opendir(const char *name)
     if (result >= 0)
     {
         /* open successfully */
-        t = (DIR *) rt_malloc(sizeof(DIR));
+        t = (DIR *)rt_malloc(sizeof(DIR));
         if (t == NULL)
         {
             dfs_file_close(file);
@@ -1097,10 +1147,12 @@ void seekdir(DIR *d, long offset)
         {
             /* seek to the offset position of directory */
             if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+            {
                 d->num = d->cur = 0;
+            }
         }
 
-        while(file->fpos < offset)
+        while (file->fpos < offset)
         {
             if (!readdir(d))
             {
@@ -1123,7 +1175,9 @@ void rewinddir(DIR *d)
     {
         /* seek to the beginning of directory */
         if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+        {
             d->num = d->cur = 0;
+        }
     }
 }
 RTM_EXPORT(rewinddir);
@@ -1240,10 +1294,6 @@ int chdir(const char *path)
     return 0;
 }
 RTM_EXPORT(chdir);
-
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
-#endif
 #endif
 
 /**
@@ -1323,7 +1373,7 @@ void setcwd(char *buf)
     rt_kprintf(NO_WORKING_DIR);
 #endif
 
-    return ;
+    return;
 }
 RTM_EXPORT(setcwd);
 

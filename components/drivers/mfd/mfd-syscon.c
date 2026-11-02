@@ -182,7 +182,7 @@ static rt_err_t syscon_probe(struct rt_platform_device *pdev)
     }
 
     syscon->iomem_size = (rt_size_t)iomem_range[1];
-    syscon->iomem_base = rt_ioremap((void *)iomem_range[0], syscon->iomem_size);
+    syscon->iomem_base = rt_ioremap((void *)(rt_ubase_t)iomem_range[0], syscon->iomem_size);
 
     if (!syscon->iomem_base)
     {

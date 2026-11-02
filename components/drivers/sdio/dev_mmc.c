@@ -87,7 +87,9 @@ rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
 
     __res = resp[__off] >> __shft;
     if (__size + __shft > 32)
+    {
         __res |= resp[__off - 1] << ((32 - __shft) % 32);
+    }
 
     return __res & __mask;
 }
@@ -157,7 +159,9 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
 
     *new_ext_csd = RT_NULL;
     if (GET_BITS(card->resp_csd, 122, 4) < 4)
+    {
         return 0;
+    }
 
     /*
     * As the ext_csd is so large and mostly unused, we don't store the
@@ -204,9 +208,13 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
     mmcsd_send_request(card->host, &req);
 
     if (cmd.err)
+    {
         return cmd.err;
+    }
     if (data.err)
+    {
         return data.err;
+    }
 
     *new_ext_csd = ext_csd;
     return 0;
@@ -284,10 +292,14 @@ static int mmc_send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsi
     cmd.flags = RESP_R1 | CMD_AC;
     err = mmcsd_send_cmd(card->host, &cmd, retries);
     if (err)
+    {
         return err;
+    }
 
     if (status)
+    {
         *status = cmd.resp[0];
+    }
 
     return 0;
 }
@@ -321,9 +333,8 @@ static int mmc_poll_for_busy(struct rt_mmcsd_card *card, rt_uint32_t timeout_ms,
             LOG_E("error %d requesting status", err);
             return err;
         }
-    }
-    while (!(status & R1_READY_FOR_DATA) ||
-           (R1_CURRENT_STATE(status) == R1_STATE_PRG));
+    } while (!(status & R1_READY_FOR_DATA) ||
+             (R1_CURRENT_STATE(status) == R1_STATE_PRG));
 
     return err;
 }
@@ -344,21 +355,25 @@ static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
     struct rt_mmcsd_host *host = card->host;
     struct rt_mmcsd_cmd cmd = { 0 };
 
-    cmd.cmd_code = SWITCH;
+    cmd.cmd_code = MMC_SWITCH;
     cmd.arg = (MMC_SWITCH_MODE_WRITE_BYTE << 24) |
               (index << 16) | (value << 8) | set;
     cmd.flags = RESP_R1B | CMD_AC;
 
     err = mmcsd_send_cmd(host, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     /*
      * Poll the card status using CMD13 with a timeout of 500ms and a polling interval of 1ms.
      */
     err = mmc_poll_for_busy(card, 500, 3);
     if (err)
+    {
         return err;
+    }
 
     return 0;
 }
@@ -370,7 +385,9 @@ static int mmc_compare_ext_csds(struct rt_mmcsd_card *card,
     int err;
 
     if (bus_width == MMCSD_BUS_WIDTH_1)
+    {
         return 0;
+    }
 
     err = mmc_get_ext_csd(card, &bw_ext_csd);
 
@@ -409,7 +426,9 @@ static int mmc_compare_ext_csds(struct rt_mmcsd_card *card,
             (ext_csd[EXT_CSD_PWR_CL_DDR_200_360] == bw_ext_csd[EXT_CSD_PWR_CL_DDR_200_360]));
 
     if (err)
+    {
         err = -RT_ERROR;
+    }
 
 out:
     rt_free(bw_ext_csd);
@@ -438,7 +457,9 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     int err = 0, ddr = 0;
 
     if (GET_BITS(card->resp_csd, 122, 4) < 4)
+    {
         return 0;
+    }
 
     if (card->flags & CARD_FLAG_HIGHSPEED_DDR)
     {
@@ -471,7 +492,9 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
                          ext_csd_bits[idx][0]);
 
         if (err)
+        {
             continue;
+        }
 
         mmcsd_set_bus_width(host, bus_width);
         err = mmc_compare_ext_csds(card, ext_csd, bus_width);
@@ -535,22 +558,30 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
     {
         err = mmcsd_send_cmd(host, &cmd, 3);
         if (err)
+        {
             break;
+        }
 
         /* if we're just probing, do a single pass */
         if (ocr == 0)
+        {
             break;
+        }
 
         /* otherwise wait until reset completes */
         if (controller_is_spi(host))
         {
             if (!(cmd.resp[0] & R1_SPI_IDLE))
+            {
                 break;
+            }
         }
         else
         {
             if (cmd.resp[0] & CARD_BUSY)
+            {
                 break;
+            }
         }
 
         err = -RT_ETIMEOUT;
@@ -559,7 +590,9 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
     }
 
     if (rocr && !controller_is_spi(host))
+    {
         *rocr = cmd.resp[0];
+    }
 
     return err;
 }
@@ -577,7 +610,9 @@ static rt_err_t mmc_set_card_addr(struct rt_mmcsd_host *host, rt_uint32_t rca)
 
     err = mmcsd_send_cmd(host, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     return 0;
 }
@@ -589,7 +624,9 @@ static int mmc_select_hs200(struct rt_mmcsd_card *card)
     ret = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS200);
     if (ret)
+    {
         return ret;
+    }
 
     mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS200);
     mmcsd_set_clock(card->host, card->max_data_rate);
@@ -714,21 +751,31 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     /* The extra bit indicates that we support high capacity */
     err = mmc_send_op_cond(host, ocr | (1 << 30), &rocr);
     if (err)
+    {
         goto err;
+    }
 
     if (controller_is_spi(host))
     {
         err = mmcsd_spi_use_crc(host, 1);
         if (err)
+        {
             goto err1;
+        }
     }
 
     if (controller_is_spi(host))
+    {
         err = mmcsd_get_cid(host, resp);
+    }
     else
+    {
         err = mmcsd_all_get_cid(host, resp);
+    }
     if (err)
+    {
         goto err;
+    }
 
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card)
@@ -751,24 +798,32 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     {
         err = mmc_set_card_addr(host, card->rca);
         if (err)
+        {
             goto err1;
+        }
 
         mmcsd_set_bus_mode(host, MMCSD_BUSMODE_PUSHPULL);
     }
 
     err = mmcsd_get_csd(card, card->resp_csd);
     if (err)
+    {
         goto err1;
+    }
 
     err = mmcsd_parse_csd(card);
     if (err)
+    {
         goto err1;
+    }
 
     if (!controller_is_spi(host))
     {
         err = mmcsd_select_card(card);
         if (err)
+        {
             goto err1;
+        }
     }
 
     /*
@@ -777,10 +832,14 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
 
     err = mmc_get_ext_csd(card, &ext_csd);
     if (err)
+    {
         goto err1;
+    }
     err = mmc_parse_ext_csd(card, ext_csd);
     if (err)
+    {
         goto err1;
+    }
 
     /* If doing byte addressing, check if required to do sector
     * addressing.  Handle the case of <2GB cards needing sector
@@ -788,7 +847,9 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     * ocr register has bit 30 set for sector addressing.
     */
     if (!(card->flags & CARD_FLAG_SDHC) && (rocr & (1 << 30)))
+    {
         card->flags |= CARD_FLAG_SDHC;
+    }
 
     /*switch bus width and bus mode*/
     err = mmc_select_bus_width(card, ext_csd);
@@ -839,7 +900,9 @@ rt_int32_t init_mmc(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     {
         err = mmcsd_spi_read_ocr(host, 0, &ocr);
         if (err)
+        {
             goto err;
+        }
     }
 
     current_ocr = mmcsd_select_voltage(host, ocr);
@@ -858,13 +921,17 @@ rt_int32_t init_mmc(struct rt_mmcsd_host *host, rt_uint32_t ocr)
      */
     err = mmcsd_mmc_init_card(host, current_ocr);
     if (err)
+    {
         goto err;
+    }
 
     mmcsd_host_unlock(host);
 
     err = rt_mmcsd_blk_probe(host->card);
     if (err)
+    {
         goto remove_card;
+    }
     mmcsd_host_lock(host);
 
     return 0;

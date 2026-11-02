@@ -48,7 +48,7 @@ es32f36xx_library = 'libraries'
 
 rtconfig.BSP_LIBRARY_TYPE = es32f36xx_library
 # include libraries
-objs.extend(SConscript(os.path.join(es32f36xx_lib_path_prefix, es32f36xx_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(es32f36xx_lib_path_prefix, es32f36xx_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', es32f36xx_library), duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

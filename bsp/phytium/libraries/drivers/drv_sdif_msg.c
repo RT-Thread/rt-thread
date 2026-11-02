@@ -52,7 +52,7 @@
 #define SDIF_DMA_ALIGN     SDIF_DMA_BLK_SZ
 
 /* preserve pointer to host instance */
-static struct rt_mmcsd_host *mmc_host[FSDIF_NUM] = {RT_NULL};
+static struct rt_mmcsd_host *mmc_host[FSDIF_NUM] = { RT_NULL };
 /**************************** Type Definitions *******************************/
 typedef struct
 {
@@ -63,10 +63,10 @@ typedef struct
     rt_size_t rw_desc_num;
     struct rt_event event;
 #define SDIF_EVENT_CARD_DETECTED (1 << 0)
-#define SDIF_EVENT_COMMAND_DONE (1 << 1)
-#define SDIF_EVENT_DATA_DONE (1 << 2)
-#define SDIF_EVENT_ERROR_OCCUR (1 << 3)
-#define SDIF_EVENT_SDIO_IRQ (1 << 4)
+#define SDIF_EVENT_COMMAND_DONE  (1 << 1)
+#define SDIF_EVENT_DATA_DONE     (1 << 2)
+#define SDIF_EVENT_ERROR_OCCUR   (1 << 3)
+#define SDIF_EVENT_SDIO_IRQ      (1 << 4)
     void *aligned_buffer;
     uintptr_t aligned_buffer_dma;
     rt_size_t aligned_buffer_size;
@@ -99,7 +99,7 @@ rt_int32_t sdif_card_inserted(rt_uint32_t id)
     return 0;
 }
 
-static void sdif_card_detect_callback(FSdifMsgCtrl *const instance_p, void *args, void *data)
+static void sdif_card_detect_callback(FSdifMsgCtrl * const instance_p, void *args, void *data)
 {
     struct rt_mmcsd_host *host = (struct rt_mmcsd_host *)args;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
@@ -108,7 +108,7 @@ static void sdif_card_detect_callback(FSdifMsgCtrl *const instance_p, void *args
     sdif_change(host_info->sdif.config.instance_id);
 }
 
-static void sdif_command_done_callback(FSdifMsgCtrl *const instance_p, void *args, void *data)
+static void sdif_command_done_callback(FSdifMsgCtrl * const instance_p, void *args, void *data)
 {
     struct rt_mmcsd_host *host = (struct rt_mmcsd_host *)args;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
@@ -116,7 +116,7 @@ static void sdif_command_done_callback(FSdifMsgCtrl *const instance_p, void *arg
     rt_event_send(&host_info->event, SDIF_EVENT_COMMAND_DONE);
 }
 
-static void sdif_data_done_callback(FSdifMsgCtrl *const instance_p, void *args, void *data)
+static void sdif_data_done_callback(FSdifMsgCtrl * const instance_p, void *args, void *data)
 {
     struct rt_mmcsd_host *host = (struct rt_mmcsd_host *)args;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
@@ -124,7 +124,7 @@ static void sdif_data_done_callback(FSdifMsgCtrl *const instance_p, void *args, 
     rt_event_send(&host_info->event, SDIF_EVENT_DATA_DONE);
 }
 
-static void sdif_error_occur_callback(FSdifMsgCtrl *const instance_p, void *args, void *data)
+static void sdif_error_occur_callback(FSdifMsgCtrl * const instance_p, void *args, void *data)
 {
     struct rt_mmcsd_host *host = (struct rt_mmcsd_host *)args;
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
@@ -140,19 +140,29 @@ static void sdif_error_occur_callback(FSdifMsgCtrl *const instance_p, void *args
         LOG_E("Status: 0x%x, dmac status: 0x%x.", status, dmac_status);
 
         if (status & FSDIF_INT_RE_BIT)
+        {
             LOG_E("[CMD_FAIL]Response err. 0x%x", FSDIF_INT_RE_BIT);
+        }
 
         if (status & FSDIF_INT_RTO_BIT)
+        {
             LOG_E("[CMD_FAIL]Response timeout. 0x%x", FSDIF_INT_RTO_BIT);
+        }
 
         if (dmac_status & FSDIF_DMAC_STATUS_DU)
+        {
             LOG_E("[DATA_FAIL]Descriptor un-readable. 0x%x", FSDIF_DMAC_STATUS_DU);
+        }
 
         if (status & FSDIF_INT_DCRC_BIT)
+        {
             LOG_E("[DATA_FAIL]Data CRC error. 0x%x", FSDIF_INT_DCRC_BIT);
+        }
 
         if (status & FSDIF_INT_RCRC_BIT)
+        {
             LOG_E("[DATA_FAIL]Data CRC error. 0x%x", FSDIF_INT_RCRC_BIT);
+        }
 
         rt_event_send(&host_info->event, SDIF_EVENT_ERROR_OCCUR);
     }
@@ -381,79 +391,79 @@ static uint32_t sdif_prepare_sd_command_flags(struct rt_mmcsd_req *req)
     uint32_t argument = input_cmd->arg;
     uint32_t flags = 0U;
 
-    switch(opcode)
+    switch (opcode)
     {
-        case GO_IDLE_STATE: /* MMC_GO_IDLE_STATE 0 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_BC;
-            break;
-        case SEND_EXT_CSD: /* SD_SEND_IF_COND 8 */
-            flags |= FSDIF_MMC_RSP_SPI_R7 | FSDIF_MMC_RSP_R7 | FSDIF_MMC_CMD_BCR;
-            break;
-        case SD_APP_OP_COND: /* SD_APP_OP_COND 41 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R3 | FSDIF_MMC_CMD_BCR;
-            break;
-        case VOLTAGE_SWITCH: /* SD_SWITCH_VOLTAGE 11 */
+    case GO_IDLE_STATE: /* MMC_GO_IDLE_STATE 0 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_BC;
+        break;
+    case SEND_EXT_CSD: /* SD_SEND_IF_COND 8 */
+        flags |= FSDIF_MMC_RSP_SPI_R7 | FSDIF_MMC_RSP_R7 | FSDIF_MMC_CMD_BCR;
+        break;
+    case SD_APP_OP_COND: /* SD_APP_OP_COND 41 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R3 | FSDIF_MMC_CMD_BCR;
+        break;
+    case VOLTAGE_SWITCH: /* SD_SWITCH_VOLTAGE 11 */
+        flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case ALL_SEND_CID: /* MMC_ALL_SEND_CID 2 */
+        flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
+        break;
+    case SET_RELATIVE_ADDR: /* SD_SEND_RELATIVE_ADDR 3 */
+        flags |= FSDIF_MMC_RSP_R6 | FSDIF_MMC_CMD_BCR;
+        break;
+    case SEND_CSD: /* MMC_SEND_CSD 9 */
+        flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
+        break;
+    case SELECT_CARD: /* MMC_SELECT_CARD 7 */
+        if (argument)
+        {
             flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case ALL_SEND_CID: /* MMC_ALL_SEND_CID 2 */
-            flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
-            break;
-        case SET_RELATIVE_ADDR: /* SD_SEND_RELATIVE_ADDR 3 */
-            flags |= FSDIF_MMC_RSP_R6 | FSDIF_MMC_CMD_BCR;
-            break;
-        case SEND_CSD: /* MMC_SEND_CSD 9 */
-            flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
-            break;
-        case SELECT_CARD: /* MMC_SELECT_CARD 7 */
-            if (argument)
-            {
-                flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            }
-            else
-            {
-                flags |= FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_AC;
-            }
-            break;
-        case APP_CMD: /* MMC_APP_CMD 55 */
-            if (argument)
-            {
-                flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            }
-            else
-            {
-                flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_BCR;
-            }
-            break;
-        case SD_APP_SEND_SCR: /* SD_APP_SEND_SCR 51 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case SD_APP_SET_BUS_WIDTH: /* SD_APP_SET_BUS_WIDTH 6 */
-            flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case SEND_STATUS: /* SD_APP_SD_STATUS 13 */
-            flags |= FSDIF_MMC_RSP_SPI_R2 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case SET_BLOCKLEN : /* MMC_SET_BLOCKLEN 16 */
+        }
+        else
+        {
+            flags |= FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_AC;
+        }
+        break;
+    case APP_CMD: /* MMC_APP_CMD 55 */
+        if (argument)
+        {
             flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case SET_BLOCK_COUNT: /* MMC_SET_BLOCK_COUNT 23 */
-            flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case WRITE_BLOCK: /* MMC_WRITE_BLOCK 24 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case WRITE_MULTIPLE_BLOCK: /* MMC_WRITE_MULTIPLE_BLOCK 25 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case READ_SINGLE_BLOCK: /* MMC_READ_SINGLE_BLOCK 17 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case READ_MULTIPLE_BLOCK: /* MMC_READ_MULTIPLE_BLOCK 18 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        default:
-            LOG_E("unhandled command-%d !!!", opcode);
-            break;
+        }
+        else
+        {
+            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_BCR;
+        }
+        break;
+    case SD_APP_SEND_SCR: /* SD_APP_SEND_SCR 51 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case SD_APP_SET_BUS_WIDTH: /* SD_APP_SET_BUS_WIDTH 6 */
+        flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case SEND_STATUS: /* SD_APP_SD_STATUS 13 */
+        flags |= FSDIF_MMC_RSP_SPI_R2 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case SET_BLOCKLEN: /* MMC_SET_BLOCKLEN 16 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case SET_BLOCK_COUNT: /* MMC_SET_BLOCK_COUNT 23 */
+        flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case WRITE_BLOCK: /* MMC_WRITE_BLOCK 24 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case WRITE_MULTIPLE_BLOCK: /* MMC_WRITE_MULTIPLE_BLOCK 25 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case READ_SINGLE_BLOCK: /* MMC_READ_SINGLE_BLOCK 17 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case READ_MULTIPLE_BLOCK: /* MMC_READ_MULTIPLE_BLOCK 18 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    default:
+        LOG_E("unhandled command-%d !!!", opcode);
+        break;
     }
 
     return flags;
@@ -466,63 +476,63 @@ static uint32_t sdif_prepar_emmc_command_flags(struct rt_mmcsd_req *req)
     uint32_t argument = input_cmd->arg;
     uint32_t flags = 0U;
 
-    switch(opcode)
+    switch (opcode)
     {
-        case GO_IDLE_STATE: /* MMC_GO_IDLE_STATE 0 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_BC;
-            break;
-        case SEND_OP_COND: /* MMC_SEND_OP_COND 1 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R3 | FSDIF_MMC_CMD_BCR;
-            break;
-        case ALL_SEND_CID: /* MMC_ALL_SEND_CID 2 */
-            flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
-            break;
-        case SET_RELATIVE_ADDR: /* MMC_SET_RELATIVE_ADDR 3 */
+    case GO_IDLE_STATE: /* MMC_GO_IDLE_STATE 0 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_BC;
+        break;
+    case SEND_OP_COND: /* MMC_SEND_OP_COND 1 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R3 | FSDIF_MMC_CMD_BCR;
+        break;
+    case ALL_SEND_CID: /* MMC_ALL_SEND_CID 2 */
+        flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
+        break;
+    case SET_RELATIVE_ADDR: /* MMC_SET_RELATIVE_ADDR 3 */
+        flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case SEND_CSD: /* MMC_SEND_CSD 9 */
+        flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
+        break;
+    case SELECT_CARD: /* MMC_SELECT_CARD 7 */
+        if (argument)
+        {
             flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case SEND_CSD: /* MMC_SEND_CSD 9 */
-            flags |= FSDIF_MMC_RSP_R2 | FSDIF_MMC_CMD_AC;
-            break;
-        case SELECT_CARD: /* MMC_SELECT_CARD 7 */
-            if (argument)
-            {
-                flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            }
-            else
-            {
-                flags |= FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_AC;
-            }
-            break;
-        case SEND_EXT_CSD: /* MMC_SEND_EXT_CSD 8 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case SWITCH: /* MMC_SWITCH 6 */
-            flags |= FSDIF_MMC_CMD_AC | FSDIF_MMC_RSP_SPI_R1B | FSDIF_MMC_RSP_R1B;
-            break;
-        case SEND_STATUS: /* MMC_SEND_STATUS 13 */
-            flags |= FSDIF_MMC_RSP_SPI_R2 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case SET_BLOCKLEN: /* MMC_SET_BLOCKLEN 16 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case SET_BLOCK_COUNT: /* MMC_SET_BLOCK_COUNT 23 */
-            flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
-            break;
-        case WRITE_BLOCK: /* MMC_WRITE_BLOCK 24 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case WRITE_MULTIPLE_BLOCK: /* MMC_WRITE_MULTIPLE_BLOCK 25 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case READ_SINGLE_BLOCK: /* MMC_READ_SINGLE_BLOCK 17 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        case READ_MULTIPLE_BLOCK: /* MMC_READ_MULTIPLE_BLOCK 18 */
-            flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
-            break;
-        default:
-            LOG_E("unhandled command-%d !!!", opcode);
-            break;
+        }
+        else
+        {
+            flags |= FSDIF_MMC_RSP_NONE | FSDIF_MMC_CMD_AC;
+        }
+        break;
+    case SEND_EXT_CSD: /* MMC_SEND_EXT_CSD 8 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case MMC_SWITCH: /* MMC_SWITCH 6 */
+        flags |= FSDIF_MMC_CMD_AC | FSDIF_MMC_RSP_SPI_R1B | FSDIF_MMC_RSP_R1B;
+        break;
+    case SEND_STATUS: /* MMC_SEND_STATUS 13 */
+        flags |= FSDIF_MMC_RSP_SPI_R2 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case SET_BLOCKLEN: /* MMC_SET_BLOCKLEN 16 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case SET_BLOCK_COUNT: /* MMC_SET_BLOCK_COUNT 23 */
+        flags |= FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_AC;
+        break;
+    case WRITE_BLOCK: /* MMC_WRITE_BLOCK 24 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case WRITE_MULTIPLE_BLOCK: /* MMC_WRITE_MULTIPLE_BLOCK 25 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case READ_SINGLE_BLOCK: /* MMC_READ_SINGLE_BLOCK 17 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    case READ_MULTIPLE_BLOCK: /* MMC_READ_MULTIPLE_BLOCK 18 */
+        flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
+        break;
+    default:
+        LOG_E("unhandled command-%d !!!", opcode);
+        break;
     }
 
     return flags;
@@ -620,7 +630,7 @@ static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
     /* ClockData set */
     if (0 != io_cfg->clock)
     {
-       target_ios.ios_clock = io_cfg->clock;
+        target_ios.ios_clock = io_cfg->clock;
     }
 
     /* Timing set */
@@ -643,23 +653,23 @@ static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
             {
                 switch (io_cfg->timing)
                 {
-                    case MMCSD_TIMING_UHS_SDR12:
-                        target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR12;
-                        break;
-                    case MMCSD_TIMING_UHS_SDR25:
-                        target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR25;
-                        break;
-                    case MMCSD_TIMING_UHS_SDR50:
-                        target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR50;
-                        break;
-                    case MMCSD_TIMING_UHS_SDR104:
-                        target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR104;
-                        break;
-                    case MMCSD_TIMING_UHS_DDR50:
-                        target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_DDR50;
-                        break;
-                    default:
-                        break;
+                case MMCSD_TIMING_UHS_SDR12:
+                    target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR12;
+                    break;
+                case MMCSD_TIMING_UHS_SDR25:
+                    target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR25;
+                    break;
+                case MMCSD_TIMING_UHS_SDR50:
+                    target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR50;
+                    break;
+                case MMCSD_TIMING_UHS_SDR104:
+                    target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_SDR104;
+                    break;
+                case MMCSD_TIMING_UHS_DDR50:
+                    target_ios.ios_timing = FSDIF_MMC_TIMING_UHS_DDR50;
+                    break;
+                default:
+                    break;
                 }
             }
         }
@@ -684,7 +694,6 @@ static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
                 break;
             }
         }
-
     }
 
     /* dataBusWidth set */
@@ -719,13 +728,12 @@ static rt_int32_t sdif_card_status(struct rt_mmcsd_host *host)
     return FSdifMsgCheckifCardExists(sdif) ? 1 : 0;
 }
 
-static const struct rt_mmcsd_host_ops ops =
-    {
-        .request = sdif_send_request,
-        .set_iocfg = sdif_set_iocfg,
-        .get_card_status = sdif_card_status,
-        .enable_sdio_irq = RT_NULL,
-        .execute_tuning = RT_NULL,
+static const struct rt_mmcsd_host_ops ops = {
+    .request = sdif_send_request,
+    .set_iocfg = sdif_set_iocfg,
+    .get_card_status = sdif_card_status,
+    .enable_sdio_irq = RT_NULL,
+    .execute_tuning = RT_NULL,
 };
 
 static void sdif_ctrl_setup_interrupt(struct rt_mmcsd_host *host)
@@ -769,7 +777,7 @@ void sdif_msg_prepare_init_data(FSdifMsgDataInit *msg_data_init, rt_uint32_t typ
     msg_data_init->clk_rate = FSDIF_CLK_FREQ_HZ; /*1.2GHz*/
 }
 
-static rt_err_t sdif_prepare_init_ios(FSdifMsgCtrl *const instance)
+static rt_err_t sdif_prepare_init_ios(FSdifMsgCtrl * const instance)
 {
     FSdifMsgDataSetIos target_ios;
 
@@ -787,7 +795,7 @@ static rt_err_t sdif_prepare_init_ios(FSdifMsgCtrl *const instance)
     return RT_EOK;
 }
 
-static rt_err_t sdif_prepare_init_volt(FSdifMsgCtrl *const instance, rt_uint32_t type)
+static rt_err_t sdif_prepare_init_volt(FSdifMsgCtrl * const instance, rt_uint32_t type)
 {
     FSdifMsgDataSwitchVolt target_volt;
 

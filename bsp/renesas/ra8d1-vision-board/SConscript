@@ -14,9 +14,8 @@ if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support IAR build\n")
     Return('group')
 elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
-    if GetOption('target') != 'mdk5':
-        CPPPATH = [cwd]
-        src = Glob('./src/*.c')
+    CPPPATH = [cwd]
+    src = Glob('./src/*.c')
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

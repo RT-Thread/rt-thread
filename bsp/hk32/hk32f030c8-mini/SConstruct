@@ -50,10 +50,10 @@ hk32f0_library = 'HK32F0xx_StdPeriph_Driver'
 rtconfig.BSP_LIBRARY_TYPE = hk32f0_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, hk32f0_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, hk32f0_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', hk32f0_library), duplicate=0))
 
 # common include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript'), variant_dir='build/libraries/rt_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

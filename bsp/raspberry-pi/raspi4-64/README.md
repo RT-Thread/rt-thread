@@ -47,7 +47,7 @@ windows系统电脑上可以安装tftpd搭建tftp服务器。将目录指定到`
 在控制台输入下列命令：
 
 ```
-setenv bootcmd "dhcp 0x00208000 x.x.x.x:rtthread.bin;dcache flush;go 0x00208000"
+setenv bootcmd "dhcp 0x208000 x.x.x.x:rtthread.bin;fdt addr ${fdt_addr};fdt set /chosen bootargs 'earlycon=uart8250,mmio32,0xfe215040 console=ttyAMA0 cma=8M coherent_pool=2M';booti 0x208000 - ${fdt_addr}"
 saveenv
 reset
 ```

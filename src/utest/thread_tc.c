@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -65,21 +65,20 @@
 #include <stdlib.h>
 #include "utest.h"
 
-#define THREAD_STACK_SIZE  UTEST_THR_STACK_SIZE
-#define THREAD_TIMESLICE   10
+#define THREAD_STACK_SIZE         UTEST_THR_STACK_SIZE
+#define THREAD_TIMESLICE          10
 #define THREAD_CLEANUP_TIMEOUT_MS 1000
 
-rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 #ifdef RT_USING_HEAP
-    static rt_thread_t tid1 = RT_NULL;
-    static rt_thread_t tid3 = RT_NULL;
-    static rt_thread_t tid4 = RT_NULL;
-    static rt_thread_t tid5 = RT_NULL;
-    static rt_thread_t tid6 = RT_NULL;
-    static rt_thread_t tid7 = RT_NULL;
-    static rt_thread_t tid9 = RT_NULL;
+static rt_thread_t tid1 = RT_NULL;
+static rt_thread_t tid3 = RT_NULL;
+static rt_thread_t tid4 = RT_NULL;
+static rt_thread_t tid5 = RT_NULL;
+static rt_thread_t tid6 = RT_NULL;
+static rt_thread_t tid7 = RT_NULL;
+static rt_thread_t tid9 = RT_NULL;
 #endif /* RT_USING_HEAP */
 
 static volatile rt_uint32_t tid3_delay_pass_flag = 0;
@@ -93,7 +92,7 @@ static rt_atomic_t thread9_delete_ret = -RT_ERROR;
 static rt_bool_t thread9_pending = RT_FALSE;
 
 #ifndef RT_USING_SMP
-    static volatile rt_uint32_t thread_yield_flag = 0;
+static volatile rt_uint32_t thread_yield_flag = 0;
 #endif
 static volatile rt_uint32_t entry_idle_hook_times = 0;
 static rt_thread_t __current_thread;
@@ -245,13 +244,13 @@ __exit:
 
 static void idle_hook(void)
 {
-    entry_idle_hook_times ++;
+    entry_idle_hook_times++;
 }
 
 static void thread4_entry(void *parameter)
 {
     rt_uint32_t delay_times = 5;
-    while (delay_times --)
+    while (delay_times--)
     {
         rt_thread_mdelay(300);
     }
@@ -300,7 +299,7 @@ static void thread5_entry(void *parameter)
 {
     while (1)
     {
-        thread5_source ++;
+        thread5_source++;
         rt_thread_delay(5);
         if (thread5_source == 5)
         {
@@ -311,7 +310,7 @@ static void thread5_entry(void *parameter)
 
 static void thread6_entry(void *parameter)
 {
-    while (++ thread5_source <= 9);
+    while (++thread5_source <= 9);
     tid6_finish_flag = 1;
 }
 
@@ -433,7 +432,7 @@ __exit:
 
 static void thread8_entry(void *parameter)
 {
-    for (; count < 10; count ++);
+    for (; count < 10; count++);
 }
 
 static void test_thread_priority(void)
@@ -458,7 +457,7 @@ static void test_thread_priority(void)
     if (ret_startup != RT_EOK)
     {
         uassert_false(ret_startup != RT_EOK);
-        return ;
+        return;
     }
     uassert_true(count == 10);
 
@@ -563,8 +562,7 @@ static void test_thread_delete_again(void)
 
 #if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
 static struct rt_thread detach_thread;
-rt_align(RT_ALIGN_SIZE)
-static char detach_stack[THREAD_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char detach_stack[THREAD_STACK_SIZE];
 static rt_thread_t detach_fence;
 static rt_atomic_t detach_cleanup_count;
 static rt_atomic_t detach_fence_done;
@@ -881,7 +879,10 @@ static void test_timeslice_threadA_entry(void *parameter)
     {
         rt_thread_delay(2);
         timeslice_cntA++;
-        if (timeslice_cntA > 10) return;
+        if (timeslice_cntA > 10)
+        {
+            return;
+        }
     }
 }
 static void test_timeslice_threadB1_entry(void *parameter)
@@ -889,7 +890,10 @@ static void test_timeslice_threadB1_entry(void *parameter)
     while (1)
     {
         timeslice_cntB1++;
-        if (timeslice_cntA > 10) return;
+        if (timeslice_cntA > 10)
+        {
+            return;
+        }
     }
 }
 static void test_timeslice_threadB2_entry(void *parameter)
@@ -897,7 +901,10 @@ static void test_timeslice_threadB2_entry(void *parameter)
     while (1)
     {
         timeslice_cntB2++;
-        if (timeslice_cntA > 10) return;
+        if (timeslice_cntA > 10)
+        {
+            return;
+        }
     }
 }
 
@@ -911,7 +918,7 @@ void test_timeslice(void)
     timeslice_cntB2 = 0;
 
     tidA = rt_thread_create("timeslice", test_timeslice_threadA_entry, RT_NULL,
-                           2048, UTEST_THR_PRIORITY + 1, 10);
+                            2048, UTEST_THR_PRIORITY + 1, 10);
     if (!tidA)
     {
         LOG_E("rt_thread_create failed!");
@@ -924,11 +931,11 @@ void test_timeslice(void)
     {
         LOG_E("rt_thread_startup failed!");
         uassert_false(1);
-        return ;
+        return;
     }
 
     tidB1 = rt_thread_create("timeslice", test_timeslice_threadB1_entry, RT_NULL,
-                           2048, UTEST_THR_PRIORITY + 2, 2);
+                             2048, UTEST_THR_PRIORITY + 2, 2);
     if (!tidB1)
     {
         LOG_E("rt_thread_create failed!");
@@ -941,11 +948,11 @@ void test_timeslice(void)
     {
         LOG_E("rt_thread_startup failed!");
         uassert_false(1);
-        return ;
+        return;
     }
 
     tidB2 = rt_thread_create("timeslice", test_timeslice_threadB2_entry, RT_NULL,
-                           2048, UTEST_THR_PRIORITY + 2, 2);
+                             2048, UTEST_THR_PRIORITY + 2, 2);
     if (!tidB2)
     {
         LOG_E("rt_thread_create failed!");
@@ -958,11 +965,12 @@ void test_timeslice(void)
     {
         LOG_E("rt_thread_startup failed!");
         uassert_false(1);
-        return ;
+        return;
     }
-    do{
+    do
+    {
         rt_thread_delay(2 * 20);
-    }while(timeslice_cntA <= 10);
+    } while (timeslice_cntA <= 10);
 
     rt_kprintf("A:%d,B1:%d,B2:%d\n", timeslice_cntA, timeslice_cntB1, timeslice_cntB2);
     diff = abs(timeslice_cntB1 - timeslice_cntB2);
@@ -980,7 +988,9 @@ static void test_thread_yield_inc_entry(void *parameter)
     while (1)
     {
         if (loop++ > 10001)
+        {
             break;
+        }
         yield_count++;
         rt_thread_yield();
     }
@@ -1007,13 +1017,15 @@ static void test_thread_yield_entry(void *parameter)
     {
         LOG_E("rt_thread_startup failed!");
         uassert_false(1);
-        return ;
+        return;
     }
 
     while (1)
     {
         if (loop++ > 10000)
+        {
             break;
+        }
 
         count_before = yield_count;
         rt_thread_yield();
@@ -1047,7 +1059,7 @@ void test_thread_yield_nosmp(void)
     {
         LOG_E("rt_thread_startup failed!");
         uassert_false(1);
-        return ;
+        return;
     }
 
     uassert_true(thread_yield_flag == 1);
@@ -1163,7 +1175,6 @@ static void testcase(void)
     /* timeslice */
     // UTEST_UNIT_RUN(test_timeslice); /* Can not running in Github Action QEMU */
 }
-
 
 UTEST_TC_EXPORT(testcase, "core.thread_tc", utest_tc_init, utest_tc_cleanup, 1000);
 

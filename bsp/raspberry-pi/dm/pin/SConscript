@@ -1,0 +1,19 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/pin']
+
+if GetDepend(['RT_PIN_BCM_VIRT']):
+    src += ['pin-bcm-virt.c']
+
+if GetDepend(['RT_PIN_BRCMSTB']):
+    src += ['pin-brcmstb.c']
+
+if GetDepend(['RT_PIN_RASPBERRYPI_EXP']):
+    src += ['pin-raspberrypi-exp.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

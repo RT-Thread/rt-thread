@@ -5,21 +5,33 @@
 LR_IROM1 0x15000000 0x001E0000  {    ; load region size_region
   ER_IROM1 0x15000000 0x001E0000  {  ; load address = execution address
    *.o (RESET, +First)
-   *(InRoot$$Sections)
-   startup_n32h7*.o (+RO)
+   *(.boot_text)
+   startup_n32h7*.o (.text)
    system_n32h7*.o (+RO)
   }
   
-  ;ITCM 
-  RW_ITCM 0x00000400 0x0003FC00  {  ;256K ITCM   offset 0x400 for VECTOR TABLE
+  ;ITCM
+  RW_ITCM 0x00000000 0x000C0000  {  ;768K ITCM
+   *(tcm_vector, +First)
    .ANY (+RO)
    .ANY (+XO)
   }
+
+;  ;DTCM
+;  RW_DTCM 0x20000000 0x00040000  {  ; 256K DTCM  
+;  }
   
   ;AXI SRAM 
   RW_AXI_SRAM 0x24000000 0x00020000  {  ; 128K AXI-SRAM  stack
    *(STACK)
+  }
+
+  ;AHB SRAM 
+  RW_AHB_SRAM 0x30000000 0x00050000  {  ; 320K AHB-SRAM
    .ANY (+RW +ZI) 
   }
-}
 
+;  ;AHB SRAM5 
+;  RW_AHB_SRAM5 0x30050000 0x00008000  {  ; 32K AHB-SRAM5 FDCAN1-8
+;  }
+}

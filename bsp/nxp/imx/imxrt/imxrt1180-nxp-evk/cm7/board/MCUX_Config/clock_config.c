@@ -412,8 +412,8 @@ void BOARD_BootClockRUN(void)
 #endif
 
 #if (__CORTEX_M == 7)
-    DCDC_SetVoltage(kDCDC_CORE0, kDCDC_1P0Target1P1V);
-    DCDC_SetVoltage(kDCDC_CORE1, kDCDC_1P0Target1P1V);
+    DCDC_SetVoltage(kDCDC_CORE0, kDCDC_1P0Target1P125V);
+    DCDC_SetVoltage(kDCDC_CORE1, kDCDC_1P0Target1P125V);
     /* FBB need to be enabled in OverDrive(OD) mode */
     PMU_EnableFBB(ANADIG_PMU, true);
 #endif

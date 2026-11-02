@@ -38,7 +38,7 @@
 extern "C" {
 #endif
 
-#define RT_DEVICE(device)            ((rt_device_t)device)
+#define RT_DEVICE(device) ((rt_device_t)device)
 
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
@@ -63,6 +63,10 @@ extern "C" {
 #ifdef RT_USING_LED
 #include "drivers/led.h"
 #endif /* RT_USING_LED */
+
+#ifdef RT_USING_PTP
+#include "drivers/ptp.h"
+#endif /* RT_USING_PTP */
 
 #ifdef RT_USING_INPUT
 #include "drivers/input.h"
@@ -107,6 +111,7 @@ extern "C" {
 
 #ifdef RT_USING_PHYE
 #include "drivers/phye.h"
+#include "drivers/phye-mipi-dphy.h"
 #endif /* RT_USING_PHYE */
 
 #ifdef RT_USING_PIC
@@ -148,6 +153,10 @@ extern "C" {
 #include "drivers/scmi.h"
 #endif /* RT_FIRMWARE_ARM_SCMI */
 #endif /* RT_USING_FIRMWARE */
+
+#ifdef RT_USING_TEE
+#include "drivers/tee.h"
+#endif /* RT_USING_TEE */
 
 #ifdef RT_USING_HWCACHE
 #include "drivers/hwcache.h"
@@ -239,7 +248,6 @@ extern "C" {
 #endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
 
-
 #ifdef RT_USING_WDT
 #include "drivers/dev_watchdog.h"
 #endif /* RT_USING_WDT */
@@ -268,9 +276,11 @@ extern "C" {
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
-#ifdef RT_USING_ADC
+#ifdef RT_USING_ADC_V2
+#include "drivers/adc_v2.h"
+#elif defined(RT_USING_ADC)
 #include "drivers/adc.h"
-#endif /* RT_USING_ADC */
+#endif /* RT_USING_ADC_V2 */
 
 #ifdef RT_USING_DAC
 #include "drivers/dac.h"

@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../../include']
 
 src = []
 
+if GetDepend(['RT_INPUT_JOYSTICK_ADC']):
+    src += ['js-adc.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

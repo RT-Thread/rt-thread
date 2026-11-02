@@ -35,6 +35,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <rtthread.h>
 
@@ -204,7 +205,7 @@ dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     }
 
     opt = dhcp_server_option_find(opt_buf, len, DHCP_OPTION_REQUESTED_IP);
-    if (opt != NULL)
+    if (opt != NULL && opt[1] >= 4)
     {
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
@@ -240,7 +241,7 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     }
 
     opt = dhcp_server_option_find(opt_buf, len, DHCP_OPTION_REQUESTED_IP);
-    if (opt != NULL)
+    if (opt != NULL && opt[1] >= 4)
     {
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
@@ -287,8 +288,24 @@ static u8_t *
 dhcp_server_option_find(u8_t *buf, u16_t len, u8_t option)
 {
     u8_t *end = buf + len;
+    u16_t remaining;
+
     while ((buf < end) && (*buf != DHCP_OPTION_END))
     {
+        remaining = end - buf;
+
+        /* need at least option + length */
+        if (remaining < 2)
+        {
+            break;
+        }
+
+        /* option data must stay within the received packet */
+        if (buf[1] > remaining - 2)
+        {
+            break;
+        }
+
         if (*buf == option)
         {
             return buf;
@@ -321,7 +338,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     LWIP_UNUSED_ARG(addr);
     LWIP_UNUSED_ARG(port);
 
-    if (p->len < DHCP_MIN_REQUEST_LEN)
+    if (p->len < DHCP_MIN_REQUEST_LEN || p->tot_len < DHCP_OPTIONS_OFS)
     {
         LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("DHCP request message or pbuf too short\n"));
         pbuf_free(p);
@@ -338,10 +355,13 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     if (q->tot_len < p->tot_len)
     {
         LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("pbuf_alloc dhcp_msg too small %d:%d\n", q->tot_len, p->tot_len));
+        pbuf_free(q);
         pbuf_free(p);
         return;
     }
 
+    /* Parse only bytes actually received, not the whole allocated buffer. */
+    length = p->tot_len - DHCP_OPTIONS_OFS;
     pbuf_copy(q, p);
     pbuf_free(p);
 
@@ -364,9 +384,8 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     }
 
     opt_buf = (u8_t *)msg + DHCP_OPTIONS_OFS;
-    length = q->tot_len - DHCP_OPTIONS_OFS;
     opt = dhcp_server_option_find(opt_buf, length, DHCP_OPTION_MESSAGE_TYPE);
-    if (opt)
+    if (opt && opt[1] >= 1)
     {
         msg_type = *(opt + 2);
         if (msg_type == DHCP_DISCOVER)
@@ -576,7 +595,6 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
                             break;
                         }
                         node_prev = node;
-                        node = node->next;
                     }
 
                     if (node != NULL)
@@ -614,6 +632,7 @@ err_t
 dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
 {
     struct dhcp_server *dhcp_server;
+    err_t err;
 
     /* If this netif alreday use the dhcp server. */
     for (dhcp_server = lw_dhcp_server; dhcp_server != NULL; dhcp_server = dhcp_server->next)
@@ -639,9 +658,6 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
     /* clear data structure */
     memset(dhcp_server, 0, sizeof(struct dhcp_server));
 
-    /* store this dhcp server to list */
-    dhcp_server->next = lw_dhcp_server;
-    lw_dhcp_server = dhcp_server;
     dhcp_server->netif = netif;
     dhcp_server->node_list = NULL;
     dhcp_server->start = *start;
@@ -653,15 +669,27 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
     if (dhcp_server->pcb == NULL)
     {
         LWIP_DEBUGF(DHCP_DEBUG  | LWIP_DBG_TRACE, ("dhcp_server_start(): could not obtain pcb\n"));
+        mem_free(dhcp_server);
         return ERR_MEM;
     }
 
     ip_set_option(dhcp_server->pcb, SOF_BROADCAST);
     /* set up local and remote port for the pcb */
-    udp_bind(dhcp_server->pcb, IP_ADDR_ANY, DHCP_SERVER_PORT);
+    err = udp_bind(dhcp_server->pcb, IP_ADDR_ANY, DHCP_SERVER_PORT);
+    if (err != ERR_OK)
+    {
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_server_start(): could not bind pcb, err=%d\n", (int)err));
+        udp_remove(dhcp_server->pcb);
+        mem_free(dhcp_server);
+        return err;
+    }
     //udp_connect(dhcp_server->pcb, IP_ADDR_ANY, DHCP_CLIENT_PORT);
     /* set up the recv callback and argument */
     udp_recv(dhcp_server->pcb, dhcp_server_recv, dhcp_server);
+
+    /* Publish the server only after all resources are ready. */
+    dhcp_server->next = lw_dhcp_server;
+    lw_dhcp_server = dhcp_server;
     LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_server_start(): starting DHCP server\n"));
 
     return ERR_OK;
@@ -741,7 +769,7 @@ void dhcpd_start(const char *netif_name)
         res = dhcp_server_start(netif, &ip_start, &ip_end);
         if (res != 0)
         {
-            DEBUG_PRINTF("dhcp_server_start res: %s.\r\n", res);
+            DEBUG_PRINTF("dhcp_server_start res: %d.\r\n", (int)res);
         }
     }
 

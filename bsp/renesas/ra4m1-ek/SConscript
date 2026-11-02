@@ -13,8 +13,7 @@ if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support IAR build\n")
     Return('group')
 elif rtconfig.PLATFORM in ['gcc', 'armclang']:
-    if GetOption('target') != 'mdk5':
-        src = Glob('./src/*.c')
+    src = Glob('./src/*.c')
 
 if rtconfig.PLATFORM in ['armclang']:
     CPPPATH = [cwd + '/script/bsp_link/Keil']

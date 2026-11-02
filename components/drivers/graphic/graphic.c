@@ -107,14 +107,25 @@ static rt_err_t plane_fb_remap(struct rt_graphic_plane *plane,
 static rt_err_t plane_fb_pan_display(struct rt_graphic_plane *plane,
         struct rt_device_rect_info *rect)
 {
-    void *framebuffer_end = plane->framebuffer;
     rt_size_t byte_per_pixel = plane->bits_per_pixel / 8;
+    rt_size_t offset, row_bytes, span;
 
-    framebuffer_end += rect->x * byte_per_pixel;
-    framebuffer_end += rect->y * plane->line_length;
-    framebuffer_end += rect->width * rect->height * byte_per_pixel;
+    if (!plane->framebuffer || !byte_per_pixel || !rect->width || !rect->height)
+    {
+        return -RT_EINVAL;
+    }
 
-    if (framebuffer_end < plane->framebuffer + plane->framebuffer_len)
+    row_bytes = rect->width * byte_per_pixel;
+
+    if (rect->x * byte_per_pixel + row_bytes > plane->line_length)
+    {
+        return -RT_EINVAL;
+    }
+
+    offset = rect->y * plane->line_length + rect->x * byte_per_pixel;
+    span   = (rect->height - 1) * plane->line_length + row_bytes;
+
+    if (offset <= plane->framebuffer_len && span <= plane->framebuffer_len - offset)
     {
         return plane->ops->fb_pan_display(plane, rect);
     }
@@ -203,6 +214,7 @@ static rt_err_t _graphic_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t err = RT_EOK;
     rt_bool_t need_schedule = RT_FALSE;
+    rt_bool_t                 wait_vsync    = RT_FALSE;
     struct rt_graphic_device *gdev = raw_to_graphic(dev);
 
 _retry:
@@ -520,7 +532,7 @@ _retry:
     case RTGRAPHIC_CTRL_WAIT_VSYNC:
         if (gdev->ops->wait_vsync)
         {
-            err = gdev->ops->wait_vsync(gdev);
+            wait_vsync = RT_TRUE;
         }
         break;
 
@@ -555,6 +567,8 @@ _retry:
             var->yres = plane->height;
             var->xres_virtual = plane->width;
             var->yres_virtual = plane->height * (plane->framebuffer_len / plane->screen_len);
+            var->xoffset        = plane->x;
+            var->yoffset        = plane->y;
             var->bits_per_pixel = plane->bits_per_pixel;
 
             if (plane == gdev->primary_plane)
@@ -668,10 +682,16 @@ _retry:
 
             for (int i = 0; i < plane->modes_nr; ++i)
             {
-                /* Check supported and commit */
-                if (plane->modes[i] == mode && plane->mode != mode)
+                if (plane->modes[i] == mode)
                 {
-                    err = plane_fb_remap(plane, mode, &rect);
+                    err = RT_EOK;
+
+                    if (plane->mode != mode)
+                    {
+                        err = plane_fb_remap(plane, mode, &rect);
+                    }
+
+                    break;
                 }
             }
 
@@ -683,6 +703,11 @@ _retry:
                 rect.height = var->yres;
 
                 err = plane_fb_pan_display(plane, &rect);
+            }
+
+            if (!err && (var->activate & FB_ACTIVATE_VBL) && gdev->ops->wait_vsync)
+            {
+                wait_vsync = RT_TRUE;
             }
 
             if (!err && var->rotate && plane->ops->prop_set)
@@ -733,6 +758,11 @@ _retry:
             fix->mmio_start = fix->smem_start;
             fix->mmio_len = plane->screen_len;
             fix->line_length = plane->line_length;
+
+            if (plane->ops->fb_pan_display && plane->framebuffer_len > plane->screen_len)
+            {
+                fix->ypanstep = 1;
+            }
         }
         else
         {
@@ -769,6 +799,11 @@ _retry:
                 rect.height = var->yres;
 
                 err = plane_fb_pan_display(plane, &rect);
+
+                if (!err && (var->activate & FB_ACTIVATE_VBL) && gdev->ops->wait_vsync)
+                {
+                    wait_vsync = RT_TRUE;
+                }
             }
             else
             {
@@ -901,7 +936,7 @@ _retry:
     case FBIO_WAITFORVSYNC:
         if (gdev->ops->wait_vsync)
         {
-            err = gdev->ops->wait_vsync(gdev);
+            wait_vsync = RT_TRUE;
         }
         break;
 
@@ -929,6 +964,11 @@ _retry:
     }
 
     spin_unlock(&gdev->lock);
+
+    if (!err && wait_vsync)
+    {
+        err = gdev->ops->wait_vsync(gdev);
+    }
 
     return err;
 }

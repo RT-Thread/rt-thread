@@ -1,0 +1,112 @@
+menu "SPI Test"
+
+config RT_UTEST_SPI_LOOPBACK
+    bool "SPI MOSI/MISO Loopback Test"
+    select RT_USING_SPI
+    default n
+    help
+        This test validates full-duplex loopback data with sendrecv8,
+        transfer and transfer_message over length and clock matrices.
+        The hardware transfer mode, such as polling, interrupt or DMA, is
+        selected by the BSP SPI driver configuration.
+
+if RT_UTEST_SPI_LOOPBACK
+
+config RT_UTEST_SPI_LOOPBACK_BUS_NAME
+    string "SPI bus name for loopback test"
+    default "spi2"
+
+config RT_UTEST_SPI_LOOPBACK_DEV_NAME
+    string "Temporary SPI device name for loopback test"
+    default "spi_loop"
+
+config RT_UTEST_SPI_LOOPBACK_DATA_SIZE
+    int "SPI loopback maximum test data size"
+    range 1 65535
+    default 512
+
+config RT_UTEST_SPI_LOOPBACK_MAX_HZ
+    int "SPI loopback maximum clock frequency (Hz)"
+    range 1 100000000
+    default 10000000
+    help
+        The test automatically builds the clock matrix from standard SPI
+        frequencies up to this value, and always includes this maximum value.
+
+config RT_UTEST_SPI_LOOPBACK_API_SMOKE
+    bool "Enable SPI TX-only/RX-only API smoke test"
+    default n
+    help
+        Enable this to smoke-test TX-only and RX-only transfer APIs by return
+        length. These transfers do not validate MOSI/MISO loopback data and
+        may be unsupported or unstable on some BSP SPI controllers.
+
+config RT_UTEST_SPI_LOOPBACK_TIMEOUT
+    int "SPI loopback test timeout (s)"
+    range 1 3600
+    default 60
+
+endif
+
+config RT_UTEST_SPI_FLASH
+    bool "SPI Flash SFUD Read/Write Test"
+    select RT_USING_SPI
+    select RT_USING_SFUD
+    select RT_SFUD_USING_SFDP
+    select RT_SFUD_USING_FLASH_INFO_TABLE
+    select RT_USING_HEAP
+    default n
+
+if RT_UTEST_SPI_FLASH
+
+config RT_UTEST_SPI_FLASH_SPI_DEV_NAME
+    string "SPI device name for SFUD flash"
+    default "spi20"
+    help
+        The SPI device that connects to the flash, such as spi20. If it does
+        not exist yet, the test attaches it to the configured SPI bus and CS pin.
+
+config RT_UTEST_SPI_FLASH_BUS_NAME
+    string "SPI bus name for flash device attach"
+    default "spi2"
+    help
+        The SPI bus used when the test needs to attach the SPI flash device.
+
+config RT_UTEST_SPI_FLASH_CS_PIN
+    int "SPI flash CS pin index"
+    range -1 32767
+    default -1
+    help
+        Use the RT-Thread pin index used by the BSP, such as a GET_PIN() value
+        on STM32. -1 means PIN_NONE.
+
+config RT_UTEST_SPI_FLASH_DEV_NAME
+    string "SFUD flash model/device name"
+    default "W25Q64"
+    help
+        This is the SFUD flash device name used to find or register the flash,
+        and is usually set to the board flash model name, such as W25Q64 or
+        W25Q128. SFUD still verifies the actual chip by JEDEC ID and SFDP or
+        its flash information table when probing.
+
+config RT_UTEST_SPI_FLASH_MAX_HZ
+    int "SPI flash test maximum clock frequency (Hz)"
+    range 1 50000000
+    default 10000000
+    help
+        The SPI clock used while probing and testing the flash. Keep this
+        conservative for board-level utests because wiring, pinmux and flash
+        parts may vary.
+
+config RT_UTEST_SPI_FLASH_TEST_OFFSET
+    hex "SPI flash test offset"
+    default 0x0
+
+config RT_UTEST_SPI_FLASH_TEST_SIZE
+    int "SPI flash test data size"
+    range 1 4096
+    default 256
+
+endif
+
+endmenu

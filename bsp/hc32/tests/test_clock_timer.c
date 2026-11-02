@@ -160,5 +160,5 @@ static int clock_timer_sample(int argc, char *argv[])
     return ret;
 }
 /* 导出到 msh 命令列表中 */
-MSH_CMD_EXPORT(clock_timer_sample, clock_timer sample: devname [oneshot | period] timeout);
+MSH_CMD_EXPORT(clock_timer_sample, clock_timer sample : devname[oneshot | period] timeout);
 #endif

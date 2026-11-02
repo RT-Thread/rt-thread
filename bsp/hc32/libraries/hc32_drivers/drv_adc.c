@@ -10,6 +10,8 @@
  * 2022-06-14     CDT                  fix a bug of internal trigger
  * 2024-02-20     CDT                  support HC32F448
  *                                     add function for associating with the dma
+ * 2026-05-27     CDT                  support HC32F4A2
+ * 2026-06-05     CDT                  support HC32F467
  */
 
 #include <board.h>
@@ -17,8 +19,8 @@
 #include <drv_adc.h>
 #include <drv_config.h>
 
-#define DBG_TAG             "drv.adc"
-#define DBG_LVL             DBG_INFO
+#define DBG_TAG "drv.adc"
+#define DBG_LVL DBG_INFO
 
 #include <rtdbg.h>
 #ifdef BSP_USING_ADC
@@ -44,25 +46,24 @@ enum
 #endif
 };
 
-static adc_device _g_adc_dev_array[] =
-{
+static adc_device _g_adc_dev_array[] = {
 #ifdef BSP_USING_ADC1
     {
-        {0},
+        { 0 },
         CM_ADC1,
         ADC1_INIT_PARAMS,
     },
 #endif
 #ifdef BSP_USING_ADC2
     {
-        {0},
+        { 0 },
         CM_ADC2,
         ADC2_INIT_PARAMS,
     },
 #endif
 #ifdef BSP_USING_ADC3
     {
-        {0},
+        { 0 },
         CM_ADC3,
         ADC3_INIT_PARAMS,
     },
@@ -87,7 +88,7 @@ static void _adc_internal_trigger0_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_0;
         break;
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F472) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334) || defined(HC32F467)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_0;
         break;
@@ -118,7 +119,7 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_1;
         break;
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F472) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334) || defined(HC32F467)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_1;
         break;
@@ -176,8 +177,7 @@ static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt
                 rt_ret = LL_OK;
                 break;
             }
-        }
-        while ((rt_tick_get() - start_time) < p_adc_dev->init.eoc_poll_time_max);
+        } while ((rt_tick_get() - start_time) < p_adc_dev->init.eoc_poll_time_max);
 
         if (rt_ret == LL_OK)
         {
@@ -214,6 +214,10 @@ static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt
                     {
                         (void)DMA_ChCmd(adc_eoca_dma->Instance, adc_eoca_dma->channel, DISABLE);
                         rt_ret = -RT_ETIMEOUT;
+                    }
+                    else
+                    {
+                        rt_ret = LL_OK;
                     }
                     if (adc_dev_priv->ops->dma_trig_stop != RT_NULL)
                     {
@@ -263,8 +267,7 @@ static rt_int16_t _adc_get_vref(struct rt_adc_device *device)
     return vref;
 }
 
-static struct rt_adc_ops _g_adc_ops =
-{
+static struct rt_adc_ops _g_adc_ops = {
     _adc_enable,
     _adc_convert,
     _adc_get_resolution,
@@ -286,17 +289,17 @@ static void _adc_clock_enable(void)
 
 static void hc32_adc_get_dma_info(void)
 {
-#ifdef  BSP_ADC1_USING_DMA
+#ifdef BSP_ADC1_USING_DMA
     static struct dma_config adc1_eoca_dma = ADC1_EOCA_DMA_CONFIG;
     _g_adc_dev_array[ADC1_INDEX].init.adc_eoca_dma = &adc1_eoca_dma;
 #endif
 
-#ifdef  BSP_ADC2_USING_DMA
+#ifdef BSP_ADC2_USING_DMA
     static struct dma_config adc2_eoca_dma = ADC2_EOCA_DMA_CONFIG;
     _g_adc_dev_array[ADC2_INDEX].init.adc_eoca_dma = &adc2_eoca_dma;
 #endif
 
-#ifdef  BSP_ADC3_USING_DMA
+#ifdef BSP_ADC3_USING_DMA
     static struct dma_config adc3_eoca_dma = ADC3_EOCA_DMA_CONFIG;
     _g_adc_dev_array[ADC3_INDEX].init.adc_eoca_dma = &adc3_eoca_dma;
 #endif
@@ -310,13 +313,13 @@ static void hc32_adc_dma_config(adc_device *p_adc_dev)
     FCG_Fcg0PeriphClockCmd(p_adc_dev->init.adc_eoca_dma->clock, ENABLE);
 
     (void)DMA_StructInit(&stcDmaInit);
-    stcDmaInit.u32BlockSize  = 1UL;
+    stcDmaInit.u32BlockSize = 1UL;
     stcDmaInit.u32TransCount = 1UL;
-    stcDmaInit.u32DataWidth  = DMA_DATAWIDTH_16BIT;
-    stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_FIX;
+    stcDmaInit.u32DataWidth = DMA_DATAWIDTH_16BIT;
+    stcDmaInit.u32SrcAddrInc = DMA_SRC_ADDR_FIX;
     stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
-    stcDmaInit.u32SrcAddr     = (uint32_t)RT_NULL;
-    stcDmaInit.u32DestAddr    = (uint32_t)RT_NULL;
+    stcDmaInit.u32SrcAddr = (uint32_t)RT_NULL;
+    stcDmaInit.u32DestAddr = (uint32_t)RT_NULL;
     if (LL_OK != DMA_Init(p_adc_dev->init.adc_eoca_dma->Instance, p_adc_dev->init.adc_eoca_dma->channel, &stcDmaInit))
     {
         rt_kprintf("[%s:%d]ADC DMA init error!\n", __func__, __LINE__);
@@ -333,7 +336,7 @@ extern rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx);
 int rt_hw_adc_init(void)
 {
     int ret = RT_EOK, i = 0;
-    stc_adc_init_t stcAdcInit = {0};
+    stc_adc_init_t stcAdcInit = { 0 };
     int32_t ll_ret = 0;
 
     _adc_clock_enable();
@@ -355,20 +358,21 @@ int rt_hw_adc_init(void)
 
         ADC_TriggerCmd(_g_adc_dev_array[i].instance, ADC_SEQ_A, (en_functional_state_t)_g_adc_dev_array[i].init.hard_trig_enable);
         ADC_TriggerConfig(_g_adc_dev_array[i].instance, ADC_SEQ_A, _g_adc_dev_array[i].init.hard_trig_src);
-        if (_g_adc_dev_array[i].init.hard_trig_enable && _g_adc_dev_array[i].init.hard_trig_src != ADC_HARDTRIG_ADTRG_PIN)
-        {
-            _adc_internal_trigger0_set(&_g_adc_dev_array[i]);
-            _adc_internal_trigger1_set(&_g_adc_dev_array[i]);
-        }
 
         if (_g_adc_dev_array[i].init.adc_eoca_dma != RT_NULL)
         {
             hc32_adc_dma_config(&_g_adc_dev_array[i]);
         }
 
+        if (_g_adc_dev_array[i].init.hard_trig_enable && _g_adc_dev_array[i].init.hard_trig_src != ADC_HARDTRIG_ADTRG_PIN)
+        {
+            _adc_internal_trigger0_set(&_g_adc_dev_array[i]);
+            _adc_internal_trigger1_set(&_g_adc_dev_array[i]);
+        }
+
         rt_hw_board_adc_init((void *)_g_adc_dev_array[i].instance);
-        ret = rt_hw_adc_register(&_g_adc_dev_array[i].rt_adc, \
-                                 (const char *)_g_adc_dev_array[i].init.name, \
+        ret = rt_hw_adc_register(&_g_adc_dev_array[i].rt_adc,
+                                 (const char *)_g_adc_dev_array[i].init.name,
                                  &_g_adc_ops, (void *)_g_adc_dev_array[i].instance);
         if (ret != RT_EOK)
         {

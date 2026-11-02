@@ -115,6 +115,16 @@ msh >
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
+### 启用设备模型（DM）
+
+本 BSP 通过 `RT_USING_DM` 在设备模型驱动和传统 BSP 驱动之间进行选择。启用 DM 后，GPIO 和 EXTI 使用设备树描述，传统的 STM32 GPIO 驱动不会参与构建。
+
+1. 在当前 BSP 目录执行 `scons --menuconfig`。
+2. 进入 `Device Drivers`，选中 `Enable device driver model with device tree`。
+3. 保存配置后执行 `scons -jN` 构建 GCC 工程。
+
+BSP 会随 `RT_USING_DM` 自动选择 OFW、内置 FDT、PIC、NVIC 和 PIN 框架，并使用 `board/dts/stm32h750-artpi.dts`。构建过程会生成并嵌入 DTB。
+
 ## 注意事项
 
 - 调试串口为串口4 映射说明

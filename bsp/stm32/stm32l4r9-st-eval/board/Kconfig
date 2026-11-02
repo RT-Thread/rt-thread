@@ -18,7 +18,9 @@ menu "Onboard Peripheral Drivers"
 
         config BSP_USING_TOUCH
             bool "Enable Touch drivers"
-            select BSP_USING_I2C1
+            select RT_USING_I2C
+            select BSP_USING_SOFT_I2C
+            select BSP_USING_SOFT_I2C1
             default n
             if BSP_USING_TOUCH
                 config BSP_TOUCH_INT_PIN
@@ -35,6 +37,18 @@ menu "Onboard Peripheral Drivers"
         default n
 
     endmenu
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 116 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 117 if RT_USING_SOFT_I2C1
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -93,23 +107,25 @@ menu "On-chip Peripheral Drivers"
         select BSP_USING_FMC
         default n
 
-    menuconfig BSP_USING_I2C1
-    bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-            int "i2c1 scl pin number"
-            range 1 216
-            default 116
-            config BSP_I2C1_SDA_PIN
-            int "I2C1 sda pin number"
-            range 1 216
-            default 117
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 116
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 117
+            endif
         endif
-
     config BSP_USING_GFXMMU
         bool
         default n
@@ -124,5 +140,6 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
 
 endmenu

@@ -16,7 +16,7 @@
 #include <string.h>
 
 // #define DRV_DEBUG
-#define LOG_TAG             "drv_wdt"
+#define LOG_TAG "drv_wdt"
 #include <drv_log.h>
 
 enum
@@ -47,8 +47,8 @@ struct time_match
     float timeout_s;
 };
 
-static uint32_t const Div[] = {4U, 64U, 128U, 256U, 512U, 1024U, 2048U, 8192U};
-static uint32_t const Peri[] = {256U, 4096U, 16384U, 65536U};
+static uint32_t const Div[] = { 4U, 64U, 128U, 256U, 512U, 1024U, 2048U, 8192U };
+static uint32_t const Peri[] = { 256U, 4096U, 16384U, 65536U };
 static struct time_match wdt_match[(sizeof(Div) / sizeof(Div[0])) * (sizeof(Peri) / sizeof(Peri[0]))];
 
 static void wdt_match_init(uint32_t clock)
@@ -160,11 +160,11 @@ static rt_err_t _wdt_init(rt_watchdog_t *wdt)
     }
     wdt_match_init(hc32_wdt.pclk3);
     wdt_match_sort();
-    hc32_wdt.stcwdg.u32RefreshRange  = WDT_RANGE_0TO100PCT;
+    hc32_wdt.stcwdg.u32RefreshRange = WDT_RANGE_0TO100PCT;
 #ifdef BSP_WDT_CONTINUE_COUNT
-    hc32_wdt.stcwdg.u32LPMCount      = WDT_LPM_CNT_CONT;
+    hc32_wdt.stcwdg.u32LPMCount = WDT_LPM_CNT_CONT;
 #else
-    hc32_wdt.stcwdg.u32LPMCount      = WDT_LPM_CNT_STOP;
+    hc32_wdt.stcwdg.u32LPMCount = WDT_LPM_CNT_STOP;
 #endif
     hc32_wdt.stcwdg.u32ExceptionType = WDT_EXP_TYPE_RST;
     hc32_wdt.sta = WDT_INIT_ING;
@@ -188,8 +188,8 @@ static rt_err_t _wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         hc32_wdt.index = wdt_match_find_index((*((rt_uint32_t *)arg)));
-        hc32_wdt.stcwdg.u32CountPeriod   = wdt_match_find_period(wdt_match[hc32_wdt.index].u32CountPeriod);
-        hc32_wdt.stcwdg.u32ClockDiv      = ((uint32_t)log2(wdt_match[hc32_wdt.index].u32ClockDiv) << WDT_CR_CKS_POS);
+        hc32_wdt.stcwdg.u32CountPeriod = wdt_match_find_period(wdt_match[hc32_wdt.index].u32CountPeriod);
+        hc32_wdt.stcwdg.u32ClockDiv = ((uint32_t)log2(wdt_match[hc32_wdt.index].u32ClockDiv) << WDT_CR_CKS_POS);
         if (WDT_Init(&hc32_wdt.stcwdg) != LL_OK)
         {
             LOG_E("wdg set timeout failed.");
@@ -258,8 +258,8 @@ struct time_match
     float timeout_s;
 };
 
-static uint32_t const Div[] = {1U, 16U, 32U, 64U, 128U, 256U, 2048U};
-static uint32_t const Peri[] = {256U, 4096U, 16384U, 65536U};
+static uint32_t const Div[] = { 1U, 16U, 32U, 64U, 128U, 256U, 2048U };
+static uint32_t const Peri[] = { 256U, 4096U, 16384U, 65536U };
 static struct time_match swdt_match[(sizeof(Div) / sizeof(Div[0])) * (sizeof(Peri) / sizeof(Peri[0]))];
 
 static void swdt_match_init(uint32_t clock)
@@ -365,11 +365,11 @@ static rt_err_t swdt_init(rt_watchdog_t *swdt)
     hc32_swdt.swdtclk = 10000U;
     swdt_match_init(hc32_swdt.swdtclk);
     swdt_match_sort();
-    hc32_swdt.stcwdg.u32RefreshRange  = SWDT_RANGE_0TO100PCT;
+    hc32_swdt.stcwdg.u32RefreshRange = SWDT_RANGE_0TO100PCT;
 #ifdef BSP_WDT_CONTINUE_COUNT
-    hc32_swdt.stcwdg.u32LPMCount      = SWDT_LPM_CNT_CONT;
+    hc32_swdt.stcwdg.u32LPMCount = SWDT_LPM_CNT_CONT;
 #else
-    hc32_swdt.stcwdg.u32LPMCount      = SWDT_LPM_CNT_STOP;
+    hc32_swdt.stcwdg.u32LPMCount = SWDT_LPM_CNT_STOP;
 #endif
     hc32_swdt.stcwdg.u32ExceptionType = SWDT_EXP_TYPE_RST;
     hc32_swdt.sta = WDT_INIT_ING;
@@ -393,8 +393,8 @@ static rt_err_t swdt_control(rt_watchdog_t *swdt, int cmd, void *arg)
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         hc32_swdt.index = swdt_match_find_index((*((rt_uint32_t *)arg)));
-        hc32_swdt.stcwdg.u32CountPeriod   = swdt_match_find_period(swdt_match[hc32_swdt.index].u32CountPeriod);
-        hc32_swdt.stcwdg.u32ClockDiv      = ((uint32_t)log2(swdt_match[hc32_swdt.index].u32ClockDiv) << SWDT_CR_CKS_POS);
+        hc32_swdt.stcwdg.u32CountPeriod = swdt_match_find_period(swdt_match[hc32_swdt.index].u32CountPeriod);
+        hc32_swdt.stcwdg.u32ClockDiv = ((uint32_t)log2(swdt_match[hc32_swdt.index].u32ClockDiv) << SWDT_CR_CKS_POS);
         if (SWDT_Init(&hc32_swdt.stcwdg) != LL_OK)
         {
             LOG_E("swdg set timeout failed.");

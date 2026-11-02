@@ -1,0 +1,13 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_SOC_BROADCOM_RASPBERRYPI_VOLTAGE_MONITOR']):
+    src += ['raspberrypi-voltage-monitor.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

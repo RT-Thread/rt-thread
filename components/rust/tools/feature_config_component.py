@@ -15,6 +15,7 @@ def setup_all_component_features():
         'RUST_LOG_COMPONENT': {
             'feature': 'enable-log',
             'dependencies': ['em_component_log'],
+            'export_symbols': ['__rust_component_registry_component_seg'],
             'description': 'Enable Rust logging component integration'
         },
     })

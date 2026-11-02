@@ -13,8 +13,7 @@
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*******************************************************************************
@@ -40,30 +39,30 @@ extern "C"
 #endif
 
 #ifndef USB_FS_MODE
-#error  "USB_FS_MODE should be defined"
+#error "USB_FS_MODE should be defined"
 #endif
 
 #ifndef USE_DEVICE_MODE
 #ifndef USE_HOST_MODE
-#error  "USE_DEVICE_MODE or USE_HOST_MODE should be defined"
+#error "USE_DEVICE_MODE or USE_HOST_MODE should be defined"
 #endif
 #endif
 
 #if defined(BSP_USING_USBD)
 /* USB DEVICE FIFO CONFIGURATION */
 #ifdef USB_FS_MODE
-#define RX_FIFO_FS_SIZE                         (128U)
-#define TX0_FIFO_FS_SIZE                        (32U)
-#define TX1_FIFO_FS_SIZE                        (32U)
-#define TX2_FIFO_FS_SIZE                        (32U)
-#define TX3_FIFO_FS_SIZE                        (32U)
-#define TX4_FIFO_FS_SIZE                        (32U)
-#define TX5_FIFO_FS_SIZE                        (32U)
+#define RX_FIFO_FS_SIZE  (128U)
+#define TX0_FIFO_FS_SIZE (32U)
+#define TX1_FIFO_FS_SIZE (32U)
+#define TX2_FIFO_FS_SIZE (32U)
+#define TX3_FIFO_FS_SIZE (32U)
+#define TX4_FIFO_FS_SIZE (32U)
+#define TX5_FIFO_FS_SIZE (32U)
 
-#if ((RX_FIFO_FS_SIZE + \
+#if ((RX_FIFO_FS_SIZE +                                                                              \
       TX0_FIFO_FS_SIZE + TX1_FIFO_FS_SIZE + TX2_FIFO_FS_SIZE + TX3_FIFO_FS_SIZE + TX4_FIFO_FS_SIZE + \
       TX5_FIFO_FS_SIZE) > 320U)
-#error  "The USB max FIFO size is 320 x 4 Bytes!"
+#error "The USB max FIFO size is 320 x 4 Bytes!"
 #endif
 #endif
 
@@ -75,12 +74,12 @@ extern "C"
 #if defined(BSP_USING_USBH)
 /* USB HOST FIFO CONFIGURATION */
 #ifdef USB_FS_MODE
-#define RX_FIFO_FS_SIZE                          (128U)
-#define TXH_NP_FS_FIFOSIZ                        (64U)
-#define TXH_P_FS_FIFOSIZ                         (128U)
+#define RX_FIFO_FS_SIZE   (128U)
+#define TXH_NP_FS_FIFOSIZ (64U)
+#define TXH_P_FS_FIFOSIZ  (128U)
 
 #if ((RX_FIFO_FS_SIZE + TXH_NP_FS_FIFOSIZ + TXH_P_FS_FIFOSIZ) > 320U)
-#error  "The USB max FIFO size is 320 x 4 Bytes!"
+#error "The USB max FIFO size is 320 x 4 Bytes!"
 #endif
 #endif
 

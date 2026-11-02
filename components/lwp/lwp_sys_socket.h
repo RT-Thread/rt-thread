@@ -108,6 +108,33 @@ struct musl_sockaddr
     char     sa_data[14];
 };
 
+struct musl_msghdr
+{
+    void *msg_name;
+    socklen_t msg_namelen;
+    struct iovec *msg_iov;
+#if defined(ARCH_CPU_64BIT) && defined(__BYTE_ORDER__) && \
+    __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    int padding1;
+#endif
+    int msg_iovlen;
+#if defined(ARCH_CPU_64BIT) && defined(__BYTE_ORDER__) && \
+    __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    int padding1;
+#endif
+    void *msg_control;
+#if defined(ARCH_CPU_64BIT) && defined(__BYTE_ORDER__) && \
+    __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    int padding2;
+#endif
+    socklen_t msg_controllen;
+#if defined(ARCH_CPU_64BIT) && defined(__BYTE_ORDER__) && \
+    __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    int padding2;
+#endif
+    int msg_flags;
+};
+
 struct musl_ifmap {
     unsigned long int mem_start;
     unsigned long int mem_end;

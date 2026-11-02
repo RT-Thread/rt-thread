@@ -10,6 +10,7 @@ jobs:
   comment:
     runs-on: ubuntu-22.04
     if: >
+      github.repository == 'RT-Thread/rt-thread' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion != 'cancelled' &&
       github.event.workflow_run.conclusion != 'skipped'

@@ -1,0 +1,8 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../../..
+
+source "$(RTT_DIR)/Kconfig"
+rsource "board/Kconfig"

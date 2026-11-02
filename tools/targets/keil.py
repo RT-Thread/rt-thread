@@ -223,7 +223,7 @@ def MDK45Project(env, tree, target, script):
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
 
-    CPPPATH = []
+    CPPPATH = list(env.get('CPPPATH', []))
     CPPDEFINES = env.get('CPPDEFINES', [])
     LINKFLAGS = ''
     CXXFLAGS = ''
@@ -286,7 +286,9 @@ def MDK45Project(env, tree, target, script):
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+    # Keep the same include path precedence as the SCons build environment.
+    paths = [_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH]
+    IncludePath.text = ';'.join(dict.fromkeys(paths))
 
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))

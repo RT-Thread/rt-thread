@@ -43,7 +43,7 @@ typedef rt_uint32_t (*sdio_clk_get)(CM_SDIOC_TypeDef *sdio_instance);
 /* hc32 sdio des */
 struct hc32_sdio_des
 {
-    sdio_clk_get  clk_get;
+    sdio_clk_get clk_get;
     sdio_txconfig txconfig;
     sdio_rxconfig rxconfig;
 };
@@ -51,12 +51,12 @@ struct hc32_sdio_des
 /* hc32 sdio configure */
 struct hc32_sdio_config
 {
-    const char             *name;
-    CM_SDIOC_TypeDef       *instance;
-    rt_uint32_t            clock;
+    const char *name;
+    CM_SDIOC_TypeDef *instance;
+    rt_uint32_t clock;
     struct hc32_irq_config irq_config;
-    struct dma_config      dma_rx;
-    struct dma_config      dma_tx;
+    struct dma_config dma_rx;
+    struct dma_config dma_tx;
 };
 
 /*******************************************************************************

@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_THERMAL_BCM2711']):
+    src += ['thermal-bcm2711.c']
+
+if GetDepend(['RT_THERMAL_BCM2835']):
+    src += ['thermal-bcm2835.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

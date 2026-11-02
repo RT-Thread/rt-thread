@@ -1,0 +1,5 @@
+config RT_RTC_RPI
+    bool "Raspberry Pi RTC"
+    depends on RT_FIRMWARE_RASPBERRYPI
+    select RT_USING_ALARM
+    default n

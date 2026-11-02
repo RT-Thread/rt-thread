@@ -366,6 +366,9 @@ static void sender_timeout(void *parameter)
 
     rt_sched_lock(&slvl);
 
+    /* The timeout callback now owns this thread timer. */
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+
     ch = (rt_channel_t)(thread->wakeup_handle.user_data);
     if (ch->stat == RT_IPC_STAT_ACTIVE && ch->reply == thread)
     {
@@ -782,6 +785,9 @@ static void receiver_timeout(void *parameter)
     rt_sched_lock_level_t slvl;
 
     rt_sched_lock(&slvl);
+
+    /* The timeout callback now owns this thread timer. */
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
 
     ch = (rt_channel_t)(thread->wakeup_handle.user_data);
 

@@ -4,7 +4,7 @@ menuconfig RT_SERIAL_VIRTUAL
     depends on RT_INPUT_KEYBOARD
     default n
 
-choice
+choice RT_SERIAL_VIRT_FONT_UNI2_SEL
     prompt "Rendering font(psf)"
     default RT_SERIAL_VIRTUAL_FONT_UNI2_FIXED16
     depends on RT_SERIAL_VIRTUAL

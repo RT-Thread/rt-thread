@@ -21,7 +21,7 @@ config RT_VIRTIO_TRANSPORT_PCI
 config RT_VIRTIO_NET
     bool "VirtIO Net"
     depends on RT_USING_VIRTIO
-    depends on RT_USING_ETHERNET
+    depends on RT_USING_LWIP
     default y
 
 config RT_VIRTIO_BLK

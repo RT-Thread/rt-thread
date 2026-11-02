@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
+    src = Glob('*.c')
+    CPPPATH = [cwd, ]
+
+group = DefineGroup('RA_gen', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

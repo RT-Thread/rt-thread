@@ -14,7 +14,7 @@
  * 程序功能：对整个Nand存储空间进行擦除、写和读操作，比较数据是否一致
  *
  * 注意:
- * F4A0: 修改函数SystemClock_Config，调用函数CLK_SetClockDiv参数，CLK_EXCLK_DIV2改为CLK_EXCLK_DIV4;
+ * F4A0/F4A2: 修改函数SystemClock_Config，调用函数CLK_SetClockDiv参数，CLK_EXCLK_DIV2改为CLK_EXCLK_DIV4;
  *
  * menuconfig:
  *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable EXMC  ---->  Using SDRAM or NAND  ---->  Using NAND
@@ -28,7 +28,7 @@
 #if defined(BSP_USING_EXMC) && defined(BSP_USING_NAND)
 #include "nand_port.h"
 
-#define NAND_DEVICE_NAME             "nand"
+#define NAND_DEVICE_NAME "nand"
 
 static rt_err_t nand_read_id(struct rt_mtd_nand_device *mtd_nand)
 {

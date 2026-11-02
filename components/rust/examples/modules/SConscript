@@ -1,7 +1,6 @@
 import os
 import sys
 import subprocess
-import toml
 from building import *
 
 cwd = GetCurrentDir()
@@ -31,6 +30,20 @@ def _has(sym: str) -> bool:
         return bool(GetDepend([sym]))
     except Exception:
         return bool(GetDepend(sym))
+
+
+MODULE_CONFIG_MAP = {
+    'example_lib': 'RT_RUST_MODULE_SIMPLE_MODULE',
+}
+
+
+def should_build_module(module_dir: str) -> bool:
+    if _has('RT_RUST_BUILD_ALL_EXAMPLES'):
+        return True
+
+    config = MODULE_CONFIG_MAP.get(os.path.basename(module_dir))
+    return bool(config and _has(config))
+
 
 def detect_target_for_dynamic_modules():
     """
@@ -63,12 +76,14 @@ def build_rust_module(module_dir, build_root):
     cargo_toml_path = os.path.join(module_dir, 'Cargo.toml')
     if not os.path.exists(cargo_toml_path):
         return [], [], ""
-    
+
+    import toml
+
     with open(cargo_toml_path, 'r') as f:
         cargo_config = toml.load(f)
     
     module_name = cargo_config['package']['name']
-    
+
     # Detect target automatically based on the current configuration
     target = detect_target_for_dynamic_modules()
     print(f"Building Rust module '{module_name}' for target: {target}")
@@ -121,7 +136,12 @@ def build_rust_module(module_dir, build_root):
         return [], [], ""
 
 # Check dependencies
-if not _has('RT_RUST_BUILD_MODULES'):
+if not _has('RT_USING_MODULE') and not GetOption('clean'):
+    Return([])
+
+if not (
+    _has('RT_RUST_BUILD_MODULES') or _has('RT_RUST_BUILD_ALL_EXAMPLES')
+) and not GetOption('clean'):
     Return([])
 
 build_root = os.path.join(Dir('#').abspath, "build", "rust_modules")
@@ -142,7 +162,11 @@ else:
     modules_built = []
     for item in os.listdir(cwd):
         item_path = os.path.join(cwd, item)
-        if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, 'Cargo.toml')):
+        if (
+            os.path.isdir(item_path)
+            and os.path.exists(os.path.join(item_path, 'Cargo.toml'))
+            and should_build_module(item_path)
+        ):
             result = build_rust_module(item_path, build_root)
             if result[0]:
                 modules_built.extend(result[0])
@@ -151,9 +175,9 @@ else:
         print(f"Successfully built {len(modules_built)} Rust dynamic module(s): {', '.join(modules_built)}")
 
 group = DefineGroup(
-    'rust_modules', 
-    [], 
-    depend=['RT_RUST_BUILD_MODULES']
+    'rust_modules',
+    [],
+    depend=['RT_USING_RUST']
 )
 
 Return('group')

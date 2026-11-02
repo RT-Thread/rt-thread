@@ -371,7 +371,7 @@
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\board</state>
@@ -381,7 +381,7 @@
           <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1500,7 +1500,7 @@
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\board</state>
@@ -1510,7 +1510,7 @@
           <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2387,10 +2387,10 @@
       <name>$PROJ_DIR$\board\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_pin.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>

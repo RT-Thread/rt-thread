@@ -1,0 +1,18 @@
+config RT_MFD_BCM2835_PM
+    bool "BCM2835 PM driver"
+    depends on RT_USING_MFD
+    default n
+
+config RT_MFD_RP1
+    bool "Raspberry Pi RP1 MFD driver"
+    depends on RT_USING_MFD
+    depends on RT_USING_PCI
+    default n
+
+config RT_MFD_RPI_SENSE
+    bool "Raspberry Pi Sense HAT core functions"
+    depends on RT_USING_MFD
+    depends on RT_USING_I2C
+    depends on RT_USING_OFW
+    depends on RT_USING_PIN
+    default n

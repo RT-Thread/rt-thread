@@ -161,6 +161,42 @@ jobs:
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
           echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
 
+      - name: Install ArmClang ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'armclang' && success() }}
+        uses: ARM-software/cmsis-actions/setup-vcpkg@v1
+        with:
+          version: 2026.04.27
+
+      - name: Activate ArmClang ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'armclang' && success() }}
+        uses: ARM-software/cmsis-actions/vcpkg@v1
+        with:
+          config: .github/armclang-vcpkg-configuration.json
+          cache: ${{ runner.os }}-armclang-6.24.0
+
+      - name: Activate ArmClang License
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'armclang' && success() }}
+        uses: ARM-software/cmsis-actions/armlm@v1
+        with:
+          product: KEMDK-COM0
+
+      - name: Configure ArmClang ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'armclang' && success() }}
+        shell: bash
+        run: |
+          armclang --version
+          command -v armlink
+          command -v fromelf
+          ARMCLANG_BIN="${AC6_TOOLCHAIN_6_24_0:-$(dirname "$(command -v armclang)")}"
+          ARMCLANG_BIN="${ARMCLANG_BIN%/}"
+          ARMCLANG_ROOT="$(dirname "$ARMCLANG_BIN")"
+          test -d "$ARMCLANG_ROOT/include"
+          test -d "$ARMCLANG_ROOT/lib"
+          sudo mkdir -p /opt/Keil_v5/ARM
+          sudo ln -sfn "$ARMCLANG_ROOT" /opt/Keil_v5/ARM/ARMCLANG
+          echo "RTT_CC=keil" >> $GITHUB_ENV
+          echo "RTT_EXEC_PATH=/opt/Keil_v5" >> $GITHUB_ENV
+
       - name: Install AArch64 ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-aarch64' && matrix.legs.RTT_SMART_TOOL_CHAIN != 'aarch64-linux-musleabi' && success() }}
         shell: bash
@@ -206,6 +242,7 @@ jobs:
           sudo tar xjf riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu_252938-345d8b6e45.tar.bz2 -C /opt
           /opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
       - name: Install Xuantie-900-gcc-elf-newlib Tools
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf-newlib' && success() }}
@@ -224,13 +261,14 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin" >> $GITHUB_ENV
           echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
-      - name: Install k230 MUSL ToolChains
-        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && matrix.legs.RTT_BSP == 'K230' && success() }}
+      - name: Install RISC-V64 MUSL ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && success() }}
         run: |
           wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
           sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
           /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
       - name: Install riscv32-unknown-elf Toolchains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
@@ -251,8 +289,8 @@ jobs:
       - name: Install riscv32-esp-elf ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
         run: |
-          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
-          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz
+          sudo tar xf riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
           pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
@@ -288,7 +326,7 @@ jobs:
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
           ATTACHCONFIG_RTT_BSP: ${{ join(matrix.legs.ATTACHCONFIG_RTT_BSP || fromJSON('[]'), ',') }}
-          RTT_CI_BUILD_DIST: "1"
+          RTT_CI_BUILD_DIST: ${{ matrix.legs.RTT_TOOL_CHAIN == 'armclang' && '0' || '1' }}
         run: |
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py

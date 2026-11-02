@@ -6,7 +6,7 @@ cwd = GetCurrentDir()
 
 # Import component build module and build support
 sys.path.append(os.path.join(cwd, '../../tools'))
-from build_component import build_example_component
+from build_component import ComponentBuildError, build_example_component
 from build_support import clean_rust_build
 
 # Load feature configurations
@@ -25,12 +25,11 @@ def _has(sym: str) -> bool:
         return bool(GetDepend(sym))
 
 
-# Early return if Rust or log component is not enabled
-if not _has('RT_USING_RUST'):
+if not _has('RT_USING_RUST') and not GetOption('clean'):
     group = []
     Return('group')
 
-if not _has('RUST_LOG_COMPONENT'):
+if not (_has('RT_RUST_BUILD_COMPONENTS') or _has('RT_RUST_BUILD_ALL_EXAMPLES')) and not GetOption('clean'):
     group = []
     Return('group')
 
@@ -51,12 +50,16 @@ if GetOption('clean'):
 else:
     # Build the component using the extracted build module
     import rtconfig
-    LIBS, LIBPATH, LINKFLAGS = build_example_component(
-        cwd=cwd,
-        has_func=_has,
-        rtconfig=rtconfig,
-        build_root=os.path.join(Dir('#').abspath, "build", "example_component")
-    )
+    try:
+        LIBS, LIBPATH, LINKFLAGS = build_example_component(
+            cwd=cwd,
+            has_func=_has,
+            rtconfig=rtconfig,
+            build_root=os.path.join(Dir('#').abspath, "build", "example_component")
+        )
+    except ComponentBuildError as e:
+        print(f'Error: {e}')
+        sys.exit(1)
 
 # Define component group for SCons
 group = DefineGroup(

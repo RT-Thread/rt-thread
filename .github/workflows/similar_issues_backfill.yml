@@ -1,0 +1,48 @@
+name: Backfill Similar Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Log suggestions without posting comments
+        required: true
+        default: true
+        type: boolean
+      max_issues:
+        description: Maximum open unassigned issues to inspect (1-50)
+        required: true
+        default: "20"
+        type: string
+      search_delay_seconds:
+        description: Delay between GitHub searches (2-30 seconds)
+        required: true
+        default: "3"
+        type: string
+
+concurrency:
+  group: similar-issues-backfill
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  backfill:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 55
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout trusted workflow code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Inspect recent open issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BACKFILL: "true"
+          DRY_RUN: ${{ inputs.dry_run }}
+          MAX_ISSUES: ${{ inputs.max_issues }}
+          SEARCH_DELAY_SECONDS: ${{ inputs.search_delay_seconds }}
+        run: python3 tools/ci/similar_issues.py

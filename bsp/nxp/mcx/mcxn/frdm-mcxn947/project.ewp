@@ -361,11 +361,11 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface</state>
           <state>$PROJ_DIR$\..\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\packages\nxp-mcx-cmsis-latest\Core\Include</state>
           <state>$PROJ_DIR$\.</state>
@@ -1497,11 +1497,11 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface</state>
           <state>$PROJ_DIR$\..\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\packages\nxp-mcx-cmsis-latest\Core\Include</state>
           <state>$PROJ_DIR$\.</state>
@@ -2386,10 +2386,10 @@
       <name>$PROJ_DIR$\board\usb_phy.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_pin.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>

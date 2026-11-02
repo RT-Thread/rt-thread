@@ -48,7 +48,7 @@ void init_uart_pin_as_gpio(UART_Type *ptr)
     }
 }
 
-void init_i2c_pins_as_gpio(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins_as_gpio(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         /* I2C0 */
@@ -59,12 +59,12 @@ void init_i2c_pins_as_gpio(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PB20].FUNC_CTL = IOC_PB20_FUNC_CTL_GPIO_B_20;
         HPM_IOC->PAD[IOC_PAD_PB21].FUNC_CTL = IOC_PB21_FUNC_CTL_GPIO_B_21;
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
-void init_i2c_pins(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         HPM_IOC->PAD[IOC_PAD_PB22].FUNC_CTL = IOC_PB22_FUNC_CTL_I2C0_SCL
@@ -81,9 +81,9 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PB20].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
         HPM_IOC->PAD[IOC_PAD_PB21].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
 void init_sdm_pins(void)

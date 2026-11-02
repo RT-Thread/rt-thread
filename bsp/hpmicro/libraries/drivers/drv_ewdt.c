@@ -14,7 +14,6 @@
 #include "hpm_sysctl_drv.h"
 
 
-
 #ifdef BSP_USING_EWDG
 
 #define EWDG_CNT_CLK_FREQ 32768UL
@@ -35,83 +34,87 @@ static rt_err_t hpm_wdog_close(rt_watchdog_t *wdt);
 static rt_err_t hpm_wdog_refresh(rt_watchdog_t *wdt);
 static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args);
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 static void hpm_wdog_isr(rt_watchdog_t *wdt);
 
+/* Macro to declare watchdog device and ISR handler */
+#define HPM_EWDG_DECLARE_DEVICE_ISR(idx) \
+    rt_watchdog_t wdog##idx; \
+    SDK_DECLARE_EXT_ISR_M(IRQn_EWDG##idx, wdog##idx##_isr) \
+    void wdog##idx##_isr(void) \
+    { \
+        hpm_wdog_isr(&wdog##idx); \
+    }
+
 #if defined(BSP_USING_EWDG0)
-rt_watchdog_t wdog0;
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG0, wdog0_isr)
-void wdog0_isr(void)
-{
-    hpm_wdog_isr(&wdog0);
-}
+HPM_EWDG_DECLARE_DEVICE_ISR(0)
 #endif
 
 #if defined(BSP_USING_EWDG1)
-rt_watchdog_t wdog1;
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG1, wdog1_isr)
-void wdog1_isr(void)
-{
-    hpm_wdog_isr(&wdog1);
-}
+HPM_EWDG_DECLARE_DEVICE_ISR(1)
 #endif
 
 #if defined(BSP_USING_EWDG2)
-rt_watchdog_t wdog2;
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG2, wdog2_isr)
-void wdog2_isr(void)
-{
-    hpm_wdog_isr(&wdog2);
-}
+HPM_EWDG_DECLARE_DEVICE_ISR(2)
 #endif
 
 #if defined(BSP_USING_EWDG3)
+HPM_EWDG_DECLARE_DEVICE_ISR(3)
+#endif
+#else
+#ifdef BSP_USING_EWDG0
+rt_watchdog_t wdog0;
+#endif
+#ifdef BSP_USING_EWDG1
+rt_watchdog_t wdog1;
+#endif
+#ifdef BSP_USING_EWDG2
+rt_watchdog_t wdog2;
+#endif
+#ifdef BSP_USING_EWDG3
 rt_watchdog_t wdog3;
-SDK_DECLARE_EXT_ISR_M(IRQn_EWDG3, wdog3_isr)
-void wdog3_isr(void)
-{
-    hpm_wdog_isr(&wdog3);
-}
+#endif
+static void hpm_wdog_isr(int vector, rt_watchdog_t *wdt);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
+
+/* Macro to configure watchdog instance */
+#define HPM_EWDG_CONFIG(idx) \
+    { \
+        .wdog_base = HPM_EWDG##idx, \
+        .device_name = "wdt"#idx, \
+        .clock_name = clock_watchdog##idx, \
+        .irq_num = IRQn_EWDG##idx, \
+        .wdog = &wdog##idx, \
+    }
+
+#ifdef BSP_USING_EWDG0
+rt_watchdog_t wdog0;
+#endif
+#ifdef BSP_USING_EWDG1
+rt_watchdog_t wdog1;
+#endif
+#ifdef BSP_USING_EWDG2
+rt_watchdog_t wdog2;
+#endif
+#ifdef BSP_USING_EWDG3
+rt_watchdog_t wdog3;
 #endif
 
 static hpm_wdog_t wdogs[] = {
 #ifdef BSP_USING_EWDG0
-    {
-        .wdog_base = HPM_EWDG0,
-        .device_name = "wdt0",
-        .clock_name = clock_watchdog0,
-        .irq_num = IRQn_EWDG0,
-        .wdog = &wdog0,
-    },
+    HPM_EWDG_CONFIG(0),
 #endif
 
 #ifdef BSP_USING_EWDG1
-    {
-        .wdog_base = HPM_EWDG1,
-        .device_name = "wdt1",
-        .clock_name = clock_watchdog1,
-        .irq_num = IRQn_EWDG1,
-        .wdog = &wdog1,
-    },
+    HPM_EWDG_CONFIG(1),
 #endif
 
 #ifdef BSP_USING_EWDG2
-    {
-        .wdog_base = HPM_EWDG2,
-        .device_name = "wdt2",
-        .clock_name = clock_watchdog2,
-        .irq_num = IRQn_EWDG2,
-        .wdog = &wdog2,
-    },
+    HPM_EWDG_CONFIG(2),
 #endif
 
 #ifdef BSP_USING_EWDG3
-    {
-        .wdog_base = HPM_EWDG3,
-        .device_name = "wdt3",
-        .clock_name = clock_watchdog3,
-        .irq_num = IRQn_EWDG3,
-        .wdog = &wdog3,
-    },
+    HPM_EWDG_CONFIG(3),
 #endif
 };
 
@@ -154,6 +157,7 @@ static rt_err_t hpm_wdog_open(rt_watchdog_t *wdt, rt_uint16_t oflag)
     rt_enter_critical();
     ewdg_enable(base);
     rt_exit_critical();
+    return RT_EOK;
 }
 
 static rt_err_t hpm_wdog_close(rt_watchdog_t *wdt)
@@ -230,10 +234,14 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         break;
     }
 
-    return RT_EOK;
+    return ret;
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void hpm_wdog_isr(rt_watchdog_t *wdt)
+#else
+void hpm_wdog_isr(int vector, rt_watchdog_t *wdt)
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 {
     hpm_wdog_t *hpm_wdog = (hpm_wdog_t*)wdt->parent.user_data;
     EWDG_Type *base = hpm_wdog->wdog_base;
@@ -260,6 +268,10 @@ int rt_hw_wdt_init(void)
         {
             LOG_E("rt device %s failed, status=%d\n", wdogs[i].device_name, err);
         }
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register EWDT device to irq table */
+        rt_hw_interrupt_install(wdogs[i].irq_num, (rt_isr_handler_t)hpm_wdog_isr, &wdogs[i], wdogs[i].device_name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
     }
 #endif
     return err;

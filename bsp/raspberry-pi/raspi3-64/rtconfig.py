@@ -26,6 +26,7 @@ if PLATFORM == 'gcc':
     PREFIX  = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
+    CPP     = PREFIX + 'cpp'
     AS      = PREFIX + 'gcc'
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
@@ -34,7 +35,8 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv8-a -mtune=cortex-a53'
+    CPPFLAGS = ' -nostdinc -undef -E -P -x assembler-with-cpp'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a53 -fdiagnostics-color=always -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
@@ -51,3 +53,10 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET kernel8.img\n' + SIZE + ' $TARGET \n'
+
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

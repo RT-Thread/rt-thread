@@ -12,11 +12,11 @@
 #ifdef RT_USING_ADC
 
 #define DRV_DEBUG
-#define DBG_TAG              "drv.adc"
+#define DBG_TAG "drv.adc"
 #ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
@@ -26,36 +26,46 @@
 #define R_ADC_ScanCfg   R_ADC_B_ScanCfg
 #define R_ADC_ScanStart R_ADC_B_ScanStart
 #define R_ADC_Read32    R_ADC_B_Read32
-#define R_ADC_Read    	R_ADC_B_Read
+#define R_ADC_Read      R_ADC_B_Read
 #define R_ADC_ScanStop  R_ADC_B_ScanStop
+#define R_ADC_Close     R_ADC_B_Close
 
+#elif defined(SOC_SERIES_R7SA6W1)
+
+#define R_ADC_Open           R_ADC_W_Open
+#define R_ADC_ScanCfg        R_ADC_W_ScanCfg
+#define R_ADC_ScanStart      R_ADC_W_ScanStart
+#define R_ADC_Read32         R_ADC_W_Read32
+#define R_ADC_Read           R_ADC_W_Read
+#define R_ADC_ScanStop       R_ADC_W_ScanStop
+#define R_ADC_Close          R_ADC_W_Close
+#define RA_ADC_FULL_SCALE_MV 1400
 #endif
 
-struct ra_adc_map ra_adc[] =
-{
+struct ra_adc_map ra_adc[] = {
 #ifdef BSP_USING_ADC0
     {
-      .device_name = "adc0",
-      .g_cfg = &g_adc0_cfg,
-      .g_ctrl = &g_adc0_ctrl,
+        .device_name = "adc0",
+        .g_cfg = &g_adc0_cfg,
+        .g_ctrl = &g_adc0_ctrl,
 #ifdef SOC_SERIES_R7KA8P1
-      .g_channel_cfg = &g_adc0_scan_cfg,
+        .g_channel_cfg = &g_adc0_scan_cfg,
 #else
-      .g_channel_cfg = &g_adc0_channel_cfg,
+        .g_channel_cfg = &g_adc0_channel_cfg,
 #endif
     },
 #endif
 #ifdef BSP_USING_ADC1
     {
-      .device_name = "adc1",
-      .g_cfg = &g_adc1_cfg,
-      .g_ctrl = &g_adc1_ctrl,
-      .g_channel_cfg = &g_adc1_channel_cfg,
+        .device_name = "adc1",
+        .g_cfg = &g_adc1_cfg,
+        .g_ctrl = &g_adc1_ctrl,
+        .g_channel_cfg = &g_adc1_channel_cfg,
     },
 #endif
 };
 
-static struct rt_adc_dev adc_obj[sizeof(ra_adc) / sizeof(ra_adc[0])] = {0};
+static struct rt_adc_dev adc_obj[sizeof(ra_adc) / sizeof(ra_adc[0])] = { 0 };
 
 static rt_err_t ra_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
@@ -103,13 +113,48 @@ static rt_err_t ra_get_adc_value(struct rt_adc_device *device, rt_int8_t channel
         LOG_E("get adc value failed.\n");
         return -RT_ERROR;
     }
+#if defined(SOC_SERIES_R7SA6W1)
+    /* R_ADC_W returns the 12-bit result left-aligned in a 16-bit FIFO field. */
+    *value >>= 4U;
+#endif
     return RT_EOK;
 }
 
-static const struct rt_adc_ops ra_adc_ops =
+static rt_uint8_t ra_adc_get_resolution(struct rt_adc_device *device)
 {
+    struct ra_adc_map *adc;
+
+    RT_ASSERT(device != RT_NULL);
+    adc = (struct ra_adc_map *)device->parent.user_data;
+
+    switch (adc->g_cfg->resolution)
+    {
+    case ADC_RESOLUTION_12_BIT:
+        return 12;
+    case ADC_RESOLUTION_10_BIT:
+        return 10;
+    case ADC_RESOLUTION_7_BIT:
+        return 7;
+    case ADC_RESOLUTION_4_BIT:
+        return 4;
+    default:
+        return 0;
+    }
+}
+static rt_int16_t ra_adc_get_vref(struct rt_adc_device *device)
+{
+#if defined(SOC_SERIES_R7SA6W1)
+    return RA_ADC_FULL_SCALE_MV;
+#else
+    return 0;
+#endif
+}
+
+static const struct rt_adc_ops ra_adc_ops = {
     .enabled = ra_adc_enabled,
     .convert = ra_get_adc_value,
+    .get_resolution = ra_adc_get_resolution,
+    .get_vref = ra_adc_get_vref,
 };
 
 static int ra_adc_init(void)
@@ -125,10 +170,10 @@ static int ra_adc_init(void)
         result = R_ADC_ScanCfg((adc_ctrl_t *)ra_adc[i].g_ctrl, ra_adc[i].g_channel_cfg);
 
         /* register ADC device */
-        if(rt_hw_adc_register(&adc_obj[i].adc_device,
-                                       ra_adc[i].device_name,
-                                       &ra_adc_ops,
-                                       &ra_adc[i]) == RT_EOK)
+        if (rt_hw_adc_register(&adc_obj[i].adc_device,
+                               ra_adc[i].device_name,
+                               &ra_adc_ops,
+                               &ra_adc[i]) == RT_EOK)
         {
             LOG_D("%s init success", ra_adc[i].device_name);
         }

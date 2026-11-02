@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_ETHERNET_CADENCE']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include', cwd + '/../../phy']
+
+src = ['macb.c']
+
+if GetDepend(['RT_ETHERNET_CADENCE_PCI']):
+    src += ['macb_pci.c']
+
+if GetDepend(['RT_ETHERNET_CADENCE_PTP']):
+    src += ['macb_ptp.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

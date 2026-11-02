@@ -10,6 +10,8 @@
  * 2022-06-10     xiaoxiaolisunny      re-add this file for F460
  * 2023-02-14     CDT                  add alarm(precision is 1 minute)
  * 2024-06-07     CDT                  Add support for F448/F472
+ * 2026-05-27     CDT                  support HC32F4A2
+ * 2026-06-09     CDT                  support HC32F467, fix local time calculation bug
  */
 
 #include <board.h>
@@ -19,19 +21,18 @@
 #if defined(BSP_USING_RTC)
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.rtc"
+#define LOG_TAG "drv.rtc"
 #include <drv_log.h>
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
 /* BACKUP REG: 96~127 for RTC used */
-#define RTC_BACKUP_DATA_SIZE        (32U)
-#define RTC_BACKUP_REG_OFFSET       (128U - RTC_BACKUP_DATA_SIZE)
+#define RTC_BACKUP_DATA_SIZE  (32U)
+#define RTC_BACKUP_REG_OFFSET (128U - RTC_BACKUP_DATA_SIZE)
 
-static const uint8_t m_au8BackupWriteData[RTC_BACKUP_DATA_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                                                                   11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                                                                   21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-                                                                   31
-                                                                  };
+static const uint8_t m_au8BackupWriteData[RTC_BACKUP_DATA_SIZE] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                                                                    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                                                                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                                                                    31 };
 static uint8_t m_au8BackupReadData[RTC_BACKUP_DATA_SIZE];
 #endif
 
@@ -40,27 +41,26 @@ static rt_rtc_dev_t rtc_dev;
 #ifdef RT_USING_ALARM
 struct stc_hc32_alarm_irq
 {
-    struct hc32_irq_config  irq_config;
-    func_ptr_t              irq_callback;
+    struct hc32_irq_config irq_config;
+    func_ptr_t irq_callback;
 };
 
 static void _rtc_alarm_irq_handler(void);
 
-#define RTC_ALARM_IRQ_CONFIG                                \
-    {                                                       \
-        .irq_num    = BSP_RTC_ALARM_IRQ_NUM,                \
-        .irq_prio   = BSP_RTC_ALARM_IRQ_PRIO,               \
-        .int_src    = INT_SRC_RTC_ALM,                      \
+#define RTC_ALARM_IRQ_CONFIG                \
+    {                                       \
+        .irq_num = BSP_RTC_ALARM_IRQ_NUM,   \
+        .irq_prio = BSP_RTC_ALARM_IRQ_PRIO, \
+        .int_src = INT_SRC_RTC_ALM,         \
     }
 
-static struct stc_hc32_alarm_irq hc32_alarm_irq =
-{
-    .irq_config     = RTC_ALARM_IRQ_CONFIG,
-    .irq_callback   = _rtc_alarm_irq_handler,
+static struct stc_hc32_alarm_irq hc32_alarm_irq = {
+    .irq_config = RTC_ALARM_IRQ_CONFIG,
+    .irq_callback = _rtc_alarm_irq_handler,
 };
 #endif
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
 static void _bakup_reg_write(void)
 {
     uint8_t u8Num;
@@ -112,10 +112,9 @@ static int32_t _hc32_rtc_rw_check(void)
 
 static rt_err_t _rtc_get_timeval(struct timeval *tv)
 {
-
-    stc_rtc_time_t stcRtcTime = {0};
-    stc_rtc_date_t stcRtcDate = {0};
-    struct tm tm_new = {0};
+    stc_rtc_time_t stcRtcTime = { 0 };
+    stc_rtc_date_t stcRtcDate = { 0 };
+    struct tm tm_new = { 0 };
 
     if (LL_OK != RTC_GetTime(RTC_DATA_FMT_DEC, &stcRtcTime))
     {
@@ -126,11 +125,11 @@ static rt_err_t _rtc_get_timeval(struct timeval *tv)
         return -RT_ERROR;
     }
 
-    tm_new.tm_sec  = stcRtcTime.u8Second;
-    tm_new.tm_min  = stcRtcTime.u8Minute;
+    tm_new.tm_sec = stcRtcTime.u8Second;
+    tm_new.tm_min = stcRtcTime.u8Minute;
     tm_new.tm_hour = stcRtcTime.u8Hour;
     tm_new.tm_mday = stcRtcDate.u8Day;
-    tm_new.tm_mon  = stcRtcDate.u8Month - 1;
+    tm_new.tm_mon = stcRtcDate.u8Month - 1;
     tm_new.tm_year = stcRtcDate.u8Year + 100;
 
     tv->tv_sec = timegm(&tm_new);
@@ -140,9 +139,9 @@ static rt_err_t _rtc_get_timeval(struct timeval *tv)
 
 static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
 {
-    stc_rtc_time_t stcRtcTime = {0};
-    stc_rtc_date_t stcRtcDate = {0};
-    struct tm tm_set = {0};
+    stc_rtc_time_t stcRtcTime = { 0 };
+    stc_rtc_date_t stcRtcDate = { 0 };
+    struct tm tm_set = { 0 };
 
     gmtime_r(&time_stamp, &tm_set);
 
@@ -151,12 +150,12 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
         return -RT_ERROR;
     }
 
-    stcRtcTime.u8Second  = tm_set.tm_sec ;
-    stcRtcTime.u8Minute  = tm_set.tm_min ;
-    stcRtcTime.u8Hour    = tm_set.tm_hour;
-    stcRtcDate.u8Day     = tm_set.tm_mday;
-    stcRtcDate.u8Month   = tm_set.tm_mon + 1;
-    stcRtcDate.u8Year    = tm_set.tm_year - 100;
+    stcRtcTime.u8Second = tm_set.tm_sec;
+    stcRtcTime.u8Minute = tm_set.tm_min;
+    stcRtcTime.u8Hour = tm_set.tm_hour;
+    stcRtcDate.u8Day = tm_set.tm_mday;
+    stcRtcDate.u8Month = tm_set.tm_mon + 1;
+    stcRtcDate.u8Year = tm_set.tm_year - 100;
     stcRtcDate.u8Weekday = tm_set.tm_wday;
 
     if (LL_OK != RTC_SetTime(RTC_DATA_FMT_DEC, &stcRtcTime))
@@ -172,30 +171,30 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     return RT_EOK;
 }
 
-#if defined(HC32F4A0) || defined(HC32F460)
-    #if defined(BSP_RTC_USING_XTAL32)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
-    #else
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
-    #endif
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F460) || defined(HC32F467)
+#if defined(BSP_RTC_USING_XTAL32)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_XTAL32)
+#else
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_LRC)
+#endif
 #elif defined(HC32F448) || defined(HC32F4A8)
-    #if defined(BSP_RTC_USING_XTAL32)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
-    #elif defined(BSP_RTC_USING_XTAL_DIV)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL_DIV)
-    #else
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
-    #endif
-#elif defined(HC32F472) || defined (HC32F334)
-    #if defined(BSP_RTC_USING_XTAL32)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
-    #elif defined(BSP_RTC_USING_XTAL_DIV)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL_DIV)
-    #elif defined(BSP_RTC_USING_EXTCLK)
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_EXTCLK)
-    #else
-        #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
-    #endif
+#if defined(BSP_RTC_USING_XTAL32)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_XTAL32)
+#elif defined(BSP_RTC_USING_XTAL_DIV)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_XTAL_DIV)
+#else
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_LRC)
+#endif
+#elif defined(HC32F472) || defined(HC32F334)
+#if defined(BSP_RTC_USING_XTAL32)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_XTAL32)
+#elif defined(BSP_RTC_USING_XTAL_DIV)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_XTAL_DIV)
+#elif defined(BSP_RTC_USING_EXTCLK)
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_EXTCLK)
+#else
+#define RTC_CLK_SRC_SEL (RTC_CLK_SRC_LRC)
+#endif
 #endif
 
 #if defined(HC32F4A8)
@@ -217,9 +216,9 @@ static rt_err_t _rtc_init(void)
 
 #if defined(HC32F4A8)
     if ((SET == VBAT_PowerDownCheck()) || (LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
-#elif defined(HC32F4A0)
+#elif defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)
     if ((LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
-#elif  defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined (HC32F334)
+#elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
     if (DISABLE == RTC_GetCounterState())
 #endif
     {
@@ -246,7 +245,7 @@ static rt_err_t _rtc_init(void)
             /* Startup RTC count */
             RTC_Cmd(ENABLE);
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
             /* Write sequence flag to backup register  */
             _bakup_reg_write();
 #endif
@@ -266,7 +265,7 @@ static rt_err_t _rtc_get_secs(time_t *sec)
     struct timeval tv;
 
     _rtc_get_timeval(&tv);
-    *(time_t *) sec = tv.tv_sec;
+    *(time_t *)sec = tv.tv_sec;
     LOG_D("RTC: get rtc_time %d", *sec);
 
     return RT_EOK;
@@ -297,7 +296,7 @@ static void _rtc_alarm_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F448) || defined(HC32F472) || defined (HC32F334)
+#if defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
 void RTC_Handler(void)
 {
     if (RTC_GetStatus(RTC_FLAG_ALARM) != RESET)
@@ -332,8 +331,19 @@ static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
     stc_rtc_alarm_t stcRtcAlarm;
     RTC_GetAlarm(RTC_DATA_FMT_DEC, &stcRtcAlarm);
     alarm->tm_hour = stcRtcAlarm.u8AlarmHour;
-    alarm->tm_min  = stcRtcAlarm.u8AlarmMinute;
-    alarm->tm_sec  = 0; /* alarms precision is 1 minute */
+    alarm->tm_min = stcRtcAlarm.u8AlarmMinute;
+    alarm->tm_sec = 0; /* alarms precision is 1 minute */
+#ifdef RT_ALARM_USING_LOCAL_TIME
+    alarm->tm_hour += RT_LIBC_TZ_DEFAULT_HOUR;
+    if (alarm->tm_hour < 0)
+    {
+        alarm->tm_hour += 24;
+    }
+    else if (alarm->tm_hour > 23)
+    {
+        alarm->tm_hour -= 24;
+    }
+#endif
 
     LOG_D("GET_ALARM %d:%d:%d", alarm->tm_hour, alarm->tm_min, alarm->tm_sec);
     return RT_EOK;
@@ -354,10 +364,21 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
         {
             RTC_AlarmCmd(DISABLE);
             /* Configuration alarm time: precision is 1 minute */
-            stcRtcAlarm.u8AlarmHour    = alarm->tm_hour;
-            stcRtcAlarm.u8AlarmMinute  = alarm->tm_min;
+#ifdef RT_ALARM_USING_LOCAL_TIME
+            alarm->tm_hour -= RT_LIBC_TZ_DEFAULT_HOUR;
+            if (alarm->tm_hour < 0)
+            {
+                alarm->tm_hour += 24;
+            }
+            else if (alarm->tm_hour > 23)
+            {
+                alarm->tm_hour -= 24;
+            }
+#endif
+            stcRtcAlarm.u8AlarmHour = alarm->tm_hour;
+            stcRtcAlarm.u8AlarmMinute = alarm->tm_min;
             stcRtcAlarm.u8AlarmWeekday = RTC_ALARM_WEEKDAY_EVERYDAY;
-            stcRtcAlarm.u8AlarmAmPm    = RTC_HOUR_24H;
+            stcRtcAlarm.u8AlarmAmPm = RTC_HOUR_24H;
             RTC_ClearStatus(RTC_FLAG_ALARM);
             (void)RTC_SetAlarm(RTC_DATA_FMT_DEC, &stcRtcAlarm);
             hc32_rtc_alarm_enable();
@@ -368,7 +389,6 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
         {
             hc32_rtc_alarm_disable();
         }
-
     }
     else
     {
@@ -382,8 +402,7 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
 #endif
 }
 
-const static struct rt_rtc_ops _ops =
-{
+const static struct rt_rtc_ops _ops = {
     _rtc_init,
     _rtc_get_secs,
     _rtc_set_secs,

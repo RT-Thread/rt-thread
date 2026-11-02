@@ -6,7 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-01     CDT          first version
- * 2042-12-24     CDT          fix compiler warning
+ * 2024-12-24     CDT          fix compiler warning
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-05     CDT          support HC32F467
  */
 
 
@@ -16,8 +18,8 @@
 #include <rtthread.h>
 
 
-#if defined (BSP_USING_EXMC)
-#if defined (BSP_USING_NAND)
+#if defined(BSP_USING_EXMC)
+#if defined(BSP_USING_NAND)
 
 #include "drv_nand.h"
 #include "board_config.h"
@@ -44,27 +46,27 @@ struct rthw_nand
 #include <drv_log.h>
 
 /* Nand status */
-#define NAND_BUSY                   0x00000000U
-#define NAND_FAIL                   0x00000001U
-#define NAND_READY                  0x00000040U
-#define NAND_VALID_ADDRESS          0x00000100U
-#define NAND_INVALID_ADDRESS        0x00000200U
-#define NAND_TIMEOUT_ERROR          0x00000400U
+#define NAND_BUSY            0x00000000U
+#define NAND_FAIL            0x00000001U
+#define NAND_READY           0x00000040U
+#define NAND_VALID_ADDRESS   0x00000100U
+#define NAND_INVALID_ADDRESS 0x00000200U
+#define NAND_TIMEOUT_ERROR   0x00000400U
 
-#define NAND_ERASE_TIMEOUT          2000000UL
-#define NAND_READ_TIMEOUT           2000000UL
-#define NAND_WRITE_TIMEOUT          2000000UL
-#define NAND_RESET_TIMEOUT          2000000UL
+#define NAND_ERASE_TIMEOUT 2000000UL
+#define NAND_READ_TIMEOUT  2000000UL
+#define NAND_WRITE_TIMEOUT 2000000UL
+#define NAND_RESET_TIMEOUT 2000000UL
 
-#define NAND_ECC_SECTOR_SIZE        512UL
-#define NAND_ECC_CODE_SIZE          ((NAND_EXMC_NFC_ECC_MD == EXMC_NFC_1BIT_ECC) ? 3UL : 8UL)
-#define NAND_SPARE_FREE_SIZE        (NAND_SPARE_AREA_SIZE - (NAND_BYTES_PER_PAGE / NAND_ECC_SECTOR_SIZE) * NAND_ECC_CODE_SIZE)
+#define NAND_ECC_SECTOR_SIZE 512UL
+#define NAND_ECC_CODE_SIZE   ((NAND_EXMC_NFC_ECC_MD == EXMC_NFC_1BIT_ECC) ? 3UL : 8UL)
+#define NAND_SPARE_FREE_SIZE (NAND_SPARE_AREA_SIZE - (NAND_BYTES_PER_PAGE / NAND_ECC_SECTOR_SIZE) * NAND_ECC_CODE_SIZE)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#if defined (BSP_USING_NAND)
-    extern rt_err_t rt_hw_board_nand_init(void);
+#if defined(BSP_USING_NAND)
+extern rt_err_t rt_hw_board_nand_init(void);
 #endif
 
 /*******************************************************************************
@@ -84,7 +86,7 @@ static rt_err_t _nand_verify_clock_frequency(void)
 {
     rt_err_t ret = RT_EOK;
 
-#if defined (HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)
     /* EXCLK max frequency for Nand: 60MHz */
     if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (60 * 1000000))
     {
@@ -101,7 +103,7 @@ static rt_err_t _nand_init(struct rt_mtd_nand_device *device)
     rt_err_t ret = -RT_ERROR;
     stc_exmc_nfc_init_t nfc_init_params;
     struct rthw_nand *hw_nand = (struct rthw_nand *)device;
-    rt_uint16_t oob_free = (rt_uint16_t)(NAND_SPARE_AREA_SIZE - \
+    rt_uint16_t oob_free = (rt_uint16_t)(NAND_SPARE_AREA_SIZE -
                                          (NAND_BYTES_PER_PAGE / NAND_ECC_SECTOR_SIZE) * NAND_ECC_CODE_SIZE);
 
     RT_ASSERT(device != RT_NULL);
@@ -128,7 +130,7 @@ static rt_err_t _nand_init(struct rt_mtd_nand_device *device)
     nfc_init_params.u32OpenPage = EXMC_NFC_OPEN_PAGE_DISABLE;
     nfc_init_params.stcBaseConfig.u32CapacitySize = NAND_EXMC_NFC_BANK_CAPACITY;
     nfc_init_params.stcBaseConfig.u32MemoryWidth = NAND_EXMC_NFC_MEMORY_WIDTH;
-    nfc_init_params.stcBaseConfig.u32BankNum = EXMC_NFC_1BANK;
+    nfc_init_params.stcBaseConfig.u32BankNum = NAND_EXMC_NFC_BANK_NUMBER;
     nfc_init_params.stcBaseConfig.u32PageSize = NAND_EXMC_NFC_PAGE_SIZE;
     nfc_init_params.stcBaseConfig.u32WriteProtect = EXMC_NFC_WR_PROTECT_DISABLE;
     nfc_init_params.stcBaseConfig.u32EccMode = NAND_EXMC_NFC_ECC_MD;
@@ -157,8 +159,8 @@ static rt_err_t _nand_init(struct rt_mtd_nand_device *device)
         if (LL_OK == EXMC_NFC_Reset(hw_nand->nfc_bank, NAND_RESET_TIMEOUT))
         {
             EXMC_NFC_ReadId(hw_nand->nfc_bank, 0UL, au8DevId, sizeof(au8DevId), NAND_READ_TIMEOUT);
-            hw_nand->id = (((rt_uint32_t)au8DevId[3]) << 24 | ((rt_uint32_t)au8DevId[2]) << 16 | \
-                           ((rt_uint32_t)au8DevId[1]) << 8  | (rt_uint32_t)au8DevId[0]);
+            hw_nand->id = (((rt_uint32_t)au8DevId[3]) << 24 | ((rt_uint32_t)au8DevId[2]) << 16 |
+                           ((rt_uint32_t)au8DevId[1]) << 8 | (rt_uint32_t)au8DevId[0]);
 
             LOG_D("Nand Flash ID = 0x%02X,0x%02X,0x%02X,0x%02X",
                   au8DevId[0], au8DevId[1], au8DevId[2], au8DevId[3]);
@@ -187,8 +189,7 @@ static rt_err_t _nand_wait_ready(rt_uint32_t nfc_bank, rt_uint32_t timeout)
         }
 
         status = EXMC_NFC_ReadStatus(nfc_bank);
-    }
-    while (0UL == (status & NAND_READY));
+    } while (0UL == (status & NAND_READY));
 
     if (RT_ETIMEOUT != ret)
     {
@@ -215,7 +216,7 @@ rt_err_t _nand_erase_block(struct rt_mtd_nand_device *device, rt_uint32_t block)
 
     rt_mutex_take(&hw_nand->lock, RT_WAITING_FOREVER);
 
-    if (LL_OK == EXMC_NFC_EraseBlock(hw_nand->nfc_bank,  block_num, NAND_ERASE_TIMEOUT))
+    if (LL_OK == EXMC_NFC_EraseBlock(hw_nand->nfc_bank, block_num, NAND_ERASE_TIMEOUT))
     {
         if (_nand_wait_ready(hw_nand->nfc_bank, NAND_ERASE_TIMEOUT) == RT_EOK)
         {
@@ -249,8 +250,8 @@ static rt_err_t _nand_read_id(struct rt_mtd_nand_device *device)
     RT_ASSERT(device != RT_NULL);
 
     EXMC_NFC_ReadId(hw_nand->nfc_bank, 0UL, device_id, sizeof(device_id), NAND_READ_TIMEOUT);
-    hw_nand->id = (((rt_uint32_t)device_id[3]) << 24 | ((rt_uint32_t)device_id[2]) << 16 | \
-                   ((rt_uint32_t)device_id[1]) << 8  | (rt_uint32_t)device_id[0]);
+    hw_nand->id = (((rt_uint32_t)device_id[3]) << 24 | ((rt_uint32_t)device_id[2]) << 16 |
+                   ((rt_uint32_t)device_id[1]) << 8 | (rt_uint32_t)device_id[0]);
 
     LOG_D("Nand Flash ID: Manufacturer ID = 0x%02X, Device ID=[0x%02X,0x%02X,0x%02X]",
           device_id[0], device_id[1], device_id[2], device_id[3]);
@@ -410,8 +411,7 @@ rt_err_t _nand_move_page(struct rt_mtd_nand_device *device, rt_off_t src_page, r
     return (RT_MTD_EOK);
 }
 
-static const struct rt_mtd_nand_driver_ops _ops =
-{
+static const struct rt_mtd_nand_driver_ops _ops = {
     _nand_read_id,
     _nand_read_page,
     _nand_write_page,
@@ -434,14 +434,14 @@ int rt_hw_nand_init(void)
     }
     rt_mutex_init(&_hw_nand.lock, "nand", RT_IPC_FLAG_PRIO);
 
-    nand_dev->page_size       = NAND_BYTES_PER_PAGE;
+    nand_dev->page_size = NAND_BYTES_PER_PAGE;
     nand_dev->pages_per_block = NAND_PAGES_PER_BLOCK;
-    nand_dev->plane_num       = NAND_PLANE_PER_DEVICE;
-    nand_dev->oob_size        = NAND_SPARE_AREA_SIZE;
-    nand_dev->oob_free        = (rt_uint16_t)(NAND_SPARE_AREA_SIZE - (NAND_BYTES_PER_PAGE / NAND_ECC_SECTOR_SIZE) * NAND_ECC_CODE_SIZE);
-    nand_dev->block_total     = NAND_DEVICE_BLOCKS;
-    nand_dev->block_start     = 0;
-    nand_dev->block_end       = nand_dev->block_total - 1UL;
+    nand_dev->plane_num = NAND_PLANE_PER_DEVICE;
+    nand_dev->oob_size = NAND_SPARE_AREA_SIZE;
+    nand_dev->oob_free = (rt_uint16_t)(NAND_SPARE_AREA_SIZE - (NAND_BYTES_PER_PAGE / NAND_ECC_SECTOR_SIZE) * NAND_ECC_CODE_SIZE);
+    nand_dev->block_total = NAND_DEVICE_BLOCKS;
+    nand_dev->block_start = 0;
+    nand_dev->block_end = nand_dev->block_total - 1UL;
     nand_dev->ops = &_ops;
 
     result = rt_mtd_nand_register_device("nand", nand_dev);

@@ -5,5 +5,5 @@
 
 # 从 .ignore_format.yml 迁移的规则
 # 忽略所有 CH32F 系列标准外设驱动目录
-/arm/Libraries/CH32F*_StdPeriph_Driver/
-/risc-v/Libraries/CH32V10x_StdPeriph_Driver/
+/arm/libraries/CH32F*_StdPeriph_Driver/
+/risc-v/libraries/CH32V10x_StdPeriph_Driver/

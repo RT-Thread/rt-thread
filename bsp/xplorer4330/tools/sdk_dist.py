@@ -22,7 +22,7 @@ def dist_do_building(BSP_ROOT, dist_dir):
     dist_root = os.path.dirname(dist_dir)
     bsp_root = os.path.dirname(BSP_ROOT)
 
-    for dirname in ['applications', 'drivers', 'Libraries']:
+    for dirname in ['applications', 'drivers', 'libraries']:
         print("=> copy xplorer4330 %s" % dirname)
         bsp_copy_files(os.path.join(bsp_root, dirname), os.path.join(dist_root, dirname))
 

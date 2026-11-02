@@ -232,12 +232,13 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     RT_ASSERT(ping_resp);
 
     rt_memset(&hint, 0x00, sizeof(hint));
+    hint.ai_family = AF_INET;
     /* convert URL to IP */
     if (lwip_getaddrinfo(host, RT_NULL, &hint, &res) != 0)
     {
         return -RT_ERROR;
     }
-    SMEMCPY(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
+    h = (struct sockaddr_in *)res->ai_addr;
     SMEMCPY(&ina, &h->sin_addr, sizeof(ina));
     lwip_freeaddrinfo(res);
     if (inet_aton(inet_ntoa(ina), &target_addr) == 0)
@@ -446,6 +447,44 @@ static void netdev_del(struct netif *lwip_netif)
     netdev_unregister(netdev);
     rt_free(netdev);
 }
+
+#ifdef RT_LWIP_USING_LOOPBACK
+static int lwip_loopback_init(void)
+{
+    struct netif *netif = netif_find("lo0");
+    struct netdev *netdev;
+    err_t result;
+
+    if (netif == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+
+    netif->mtu = 65535;
+    if (netdev_add(netif) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
+    result = netifapi_netif_set_link_up(netif);
+    if (result == ERR_OK && netif_default == RT_NULL)
+    {
+        result = netifapi_netif_set_default(netif);
+    }
+    if (result != ERR_OK)
+    {
+        netdev_del(netif);
+        return -RT_ERROR;
+    }
+
+    netdev = netdev_get_by_name("lo");
+    netdev_low_level_set_dhcp_status(netdev, RT_FALSE);
+    netdev_low_level_set_status(netdev, RT_TRUE);
+    netdev_low_level_set_link_status(netdev, RT_TRUE);
+    return RT_EOK;
+}
+INIT_APP_EXPORT(lwip_loopback_init);
+#endif /* RT_LWIP_USING_LOOPBACK */
 #endif /* RT_USING_NETDEV */
 
 static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)

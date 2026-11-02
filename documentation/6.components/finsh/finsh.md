@@ -29,11 +29,11 @@ FinSH supports auto-completion, and viewing history commands, etc. These functio
 | Backspace key | Delete character                                             |
 | ←→ key  | Move the cursor left or right |
 
-FinSH supports two input modes, the traditional command line mode and the C language interpreter mode.
+FinSH uses the traditional command line mode, also known as MSH (module shell).
 
-## Traditional Command Line Mode
+## MSH Command-Line Mode
 
-This mode is also known as msh(module shell). In msh mode, FinSH is implemented in the same way as the traditional shell (dos/bash). For example, you can switch directories to the root directory with the `cd /` command.
+In MSH mode, FinSH works like a traditional shell such as DOS or Bash. For example, you can switch to the root directory with the `cd /` command.
 
 MSH can parse commands into parameters and parameters separated by spaces. Its command execution format is as follows:
 
@@ -43,17 +43,9 @@ command [arg1] [arg2] [...]
 
 The command can be either a built-in command in RT-Thread or an executable file.
 
-## C Language Interpreter Mode
-
-This mode is also known as C-Style mode. In C language interpreter mode, FinSH can solve and parse most C language expressions, and use functions like C to access functions and global variables in the system. In addition, it can create variables through the command line. In this mode, the command entered must be similar to the function call in C language, that is, you must carry the `()` symbol. For example, to output all current threads and their status in the system, type `list_thread()` in FinSH to print out the required information. The output of the FinSH command is the return value of this function. For some functions that do not have a return value (void return value), this printout has no meaning.
-
-Initially FinSH only supported C-Style mode. Later, with the development of RT-Thread, C-Style mode is not convenient when running scripts or programs, and it is more convenient to use traditional shell method. In addition, in C-Style mode, FinSH takes up a lot of volume. For these reasons, the msh mode has been added to RT-Thread. The msh mode is small and easy to use. It is recommended that you use the msh mode.
-
-If both modes are enabled in the RT-Thread, they can be dynamically switched. Enter the `exit` in msh mode and press `Enter` to switch to C-Style mode. Enter `msh()` in C-Style mode and press `Enter` to enter msh mode. The commands of the two modes are not common, and the msh command cannot be used in C-Style mode, and vice versa.
-
 # FinSH Built-in Commands
 
-Some FinSH commands are built in by default in RT-Thread. You can print all commands supported by the current system by entering help in FinSH and pressing Enter or directly pressing Tab. The built-in commands in C-Style and msh mode are basically the same, so msh is taken as an example here.
+Some FinSH commands are built in by default in RT-Thread. You can print all commands supported by the current system by entering help in FinSH and pressing Enter or directly pressing Tab.
 
 In msh mode, you can list all currently supported commands by pressing the Tab key. The number of default commands is not fixed, and the various components of RT-Thread will output some commands to FinSH. For example, when the DFS component is opened, commands such as `ls`, `cp`, and `cd` are added to FinSH for developers to debug.
 
@@ -323,63 +315,55 @@ static void atcmd(int argc, char**argv)
 MSH_CMD_EXPORT(atcmd, atcmd sample: atcmd <server|client>);
 ```
 
-## Custom C-Style Commands and Variables
+## Access Variables from an MSH Command
 
-Export custom commands to C-Style mode can use the following interface：
+The C-Style interpreter and `FINSH_VAR_EXPORT` were removed from RT-Thread. There is no direct replacement for exporting a variable to the shell. To inspect or change a variable at runtime, expose a small MSH command that reads or updates it.
 
-```
-FINSH_FUNCTION_EXPORT(name, desc);
-```
-
-|**Parameter**| **Description**                   |
-|----------|----------------|
-| name     | The command to export             |
-| desc     | Description of the export command |
-
-The following example defines a `hello` function and exports it as a command in C-Style mode：
+The following example exports a `dummy` command. Run `dummy` to read the value or `dummy <value>` to change it:
 
 ```c
-void hello(void)
+#include <stdlib.h>
+#include <rtthread.h>
+#include <finsh.h>
+
+static int dummy = 0;
+
+static void dummy_cmd(int argc, char **argv)
 {
-    rt_kprintf("hello RT-Thread!\n");
+    if (argc == 1)
+    {
+        rt_kprintf("dummy = %d\n", dummy);
+        return;
+    }
+
+    if (argc == 2)
+    {
+        dummy = atoi(argv[1]);
+        rt_kprintf("dummy = %d\n", dummy);
+        return;
+    }
+
+    rt_kprintf("Usage: dummy [value]\n");
 }
 
-FINSH_FUNCTION_EXPORT(hello , say hello to RT-Thread);
+MSH_CMD_EXPORT_ALIAS(dummy_cmd, dummy, show or set the dummy value);
 ```
 
-In a similar way, you can also export a variable that can be accessed through the following interface：
+## Custom MSH Command Name
+
+Use `MSH_CMD_EXPORT_ALIAS` to expose a function under a different command name:
 
 ```
-FINSH_VAR_EXPORT(name, type, desc);
-```
-
-| Parameter | **Description**                      |
-|----------|----------------|
-| name     | The variable to be exported          |
-| type     | Type of variable                     |
-| desc     | Description of the exported variable |
-
-The following example defines a `dummy` variable and exports it to a variable command in C-Style mode.：
-
-```c
-static int dummy = 0;
-FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
-```
-## Custom Command Rename
-
-The function name length of FinSH is limited. It is controlled by the macro definition `FINSH_NAME_MAX` in `finsh.h`. The default is 16 bytes, which means that the FinSH command will not exceed 16 bytes in length. There is a potential problem here: when a function name is longer than FINSH_NAME_MAX, after using FINSH_FUNCTION_EXPORT to export the function to the command table, the full function name is seen in the FinSH symbol table, but a full node execution will result in a *null node* error. This is because although the full function name is displayed, in fact FinSH saves the first 16 bytes as a command. Too many inputs will result in the command not being found correctly. In this case, you can use `FINSH_FUNCTION_EXPORT_ALIAS` to re-export the command name.
-
-```
-FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc);
+MSH_CMD_EXPORT_ALIAS(name, alias, desc);
 ```
 
 | Parameter | Description                                        |
 |----------|-------------------------|
-| name     | The command to export                              |
-| alias    | The name that is displayed when exporting to FinSH |
-| desc     | Description of the export command |
+| name     | The function to export                              |
+| alias    | The command name displayed in MSH                   |
+| desc     | Description of the exported command                 |
 
-The command can be exported to msh mode by adding `__cmd_` to the renamed command name. Otherwise, the command will be exported to C-Style mode. The following example defines a `hello` function and renames it to `ho` and exports it to a command in C-Style mode.
+The following example exports the `hello` function under the command name `ho`:
 
 ```c
 void hello(void)
@@ -387,22 +371,23 @@ void hello(void)
     rt_kprintf("hello RT-Thread!\n");
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(hello , ho, say hello to RT-Thread);
+MSH_CMD_EXPORT_ALIAS(hello, ho, say hello to RT-Thread);
 ```
+
 # FinSH Function Configuration
 
 The FinSH function can be cropped, and the macro configuration options are defined in the rtconfig.h file. The specific configuration items are shown in the following table.
 
 | **Macro Definition**              | **Value Type** | Description                                                | Default |
 |-----------------------------------|----------------|------------------------------------------------------------|---------|
-| `#define RT_USING_FINSH`          | None           | Enable FinSH                                               | on      |
+| `#define RT_USING_MSH`            | None           | Enable the MSH command shell                               | on      |
+| `#define RT_USING_FINSH`          | None           | Enable FinSH support (selected by `RT_USING_MSH`)           | on      |
 | `#define FINSH_THREAD_NAME`       | String         | FinSH thread name                                          | "tshell"|
 | `#define FINSH_USING_HISTORY`     | None           | Turn on historical traceback                               | on      |
 | `#define FINSH_HISTORY_LINES`     | Integer type   | Number of historical command lines that can be traced back | 5       |
 | `#define FINSH_USING_SYMTAB`      | None           | Symbol table can be used in FinSH                          | on      |
 | `#define FINSH_USING_DESCRIPTION` | None           | Add a description to each FinSH symbol                     | on      |
-| `#define FINSH_USING_MSH`         | None           | Enable msh mode                                            | on      |
-| `#define FINSH_USING_MSH_ONLY`    | None           | Use only msh mode                                          | on      |
+| `#define FINSH_USING_MSH`         | None           | Enable the MSH implementation (selected by `RT_USING_MSH`)  | on      |
 | `#define FINSH_ARG_MAX`           | Integer type   | Maximum number of input parameters                         | 10      |
 | `#define FINSH_USING_AUTH`        | None           | Enable permission verification                             | off     |
 | `#define FINSH_DEFAULT_PASSWORD`  | String         | Authority verification password                            | off     |
@@ -410,8 +395,12 @@ The FinSH function can be cropped, and the macro configuration options are defin
 The reference configuration example in rtconfig.h is as follows, and can be configured according to actual functional requirements.
 
 ```c
-/* Open FinSH */
+/* Enable the MSH command shell */
+#define RT_USING_MSH
+
+/* Symbols selected by RT_USING_MSH */
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
 
 /* Define the thread name as tshell */
 #define FINSH_THREAD_NAME "tshell"
@@ -433,10 +422,6 @@ The reference configuration example in rtconfig.h is as follows, and can be conf
 /* Define the command character length to 80 bytes */
 #define FINSH_CMD_SIZE 80
 
-/* Open msh function */
-#define FINSH_USING_MSH
-/* Use msh function by default */
-#define FINSH_USING_MSH_DEFAULT
 /* The maximum number of input parameters is 10 */
 #define FINSH_ARG_MAX 10
 ```

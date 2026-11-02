@@ -1,7 +1,7 @@
 import os
 import subprocess
-import toml
 import shutil
+from SCons.Subst import quote_spaces
 
 
 # Configuration to feature mapping table
@@ -21,6 +21,35 @@ APP_CONFIG_MAP = {
     'thread': 'RT_RUST_EXAMPLE_THREAD'
 }
 
+APP_DEPENDENCY_MAP = {
+    'loadlib': ['RT_USING_MODULE'],
+}
+
+APP_EXPORT_SYMBOL_MAP = {
+    'fs':        ['__rust_file_demo_cmd_seg'],
+    'loadlib':   ['__rust_dl_demo_cmd_seg'],
+    'mutex':     ['__rust_mutex_demo_cmd_seg'],
+    'param':     ['__rust_param_demo_cmd_seg'],
+    'queue':     ['__rust_queue_demo_cmd_seg'],
+    'semaphore': ['__rust_sem_demo_cmd_seg'],
+    'thread':    ['__rust_thread_demo_cmd_seg'],
+}
+
+
+def app_dependencies_satisfied(app_name, has_func):
+    if app_name == 'fs':
+        if has_func('RT_USING_POSIX_FS'):
+            return True
+        if not has_func('RT_USING_DFS'):
+            return False
+        return has_func('DFS_USING_POSIX') or has_func('RT_USING_DFS_V2')
+
+    for dep in APP_DEPENDENCY_MAP.get(app_name, []):
+        if not has_func(dep):
+            return False
+
+    return True
+
 
 def should_build_app(app_dir, has_func):
     """
@@ -35,6 +64,12 @@ def should_build_app(app_dir, has_func):
     """
     # Get the application name from the directory
     app_name = os.path.basename(app_dir)
+
+    if not app_dependencies_satisfied(app_name, has_func):
+        return False
+
+    if has_func('RT_RUST_BUILD_ALL_EXAMPLES'):
+        return True
     
     # Check if there's a specific Kconfig option for this app
     if app_name in APP_CONFIG_MAP:
@@ -43,6 +78,16 @@ def should_build_app(app_dir, has_func):
     
     # If no specific config found, check if applications are enabled in general
     return has_func('RT_RUST_BUILD_APPLICATIONS')
+
+
+def get_app_export_symbols(app_dir):
+    app_name = os.path.basename(app_dir)
+    if app_name not in APP_EXPORT_SYMBOL_MAP:
+        raise UserAppBuildError(
+            f"No link anchor metadata registered for enabled user app '{app_name}'. "
+            f"Path: {app_dir}. Add its export anchor to APP_EXPORT_SYMBOL_MAP."
+        )
+    return list(APP_EXPORT_SYMBOL_MAP[app_name])
 
 
 def check_app_dependencies(app_dir, required_dependencies):
@@ -64,6 +109,7 @@ def check_app_dependencies(app_dir, required_dependencies):
         return False
     
     try:
+        toml = load_toml_module()
         with open(cargo_toml_path, 'r') as f:
             cargo_data = toml.load(f)
         
@@ -76,6 +122,25 @@ def check_app_dependencies(app_dir, required_dependencies):
         
         return True
         
+    except Exception as e:
+        print(f"Warning: Failed to parse {cargo_toml_path}: {e}")
+        return False
+
+
+def app_has_feature_dependency(app_dir, feature_name, dependency_name):
+    cargo_toml_path = os.path.join(app_dir, 'Cargo.toml')
+    if not os.path.exists(cargo_toml_path):
+        return False
+
+    try:
+        toml = load_toml_module()
+        with open(cargo_toml_path, 'r') as f:
+            cargo_data = toml.load(f)
+
+        features = cargo_data.get('features', {})
+        dependencies = cargo_data.get('dependencies', {})
+        return feature_name in features and dependency_name in dependencies
+
     except Exception as e:
         print(f"Warning: Failed to parse {cargo_toml_path}: {e}")
         return False
@@ -110,6 +175,10 @@ def collect_features(has_func, app_dir=None):
                 # If no app_dir provided, enable for all (backward compatibility)
                 features.append(feature_name)
                 print(f"Enabling feature '{feature_name}' for {config_name}")
+
+    if app_dir and os.path.basename(app_dir) == 'fs':
+        if app_has_feature_dependency(app_dir, 'enable-log', 'em_component_log') and 'enable-log' not in features:
+            features.append('enable-log')
     
     return features
 
@@ -120,6 +189,41 @@ def collect_features(has_func, app_dir=None):
 class UserAppBuildError(Exception):
     """User application build error exception"""
     pass
+
+
+def load_toml_module():
+    try:
+        import toml
+        return toml
+    except ImportError as e:
+        raise UserAppBuildError("Missing toml module required to parse Cargo.toml") from e
+
+
+def normalize_build_root(build_root, cwd):
+    """
+    Normalize the user application build root directory.
+
+    Args:
+        build_root: Optional build root directory
+        cwd: Current working directory (usrapp directory)
+
+    Returns:
+        str: Absolute build root path
+    """
+    if build_root is None:
+        if not cwd:
+            raise UserAppBuildError("Invalid build_root: cwd is required when build_root is None")
+        build_root = os.path.join(cwd, "build", "rust", "usrapp")
+
+    try:
+        build_root = os.fspath(build_root)
+    except TypeError:
+        raise UserAppBuildError("Invalid build_root: expected a non-empty path")
+
+    if not isinstance(build_root, str) or not build_root:
+        raise UserAppBuildError("Invalid build_root: expected a non-empty path")
+
+    return os.path.abspath(build_root)
 
 
 def parse_cargo_toml(cargo_toml_path):
@@ -133,6 +237,7 @@ def parse_cargo_toml(cargo_toml_path):
         tuple: (lib_name, is_staticlib)
     """
     try:
+        toml = load_toml_module()
         with open(cargo_toml_path, 'r') as f:
             cargo_data = toml.load(f)
         
@@ -166,15 +271,24 @@ def discover_user_apps(base_dir):
     user_apps = []
     
     for root, dirs, files in os.walk(base_dir):
+        dirs[:] = [d for d in dirs if d not in ("build", "target")]
         if 'Cargo.toml' in files:
-            if 'target' in root or 'build' in root:
-                continue
             user_apps.append(root)
     
     return user_apps
 
 
-def build_user_app(app_dir, target, debug, rustflags, build_root, features=None):
+def staticlib_candidates(lib_name):
+    normalized_name = lib_name.replace('-', '_')
+    candidates = [(f"lib{normalized_name}.a", normalized_name)]
+
+    if normalized_name != lib_name:
+        candidates.append((f"lib{lib_name}.a", lib_name))
+
+    return candidates
+
+
+def build_user_app(app_dir, target, debug, rustflags, build_root, features=None, cargo_extra_args=None):
     """
     Build a single user application
     
@@ -189,18 +303,29 @@ def build_user_app(app_dir, target, debug, rustflags, build_root, features=None)
     Returns:
         tuple: (success, lib_name, lib_path)
     """
+    build_root = normalize_build_root(build_root, None)
+
     try:
         cargo_toml_path = os.path.join(app_dir, 'Cargo.toml')
         lib_name, is_staticlib = parse_cargo_toml(cargo_toml_path)
         
         if not is_staticlib:
-            return False, None, None
+            raise UserAppBuildError(f"User app in {app_dir} is not configured as a staticlib")
         
         env = os.environ.copy()
-        env['RUSTFLAGS'] = rustflags
+        previous_rustflags = env.get('RUSTFLAGS', '').strip()
+        new_rustflags = rustflags.strip() if rustflags else ''
+        if previous_rustflags and new_rustflags:
+            env['RUSTFLAGS'] = f'{previous_rustflags} {new_rustflags}'
+        elif new_rustflags:
+            env['RUSTFLAGS'] = new_rustflags
+        elif previous_rustflags:
+            env['RUSTFLAGS'] = previous_rustflags
         env['CARGO_TARGET_DIR'] = build_root
         
         cmd = ['cargo', 'build', '--target', target]
+        if cargo_extra_args:
+            cmd[2:2] = cargo_extra_args
         if not debug:
             cmd.append('--release')
         
@@ -209,8 +334,12 @@ def build_user_app(app_dir, target, debug, rustflags, build_root, features=None)
             cmd.extend(['--features', ','.join(features)])
         
         print(f"Building example user app {lib_name} (cargo)…")
-        result = subprocess.run(cmd, cwd=app_dir, env=env, 
-                              capture_output=True, text=True)
+        try:
+            result = subprocess.run(cmd, cwd=app_dir, env=env,
+                                  capture_output=True, text=True)
+        except FileNotFoundError:
+            print("Error: cargo executable not found. Please install Rust/Cargo and ensure it is in PATH.")
+            raise UserAppBuildError(f"Cargo executable not found while building user app in {app_dir}")
         
         if result.returncode != 0:
             print(f"Failed to build user app in {app_dir}")
@@ -218,19 +347,20 @@ def build_user_app(app_dir, target, debug, rustflags, build_root, features=None)
             print(f"Return code: {result.returncode}")
             print(f"STDOUT: {result.stdout}")
             print(f"STDERR: {result.stderr}")
-            return False, None, None
+            raise UserAppBuildError(f"Failed to build user app in {app_dir}")
         
-        lib_file = find_library_file(build_root, target, lib_name, debug)
+        lib_file, link_lib_name = find_library_file(build_root, target, lib_name, debug)
         if lib_file:
             # Return the library name for linking
-            return True, lib_name, lib_file
+            return True, link_lib_name, lib_file
         else:
             print(f"Library file not found for lib {lib_name}")
-            return False, None, None
+            raise UserAppBuildError(f"Library file not found for user app {lib_name}")
             
+    except UserAppBuildError:
+        raise
     except Exception as e:
-        print(f"Exception occurred while building user app in {app_dir}: {e}")
-        return False, None, None
+        raise UserAppBuildError(f"Exception occurred while building user app in {app_dir}: {e}") from e
 
 
 def find_library_file(build_root, target, lib_name, debug):
@@ -244,15 +374,11 @@ def find_library_file(build_root, target, lib_name, debug):
         debug: Whether this is a debug build
         
     Returns:
-        str: Library file path, or None if not found
+        tuple: (library file path, link library name), or (None, None) if not found
     """
+    build_root = normalize_build_root(build_root, None)
     profile = "debug" if debug else "release"
-    
-    possible_names = [
-        f"lib{lib_name}.a",
-        f"lib{lib_name.replace('-', '_')}.a"
-    ]
-    
+
     search_paths = [
         os.path.join(build_root, target, profile),
         os.path.join(build_root, target, profile, "deps")
@@ -262,15 +388,17 @@ def find_library_file(build_root, target, lib_name, debug):
         if not os.path.exists(search_path):
             continue
                     
-        for name in possible_names:
+        for name, link_lib_name in staticlib_candidates(lib_name):
             lib_path = os.path.join(search_path, name)
             if os.path.exists(lib_path):
-                return lib_path
+                if os.path.isfile(lib_path) and os.path.getsize(lib_path) > 0:
+                    return lib_path, link_lib_name
+                print(f"Warning: Rust user app static library artifact not found, is not a file, or is empty: {lib_path}")
     
-    return None
+    return None, None
 
 
-def build_all_user_apps(base_dir, target, debug, rustflags, build_root, has_func):
+def build_all_user_apps(base_dir, target, debug, rustflags, build_root, has_func, require_export_symbols=False, cargo_extra_args=None):
     """
     Build all user applications
     
@@ -287,10 +415,12 @@ def build_all_user_apps(base_dir, target, debug, rustflags, build_root, has_func
     """
     LIBS = []
     LIBPATH = []
+    LIBFILES = []
+    UNDEFINED_SYMBOLS = []
     success_count = 0
+    total_count = 0
     
     user_apps = discover_user_apps(base_dir)
-    total_count = len(user_apps)
     
     for app_dir in user_apps:
         # Check if this application should be built based on Kconfig
@@ -298,24 +428,31 @@ def build_all_user_apps(base_dir, target, debug, rustflags, build_root, has_func
             app_name = os.path.basename(app_dir)
             print(f"Skipping {app_name} (disabled in Kconfig)")
             continue
+
+        total_count += 1
             
         # Collect features for this specific app
         features = collect_features(has_func, app_dir)
-        success, lib_name, lib_path = build_user_app(app_dir, target, debug, rustflags, build_root, features)
+        success, lib_name, lib_path = build_user_app(app_dir, target, debug, rustflags, build_root, features, cargo_extra_args)
         
         if success and lib_path:
             app_name = os.path.basename(app_dir)
             print(f"Example user app {app_name} built successfully")
             LIBS.append(lib_name)
+            LIBFILES.append(lib_path)
+            if require_export_symbols:
+                UNDEFINED_SYMBOLS.extend(get_app_export_symbols(app_dir))
             lib_dir = os.path.dirname(lib_path)
             if lib_dir not in LIBPATH:
                 LIBPATH.append(lib_dir)
             success_count += 1
+        else:
+            raise UserAppBuildError(f"Failed to build enabled user app: {app_dir}")
     
-    return LIBS, LIBPATH, success_count, total_count
+    return LIBS, LIBPATH, LIBFILES, UNDEFINED_SYMBOLS, success_count, total_count
 
 
-def generate_linkflags(LIBS, LIBPATH):
+def generate_linkflags(LIBS, LIBPATH, platform, LIBFILES=None, UNDEFINED_SYMBOLS=None):
     """
     Generate link flags
     
@@ -326,15 +463,39 @@ def generate_linkflags(LIBS, LIBPATH):
     Returns:
         str: Link flags string
     """
+    if platform == 'armclang':
+        if not LIBFILES:
+            raise UserAppBuildError(
+                "ArmClang Rust link requires built static library archives, but none were produced"
+            )
+        for lib in LIBFILES:
+            if not (os.path.isfile(lib) and os.path.getsize(lib) > 0):
+                raise UserAppBuildError(
+                    f"ArmClang Rust link requires a non-empty archive, but got: {lib}"
+                )
+        if not UNDEFINED_SYMBOLS:
+            raise UserAppBuildError(
+                "ArmClang Rust link requires at least one --undefined anchor symbol, but none were resolved"
+            )
+        linkflags = [f"--undefined={symbol}" for symbol in UNDEFINED_SYMBOLS]
+        linkflags.extend(quote_spaces(os.fspath(lib)) for lib in LIBFILES)
+        return " " + " ".join(linkflags)
+
     if not LIBS or not LIBPATH:
         return ""
-    
-    linkflags = f" -L{LIBPATH[0]} -Wl,--whole-archive"
+
+    linkflags = []
+    for path in LIBPATH:
+        linkflags.append(quote_spaces(f"-L{os.fspath(path)}"))
+    linkflags.append("-Wl,--whole-archive")
     for lib in LIBS:
-        linkflags += f" -l{lib}"
-    linkflags += " -Wl,--no-whole-archive -Wl,--allow-multiple-definition"
+        linkflags.append(f"-l{lib}")
+    linkflags.extend([
+        "-Wl,--no-whole-archive",
+        "-Wl,--allow-multiple-definition",
+    ])
     
-    return linkflags
+    return " " + " ".join(linkflags)
 
 
 def clean_user_apps_build(build_root):
@@ -368,25 +529,46 @@ def build_example_usrapp(cwd, has_func, rtconfig, build_root=None):
     try:
         # Import build support functions
         import sys
-        sys.path.append(os.path.join(cwd, '../rust/tools'))
+        tools_dir = os.path.abspath(os.path.join(cwd, '..', '..', 'tools'))
+        if tools_dir not in sys.path:
+            sys.path.append(tools_dir)
         import build_support as rust_build_support
-        
+
+        build_root = normalize_build_root(build_root, cwd)
+        enabled_apps = [
+            app_dir for app_dir in discover_user_apps(cwd)
+            if should_build_app(app_dir, has_func)
+        ]
+        if not enabled_apps:
+            print('No user applications enabled for Rust build')
+            return LIBS, LIBPATH, LINKFLAGS
+
         target = rust_build_support.detect_rust_target(has_func, rtconfig)
+        if not target:
+            raise UserAppBuildError('Could not detect Rust target for user application build')
         debug = bool(has_func('RUST_DEBUG_BUILD'))
         rustflags = rust_build_support.make_rustflags(rtconfig, target)
-        LIBS, LIBPATH, success_count, total_count = build_all_user_apps(
-            cwd, target, debug, rustflags, build_root, has_func
+        cargo_extra_args = rust_build_support.make_cargo_build_std_args(rtconfig, target)
+        if not rust_build_support.ensure_rust_target_installed(target):
+            raise UserAppBuildError('Rust target is not installed; user application build failed')
+
+        platform = getattr(rtconfig, 'PLATFORM', None)
+        LIBS, LIBPATH, LIBFILES, UNDEFINED_SYMBOLS, success_count, total_count = build_all_user_apps(
+            cwd, target, debug, rustflags, build_root, has_func, platform == 'armclang', cargo_extra_args
         )
         
-        if success_count == 0 and total_count > 0:
-            print(f'Warning: Failed to build all {total_count} user applications')
-        elif success_count > 0:
-            LINKFLAGS = generate_linkflags(LIBS, LIBPATH)
-            print(f'Example user apps linked successfully')
+        if success_count > 0:
+            LINKFLAGS = generate_linkflags(LIBS, LIBPATH, platform, LIBFILES, UNDEFINED_SYMBOLS)
+            if platform == 'armclang':
+                LIBS = []
+                LIBPATH = []
+            print('Example user apps linked successfully')
+        else:
+            print('No user applications enabled for Rust build')
             
-    except UserAppBuildError as e:
-        print(f'Error: {e}')
+    except UserAppBuildError:
+        raise
     except Exception as e:
-        print(f'Unexpected error during user apps build: {e}')
+        raise UserAppBuildError(f'Unexpected error during user apps build: {e}') from e
     
     return LIBS, LIBPATH, LINKFLAGS

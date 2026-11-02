@@ -62,22 +62,22 @@ typedef enum _FlashReadSampleClkSource
 {
     kFlexSPIReadSampleClk_LoopbackInternally = 0,
     kFlexSPIReadSampleClk_LoopbackFromDqsPad = 1,
-    kFlexSPIReadSampleClk_Reversed           = 2,
-    kFlexSPIReadSampleClk_FlashProvidedDqs   = 3,
+    kFlexSPIReadSampleClk_Reversed = 2,
+    kFlexSPIReadSampleClk_FlashProvidedDqs = 3,
 } flexspi_read_sample_clk_t;
 
 //!@brief Flash Type Definition
 enum
 {
-    kFlexSpiDeviceType_SerialNOR    = 1,    //!< Flash devices are Serial NOR
-    kFlexSpiDeviceType_SerialNAND   = 2,    //!< Flash devices are Serial NAND
-    kFlexSpiDeviceType_SerialRAM    = 3     //!< Flash devices are Serial RAM/HyperFLASH
+    kFlexSpiDeviceType_SerialNOR = 1,    //!< Flash devices are Serial NOR
+    kFlexSpiDeviceType_SerialNAND = 2,    //!< Flash devices are Serial NAND
+    kFlexSpiDeviceType_SerialRAM = 3     //!< Flash devices are Serial RAM/HyperFLASH
 };
 
 //!@brief Flash Pad Definitions
 enum
 {
-    kSerialFlash_1Pad  = 1,
+    kSerialFlash_1Pad = 1,
     kSerialFlash_2Pads = 2,
     kSerialFlash_4Pads = 4,
     kSerialFlash_8Pads = 8,
@@ -86,10 +86,10 @@ enum
 //!@brief Definitions for FlexSPI Serial Clock Frequency
 typedef enum _FlexSpiSerialClockFreq
 {
-    kFlexSpiSerialClk_30MHz  = 1,
-    kFlexSpiSerialClk_50MHz  = 2,
-    kFlexSpiSerialClk_60MHz  = 3,
-    kFlexSpiSerialClk_80MHz  = 4,
+    kFlexSpiSerialClk_30MHz = 1,
+    kFlexSpiSerialClk_50MHz = 2,
+    kFlexSpiSerialClk_60MHz = 3,
+    kFlexSpiSerialClk_80MHz = 4,
     kFlexSpiSerialClk_100MHz = 5,
     kFlexSpiSerialClk_120MHz = 6,
     kFlexSpiSerialClk_133MHz = 7,

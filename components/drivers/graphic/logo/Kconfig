@@ -3,7 +3,7 @@ menuconfig RT_GRAPHIC_LOGO
     select RT_GRAPHIC_FB
     default y
 
-choice
+choice RT_GRAPHIC_LOGO_SEL
     prompt "Rendering image(ppm)"
     default RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
     depends on RT_GRAPHIC_LOGO

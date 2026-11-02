@@ -1,0 +1,2 @@
+kernel=u-boot.bin
+dtparam=pciex1

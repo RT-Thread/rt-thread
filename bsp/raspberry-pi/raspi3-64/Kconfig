@@ -6,21 +6,18 @@ RTT_DIR := ../../..
 
 PKGS_DIR := packages
 
+SOC_DM_DIR := $BSP_DIR/../dm/
+
+source "$(SOC_DM_DIR)/Kconfig"
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 
-config BCM2836_SOC
+config SOC_BCM283x
     bool
     select ARCH_ARMV8
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select ARCH_CPU_64BIT
     select RT_USING_CACHE
-    select SOC_BCM283x
+    select RT_USING_STDC_ATOMIC
     default y
-
-config SOC_BCM283x
-    bool
-    default y
-
-rsource "driver/Kconfig"

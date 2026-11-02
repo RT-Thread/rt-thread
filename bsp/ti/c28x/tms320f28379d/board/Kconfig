@@ -113,7 +113,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable phase"
                             default n
                             if BSP_PWM1_PHASE_ENABLE
-                                choice
+                                choice BSP_PWM1_SEL
                                     prompt "Select master or slave"
                                     default BSP_PWM1_MASTER
                                     config BSP_PWM1_MASTER
@@ -140,7 +140,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable interrupt service"
                             default n
                             if BSP_PWM1_IT_ENABLE
-                                choice
+                                choice BSP_PWM1_INTSEL_ET_SEL
                                     prompt "Select interrupt time"
                                     default BSP_PWM1_INTSEL_ET_CTR_ZERO
                                     config BSP_PWM1_INTSEL_ET_DCAEVT1SOC
@@ -171,7 +171,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM1_INTSEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM1_INTSEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM1_INTSEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM1_INT_ET_SEL
                                     prompt "Interrupt generation time"
                                     default BSP_PWM1_INT_ET_1ST
                                     config BSP_PWM1_INT_ET_DISABLE
@@ -190,7 +190,7 @@ menu "On-chip Peripheral Drivers"
                                     default 2 if BSP_PWM1_INT_ET_2ND
                                     default 3 if BSP_PWM1_INT_ET_3RD
                             endif
-                        choice
+                        choice BSP_PWM1_HSPCLKDIV_SEL
                             prompt "HSP Clock division"
                             default BSP_PWM1_HSPCLKDIV1
                             config BSP_PWM1_HSPCLKDIV1
@@ -205,7 +205,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM1_HSPCLKDIV1
                             default 1 if BSP_PWM1_HSPCLKDIV2
                             default 2 if BSP_PWM1_HSPCLKDIV4
-                        choice
+                        choice BSP_PWM1_CLKDIV_SEL
                             prompt "Clock division"
                             default BSP_PWM1_CLKDIV1
                             config BSP_PWM1_CLKDIV1
@@ -220,7 +220,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM1_CLKDIV1
                             default 1 if BSP_PWM1_CLKDIV2
                             default 2 if BSP_PWM1_CLKDIV4
-                        choice
+                        choice BSP_PWM1_CTR_SEL
                             default BSP_PWM1_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM1_CTR_MODE_UPDOWN
@@ -238,7 +238,7 @@ menu "On-chip Peripheral Drivers"
                             default 1 if BSP_PWM1_CTR_MODE_DOWN
                             default 2 if BSP_PWM1_CTR_MODE_UPDOWN
                             default 3 if BSP_PWM1_CTR_FREEZE
-                        choice
+                        choice BSP_PWM1_CC_SEL
                             prompt "Register load mode"
                             config BSP_PWM1_CC_CTR_ZERO
                                 bool "Load when counter == 0"
@@ -264,7 +264,7 @@ menu "On-chip Peripheral Drivers"
                         menuconfig BSP_PWM1_ADC_TRIGGER
                             bool "Enable ADC trigger from PWM1"
                             if BSP_PWM1_ADC_TRIGGER
-                                choice
+                                choice BSP_PWM1_SOCASEL_ET_SEL
                                     prompt "Select soc triggering time"
                                     default BSP_PWM1_SOCASEL_ET_CTR_ZERO
                                     config BSP_PWM1_SOCASEL_ET_DCAEVT1SOC
@@ -295,7 +295,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM1_SOCASEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM1_SOCASEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM1_SOCASEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM1_SOCA_ET_SEL
                                     prompt "SOCA generation time"
                                     default BSP_PWM1_SOCA_ET_1ST
                                     config BSP_PWM1_SOCA_ET_DISABLE
@@ -333,7 +333,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable phase"
                             default n
                             if BSP_PWM2_PHASE_ENABLE
-                                choice
+                                choice BSP_PWM2_SEL
                                     prompt "Select master or slave"
                                     default BSP_PWM2_SLAVE
                                     config BSP_PWM2_MASTER
@@ -360,7 +360,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable interrupt service"
                             default n
                             if BSP_PWM2_IT_ENABLE
-                                choice
+                                choice BSP_PWM2_INTSEL_ET_SEL
                                     prompt "Select interrupt time"
                                     default BSP_PWM2_INTSEL_ET_CTR_ZERO
                                     config BSP_PWM2_INTSEL_ET_DCAEVT1SOC
@@ -391,7 +391,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM2_INTSEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM2_INTSEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM2_INTSEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM2_INT_ET_SEL
                                     prompt "Interrupt generation time"
                                     default BSP_PWM2_INT_ET_1ST
                                     config BSP_PWM2_INT_ET_DISABLE
@@ -410,7 +410,7 @@ menu "On-chip Peripheral Drivers"
                                     default 2 if BSP_PWM2_INT_ET_2ND
                                     default 3 if BSP_PWM2_INT_ET_3RD
                             endif
-                        choice
+                        choice BSP_PWM2_HSPCLKDIV_SEL
                             prompt "HSP Clock division"
                             default BSP_PWM2_HSPCLKDIV1
                             config BSP_PWM2_HSPCLKDIV1
@@ -425,7 +425,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM2_HSPCLKDIV1
                             default 1 if BSP_PWM2_HSPCLKDIV2
                             default 2 if BSP_PWM2_HSPCLKDIV4
-                        choice
+                        choice BSP_PWM2_CLKDIV_SEL
                             prompt "Clock division"
                             default BSP_PWM2_CLKDIV1
                             config BSP_PWM2_CLKDIV1
@@ -440,7 +440,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM2_CLKDIV1
                             default 1 if BSP_PWM2_CLKDIV2
                             default 2 if BSP_PWM2_CLKDIV4
-                        choice
+                        choice BSP_PWM2_CTR_SEL
                             default BSP_PWM2_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM2_CTR_MODE_UPDOWN
@@ -458,7 +458,7 @@ menu "On-chip Peripheral Drivers"
                             default 1 if BSP_PWM2_CTR_MODE_DOWN
                             default 2 if BSP_PWM2_CTR_MODE_UPDOWN
                             default 3 if BSP_PWM2_CTR_FREEZE
-                        choice
+                        choice BSP_PWM2_CC_SEL
                             prompt "Register load mode"
                             config BSP_PWM2_CC_CTR_ZERO
                                 bool "Load when counter == 0"
@@ -484,7 +484,7 @@ menu "On-chip Peripheral Drivers"
                         menuconfig BSP_PWM2_ADC_TRIGGER
                             bool "Enable ADC trigger from PWM2"
                             if BSP_PWM2_ADC_TRIGGER
-                                choice
+                                choice BSP_PWM2_SOCASEL_ET_SEL
                                     prompt "Select soc triggering time"
                                     default BSP_PWM2_SOCASEL_ET_CTR_ZERO
                                     config BSP_PWM2_SOCASEL_ET_DCAEVT1SOC
@@ -515,7 +515,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM2_SOCASEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM2_SOCASEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM2_SOCASEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM2_SOCA_ET_SEL
                                     prompt "SOCA generation time"
                                     default BSP_PWM2_SOCA_ET_1ST
                                     config BSP_PWM2_SOCA_ET_DISABLE
@@ -553,7 +553,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable phase"
                             default n
                             if BSP_PWM3_PHASE_ENABLE
-                                choice
+                                choice BSP_PWM3_SEL
                                     prompt "Select master or slave"
                                     default BSP_PWM3_SLAVE
                                     config BSP_PWM3_MASTER
@@ -580,7 +580,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable interrupt service"
                             default n
                             if BSP_PWM3_IT_ENABLE
-                                choice
+                                choice BSP_PWM3_INTSEL_ET_SEL
                                     prompt "Select interrupt time"
                                     default BSP_PWM3_INTSEL_ET_CTR_ZERO
                                     config BSP_PWM3_INTSEL_ET_DCAEVT1SOC
@@ -611,7 +611,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM3_INTSEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM3_INTSEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM3_INTSEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM3_INT_ET_SEL
                                     prompt "Interrupt generation time"
                                     default BSP_PWM3_INT_ET_1ST
                                     config BSP_PWM3_INT_ET_DISABLE
@@ -630,7 +630,7 @@ menu "On-chip Peripheral Drivers"
                                     default 2 if BSP_PWM3_INT_ET_2ND
                                     default 3 if BSP_PWM3_INT_ET_3RD
                             endif
-                        choice
+                        choice BSP_PWM3_HSPCLKDIV_SEL
                             prompt "HSP Clock division"
                             default BSP_PWM3_HSPCLKDIV1
                             config BSP_PWM3_HSPCLKDIV1
@@ -645,7 +645,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM3_HSPCLKDIV1
                             default 1 if BSP_PWM3_HSPCLKDIV2
                             default 2 if BSP_PWM3_HSPCLKDIV4
-                        choice
+                        choice BSP_PWM3_CLKDIV_SEL
                             prompt "Clock division"
                             default BSP_PWM3_CLKDIV1
                             config BSP_PWM3_CLKDIV1
@@ -660,7 +660,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM3_CLKDIV1
                             default 1 if BSP_PWM3_CLKDIV2
                             default 2 if BSP_PWM3_CLKDIV4
-                        choice
+                        choice BSP_PWM3_CTR_SEL
                             default BSP_PWM3_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM3_CTR_MODE_UPDOWN
@@ -678,7 +678,7 @@ menu "On-chip Peripheral Drivers"
                             default 1 if BSP_PWM3_CTR_MODE_DOWN
                             default 2 if BSP_PWM3_CTR_MODE_UPDOWN
                             default 3 if BSP_PWM3_CTR_FREEZE
-                        choice
+                        choice BSP_PWM3_CC_SEL
                             prompt "Register load mode"
                             config BSP_PWM3_CC_CTR_ZERO
                                 bool "Load when counter == 0"
@@ -704,7 +704,7 @@ menu "On-chip Peripheral Drivers"
                         menuconfig BSP_PWM3_ADC_TRIGGER
                             bool "Enable ADC trigger from PWM3"
                             if BSP_PWM3_ADC_TRIGGER
-                                choice
+                                choice BSP_PWM3_SOCASEL_ET_SEL
                                     prompt "Select soc triggering time"
                                     default BSP_PWM3_SOCASEL_ET_CTR_ZERO
                                     config BSP_PWM3_SOCASEL_ET_DCAEVT1SOC
@@ -735,7 +735,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM3_SOCASEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM3_SOCASEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM3_SOCASEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM3_SOCA_ET_SEL
                                     prompt "SOCA generation time"
                                     default BSP_PWM3_SOCA_ET_1ST
                                     config BSP_PWM3_SOCA_ET_DISABLE
@@ -773,7 +773,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable phase"
                             default n
                             if BSP_PWM4_PHASE_ENABLE
-                                choice
+                                choice BSP_PWM4_SEL
                                     prompt "Select master or slave"
                                     default BSP_PWM4_SLAVE
                                     config BSP_PWM4_MASTER
@@ -800,7 +800,7 @@ menu "On-chip Peripheral Drivers"
                             bool "Enable interrupt service"
                             default n
                             if BSP_PWM4_IT_ENABLE
-                                choice
+                                choice BSP_PWM4_INTSEL_ET_SEL
                                     prompt "Select interrupt time"
                                     default BSP_PWM4_INTSEL_ET_CTR_ZERO
                                     config BSP_PWM4_INTSEL_ET_DCAEVT1SOC
@@ -831,7 +831,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM4_INTSEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM4_INTSEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM4_INTSEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM4_INT_ET_SEL
                                     prompt "Interrupt generation time"
                                     default BSP_PWM4_INT_ET_1ST
                                     config BSP_PWM4_INT_ET_DISABLE
@@ -850,7 +850,7 @@ menu "On-chip Peripheral Drivers"
                                     default 2 if BSP_PWM4_INT_ET_2ND
                                     default 3 if BSP_PWM4_INT_ET_3RD
                             endif
-                        choice
+                        choice BSP_PWM4_HSPCLKDIV_SEL
                             prompt "HSP Clock division"
                             default BSP_PWM4_HSPCLKDIV1
                             config BSP_PWM4_HSPCLKDIV1
@@ -865,7 +865,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM4_HSPCLKDIV1
                             default 1 if BSP_PWM4_HSPCLKDIV2
                             default 2 if BSP_PWM4_HSPCLKDIV4
-                        choice
+                        choice BSP_PWM4_CLKDIV_SEL
                             prompt "Clock division"
                             default BSP_PWM4_CLKDIV1
                             config BSP_PWM4_CLKDIV1
@@ -880,7 +880,7 @@ menu "On-chip Peripheral Drivers"
                             default 0 if BSP_PWM4_CLKDIV1
                             default 1 if BSP_PWM4_CLKDIV2
                             default 2 if BSP_PWM4_CLKDIV4
-                        choice
+                        choice BSP_PWM4_CTR_SEL
                             default BSP_PWM4_CTR_MODE_UPDOWN
                             prompt "Select counter mode"
                             config BSP_PWM4_CTR_MODE_UPDOWN
@@ -898,7 +898,7 @@ menu "On-chip Peripheral Drivers"
                             default 1 if BSP_PWM4_CTR_MODE_DOWN
                             default 2 if BSP_PWM4_CTR_MODE_UPDOWN
                             default 3 if BSP_PWM4_CTR_FREEZE
-                        choice
+                        choice BSP_PWM4_CC_SEL
                             prompt "Register load mode"
                             config BSP_PWM4_CC_CTR_ZERO
                                 bool "Load when counter == 0"
@@ -924,7 +924,7 @@ menu "On-chip Peripheral Drivers"
                         menuconfig BSP_PWM4_ADC_TRIGGER
                             bool "Enable ADC trigger from PWM4"
                             if BSP_PWM4_ADC_TRIGGER
-                                choice
+                                choice BSP_PWM4_SOCASEL_ET_SEL
                                     prompt "Select soc triggering time"
                                     default BSP_PWM4_SOCASEL_ET_CTR_ZERO
                                     config BSP_PWM4_SOCASEL_ET_DCAEVT1SOC
@@ -955,7 +955,7 @@ menu "On-chip Peripheral Drivers"
                                     default 5 if BSP_PWM4_SOCASEL_ET_CTRD_CMPA
                                     default 6 if BSP_PWM4_SOCASEL_ET_CTRU_CMPB
                                     default 7 if BSP_PWM4_SOCASEL_ET_CTRD_CMPB
-                                choice
+                                choice BSP_PWM4_SOCA_ET_SEL
                                     prompt "SOCA generation time"
                                     default BSP_PWM4_SOCA_ET_1ST
                                     config BSP_PWM4_SOCA_ET_DISABLE
@@ -987,7 +987,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC1"
                 default n
                 if BSP_USING_ADC1
-                    choice
+                    choice BSP_ADC1_RES_SEL
                         prompt "Select resolution"
                         default BSP_ADC_USING_12BIT
 
@@ -1002,7 +1002,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC2"
                 default n
                 if BSP_USING_ADC2
-                    choice
+                    choice BSP_ADC2_RES_SEL
                         prompt "Select resolution"
                         default BSP_ADC_USING_12BIT
 
@@ -1017,7 +1017,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC3"
                 default n
                 if BSP_USING_ADC3
-                    choice
+                    choice BSP_ADC3_RES_SEL
                         prompt "Select resolution"
                         default BSP_ADC_USING_12BIT
 
@@ -1035,7 +1035,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_RTC_LS_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

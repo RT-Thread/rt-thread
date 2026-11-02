@@ -114,7 +114,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_LCD
         default n
         if BSP_USING_TOUCHPAD
-            choice
+            choice DEMO_PANEL_RK043FN_SEL
                 prompt "Select panel"
                 default DEMO_PANEL_RK043FN66HS
 
@@ -215,7 +215,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_I2C1
                 bool
                 default y
-            choice
+            choice HW_I2C1_BADURATE_SEL
                 prompt "Select I2C1 badurate"
                 default HW_I2C1_BADURATE_100kHZ
 

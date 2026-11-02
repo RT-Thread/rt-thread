@@ -7,7 +7,7 @@ menu "General Drivers Configuration"
         bool
         default y
 
-    choice
+    choice BSP_GICV_SEL
         prompt "GIC Version"
         default BSP_USING_GICV2
 

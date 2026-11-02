@@ -368,11 +368,11 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\Libraries\sdk</state>
-          <state>$PROJ_DIR$\Libraries\core</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Include</state>
-          <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\libraries\sdk</state>
+          <state>$PROJ_DIR$\libraries\core</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\Device\YICHIP\YC3122\Include</state>
+          <state>$PROJ_DIR$\libraries</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -1416,11 +1416,11 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\Libraries\sdk</state>
-          <state>$PROJ_DIR$\Libraries\core</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
-          <state>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Include</state>
-          <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\libraries\sdk</state>
+          <state>$PROJ_DIR$\libraries\core</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\Include</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\Device\YICHIP\YC3122\Include</state>
+          <state>$PROJ_DIR$\libraries</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -2318,25 +2318,25 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_exti.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_gpio.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_uart.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_wdt.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</name>
+      <name>$PROJ_DIR$\libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\core\system.c</name>
+      <name>$PROJ_DIR$\libraries\core\system.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\iar\startup_yc3122.s</name>
+      <name>$PROJ_DIR$\libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\iar\startup_yc3122.s</name>
     </file>
   </group>
   <group>

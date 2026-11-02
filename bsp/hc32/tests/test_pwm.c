@@ -21,7 +21,7 @@
 
 #ifdef BSP_USING_PWM
 
-#define PWM_DEV_CHANNEL                 1
+#define PWM_DEV_CHANNEL 1
 
 struct rt_device_pwm *pwm_dev;
 
@@ -61,7 +61,7 @@ static rt_int32_t pwm_sample(int argc, char *argv[])
         }
     }
 }
-MSH_CMD_EXPORT(pwm_sample, pwm_sample [opt])
+MSH_CMD_EXPORT(pwm_sample, pwm_sample[opt])
 #endif
 /*
  EOF

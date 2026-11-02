@@ -13,9 +13,9 @@
 #include "board_config.h"
 
 /* unlock/lock peripheral */
-#define EXAMPLE_PERIPH_WE               (LL_PERIPH_GPIO | LL_PERIPH_EFM | LL_PERIPH_FCG | \
-                                         LL_PERIPH_PWC_CLK_RMU | LL_PERIPH_SRAM | LL_PERIPH_LVD)
-#define EXAMPLE_PERIPH_WP               (LL_PERIPH_EFM | LL_PERIPH_FCG | LL_PERIPH_SRAM)
+#define EXAMPLE_PERIPH_WE (LL_PERIPH_GPIO | LL_PERIPH_EFM | LL_PERIPH_FCG | \
+                           LL_PERIPH_PWC_CLK_RMU | LL_PERIPH_SRAM | LL_PERIPH_LVD)
+#define EXAMPLE_PERIPH_WP (LL_PERIPH_EFM | LL_PERIPH_FCG | LL_PERIPH_SRAM)
 
 /** System Base Configuration
 */
@@ -30,8 +30,8 @@ void SystemBase_Config(void)
 */
 void SystemClock_Config(void)
 {
-    stc_clock_xtal_init_t     stcXtalInit;
-    stc_clock_pll_init_t      stcMpllInit;
+    stc_clock_xtal_init_t stcXtalInit;
+    stc_clock_pll_init_t stcMpllInit;
 #if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || defined(RT_USING_CHERRYUSB)
     stc_clock_pllx_init_t stcUpllInit;
 #endif
@@ -43,14 +43,14 @@ void SystemClock_Config(void)
     /* PCLK1, PCLK4 Max 100MHz */
     /* PCLK2, PCLK3 Max 50MHz  */
     /* EX BUS Max 100MHz */
-    CLK_SetClockDiv(CLK_BUS_CLK_ALL, (CLK_HCLK_DIV1 | CLK_EXCLK_DIV2 | CLK_PCLK0_DIV1 | CLK_PCLK1_DIV2 | \
+    CLK_SetClockDiv(CLK_BUS_CLK_ALL, (CLK_HCLK_DIV1 | CLK_EXCLK_DIV2 | CLK_PCLK0_DIV1 | CLK_PCLK1_DIV2 |
                                       CLK_PCLK2_DIV4 | CLK_PCLK3_DIV4 | CLK_PCLK4_DIV2));
 
     GPIO_AnalogCmd(XTAL_PORT, XTAL_IN_PIN | XTAL_OUT_PIN, ENABLE);
     (void)CLK_XtalStructInit(&stcXtalInit);
     /* Config Xtal and enable Xtal */
-    stcXtalInit.u8Mode  = CLK_XTAL_MD_OSC;
-    stcXtalInit.u8Drv   = CLK_XTAL_DRV_ULOW;
+    stcXtalInit.u8Mode = CLK_XTAL_MD_OSC;
+    stcXtalInit.u8Drv = CLK_XTAL_DRV_ULOW;
     stcXtalInit.u8State = CLK_XTAL_ON;
     stcXtalInit.u8StableTime = CLK_XTAL_STB_2MS;
     (void)CLK_XtalInit(&stcXtalInit);
@@ -98,8 +98,8 @@ void SystemClock_Config(void)
     /* Xtal32 config */
     GPIO_AnalogCmd(XTAL32_PORT, XTAL32_IN_PIN | XTAL32_OUT_PIN, ENABLE);
     (void)CLK_Xtal32StructInit(&stcXtal32Init);
-    stcXtal32Init.u8State  = CLK_XTAL32_ON;
-    stcXtal32Init.u8Drv    = CLK_XTAL32_DRV_HIGH;
+    stcXtal32Init.u8State = CLK_XTAL32_ON;
+    stcXtal32Init.u8Drv = CLK_XTAL32_DRV_HIGH;
     stcXtal32Init.u8Filter = CLK_XTAL32_FILTER_RUN_MD;
     (void)CLK_Xtal32Init(&stcXtal32Init);
 #endif

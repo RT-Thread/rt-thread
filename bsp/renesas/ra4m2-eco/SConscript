@@ -13,10 +13,9 @@ if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support IAR build\n")
     Return('group')
 elif rtconfig.PLATFORM in ['gcc', 'armclang']:
-    if GetOption('target') != 'mdk5':
-        CPPPATH = [cwd]
-        src = Glob('./src/*.c')
-        src += Glob('./src/*.cpp')
+    CPPPATH = [cwd]
+    src = Glob('./src/*.c')
+    src += Glob('./src/*.cpp')
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

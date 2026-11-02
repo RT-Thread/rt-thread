@@ -34,8 +34,8 @@
 
 #define F_CPU          80000000L  /* CPU:80MHz */
 
-/* i2c1 : PB7-SDA PB6-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+/* swi2c1 : PB7-SDA PB6-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 /* spi1 : PA1-SCK  PA6-MISO  PA12-MOSI */
 #define SS      D1  /* Chip select pin of default spi */

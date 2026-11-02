@@ -20,7 +20,7 @@ config SOC_AVR32
     bool
     default y
 
-choice
+choice BSP_BOARD_SEL
     prompt "Select BSP board"
     default BSP_BOARD_MCUZONE_AVR32DEV1
 
@@ -44,7 +44,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART0"
                 default n
             if BSP_USING_UART0
-                choice
+                choice BSP_UART0_TX_PIN_SEL
                     prompt "uart0 tx pin number (GP)"
                     depends on BSP_USING_UART0
                     default BSP_UART0_TX_PIN_43
@@ -61,7 +61,7 @@ menu "On-chip Peripheral Drivers"
                     int
                     default 0 if BSP_UART0_TX_PIN_19
                     default 2 if BSP_UART0_TX_PIN_43
-                choice
+                choice BSP_UART0_RX_PIN_SEL
                     prompt "uart0 rx pin number (GP)"
                     depends on BSP_USING_UART0
                     default BSP_UART0_RX_PIN_42
@@ -84,7 +84,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1"
                 default y
             if BSP_USING_UART1
-                choice
+                choice BSP_UART1_TX_PIN_SEL
                     prompt "uart1 tx pin number (GP)"
                     depends on BSP_USING_UART1
                     default BSP_UART1_TX_PIN_34
@@ -101,7 +101,7 @@ menu "On-chip Peripheral Drivers"
 		    int
 		    default 2 if BSP_UART1_TX_PIN_34
 		    default 0 if BSP_UART1_TX_PIN_23
-                choice
+                choice BSP_UART1_RX_PIN_SEL
                     prompt "uart1 rx pin number (GP)"
                     depends on BSP_USING_UART1
                     default BSP_UART1_RX_PIN_35

@@ -115,10 +115,20 @@ def is_env_enabled(name, default=False):
 
     return value.lower() not in ('', '0', 'false', 'no', 'off')
 
+def get_ci_scons_args(scons_args=''):
+    args = scons_args.strip()
+    if os.getenv('RTT_TOOL_CHAIN') == 'armclang' and '--exec-path' not in args:
+        exec_path = os.getenv('RTT_EXEC_PATH')
+        if exec_path:
+            args = f'{args} --exec-path="{exec_path}"'.strip()
+
+    return args
+
 def run_dist_build_check(bsp, scons_args=''):
     """
     build BSP distribution and verify that the generated project can compile.
     """
+    scons_args = get_ci_scons_args(scons_args)
     os.chdir(rtt_root)
     bsp_dir = os.path.join(rtt_root, 'bsp', bsp)
     if not check_bsp_build_scripts(bsp_dir):
@@ -144,13 +154,13 @@ def run_dist_build_check(bsp, scons_args=''):
             return False
 
         old_rtt_root = os.environ.pop('RTT_ROOT', None)
-        _, res = run_cmd(f'scons --pyconfig-silent -C {dist_project}', output_info=True)
+        _, res = run_cmd(f'scons --pyconfig-silent -C {dist_project} {scons_args}', output_info=True)
         if res != 0:
             print(f"::error::dist project pyconfig failed for {bsp}")
             return False
 
         nproc = multiprocessing.cpu_count()
-        _, res = run_cmd(f'scons -C {dist_project} -j{nproc}', output_info=True)
+        _, res = run_cmd(f'scons -C {dist_project} -j{nproc} {scons_args}', output_info=True)
         if res != 0:
             print(f"::error::dist project build failed for {bsp}")
             return False
@@ -193,6 +203,8 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
     if not check_bsp_build_scripts(bsp_dir):
         return False
 
+    scons_args = get_ci_scons_args(scons_args)
+
     # 设置环境变量
     if bsp_build_env is not None:
         print("Setting environment variables:")
@@ -203,7 +215,7 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
     os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
         os.chdir(rtt_root)
-        _, res = run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=True)
+        _, res = run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent {scons_args}', output_info=True)
         if res != 0:
             print(f"::error::pyconfig failed for {bsp}")
             success = False
@@ -250,6 +262,8 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
         for file_type in ['*.elf', '*.bin', '*.hex']:
             files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
             for file in files:
+                if not os.path.isfile(file):
+                    continue
                 shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
         if is_env_enabled('RTT_CI_BUILD_DIST'):
             print(f"::group::\tChecking dist project: {bsp} {name}")
@@ -270,7 +284,7 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
                 print(f"Post-build command failed: {command}")
                 print(output)
                 success = False
-    _, clean_res = run_cmd('scons -c', output_info=False)
+    _, clean_res = run_cmd(f'scons -c {scons_args}', output_info=False)
     if clean_res != 0:
         print(f"::error::scons clean failed for {bsp}")
         success = False

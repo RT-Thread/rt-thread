@@ -19,7 +19,7 @@
 #define AMP_MEMORY_SIZE (128 * SIZE_MB)
 
 /*
- * RUN COMMAND: ./qemu.py -dtbo amp.dtsi -mem 258
+ * RUN COMMAND: ./qemu.py -dtbo amp.dtsi -mem 300
  * REMOTE: telnet localhost 4323
  */
 

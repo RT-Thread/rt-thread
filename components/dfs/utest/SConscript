@@ -1,5 +1,6 @@
 Import('rtconfig')
 from building import *
+import os
 
 cwd     = GetCurrentDir()
 src     = []
@@ -15,6 +16,7 @@ if GetDepend('RT_UTEST_TC_USING_DFS_API'):
         src += ['tc_posix_api.c']
 
 # Define the test group with proper dependencies
-group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_DFS'], CPPPATH = CPPPATH)
+objs = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_DFS'], CPPPATH = CPPPATH)
+objs = objs + SConscript(os.path.join('v2', 'af_unix', 'SConscript'))
 
-Return('group')
+Return('objs')

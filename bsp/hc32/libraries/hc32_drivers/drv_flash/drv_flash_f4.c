@@ -9,6 +9,8 @@
  * 2024-06-14       CDT         Fixed sector number calculation
  * 2024-06-18       CDT         Support HC32F460,HC32F448,HC32F472
  * 2025-07-16       CDT         Support HC32F334
+ * 2026-05-27       CDT         Support HC32F4A2
+ * 2026-06-03       CDT         Support HC32F467
  */
 
 #include "board.h"
@@ -18,11 +20,11 @@
 #include "drv_flash.h"
 
 #if defined(RT_USING_FAL)
-    #include "fal.h"
+#include "fal.h"
 #endif
 
 //#define DRV_DEBUG
-#define LOG_TAG                 "drv.flash"
+#define LOG_TAG "drv.flash"
 #include <drv_log.h>
 
 /**
@@ -81,7 +83,8 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     rt_err_t result = RT_EOK;
     rt_uint32_t newAddr = addr, offsetVal = 0;
     rt_uint32_t index = 0, u32Cnt = 0;
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     rt_uint32_t FirstSector = 0, NumOfSectors = 0;
 #endif
 
@@ -101,7 +104,8 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     }
     /* EFM_FWMC write enable */
     EFM_FWMC_Cmd(ENABLE);
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     /* calculate sector information */
     FirstSector = addr / EFM_SECTOR_SIZE,
     NumOfSectors = GetSectorNum(addr, size);
@@ -144,7 +148,8 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     }
 
 __exit:
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     /* Sectors enable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, DISABLE);
 #endif
@@ -170,7 +175,8 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
     rt_err_t result = RT_EOK;
     rt_uint32_t NumOfSectors = 0;
     rt_uint32_t SectorVal = 0, u32Addr = addr;
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     rt_uint32_t FirstSector = 0;
 #endif
 
@@ -188,10 +194,11 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
     EFM_FWMC_Cmd(ENABLE);
     /* calculate sector information */
     NumOfSectors = GetSectorNum(addr, size);
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     FirstSector = addr / EFM_SECTOR_SIZE,
     /* Sectors disable write protection */
-    EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, ENABLE);
+        EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, ENABLE);
 #endif
     /* Erase sector */
     for (SectorVal = 0U; SectorVal < NumOfSectors; SectorVal++)
@@ -203,7 +210,8 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
         }
         u32Addr += EFM_SECTOR_SIZE;
     }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || \
+    defined(HC32F334) || defined(HC32F467)
     /* Sectors enable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, DISABLE);
 #endif
@@ -223,13 +231,12 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev hc32_onchip_flash =
-{
-    .name       = "onchip_flash",
-    .addr       = HC32_FLASH_START_ADDRESS,
-    .len        = HC32_FLASH_SIZE,
-    .blk_size   = HC32_FLASH_ERASE_GRANULARITY,
-    .ops        = {NULL, fal_flash_read, fal_flash_write, fal_flash_erase},
+const struct fal_flash_dev hc32_onchip_flash = {
+    .name = "onchip_flash",
+    .addr = HC32_FLASH_START_ADDRESS,
+    .len = HC32_FLASH_SIZE,
+    .blk_size = HC32_FLASH_ERASE_GRANULARITY,
+    .ops = { NULL, fal_flash_read, fal_flash_write, fal_flash_erase },
     .write_gran = HC32_FLASH_WRITE_GRANULARITY
 };
 

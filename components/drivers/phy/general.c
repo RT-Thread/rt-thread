@@ -120,6 +120,7 @@ int rt_genphy_config_aneg(struct rt_phy_device *phydev)
     int result;
     int err;
     int ctl = RT_BMCR_ANRESTART;
+
     if (phydev->autoneg != AUTONEG_ENABLE)
     {
         phydev->pause = 0;
@@ -161,43 +162,40 @@ int rt_genphy_config_aneg(struct rt_phy_device *phydev)
 
 int rt_genphy_update_link(struct rt_phy_device *phydev)
 {
-    unsigned int mii_reg;
+    int bmcr, mii_reg;
 
-    mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
+    bmcr = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMCR);
+    if (bmcr < 0)
+        return bmcr;
 
-    if (phydev->link && mii_reg & RT_BMSR_LSTATUS)
-        return 0;
-
-    if ((phydev->autoneg == AUTONEG_ENABLE) &&
-        !(mii_reg & RT_BMSR_ANEGCOMPLETE))
-        {
-        int i = 0;
-        LOG_I("Waiting for PHY auto negotiation to complete");
-        while (!(mii_reg & RT_BMSR_ANEGCOMPLETE))
-        {
-
-            if (i > (RT_PHY_ANEG_TIMEOUT))
-            {
-                LOG_E(" TIMEOUT!");
-                phydev->link = 0;
-                return -ETIMEDOUT;
-            }
-
-            mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
-
-            rt_thread_delay(100);
-            i += 100;
-        }
-        LOG_D(" Done");
-        phydev->link = 1;
-    } else {
-        mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
-
-        if (mii_reg & RT_BMSR_LSTATUS)
-            phydev->link = 1;
-        else
-            phydev->link = 0;
+    if (bmcr & RT_BMCR_ANRESTART)
+    {
+        mii_reg = 0;
     }
+    else
+    {
+        /*
+         * BMSR link status is latched low. Follow Linux genphy_update_link()
+         * and read it twice when the link was previously down.
+         */
+        if (!phydev->link)
+        {
+            mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
+            if (mii_reg < 0)
+                return mii_reg;
+            if (mii_reg & RT_BMSR_LSTATUS)
+                goto _done;
+        }
+
+        mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
+        if (mii_reg < 0)
+            return mii_reg;
+    }
+
+_done:
+    phydev->link = (mii_reg & RT_BMSR_LSTATUS) ? 1 : 0;
+    if (phydev->autoneg == AUTONEG_ENABLE && !(mii_reg & RT_BMSR_ANEGCOMPLETE))
+        phydev->link = 0;
 
     return 0;
 }
@@ -343,8 +341,10 @@ int rt_genphy_startup(struct rt_phy_device *phydev)
     int ret;
 
     ret = rt_genphy_update_link(phydev);
-    if (ret)
+    if (ret < 0)
         return ret;
 
-    return rt_genphy_parse_link(phydev);
+    ret = rt_genphy_parse_link(phydev);
+
+    return ret;
 }

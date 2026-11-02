@@ -1,8 +1,12 @@
 import os
+import sys
 import rtconfig
 from building import *
 
 Import('SDK_LIB')
+Import('RTT_ROOT')
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from env_package import find_package_path
 
 cwd = GetCurrentDir()
 
@@ -20,12 +24,20 @@ if GetDepend(['BSP_USING_WLAN']):
 path =  [cwd]
 
 # add startup txt path
-startup_path_prefix = os.getcwd() + '/../'
+package_name = 'gd32-riscv-series-latest'
+package_path = find_package_path(
+    os.path.dirname(cwd),
+    package_name,
+    marker=os.path.join('GD32VW55x', 'RISCV', 'env_Eclipse', 'entry.S'),
+    extra_candidates=[
+        os.path.join(SDK_LIB, package_name),
+        os.path.join(os.path.dirname(SDK_LIB), 'packages', package_name),
+    ])
 
 if rtconfig.PLATFORM in ['gcc']:
     # Use standard peripheral library startup files for compatibility
-    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/start.S']
-    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/entry.S']
+    src += [os.path.join(package_path, 'GD32VW55x', 'RISCV', 'env_Eclipse', 'start.S')]
+    src += [os.path.join(package_path, 'GD32VW55x', 'RISCV', 'env_Eclipse', 'entry.S')]
 
 CPPDEFINES = ['GD32VW553H_EVAL']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

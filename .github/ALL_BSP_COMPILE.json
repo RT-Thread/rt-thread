@@ -53,12 +53,14 @@
         "at32/at32f457-start",
         "at32/at32m412-start",
         "at32/at32m416-start",
-        "hc32/ev_hc32f4a0_lqfp176",
-        "hc32/ev_hc32f4a8_lqfp176",
         "hc32/ev_hc32f334_lqfp64",
         "hc32/ev_hc32f448_lqfp80",
         "hc32/ev_hc32f460_lqfp100_v2",
+        "hc32/ev_hc32f467_lqfp144",
         "hc32/ev_hc32f472_lqfp100",
+        "hc32/ev_hc32f4a0_lqfp176",
+        "hc32/ev_hc32f4a2_lqfp176",
+        "hc32/ev_hc32f4a8_lqfp176",
         "hc32/lckfb-hc32f4a0-lqfp100",
         "hc32l196",
         "hc32l136",
@@ -219,6 +221,7 @@
         "stm32/stm32h7r7-artpi2",
         "stm32/stm32mp157a-st-discovery",
         "stm32/stm32mp157a-st-ev1",
+        "stm32/stm32n657-st-nucleo",
         "stm32/stm32u575-st-nucleo",
         "stm32/stm32u585-iot02a",
         "stm32/stm32wb55-st-nucleo"
@@ -256,6 +259,7 @@
         "nxp/imx/imxrt/imxrt1180-nxp-evk/cm7",
         "nxp/mcx/mcxn/frdm-mcxn947",
         "nxp/mcx/mcxn/frdm-mcxn236",
+        "nxp/mcx/mcxc/frdm-mcxc162",
         "nxp/mcx/mcxc/frdm-mcxc444",
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
@@ -269,6 +273,7 @@
         "renesas/ra6m3-hmi-board",
         "renesas/ra6e2-ek",
         "renesas/ra6e2-fpb",
+        "renesas/ra6w1-ek",
         "renesas/ra4e2-eco",
         "renesas/ra4m1-ek",
         "renesas/ra4m2-eco",
@@ -276,7 +281,8 @@
         "renesas/ra8m1-ek",
         "renesas/ra8d1-ek",
         "renesas/ra8d1-vision-board",
-        "renesas/ra8p1-titan-board",
+        "renesas/ra8p1-titan-board/m33",
+        "renesas/ra8p1-titan-board/m85",
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
@@ -340,7 +346,9 @@
         "n32/n32gxx_lxx/n32l43xrl-stb",
         "n32/n32gxx_lxx/n32l436-evb",
         "n32/n32gxx_lxx/n32wb45xl-evb",
-		"n32/n32hxxx/n32h760zil7-stb",
+        "n32/n32hxxx/n32h760zil7-stb",
+        "n32/n32hxxx/n32h487zgl7-evb",
+        "n32/n32hxxx/n32h497zgl7-evb",
         "apm32/apm32f103xe-minibroard",
         "apm32/apm32f407ig-minibroard",
         "apm32/apm32f407zg-evalboard",
@@ -419,6 +427,7 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [
         "k210",
+        "wch/risc-v/ch32v203c-evt-r0",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
         "wch/risc-v/yd-ch32v307vct6",
@@ -442,6 +451,13 @@
       ]
     },
     {
+      "RTT_BSP": "spacemit-k1",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "spacemit/k1"
+      ]
+    },
+    {
       "RTT_BSP": "hpmicro",
       "RTT_TOOL_CHAIN": "RISC-V-GCC-RV32",
       "SUB_RTT_BSP": [
@@ -455,7 +471,8 @@
         "hpmicro/hpm6800evk",
         "hpmicro/hpm6e00evk",
         "hpmicro/hpm6p00evk",
-        "hpmicro/hpm5e00evk"
+        "hpmicro/hpm5e00evk",
+        "hpmicro/hpm5100evk"
       ]
     },
     {
@@ -463,6 +480,13 @@
       "RTT_TOOL_CHAIN": "llvm-arm",
       "SUB_RTT_BSP": [
         "stm32/stm32l475-atk-pandora"
+      ]
+    },
+    {
+      "RTT_BSP": "armclang-stm32",
+      "RTT_TOOL_CHAIN": "armclang",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f407-rt-spark"
       ]
     },
     {
@@ -477,6 +501,13 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
         "ESP/ESP32_C3"
+      ]
+    },
+    {
+      "RTT_BSP": "ESP32C6",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_C6"
       ]
     },
     {
@@ -516,7 +547,6 @@
         "xuantie/smartl/e907",
         "xuantie/xiaohui/c906",
         "xuantie/xiaohui/c907",
-        "xuantie/xiaohui/c908",
         "xuantie/xiaohui/c908x",
         "xuantie/xiaohui/c920",
         "xuantie/xiaohui/r908",
@@ -528,7 +558,9 @@
       "RTT_BSP": "xuantie-smart",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-linux-musl",
       "SUB_RTT_BSP": [
-        "xuantie/virt64/c906"
+        "xuantie/virt64/c906",
+        "xuantie/virt64/c908",
+        "xuantie/xiaohui/c908"
       ]
     },
     {

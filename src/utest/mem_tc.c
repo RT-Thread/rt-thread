@@ -14,7 +14,7 @@
  *
  * Test Objectives:
  * - Validates the core kernel small memory management module functionality
- * - Verify core APIs: rt_smem_init, rt_smem_alloc, rt_smem_free, rt_smem_realloc, rt_smem_detach
+ * - Verify core APIs: rt_smem_init, rt_smem_alloc, rt_smem_free, rt_smem_realloc, rt_smem_detach, rt_calloc
  *
  * Test Scenarios:
  * - **Scenario 1 (Functional Test / mem_functional_test):**
@@ -37,6 +37,9 @@
  * 3. Memory exhaustion handling: random freeing of other blocks when realloc fails
  * 4. Reallocation to zero size (free operation) verification
  * 5. Memory content integrity verification before and after reallocation
+ * - **Scenario 4 (Calloc Overflow Test / calloc_overflow_test):**
+ * 1. Reject an object count and size whose product wraps to a small allocation
+ * 2. Verify a normal allocation is zero-initialized
  *
  * Verification Metrics:
  * - **Pass (Scenario 1):** All allocation operations return non-NULL pointers
@@ -53,6 +56,7 @@
  * - **Pass (Scenario 3):** Realloc operations preserve existing data when size increases or decreases
  * - **Pass (Scenario 3):** Magic number patterns maintained correctly after reallocation
  * - **Pass (Scenario 3):** Realloc to zero size properly frees memory blocks
+ * - **Pass (Scenario 4):** Overflow returns NULL and normal allocation is zero-initialized
  *
  * Dependencies:
  * - No specific hardware requirements, runs on any RT-Thread supported platform
@@ -60,6 +64,7 @@
  * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
  * - `Memory Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Memory Test').
  * - RT-Thread kernel with small memory management enabled
+ * - Calloc overflow test requires RT_USING_HEAP without RT_USING_USERHEAP
  * - rt_malloc and rt_free functions available for test buffer allocation
  * - RT_ALIGN_SIZE macro defined for memory alignment
  * - Random number generator (rand function) available for stress tests
@@ -85,30 +90,29 @@
 
 struct rt_small_mem_item
 {
-    rt_ubase_t              pool_ptr;         /**< small memory object addr */
-    rt_size_t               next;             /**< next free item */
-    rt_size_t               prev;             /**< prev free item */
+    rt_ubase_t pool_ptr; /**< small memory object addr */
+    rt_size_t next;      /**< next free item */
+    rt_size_t prev;      /**< prev free item */
 #ifdef RT_USING_MEMTRACE
 #ifdef ARCH_CPU_64BIT
-    rt_uint8_t              thread[8];       /**< thread name */
+    rt_uint8_t thread[8]; /**< thread name */
 #else
-    rt_uint8_t              thread[4];       /**< thread name */
+    rt_uint8_t thread[4]; /**< thread name */
 #endif /* ARCH_CPU_64BIT */
 #endif /* RT_USING_MEMTRACE */
 };
 
 struct rt_small_mem
 {
-    struct rt_memory            parent;                 /**< inherit from rt_memory */
-    rt_uint8_t                 *heap_ptr;               /**< pointer to the heap */
-    struct rt_small_mem_item   *heap_end;
-    struct rt_small_mem_item   *lfree;
-    rt_size_t                   mem_size_aligned;       /**< aligned memory size */
+    struct rt_memory parent; /**< inherit from rt_memory */
+    rt_uint8_t *heap_ptr;    /**< pointer to the heap */
+    struct rt_small_mem_item *heap_end;
+    struct rt_small_mem_item *lfree;
+    rt_size_t mem_size_aligned; /**< aligned memory size */
 };
 
-#define MEM_SIZE(_heap, _mem)      \
-    (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
-    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
+#define MEM_SIZE(_heap, _mem) \
+    (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
 
 #define TEST_MEM_SIZE 1024
 
@@ -138,7 +142,9 @@ static int _mem_cmp(void *ptr, rt_uint8_t v, rt_size_t size)
     while (size-- != 0)
     {
         if (*(rt_uint8_t *)ptr != v)
+        {
             return *(rt_uint8_t *)ptr - v;
+        }
     }
     return 0;
 }
@@ -366,8 +372,8 @@ struct mem_alloc_head
     rt_tick_t interval;
 };
 
-#define MEM_RANG_ALLOC_BLK_MIN  2
-#define MEM_RANG_ALLOC_BLK_MAX  5
+#define MEM_RANG_ALLOC_BLK_MIN   2
+#define MEM_RANG_ALLOC_BLK_MAX   5
 #define MEM_RANG_ALLOC_TEST_TIME 5
 
 static void mem_alloc_test(void)
@@ -388,7 +394,7 @@ static void mem_alloc_test(void)
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* test run */
@@ -425,7 +431,7 @@ static void mem_alloc_test(void)
                     }
                     rt_memset(ctx, 0xAA, ctx->size);
                     rt_smem_free(ctx);
-                    head.count --;
+                    head.count--;
                 }
                 continue;
             }
@@ -459,7 +465,7 @@ static void mem_alloc_test(void)
                 }
                 rt_memset(ctx, 0xAA, ctx->size);
                 rt_smem_free(ctx);
-                head.count --;
+                head.count--;
             }
         }
     }
@@ -476,7 +482,7 @@ static void mem_alloc_test(void)
         }
         rt_memset(ctx, 0xAA, ctx->size);
         rt_smem_free(ctx);
-        head.count --;
+        head.count--;
     }
     uassert_int_equal(head.count, 0);
     uassert_int_equal(max_block(heap), total_size);
@@ -486,8 +492,8 @@ static void mem_alloc_test(void)
     rt_free(buf);
 }
 
-#define MEM_RANG_REALLOC_BLK_MIN  0
-#define MEM_RANG_REALLOC_BLK_MAX  5
+#define MEM_RANG_REALLOC_BLK_MIN   0
+#define MEM_RANG_REALLOC_BLK_MAX   5
 #define MEM_RANG_REALLOC_TEST_TIME 5
 
 struct mem_realloc_context
@@ -526,7 +532,7 @@ static void mem_realloc_test(void)
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* init ctx tab */
@@ -637,6 +643,35 @@ static void mem_realloc_test(void)
     rt_free(buf);
 }
 
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+static void calloc_overflow_test(void)
+{
+    rt_size_t count = RT_SIZE_MAX / 2 + 2;
+    rt_uint8_t *ptr;
+    rt_size_t i;
+
+    ptr = rt_calloc(count, 2);
+    uassert_null(ptr);
+    if (ptr != RT_NULL)
+    {
+        rt_free(ptr);
+    }
+
+    ptr = rt_calloc(4, 8);
+    uassert_not_null(ptr);
+    if (ptr == RT_NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < 32; i++)
+    {
+        uassert_int_equal(ptr[i], 0);
+    }
+    rt_free(ptr);
+}
+#endif /* defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP) */
+
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
@@ -652,5 +687,8 @@ static void testcase(void)
     UTEST_UNIT_RUN(mem_functional_test);
     UTEST_UNIT_RUN(mem_alloc_test);
     UTEST_UNIT_RUN(mem_realloc_test);
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+    UTEST_UNIT_RUN(calloc_overflow_test);
+#endif /* defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP) */
 }
 UTEST_TC_EXPORT(testcase, "core.mem", utest_tc_init, utest_tc_cleanup, 20);

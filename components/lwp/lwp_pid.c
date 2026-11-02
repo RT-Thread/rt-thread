@@ -68,6 +68,7 @@ static struct lwp_avl_struct *lwp_pid_free_head = RT_NULL;
 static int lwp_pid_ary_alloced = 0;
 static struct lwp_avl_struct *lwp_pid_root = RT_NULL;
 static pid_t current_pid = 0;
+static unsigned long lwp_create_count = 0;
 static struct rt_mutex pid_mtx;
 static struct rt_wqueue _pid_emptyq;
 
@@ -164,6 +165,28 @@ static int _before_cb(struct lwp_avl_struct *node, void *data)
     struct pid_foreach_param *param = data;
     pid_t pid = node->avl_key;
     return param->cb(pid, param->data);
+}
+
+unsigned long lwp_pid_get_create_count(void)
+{
+    unsigned long count;
+
+    lwp_pid_lock_take();
+    count = lwp_create_count;
+    lwp_pid_lock_release();
+
+    return count;
+}
+
+pid_t lwp_pid_get_last(void)
+{
+    pid_t pid;
+
+    lwp_pid_lock_take();
+    pid = current_pid;
+    lwp_pid_lock_release();
+
+    return pid;
 }
 
 /**
@@ -413,8 +436,7 @@ static void __exit_files(struct rt_lwp *lwp)
         d = lwp->fdt.fds[fd];
         if (d)
         {
-            dfs_file_close(d);
-            fdt_fd_release(&lwp->fdt, fd);
+            dfs_fdtable_drop_fd(&lwp->fdt, fd);
         }
         fd--;
     }
@@ -695,6 +717,7 @@ rt_lwp_t lwp_create(rt_base_t flags)
             {
                 new_lwp->pid = pid;
                 lwp_pid_set_lwp_locked(pid, new_lwp);
+                lwp_create_count++;
             }
             lwp_pid_lock_release();
         }

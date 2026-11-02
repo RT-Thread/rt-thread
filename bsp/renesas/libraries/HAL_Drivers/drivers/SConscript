@@ -3,6 +3,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
+group = []
 
 # add the general drivers.
 src = []
@@ -14,7 +15,9 @@ if GetDepend(['BSP_USING_UART']):
         print("\nThe current project does not support serial-v1\n")
         Return('group')
 
-if GetDepend(['BSP_USING_GPIO']):
+if GetDepend(['RT_USING_DM']):
+    group += SConscript(os.path.join('dm', 'SConscript'))
+elif GetDepend(['BSP_USING_GPIO']):
     src += ['drv_gpio.c']
 
 if GetDepend(['BSP_USING_WDT']):
@@ -28,9 +31,6 @@ if GetDepend(['BSP_USING_HW_I2C']):
 
 if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']
-
-if GetDepend(['BSP_USING_SOFT_SPI']):
-    src += ['drv_soft_spi.c']
 
 if GetDepend(['BSP_USING_SCI']):
     src += ['drv_sci.c']
@@ -68,6 +68,6 @@ if GetDepend(['BSP_USING_RS485']):
 path =  [cwd]
 path += [cwd + '/config']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group += DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

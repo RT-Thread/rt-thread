@@ -21,10 +21,19 @@
 #include "esp_timer.h"
 #include "driver/gptimer.h"
 
+/* CI pulls RT-Thread-packages/esp-idf rtt-dev, where OS-tick IDs live only as SYSTIMER_LL_*.
+ * IDF v6.1 / package PR #18 reintroduces the non-LL names in esp_private/systimer.h. */
+#ifndef SYSTIMER_COUNTER_OS_TICK
+#define SYSTIMER_COUNTER_OS_TICK SYSTIMER_LL_COUNTER_OS_TICK
+#endif
+#ifndef SYSTIMER_ALARM_OS_TICK_CORE0
+#define SYSTIMER_ALARM_OS_TICK_CORE0 SYSTIMER_LL_ALARM_OS_TICK_CORE0
+#endif
+
 static systimer_hal_context_t systimer_hal;
 IRAM_ATTR void rt_SysTickIsrHandler(void *arg)
 {
-    systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
+    systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_ALARM_OS_TICK_CORE0);
     rt_interrupt_enter();
     rt_tick_increase();
     rt_interrupt_leave();
@@ -36,22 +45,40 @@ void rt_hw_systick_init(void)
     periph_module_enable(PERIPH_SYSTIMER_MODULE);
     systimer_hal_init(&systimer_hal);
     systimer_hal_tick_rate_ops_t ops = {
-            .ticks_to_us = systimer_ticks_to_us,
-            .us_to_ticks = systimer_us_to_ticks,
+        .ticks_to_us = systimer_ticks_to_us,
+        .us_to_ticks = systimer_us_to_ticks,
     };
     systimer_hal_set_tick_rate_ops(&systimer_hal, &ops);
-    systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK, 0);
-    systimer_ll_apply_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK);
-    systimer_hal_connect_alarm_counter(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_LL_COUNTER_OS_TICK);
-    systimer_hal_set_alarm_period(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, 1000000UL / RT_TICK_PER_SECOND);
-    systimer_hal_select_alarm_mode(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_ALARM_MODE_PERIOD);
+    systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_COUNTER_OS_TICK, 0);
+    systimer_ll_apply_counter_value(systimer_hal.dev, SYSTIMER_COUNTER_OS_TICK);
+    systimer_hal_connect_alarm_counter(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, SYSTIMER_COUNTER_OS_TICK);
+    systimer_hal_set_alarm_period(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, 1000000UL / RT_TICK_PER_SECOND);
+    systimer_hal_select_alarm_mode(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, SYSTIMER_ALARM_MODE_PERIOD);
     systimer_hal_counter_can_stall_by_cpu(&systimer_hal, 1, 0, true);
-    systimer_hal_enable_alarm_int(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
-    systimer_hal_enable_counter(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK);
+    systimer_hal_enable_alarm_int(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0);
+    systimer_hal_enable_counter(&systimer_hal, SYSTIMER_COUNTER_OS_TICK);
 }
+
+#ifdef SOC_ESP32_C6
+#include "riscv/csr.h"
+
+static void c6_reserve_broken_intr(void)
+{
+    /* CPU lines 3 and 4 do not latch an enable on this chip. Reserve them
+     * before esp_intr_alloc so the chosen line, its non-IRAM mask and the
+     * matrix route are written together. Copying the handler afterwards
+     * leaves non_iram_int_mask on the old line. */
+    ESP_ERROR_CHECK(esp_intr_reserve(3, 0));
+    ESP_ERROR_CHECK(esp_intr_reserve(4, 0));
+}
+#endif
 
 void rt_hw_board_init(void)
 {
+#ifdef SOC_ESP32_C6
+    RV_WRITE_CSR(mideleg, 0);
+    c6_reserve_broken_intr();
+#endif
     rt_hw_systick_init();
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -62,6 +89,14 @@ void rt_hw_board_init(void)
 #endif
 }
 
+#ifdef SOC_ESP32_C6
+#include "esp_rom_sys.h"
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    esp_rom_delay_us(us);
+}
+#else
 static gptimer_handle_t gptimer_hw_us = NULL;
 
 static int delay_us_init(void)
@@ -83,9 +118,10 @@ void rt_hw_us_delay(rt_uint32_t us)
     ESP_ERROR_CHECK(gptimer_start(gptimer_hw_us));
     ESP_ERROR_CHECK(gptimer_set_raw_count(gptimer_hw_us, 0));
     /* Retrieve the timestamp at anytime*/
-    while(count < (uint64_t)us)
+    while (count < (uint64_t)us)
     {
         ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer_hw_us, &count));
     }
     ESP_ERROR_CHECK(gptimer_stop(gptimer_hw_us));
 }
+#endif

@@ -1,0 +1,5 @@
+config RT_ETHERNET_DWMAC_ROCKCHIP
+    bool "Rockchip DWMAC (RK3308/RK3528/RK3568/RK3576/RK3588)"
+    depends on RT_ETHERNET_DWMAC
+    depends on RT_USING_OFW
+    default n

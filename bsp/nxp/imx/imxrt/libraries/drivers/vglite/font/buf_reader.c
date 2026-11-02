@@ -190,7 +190,7 @@ char *bufferred_fgets(char* buff, int len, bufferred_reader_t *fd)
       return NULL;
 
     ptr = fd->data_buf + fd->index;
-    for(i=0; ptr[i] != '\0' && i < len; i++)
+    for(i=0; i < len && ptr[i] != '\0'; i++)
     {
         if ( ptr[i] == '\n' )
             break;
@@ -201,9 +201,9 @@ char *bufferred_fgets(char* buff, int len, bufferred_reader_t *fd)
     buff[i] = '\0';
     j = i;
     /* skip trailing newline from file buffer */
-    if ( ptr[i] == '\r' )
+    if ( i < valid_bytes && ptr[i] == '\r' )
         i++;
-    if ( ptr[i] == '\n' )
+    if ( i < valid_bytes && ptr[i] == '\n' )
         i++;
     fd->index += i;
 

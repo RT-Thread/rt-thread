@@ -12,6 +12,8 @@
 #ifndef _PIN_MUX_H_
 #define _PIN_MUX_H_
 
+#include <rtthread.h>
+
 /*!
  * @addtogroup pin_mux
  * @{
@@ -38,6 +40,34 @@ void BOARD_InitBootPins(void);
 void BOARD_InitPins(void);                    /* Function assigned for the Cortex-M33 */
 
 void BOARD_InitLeds(void);
+
+#ifdef BSP_USING_LPUART1
+void BOARD_InitLPUART1Pins(void);
+#endif
+
+#ifdef BSP_USING_LPUART10
+void BOARD_InitLPUART10Pins(void);
+#endif
+
+#ifdef BSP_USING_LPUART12
+void BOARD_InitLPUART12Pins(void);
+#endif
+
+#ifdef BSP_USING_I2C2
+void BOARD_InitLPI2C2Pins(void);
+#endif
+
+#ifdef BSP_USING_I2C3
+void BOARD_InitLPI2C3Pins(void);
+#endif
+
+#ifdef BSP_USING_SPI3
+void BOARD_InitLPSPI3Pins(void);
+#endif
+
+#ifdef BSP_USING_SDIO
+void BOARD_InitSDIO1Pins(void);
+#endif
 
 #if defined(__cplusplus)
 }

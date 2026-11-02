@@ -8,6 +8,7 @@
  * 2018-08-03     tyx          the first version
  * 2024-12-25     Evlers       add get_info api for more new sta information
  * 2025-01-04     Evlers       add ap_get_info api for more ap information
+ * 2026-08-11     Kai          add WPA3 security modes
  */
 
 #ifndef __DEV_WLAN_DEVICE_H__
@@ -71,14 +72,19 @@ typedef enum
     RT_WLAN_DEV_EVT_MAX,
 } rt_wlan_dev_event_t;
 
-#define SHARED_ENABLED  0x00008000
-#define WPA_SECURITY    0x00200000
-#define WPA2_SECURITY   0x00400000
-#define WPS_ENABLED     0x10000000
-#define WEP_ENABLED     0x0001
-#define TKIP_ENABLED    0x0002
-#define AES_ENABLED     0x0004
-#define WSEC_SWFLAG     0x0008
+#define SHARED_ENABLED      0x00008000
+#define WAPI_ENABLED        0x00020000
+#define OWE_ENABLED         0x00040000
+#define ENTERPRISE_ENABLED  0x00080000
+#define DPP_ENABLED         0x00100000
+#define WPA_SECURITY        0x00200000
+#define WPA2_SECURITY       0x00400000
+#define WPA3_SECURITY       0x00800000
+#define WPS_ENABLED         0x10000000
+#define WEP_ENABLED         0x0001
+#define TKIP_ENABLED        0x0002
+#define AES_ENABLED         0x0004
+#define WSEC_SWFLAG         0x0008
 
 #define RT_WLAN_FLAG_STA_ONLY    (0x1 << 0)
 #define RT_WLAN_FLAG_AP_ONLY     (0x1 << 1)
@@ -112,6 +118,16 @@ typedef enum
     SECURITY_WPA2_AES_PSK   = (WPA2_SECURITY | AES_ENABLED),                    /* WPA2 Security with AES                  */
     SECURITY_WPA2_TKIP_PSK  = (WPA2_SECURITY | TKIP_ENABLED),                   /* WPA2 Security with TKIP                 */
     SECURITY_WPA2_MIXED_PSK = (WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED),     /* WPA2 Security with AES & TKIP           */
+    SECURITY_WPA3_AES_PSK   = (WPA3_SECURITY | AES_ENABLED),                    /* WPA3 Security with AES (SAE)            */
+    SECURITY_WPA2_WPA3_PSK  = (WPA2_SECURITY | WPA3_SECURITY | AES_ENABLED),    /* WPA2/WPA3 mixed Security with AES       */
+    SECURITY_WPA_ENTERPRISE = (WPA_SECURITY  | ENTERPRISE_ENABLED),             /* WPA Security with 802.1X                */
+    SECURITY_WPA2_ENTERPRISE = (WPA2_SECURITY | ENTERPRISE_ENABLED),            /* WPA2 Security with 802.1X               */
+    SECURITY_WPA3_ENTERPRISE = (WPA3_SECURITY | ENTERPRISE_ENABLED),            /* WPA3 Security with 802.1X               */
+    SECURITY_WPA2_WPA3_ENTERPRISE = (WPA2_SECURITY | WPA3_SECURITY | ENTERPRISE_ENABLED), /* WPA2/WPA3 mixed with 802.1X    */
+    SECURITY_WPA3_ENT_192   = (WPA3_SECURITY | ENTERPRISE_ENABLED | AES_ENABLED), /* WPA3 Enterprise 192-bit (Suite B)     */
+    SECURITY_WAPI_PSK       = (WAPI_ENABLED | AES_ENABLED),                     /* WAPI Security with AES                 */
+    SECURITY_OWE            = OWE_ENABLED,                                      /* OWE (Enhanced Open)                    */
+    SECURITY_DPP            = DPP_ENABLED,                                      /* WPA3 Device Provisioning Protocol      */
     SECURITY_WPS_OPEN       = WPS_ENABLED,                                      /* WPS with open security                  */
     SECURITY_WPS_SECURE     = (WPS_ENABLED | AES_ENABLED),                      /* WPS with AES security                   */
     SECURITY_UNKNOWN        = 0xffffffff,                                       /* May be returned by scan function if security is unknown.

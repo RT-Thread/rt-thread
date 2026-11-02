@@ -1,5 +1,0 @@
-config SOC_MCX
-    bool
-    select ARCH_ARM_CORTEX_M0
-    select PKG_USING_NXP_MCX_CMSIS_DRIVER
-    select PKG_USING_NXP_MCX_SERIES_DRIVER

@@ -46,8 +46,7 @@ pub use librt::{
 
 /* Memory management functions */
 pub use librt::{
-    rt_malloc, rt_free, rt_realloc, rt_calloc, rt_malloc_align, rt_free_align,
-    rt_safe_malloc, rt_safe_free
+    rt_malloc, rt_free, rt_realloc, rt_calloc, rt_malloc_align, rt_free_align
 };
 
 /* Device management functions */

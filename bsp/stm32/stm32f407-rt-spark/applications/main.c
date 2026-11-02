@@ -16,10 +16,14 @@
 #include <rtdevice.h>
 #endif /* RT_USING_NANO */
 
+#ifndef RT_USING_DM
 #define GPIO_LED_B    GET_PIN(F, 11)
 #define GPIO_LED_R    GET_PIN(F, 12)
+#endif
+
 int main(void)
 {
+#ifndef RT_USING_DM
     rt_pin_mode(GPIO_LED_R, PIN_MODE_OUTPUT);
 
     while (1)
@@ -29,4 +33,10 @@ int main(void)
         rt_pin_write(GPIO_LED_R, PIN_LOW);
         rt_thread_mdelay(500);
     }
+#else
+    while (1)
+    {
+        rt_thread_mdelay(1000);
+    }
+#endif
 }

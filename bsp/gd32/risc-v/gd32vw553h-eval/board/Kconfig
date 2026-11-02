@@ -118,7 +118,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_WWDT
                 bool "Enable WWDT"
                 default n
-            choice
+            choice WDT_TYPE_SEL
                 prompt "Select WDT type"
                 default BSP_USING_FWDT
                 config BSP_USING_FWDT
@@ -138,7 +138,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
             # config i2c0 pins
-            choice
+            choice BSP_HW_I2C0_PIN_P_SEL
                 prompt "Select I2C0 pins"
                 depends on BSP_USING_HW_I2C0
                 config BSP_HW_I2C0_PIN_PA2_PA3
@@ -163,7 +163,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
             # config i2c1 pins
-            choice
+            choice BSP_HW_I2C1_PIN_P_SEL
                 prompt "Select I2C1 pins"
                 depends on BSP_USING_HW_I2C1
                 config BSP_HW_I2C1_PIN_PA6_PA7

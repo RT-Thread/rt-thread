@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice SOC_SAMC21_SEL
     prompt "select chip type"
     default SOC_SAMC21J18
 

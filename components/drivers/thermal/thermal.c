@@ -773,6 +773,7 @@ void rt_thermal_cooling_device_kick(struct rt_thermal_zone_device *zdev)
     {
         rt_ubase_t level;
         rt_ubase_t max_level;
+        rt_ubase_t cur_level;
         struct rt_thermal_cooling_device *cdev;
         struct rt_thermal_cooling_cell *cell;
         struct rt_thermal_cooling_map *map = &zdev->cooling_maps[i];
@@ -795,32 +796,37 @@ void rt_thermal_cooling_device_kick(struct rt_thermal_zone_device *zdev)
 
             cdev->max_level = max_level;
 
-            if (!zdev->cooling)
+            level = 0;
+
+            if (zdev->cooling)
             {
-                /* Release cooling: restore full performance (highest OPP). */
-                if (!cdev->ops->get_cur_level(cdev, &level) && level != max_level)
+                for (int m = 0; m < zdev->cooling_maps_nr; ++m)
                 {
-                    cdev->ops->set_cur_level(cdev, max_level);
+                    struct rt_thermal_cooling_map *scan_map = &zdev->cooling_maps[m];
+
+                    if (zdev->temperature <= scan_map->trips->temperature)
+                    {
+                        continue;
+                    }
+
+                    for (int sc = 0; sc < scan_map->cells_nr; ++sc)
+                    {
+                        struct rt_thermal_cooling_cell *scan_cell = &scan_map->cells[sc];
+
+                        if (scan_cell->cooling_devices == cdev)
+                        {
+                            level = rt_max_t(rt_ubase_t, level, scan_cell->level_range[1]);
+                        }
+                    }
                 }
-                continue;
             }
 
-            if (cdev->ops->get_cur_level(cdev, &level) || level > max_level)
-            {
-                continue;
-            }
-
-            /* Check if cooling is required */
-            if (level >= cell->level_range[0] && level <= cell->level_range[1])
-            {
-                /* Is cooling, not call */
-                continue;
-            }
-
-            cdev->gov->tuning(zdev, i, c, &level);
             level = rt_min_t(rt_ubase_t, level, max_level);
 
-            cdev->ops->set_cur_level(cdev, level);
+            if (!cdev->ops->get_cur_level(cdev, &cur_level) && cur_level != level)
+            {
+                cdev->ops->set_cur_level(cdev, level);
+            }
         }
     }
 }

@@ -84,6 +84,14 @@ rustup target add thumbv7em-none-eabi
 # Add other targets that match your toolchain/ABI as needed
 ```
 
+For ARM targets whose C toolchain uses `-fshort-wchar`, RT-Thread uses the nightly-only `build-std` feature to rebuild Rust `core` and `alloc` from source, keeping the Rust ARM EABI wchar size aligned with the C toolchain. Install `rust-src` and the corresponding target for the same nightly toolchain. From the RT-Thread repository root, set a directory-local nightly override so that the plain `cargo` and `rustc` commands invoked by SCons use this toolchain throughout the repository:
+
+```bash
+rustup toolchain install nightly --profile minimal --component rust-src
+rustup target add --toolchain nightly <target-name>
+rustup override set nightly
+```
+
 ### Build
 
 ```bash

@@ -768,7 +768,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>E:\6_RT-Thread\rt-thread\bsp\stm32\stm32f103_100ask_mini\board\linker_scripts\link.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\link.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

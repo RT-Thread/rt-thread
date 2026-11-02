@@ -141,13 +141,13 @@ void CanPhyEnable(void)
 #if defined(BSP_USING_MCAN1)
     GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16PinState = PIN_STAT_RST;
-    stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+    stcGpioInit.u16PinDir = PIN_DIR_OUT;
     GPIO_Init(MCAN1_PHY_STBY_PORT, MCAN1_PHY_STBY_PIN, &stcGpioInit);
 #endif
 #if defined(BSP_USING_MCAN2)
     GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16PinState = PIN_STAT_RST;
-    stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+    stcGpioInit.u16PinDir = PIN_DIR_OUT;
     GPIO_Init(MCAN2_PHY_STBY_PORT, MCAN2_PHY_STBY_PIN, &stcGpioInit);
 #endif
 }
@@ -179,7 +179,7 @@ rt_err_t rt_hw_board_mcan_init(CM_MCAN_TypeDef *MCANx)
 }
 #endif
 
-#if defined (RT_USING_SPI)
+#if defined(RT_USING_SPI)
 rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
 {
     rt_err_t result = RT_EOK;
@@ -194,10 +194,10 @@ rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
         (void)GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
         stcGpioInit.u16PinInputType = PIN_IN_TYPE_CMOS;
-        (void)GPIO_Init(SPI1_SCK_PORT,  SPI1_SCK_PIN,  &stcGpioInit);
+        (void)GPIO_Init(SPI1_SCK_PORT, SPI1_SCK_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI1_MOSI_PORT, SPI1_MOSI_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI1_MISO_PORT, SPI1_MISO_PIN, &stcGpioInit);
-        GPIO_SetFunc(SPI1_SCK_PORT,  SPI1_SCK_PIN,  SPI1_SCK_FUNC);
+        GPIO_SetFunc(SPI1_SCK_PORT, SPI1_SCK_PIN, SPI1_SCK_FUNC);
         GPIO_SetFunc(SPI1_MOSI_PORT, SPI1_MOSI_PIN, SPI1_MOSI_FUNC);
         GPIO_SetFunc(SPI1_MISO_PORT, SPI1_MISO_PIN, SPI1_MISO_FUNC);
         break;
@@ -311,24 +311,24 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
-#if defined (BSP_USING_INPUT_CAPTURE)
+#if defined(BSP_USING_INPUT_CAPTURE)
 rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
 {
     rt_err_t result = RT_EOK;
 
     switch ((rt_uint32_t)tmr_instance)
     {
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
     case (rt_uint32_t)CM_TMR6_1:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, INPUT_CAPTURE_TMR6_FUNC);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
     case (rt_uint32_t)CM_TMR6_2:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, INPUT_CAPTURE_TMR6_FUNC);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_3)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_3)
     case (rt_uint32_t)CM_TMR6_3:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN, INPUT_CAPTURE_TMR6_FUNC);
         break;

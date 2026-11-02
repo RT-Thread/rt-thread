@@ -45,6 +45,13 @@
 #ifdef RT_USING_CLOCK_TIME
 #include <drivers/clock_time.h>
 #endif
+#ifdef RT_USING_PTP
+#include <drivers/ptp.h>
+#ifdef RT_USING_POSIX_FS
+#include <dfs.h>
+#include <dfs_file.h>
+#endif /* RT_USING_POSIX_FS */
+#endif /* RT_USING_PTP */
 
 #define DBG_TAG    "time"
 #define DBG_LVL    DBG_INFO
@@ -383,11 +390,13 @@ int stime(const time_t *t)
 }
 RTM_EXPORT(stime);
 
+/* Normalize the time fields and convert the result to a UTC timestamp. */
 time_t timegm(struct tm * const t)
 {
     time_t day;
     time_t i;
     time_t years;
+    int days_in_month;
 
     if(t == RT_NULL)
     {
@@ -395,33 +404,69 @@ time_t timegm(struct tm * const t)
         return (time_t)-1;
     }
 
-    if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
+    if (t->tm_sec < 0 || t->tm_sec > 60) /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
         t->tm_sec %= 60;
+        if (t->tm_sec < 0)
+        {
+            t->tm_sec += 60;
+            --t->tm_min;
+        }
     }
-    if (t->tm_min >= 60)        /* minutes after the hour - [0, 59] */
+    if (t->tm_min < 0 || t->tm_min >= 60) /* minutes after the hour - [0, 59] */
     {
         t->tm_hour += t->tm_min / 60;
         t->tm_min %= 60;
+        if (t->tm_min < 0)
+        {
+            t->tm_min += 60;
+            --t->tm_hour;
+        }
     }
-    if (t->tm_hour >= 24)       /* hours since midnight - [0, 23] */
+    if (t->tm_hour < 0 || t->tm_hour >= 24) /* hours since midnight - [0, 23] */
     {
         t->tm_mday += t->tm_hour / 24;
         t->tm_hour %= 24;
+        if (t->tm_hour < 0)
+        {
+            t->tm_hour += 24;
+            --t->tm_mday;
+        }
     }
-    if (t->tm_mon >= 12)        /* months since January - [0, 11] */
+    if (t->tm_mon < 0 || t->tm_mon >= 12) /* months since January - [0, 11] */
     {
         t->tm_year += t->tm_mon / 12;
         t->tm_mon %= 12;
-    }
-    while (t->tm_mday > __spm[1 + t->tm_mon])
-    {
-        if (t->tm_mon == 1 && __isleap(t->tm_year + 1900))
+        if (t->tm_mon < 0)
         {
-            --t->tm_mday;
+            t->tm_mon += 12;
+            --t->tm_year;
         }
-        t->tm_mday -= __spm[t->tm_mon];
+    }
+    while (t->tm_mday <= 0)
+    {
+        if (t->tm_mon == 0)
+        {
+            t->tm_mon = 11;
+            --t->tm_year;
+        }
+        else
+        {
+            --t->tm_mon;
+        }
+        t->tm_mday += __spm[t->tm_mon + 1] - __spm[t->tm_mon] +
+                      (__isleap(t->tm_year + 1900) && t->tm_mon == 1);
+    }
+    while (1)
+    {
+        days_in_month = __spm[t->tm_mon + 1] - __spm[t->tm_mon] +
+                        (__isleap(t->tm_year + 1900) && t->tm_mon == 1);
+        if (t->tm_mday <= days_in_month)
+        {
+            break;
+        }
+        t->tm_mday -= days_in_month;
         ++t->tm_mon;
         if (t->tm_mon > 11)
         {
@@ -611,6 +656,134 @@ RTM_EXPORT(nanosleep);
 
 #if defined(RT_USING_POSIX_CLOCK) && defined(RT_USING_CLOCK_TIME)
 
+#ifdef RT_USING_PTP
+
+static rt_bool_t _clockid_is_ptp_fd(clockid_t clockid)
+{
+    return (clockid & 7) == CLOCKFD;
+}
+
+static struct rt_ptp_clock *_ptp_clock_from_clockid(clockid_t clockid)
+{
+    unsigned int fd;
+    struct rt_ptp_clock *ptp;
+    rt_device_t dev;
+
+#ifndef RT_USING_POSIX_FS
+    RT_UNUSED(fd);
+    RT_UNUSED(ptp);
+    RT_UNUSED(dev);
+    return RT_NULL;
+#else
+    struct dfs_file *file;
+
+    if (!_clockid_is_ptp_fd(clockid))
+    {
+        return RT_NULL;
+    }
+
+    fd = CLOCKID_TO_FD(clockid);
+    file = fd_get((int)fd);
+    if (!file || !file->vnode || !file->vnode->data)
+    {
+        return RT_NULL;
+    }
+
+    dev = (rt_device_t)file->vnode->data;
+    if (dev->type != RT_Device_Class_Char)
+    {
+        return RT_NULL;
+    }
+
+    if (rt_strncmp(rt_dm_dev_get_name(dev), "ptp", 3) != 0)
+    {
+        return RT_NULL;
+    }
+
+    ptp = rt_device_to_ptp_clock(dev);
+    if (!ptp->ops || !ptp->ops->gettime)
+    {
+        return RT_NULL;
+    }
+
+    return ptp;
+#endif /* RT_USING_POSIX_FS */
+}
+
+static int _clock_gettime_ptp(clockid_t clockid, struct timespec *tp)
+{
+    struct rt_ptp_clock *ptp;
+    struct rt_ptp_clock_time ts;
+    rt_err_t err;
+
+    ptp = _ptp_clock_from_clockid(clockid);
+    if (!ptp)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    err = rt_ptp_gettime(ptp, &ts);
+    if (err != RT_EOK)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    tp->tv_sec = (time_t)ts.sec;
+    tp->tv_nsec = ts.nsec;
+
+    return 0;
+}
+
+static int _clock_settime_ptp(clockid_t clockid, const struct timespec *tp)
+{
+    struct rt_ptp_clock *ptp;
+    struct rt_ptp_clock_time ts;
+    rt_err_t err;
+
+    ptp = _ptp_clock_from_clockid(clockid);
+    if (!ptp)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    if (!ptp->ops->settime)
+    {
+        rt_set_errno(EPERM);
+        return -1;
+    }
+
+    ts.sec = tp->tv_sec;
+    ts.nsec = (rt_int32_t)tp->tv_nsec;
+
+    err = rt_ptp_settime(ptp, &ts);
+    if (err != RT_EOK)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    return 0;
+}
+
+static int _clock_getres_ptp(clockid_t clockid, struct timespec *res)
+{
+    if (!_ptp_clock_from_clockid(clockid))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    res->tv_sec = 0;
+    res->tv_nsec = 1;
+
+    return 0;
+}
+
+#endif /* RT_USING_PTP */
+
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
     if (res == RT_NULL)
@@ -618,6 +791,13 @@ int clock_getres(clockid_t clockid, struct timespec *res)
         rt_set_errno(EFAULT);
         return -1;
     }
+
+#ifdef RT_USING_PTP
+    if (_clockid_is_ptp_fd(clockid))
+    {
+        return _clock_getres_ptp(clockid, res);
+    }
+#endif /* RT_USING_PTP */
 
     switch (clockid)
     {
@@ -651,6 +831,13 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
         rt_set_errno(EFAULT);
         return -1;
     }
+
+#ifdef RT_USING_PTP
+    if (_clockid_is_ptp_fd(clockid))
+    {
+        return _clock_gettime_ptp(clockid, tp);
+    }
+#endif /* RT_USING_PTP */
 
     switch (clockid)
     {
@@ -749,6 +936,13 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
         rt_set_errno(EINVAL);
         return -1;
     }
+
+#ifdef RT_USING_PTP
+    if (_clockid_is_ptp_fd(clockid))
+    {
+        return _clock_settime_ptp(clockid, tp);
+    }
+#endif /* RT_USING_PTP */
 
     switch (clockid)
     {

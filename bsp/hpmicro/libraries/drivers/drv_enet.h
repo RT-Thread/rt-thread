@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,6 +11,15 @@
 #include <netif/ethernetif.h>
 #include "hpm_enet_drv.h"
 #include "board.h"
+#include "rtt_board.h"
+#include "lwip/sys.h"
+
+#if defined(LWIP_SUPPORT_CUSTOM_PBUF) && LWIP_SUPPORT_CUSTOM_PBUF
+typedef struct my_custom_pbuf {
+   struct pbuf_custom p;
+   void *dma_descriptor;
+} my_custom_pbuf_t;
+#endif
 
 typedef enum {
     ENET_MAC_ADDR_PARA_ERROR    = -1,
@@ -30,6 +39,7 @@ typedef struct {
 
 typedef struct {
     ENET_Type * instance;
+    clock_name_t clock_name;
     enet_desc_t desc;
     enet_mac_config_t mac_config;
     uint8_t media_interface;
@@ -38,7 +48,9 @@ typedef struct {
     uint8_t tx_delay;
     uint8_t rx_delay;
     enet_int_config_t int_config;
-#if __USE_ENET_PTP
+    enet_frame_t *frame;
+    int cnt;
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
     bool ptp_enable;
     uint32_t ptp_clk_src;
     enet_ptp_config_t ptp_config;
@@ -62,7 +74,9 @@ typedef struct _hpm_enet
     uint8_t tx_delay;
     uint8_t rx_delay;
     bool int_refclk;
-#if __USE_ENET_PTP
+    enet_frame_t *frame;
+    int cnt;
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
     bool ptp_enable;
     uint32_t ptp_clk_src;
     enet_ptp_config_t *ptp_config;
@@ -82,15 +96,7 @@ typedef struct _hpm_enet
                              MAC[4] == 0 && \
                              MAC[5] == 0)
 
-#if ENET_SOC_RGMII_EN
-#ifndef ENET0_TX_BUFF_COUNT
-#define ENET0_TX_BUFF_COUNT  (50U)
-#endif
 
-#ifndef ENET0_RX_BUFF_COUNT
-#define ENET0_RX_BUFF_COUNT  (60U)
-#endif
-#else
 #ifndef ENET0_TX_BUFF_COUNT
 #define ENET0_TX_BUFF_COUNT  (10U)
 #endif
@@ -98,14 +104,13 @@ typedef struct _hpm_enet
 #ifndef ENET0_RX_BUFF_COUNT
 #define ENET0_RX_BUFF_COUNT  (20U)
 #endif
-#endif
 
 #ifndef ENET0_RX_BUFF_SIZE
-#define ENET0_RX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
+#define ENET0_RX_BUFF_SIZE   (1536U)
 #endif
 
 #ifndef ENET0_TX_BUFF_SIZE
-#define ENET0_TX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
+#define ENET0_TX_BUFF_SIZE   (1536U)
 #endif
 
 #ifndef ENET1_TX_BUFF_COUNT
@@ -113,15 +118,15 @@ typedef struct _hpm_enet
 #endif
 
 #ifndef ENET1_RX_BUFF_COUNT
-#define ENET1_RX_BUFF_COUNT  (30U)
+#define ENET1_RX_BUFF_COUNT  (20U)
 #endif
 
 #ifndef ENET1_RX_BUFF_SIZE
-#define ENET1_RX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
+#define ENET1_RX_BUFF_SIZE   (1536U)
 #endif
 
 #ifndef ENET1_TX_BUFF_SIZE
-#define ENET1_TX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
+#define ENET1_TX_BUFF_SIZE   (1536U)
 #endif
 
 #ifndef MAC0_ADDR0

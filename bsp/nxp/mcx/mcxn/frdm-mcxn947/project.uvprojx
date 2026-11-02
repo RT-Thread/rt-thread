@@ -337,7 +337,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>CPU_MCXN947VDF_cm33_core0, DEBUG, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>.;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\nboot;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-series-latest\MCXN947;board\MCUX_Config\board;applications;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\runbootloader;..\Libraries\drivers\config;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXN947\drivers;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\flash;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\finsh;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>.;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\nboot;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-series-latest\MCXN947;board\MCUX_Config\board;applications;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\mem_interface;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\libraries\drivers;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\runbootloader;..\libraries\drivers\config;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXN947\drivers;packages\nxp-mcx-series-latest\MCXN947\drivers\romapi\flash;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\finsh;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -738,14 +738,14 @@
             <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_pin.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>

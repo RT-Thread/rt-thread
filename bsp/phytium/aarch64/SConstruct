@@ -77,10 +77,10 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
 if not IS_EXPORTED: # if project is not exported, libraries and board need to manually add
     # include libraries
-    objs.extend(SConscript(os.path.join(BSP_ROOT,'libraries','SConscript')))
+    objs.extend(SConscript(os.path.join(BSP_ROOT,'libraries','SConscript'), variant_dir='build/libraries', duplicate=0))
 
     # include board
-    objs.extend(SConscript(os.path.join(BSP_ROOT,'board','SConscript')))
+    objs.extend(SConscript(os.path.join(BSP_ROOT,'board','SConscript'), variant_dir='build/board', duplicate=0))
 
 # make a building
 # Preprocess linker script

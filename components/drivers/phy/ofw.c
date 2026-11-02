@@ -13,6 +13,7 @@
 #define DBG_TAG "rtdm.phy"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
+#include "mdio.h"
 #include "ofw.h"
 
 static const char* const rt_phy_modes[] =
@@ -108,22 +109,45 @@ rt_err_t rt_ofw_get_mac_addr(struct rt_ofw_node *np, rt_uint8_t *addr)
 
 rt_err_t rt_ofw_get_phyid(struct rt_ofw_node *np,rt_uint32_t *id)
 {
+    struct rt_ofw_prop *prop;
     const char *phy_id;
     unsigned int upper, lower;
-    int ret;
 
-    ret = rt_ofw_prop_read_string(np,"compatible",&phy_id);
-    if (ret)
-        return ret;
+    rt_ofw_foreach_prop_string(np, "compatible", prop, phy_id)
+    {
+        if (rt_sscanf(phy_id, "ethernet-phy-id%4x.%4x", &upper, &lower) == 2)
+        {
+            *id = ((upper & 0xffff) << 16) | (lower & 0xffff);
+            return RT_EOK;
+        }
+    }
 
-    ret = rt_sscanf(phy_id,"ethernet-phy-id%4x.%4x",&upper, &lower);
-    if(ret != 2)
-        return -RT_ERROR;
-
-    *id = ((upper & 0xffff) << 16) | (lower & 0xffff);
-    return RT_EOK;
-
+    return -RT_ERROR;
 }
+
+static int ofw_read_phy_id(struct mii_bus *bus, int addr, rt_uint32_t *id)
+{
+    int reg;
+
+    reg = bus->read(bus, addr, RT_MDIO_DEVAD_NONE, RT_MII_PHYSID1);
+    if (reg < 0)
+    {
+        return -RT_EIO;
+    }
+
+    *id = (reg & 0xffff) << 16;
+
+    reg = bus->read(bus, addr, RT_MDIO_DEVAD_NONE, RT_MII_PHYSID2);
+    if (reg < 0)
+    {
+        return -RT_EIO;
+    }
+
+    *id |= (reg & 0xffff);
+
+    return RT_EOK;
+}
+
 struct rt_phy_device *rt_ofw_create_phy(struct mii_bus *bus,struct rt_ofw_node *np,int phyaddr)
 {
     struct rt_phy_device *dev = RT_NULL;
@@ -138,19 +162,57 @@ struct rt_phy_device *rt_ofw_create_phy(struct mii_bus *bus,struct rt_ofw_node *
         return RT_NULL;
     }
 
-    ret = rt_ofw_get_phyid(np, &id);
+    ret = rt_ofw_get_phyid(phy_node, &id);
     if (ret)
     {
-        LOG_D("Failed to read eth PHY id, err: %d\n", ret);
-        return RT_NULL;
+        rt_uint32_t reg = 0;
+        int addr;
+
+        if (rt_ofw_prop_read_u32(phy_node, "reg", &reg))
+        {
+            rt_ofw_node_put(phy_node);
+            return RT_NULL;
+        }
+
+        addr = (phyaddr >= 0) ? phyaddr : (int)reg;
+        id = 0xffffffff;
+
+        if (!ofw_read_phy_id(bus, addr, &id) &&
+            (id & 0x1fffffff) != 0x1fffffff)
+        {
+            LOG_D("PHY id from MDIO: 0x%08x @ addr %d", id, addr);
+        }
+        else
+        {
+            id = 0xffffffff;
+            LOG_D("MDIO PHY id read failed @ addr %d, use generic PHY", addr);
+        }
+
+        dev = rt_phy_device_create(bus, addr, id, RT_FALSE);
+        if (dev)
+        {
+            dev->node = phy_node;
+        }
+        else
+        {
+            rt_ofw_node_put(phy_node);
+        }
+
+        return dev;
     }
 
-    LOG_D("Found a PHY id: 0x%x\n", id);
+    LOG_D("Found a PHY id: 0x%x", id);
 
     dev = rt_phy_device_create(bus, phyaddr, id, RT_FALSE);
 
-    if(dev)
+    if (dev)
+    {
         dev->node = phy_node;
+    }
+    else
+    {
+        rt_ofw_node_put(phy_node);
+    }
 
     return dev;
 }

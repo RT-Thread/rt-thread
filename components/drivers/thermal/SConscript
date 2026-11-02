@@ -16,6 +16,9 @@ if GetDepend(['RT_THERMAL_SCMI']):
 if GetDepend(['RT_THERMAL_COOL_DVFS']):
     src += ['thermal-cool-dvfs.c']
 
+if GetDepend(['RT_THERMAL_COOL_GPIO_FAN']):
+    src += ['thermal-cool-gpio-fan.c']
+
 if GetDepend(['RT_THERMAL_COOL_PWM_FAN']):
     src += ['thermal-cool-pwm-fan.c']
 

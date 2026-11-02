@@ -39,5 +39,6 @@ os.system("""
 	-kernel rtthread.bin \
 	{} \
 	{} \
+	-nic user,model=cadence_gem \
 	-serial mon:stdio
 """.format(RTT_QEMU_ROOT, mem, q_graphic, q_debug))

@@ -26,8 +26,8 @@
 static rt_bool_t clk_ignore_unused = RT_FALSE;
 
 static struct rt_mutex _clk_lock;
-static rt_list_t _clk_node_nodes = RT_LIST_OBJECT_INIT(_clk_node_nodes);
-static rt_list_t _clk_notifier_nodes = RT_LIST_OBJECT_INIT(_clk_notifier_nodes);
+static rt_list_t       _clk_node_nodes     = RT_LIST_OBJECT_INIT(_clk_node_nodes);
+static rt_list_t       _clk_notifier_nodes = RT_LIST_OBJECT_INIT(_clk_notifier_nodes);
 
 static int clk_init(void)
 {
@@ -80,7 +80,7 @@ static struct rt_clk *clk_alloc(struct rt_clk_cell *cell, const char *dev_id, co
     if (!clk)
     {
         LOG_E("%s not memory to create CLK for dev_id = %s con_id = %s",
-                cell->name, dev_id, con_id);
+              cell->name, dev_id, con_id);
         return RT_NULL;
     }
 
@@ -154,7 +154,7 @@ static void clk_cell_bind(struct rt_clk_cell *cell, struct rt_clk *clk)
  */
 rt_err_t rt_clk_register(struct rt_clk_node *clk_np)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t            err = RT_EOK;
     struct rt_clk_cell *cell;
 
     if (!clk_np || !clk_np->cells_nr || !clk_np->cells)
@@ -191,9 +191,9 @@ rt_err_t rt_clk_register(struct rt_clk_node *clk_np)
 
         cell->clk_np = clk_np;
 
-        cell->rate = 0;
+        cell->rate          = 0;
         cell->prepare_count = 0;
-        cell->enable_count = 0;
+        cell->enable_count  = 0;
     }
 
     clk_lock();
@@ -203,12 +203,12 @@ rt_err_t rt_clk_register(struct rt_clk_node *clk_np)
 #ifdef RT_USING_OFW
     if (clk_np->dev && clk_np->dev->ofw_node)
     {
-        rt_bool_t set_ofw_data = RT_FALSE;
-        struct rt_ofw_node *np = clk_np->dev->ofw_node;
+        rt_bool_t           set_ofw_data = RT_FALSE;
+        struct rt_ofw_node *np           = clk_np->dev->ofw_node;
 
         if (!rt_ofw_data(np))
         {
-            set_ofw_data = RT_TRUE;
+            set_ofw_data    = RT_TRUE;
             rt_ofw_data(np) = &clk_np->parent;
         }
 
@@ -354,9 +354,9 @@ rt_err_t rt_clk_notifier_unregister(struct rt_clk *clk, struct rt_clk_notifier *
  * @return  rt_err_t        RT_EOK on notify clock sucessfully, and other value is failed.
  */
 static rt_err_t clk_notify(struct rt_clk_node *clk_np, rt_ubase_t msg,
-        rt_ubase_t old_rate, rt_ubase_t new_rate)
+                           rt_ubase_t old_rate, rt_ubase_t new_rate)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t                err = RT_EOK;
     struct rt_clk_notifier *notifier;
 
     rt_list_for_each_entry(notifier, &_clk_notifier_nodes, list)
@@ -395,8 +395,8 @@ static struct rt_clk *clk_cell_get_clk(struct rt_clk_cell *cell);
  */
 static rt_err_t clk_prepare(struct rt_clk *clk)
 {
-    rt_err_t err;
-    struct rt_clk *parent;
+    rt_err_t            err;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
@@ -472,7 +472,7 @@ rt_err_t rt_clk_prepare(struct rt_clk *clk)
  */
 static void clk_unprepare(struct rt_clk *clk)
 {
-    struct rt_clk *parent;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
@@ -523,8 +523,8 @@ void rt_clk_unprepare(struct rt_clk *clk)
  */
 static rt_err_t clk_enable(struct rt_clk *clk)
 {
-    rt_err_t err;
-    struct rt_clk *parent;
+    rt_err_t            err;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
@@ -598,7 +598,7 @@ rt_err_t rt_clk_enable(struct rt_clk *clk)
  */
 static void clk_disable(struct rt_clk *clk)
 {
-    struct rt_clk *parent;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
@@ -723,9 +723,9 @@ rt_err_t rt_clk_array_prepare(struct rt_clk_array *clk_arr)
             if ((err = rt_clk_prepare(clk_arr->clks[i])))
             {
                 LOG_E("CLK Array[%d] %s failed error = %s", i,
-                        "prepare", rt_strerror(err));
+                      "prepare", rt_strerror(err));
 
-                while (i --> 0)
+                while (i-- > 0)
                 {
                     rt_clk_unprepare(clk_arr->clks[i]);
                 }
@@ -777,9 +777,9 @@ rt_err_t rt_clk_array_enable(struct rt_clk_array *clk_arr)
             if ((err = rt_clk_enable(clk_arr->clks[i])))
             {
                 LOG_E("CLK Array[%d] %s failed error = %s", i,
-                        "enable", rt_strerror(err));
+                      "enable", rt_strerror(err));
 
-                while (i --> 0)
+                while (i-- > 0)
                 {
                     rt_clk_disable(clk_arr->clks[i]);
                 }
@@ -868,8 +868,8 @@ void rt_clk_array_disable_unprepare(struct rt_clk_array *clk_arr)
  */
 static rt_err_t clk_set_rate_range(struct rt_clk *clk, rt_ubase_t min, rt_ubase_t max)
 {
-    rt_err_t err;
-    rt_ubase_t rate, old_min, old_max;
+    rt_err_t            err;
+    rt_ubase_t          rate, old_min, old_max;
     struct rt_clk_cell *cell;
 
     if (min > max)
@@ -986,11 +986,11 @@ rt_err_t rt_clk_set_max_rate(struct rt_clk *clk, rt_ubase_t rate)
  */
 static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
-    rt_err_t err;
-    rt_ubase_t old_rate, prate;
-    rt_bool_t was_enabled = RT_FALSE;
-    rt_bool_t was_disabled = RT_FALSE;
-    struct rt_clk *parent = RT_NULL;
+    rt_err_t            err;
+    rt_ubase_t          old_rate, prate, current_rate, rounded_rate;
+    rt_bool_t           was_enabled  = RT_FALSE;
+    rt_bool_t           was_disabled = RT_FALSE;
+    struct rt_clk      *parent       = RT_NULL;
     struct rt_clk_node *clk_np;
     struct rt_clk_cell *cell;
 
@@ -1015,10 +1015,10 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
     parent = clk_get_parent(clk);
 
-    if (cell->parents_nr > 1)
+    if (cell->parents_nr > 1 && !(cell->flags & RT_CLK_F_SET_RATE_NO_REPARENT))
     {
-        rt_uint8_t best_idx = RT_UINT8_MAX;
-        rt_ubase_t best_rounded = 0, best_diff = ~0UL;
+        rt_uint8_t          best_idx     = RT_UINT8_MAX;
+        rt_ubase_t          best_rounded = 0, best_diff    = ~0UL;
         struct rt_clk_cell *parent_cell, *best_parent_cell = RT_NULL;
 
         for (rt_uint8_t idx = 0; idx < cell->parents_nr; ++idx)
@@ -1032,10 +1032,10 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
             if (!parent_cell->clk && !(parent_cell->clk = clk_cell_get_clk(parent_cell)))
             {
-                return RT_NULL;
+                return -RT_ENOMEM;
             }
 
-            prate = clk_get_rate(parent_cell->clk);
+            prate   = clk_get_rate(parent_cell->clk);
             rounded = clk_round_rate(parent_cell->clk, rate);
             rounded = (rounded > 0) ? rounded : rate;
 
@@ -1043,14 +1043,14 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
             if (diff < best_diff)
             {
-                best_idx = idx;
-                best_diff = diff;
-                best_rounded = rounded;
+                best_idx         = idx;
+                best_diff        = diff;
+                best_rounded     = rounded;
                 best_parent_cell = parent_cell;
             }
         }
 
-        if (best_idx != RT_UINT8_MAX && parent->cell != best_parent_cell)
+        if (best_idx != RT_UINT8_MAX && (!parent || parent->cell != best_parent_cell))
         {
             parent = best_parent_cell->clk;
 
@@ -1079,6 +1079,21 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
     {
         prate = 0;
     }
+
+    /*
+     * Re-read the rate after parent selection / parent set_rate: it may
+     * already match the rounded target. Skip gate toggles, notify and
+     * set_rate when unchanged (old_rate above is kept for notify).
+     */
+    current_rate = clk_get_rate(clk);
+    rounded_rate = clk_round_rate(clk, rate);
+
+    if (rounded_rate == current_rate)
+    {
+        return RT_EOK;
+    }
+
+    rate = rounded_rate;
 
     if ((cell->flags & RT_CLK_F_SET_RATE_GATE) && cell->enable_count > 0)
     {
@@ -1153,13 +1168,13 @@ rt_err_t rt_clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
  */
 static rt_ubase_t clk_get_rate(struct rt_clk *clk)
 {
-    rt_ubase_t prate;
-    struct rt_clk *parent;
+    rt_ubase_t          prate;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
-    cell = clk->cell;
+    cell   = clk->cell;
     parent = clk_get_parent(clk);
-    prate = parent ? clk_get_rate(parent) : 0;
+    prate  = parent ? clk_get_rate(parent) : 0;
 
     if (cell->ops->recalc_rate)
     {
@@ -1208,14 +1223,14 @@ rt_ubase_t rt_clk_get_rate(struct rt_clk *clk)
  */
 static rt_ubase_t clk_round_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
-    rt_ubase_t prate, rounded = rate;
-    struct rt_clk *parent;
+    rt_ubase_t          prate, rounded = rate;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
 
     parent = clk_get_parent(clk);
-    prate = parent ? clk_get_rate(parent) : 0;
+    prate  = parent ? clk_get_rate(parent) : 0;
 
     /* If driver provides round_rate() callback, use it */
     if (cell->ops->round_rate)
@@ -1271,9 +1286,9 @@ rt_base_t rt_clk_round_rate(struct rt_clk *clk, rt_ubase_t rate)
  */
 static rt_err_t clk_set_parent(struct rt_clk *clk, struct rt_clk *parent)
 {
-    rt_err_t err;
-    rt_uint8_t idx = RT_UINT8_MAX;
-    rt_bool_t was_enabled = RT_FALSE;
+    rt_err_t            err;
+    rt_uint8_t          idx         = RT_UINT8_MAX;
+    rt_bool_t           was_enabled = RT_FALSE;
     struct rt_clk_cell *cell;
 
     cell = clk->cell;
@@ -1404,8 +1419,8 @@ rt_err_t rt_clk_set_parent(struct rt_clk *clk, struct rt_clk *clk_parent)
  */
 static struct rt_clk *clk_get_parent(struct rt_clk *clk)
 {
-    rt_uint8_t idx;
-    struct rt_clk *parent;
+    rt_uint8_t          idx;
+    struct rt_clk      *parent;
     struct rt_clk_cell *cell, *parent_cell;
 
     cell = clk->cell;
@@ -1453,7 +1468,7 @@ static struct rt_clk *clk_get_parent(struct rt_clk *clk)
         return RT_NULL;
     }
 
-    parent = parent_cell->clk;
+    parent       = parent_cell->clk;
     cell->parent = parent;
 
     return parent;
@@ -1714,7 +1729,7 @@ struct rt_clk_cell *rt_clk_cell_get_parent(const struct rt_clk_cell *cell)
  */
 struct rt_clk_cell *rt_clk_cell_get_parent_by_index(const struct rt_clk_cell *cell, rt_uint8_t idx)
 {
-    const char *pname;
+    const char         *pname;
     struct rt_clk_cell *parent_cell;
     struct rt_clk_node *clk_np, *clk_np_raw;
 
@@ -1771,14 +1786,15 @@ _retry:
     /* Find on the global list */
     if (clk_np_raw)
     {
-        do {
+        do
+        {
             clk_np = rt_list_entry(clk_np->parent.list.next, rt_typeof(*clk_np), parent.list);
         } while (&clk_np->parent.list != &_clk_node_nodes && clk_np == clk_np_raw);
     }
     else
     {
         clk_np_raw = clk_np;
-        clk_np = rt_list_entry(_clk_node_nodes.next, rt_typeof(*clk_np), parent.list);
+        clk_np     = rt_list_entry(_clk_node_nodes.next, rt_typeof(*clk_np), parent.list);
     }
 
     if (&clk_np->parent.list != &_clk_node_nodes)
@@ -1821,7 +1837,7 @@ rt_uint8_t rt_clk_cell_get_parent_index(struct rt_clk_cell *cell)
  */
 rt_err_t rt_clk_cell_set_parent(struct rt_clk_cell *cell, struct rt_clk_cell *parent)
 {
-    rt_err_t err;
+    rt_err_t       err;
     struct rt_clk *clk, *parent_clk = RT_NULL;
 
     RT_ASSERT(cell != RT_NULL);
@@ -1976,9 +1992,9 @@ void rt_clk_put(struct rt_clk *clk)
 
 #ifdef RT_USING_OFW
 static struct rt_clk_array *ofw_get_clk_array(struct rt_ofw_node *np,
-        const char *basename, const char *propname);
+                                              const char *basename, const char *propname);
 static struct rt_clk *ofw_get_clk(struct rt_ofw_node *np,
-        const char *basename, int index, const char *name);
+                                  const char *basename, int index, const char *name);
 
 /**
  * @brief   Retrieve a clock cell from a clock node using OFW (device tree) arguments.
@@ -2032,10 +2048,10 @@ static struct rt_clk_cell *ofw_get_cell(struct rt_clk_node *clk_np, struct rt_of
  * @return  struct rt_clk_array*    point to the newly created clock array, or an error pointer
  */
 static struct rt_clk_array *ofw_get_clk_array(struct rt_ofw_node *np,
-        const char *basename, const char *propname)
+                                              const char *basename, const char *propname)
 {
-    int count;
-    rt_bool_t has_name;
+    int                  count;
+    rt_bool_t            has_name;
     struct rt_clk_array *clk_arr;
 
     if ((count = rt_ofw_count_phandle_cells(np, basename, "#clock-cells")) <= 0)
@@ -2056,7 +2072,7 @@ static struct rt_clk_array *ofw_get_clk_array(struct rt_ofw_node *np,
     }
 
     clk_arr->count = count;
-    has_name = rt_ofw_prop_read_bool(np, propname);
+    has_name       = rt_ofw_prop_read_bool(np, propname);
 
     clk_lock();
     for (int i = 0; i < count; ++i)
@@ -2114,13 +2130,13 @@ struct rt_clk_array *rt_ofw_get_clk_array(struct rt_ofw_node *np)
  * @return  struct rt_clk*  point to the newly created clock object, or an error pointer
  */
 static struct rt_clk *ofw_get_clk(struct rt_ofw_node *np,
-        const char *basename, int index, const char *name)
+                                  const char *basename, int index, const char *name)
 {
-    struct rt_object *obj;
-    struct rt_clk *clk;
-    struct rt_clk_cell *cell;
-    struct rt_clk_node *clk_np = RT_NULL;
-    struct rt_ofw_node *clk_ofw_np;
+    struct rt_object       *obj;
+    struct rt_clk          *clk;
+    struct rt_clk_cell     *cell;
+    struct rt_clk_node     *clk_np = RT_NULL;
+    struct rt_ofw_node     *clk_ofw_np;
     struct rt_ofw_cell_args clk_args;
 
     if (rt_ofw_parse_phandle_cells(np, basename, "#clock-cells", index, &clk_args))
@@ -2142,7 +2158,7 @@ static struct rt_clk *ofw_get_clk(struct rt_ofw_node *np,
     }
 
     if (rt_ofw_data(clk_ofw_np) && (obj = rt_ofw_parse_object(clk_ofw_np,
-                RT_CLK_NODE_OBJ_NAME, "#clock-cells")))
+                                                              RT_CLK_NODE_OBJ_NAME, "#clock-cells")))
     {
         clk_np = rt_container_of(obj, struct rt_clk_node, parent);
     }
@@ -2161,8 +2177,8 @@ static struct rt_clk *ofw_get_clk(struct rt_ofw_node *np,
 
     if (rt_ofw_prop_read_bool(clk_ofw_np, "clock-indices"))
     {
-        const fdt32_t *val_raw;
-        rt_uint32_t val, indice = 0;
+        const fdt32_t      *val_raw;
+        rt_uint32_t         val, indice = 0;
         struct rt_ofw_prop *prop;
 
         rt_ofw_foreach_prop_u32(clk_ofw_np, "clock-indices", prop, val_raw, val)
@@ -2185,7 +2201,7 @@ _goon:
     if (!(cell = ofw_get_cell(clk_np, &clk_args)))
     {
         LOG_D("%s: CLK index = %d (%s) is not implemented",
-                rt_ofw_node_full_name(np), index, name);
+              rt_ofw_node_full_name(np), index, name);
         return RT_NULL;
     }
 
@@ -2270,8 +2286,8 @@ rt_ssize_t rt_ofw_count_of_clk(struct rt_ofw_node *clk_ofw_np)
         }
         else
         {
-            const fdt32_t *cell;
-            rt_uint32_t count = 0;
+            const fdt32_t      *cell;
+            rt_uint32_t         count = 0;
             struct rt_ofw_prop *prop;
 
             prop = rt_ofw_get_prop(clk_ofw_np, "clock-indices", RT_NULL);
@@ -2281,8 +2297,8 @@ rt_ssize_t rt_ofw_count_of_clk(struct rt_ofw_node *clk_ofw_np)
                 rt_uint32_t max_idx = 0, idx;
 
                 for (cell = rt_ofw_prop_next_u32(prop, RT_NULL, &idx);
-                    cell;
-                    cell = rt_ofw_prop_next_u32(prop, cell, &idx))
+                     cell;
+                     cell = rt_ofw_prop_next_u32(prop, cell, &idx))
                 {
                     if (idx > max_idx)
                     {
@@ -2340,8 +2356,8 @@ rt_ssize_t rt_ofw_count_of_clk(struct rt_ofw_node *clk_ofw_np)
  */
 const char *rt_ofw_clk_get_parent_name(struct rt_ofw_node *np, int index)
 {
-    const char *pname = RT_NULL;
-    struct rt_ofw_node *clk_ofw_np;
+    const char             *pname = RT_NULL;
+    struct rt_ofw_node     *clk_ofw_np;
     struct rt_ofw_cell_args clk_args;
 
     if (rt_ofw_parse_phandle_cells(np, "clocks", "#clock-cells", index, &clk_args))
@@ -2355,8 +2371,8 @@ const char *rt_ofw_clk_get_parent_name(struct rt_ofw_node *np, int index)
 
     if (rt_ofw_prop_read_bool(clk_ofw_np, "clock-indices"))
     {
-        const fdt32_t *val_raw;
-        rt_uint32_t val, indice = 0;
+        const fdt32_t      *val_raw;
+        rt_uint32_t         val, indice = 0;
         struct rt_ofw_prop *prop;
 
         rt_ofw_foreach_prop_u32(clk_ofw_np, "clock-indices", prop, val_raw, val)
@@ -2432,7 +2448,7 @@ _end:
  */
 rt_err_t rt_ofw_clk_set_defaults(struct rt_ofw_node *np)
 {
-    struct rt_clk *clk;
+    struct rt_clk       *clk;
     struct rt_clk_array *clk_arr;
 
     if (!np)
@@ -2449,7 +2465,7 @@ rt_err_t rt_ofw_clk_set_defaults(struct rt_ofw_node *np)
 
     if (clk_arr)
     {
-        rt_uint32_t rate;
+        rt_uint32_t          rate;
         struct rt_clk_array *clk_parent_arr;
 
         clk_parent_arr = ofw_get_clk_array(np, "assigned-clock-parents", RT_NULL);
@@ -2484,25 +2500,25 @@ rt_err_t rt_ofw_clk_set_defaults(struct rt_ofw_node *np)
 #endif /* RT_USING_OFW */
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
-static int list_clk(int argc, char**argv)
+static int list_clk(int argc, char **argv)
 {
     struct rt_clk_node *clk_np;
     struct rt_clk_cell *cell, *parent;
 
     rt_kprintf("%-*.s %-*.s %-*.s %-*.s %-*.s %-*.s Parent\n",
-            32, "Name",
-            12, "Enable Count",
-            13, "Prepare Count",
-            11, "Rate",
-            32, "Device ID",
-            32, "Connection ID");
+               32, "Name",
+               12, "Enable Count",
+               13, "Prepare Count",
+               11, "Rate",
+               32, "Device ID",
+               32, "Connection ID");
 
     clk_lock();
     rt_list_for_each_entry(clk_np, &_clk_node_nodes, parent.list)
     {
         for (int i = 0; i < clk_np->cells_nr; ++i)
         {
-            rt_ubase_t rate;
+            rt_ubase_t  rate;
             const char *dev_id = "deviceless", *con_id = "no_connection_id";
 
             cell = clk_np->cells[i];
@@ -2512,7 +2528,7 @@ static int list_clk(int argc, char**argv)
                 continue;
             }
 
-            rate = cell->rate ? : rt_clk_cell_get_rate(cell);
+            rate = cell->rate ?: rt_clk_cell_get_rate(cell);
 
             if (cell->clk)
             {
@@ -2529,13 +2545,13 @@ static int list_clk(int argc, char**argv)
             parent = rt_clk_cell_get_parent(cell);
 
             rt_kprintf("%-*.s %-12d %-13d %-11lu %-*.s %-*.s %s\n",
-                    32, cell->name,
-                    cell->enable_count,
-                    cell->prepare_count,
-                    rate,
-                    32, dev_id,
-                    32, con_id,
-                    parent ? parent->name : RT_NULL);
+                       32, cell->name,
+                       cell->enable_count,
+                       cell->prepare_count,
+                       rate,
+                       32, dev_id,
+                       32, con_id,
+                       parent ? parent->name : RT_NULL);
         }
     }
     clk_unlock();

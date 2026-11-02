@@ -243,6 +243,7 @@
 #define PCI_VENDOR_ID_FUNGIBLE              0x1dad
 #define PCI_VENDOR_ID_HXT                   0x1dbf
 #define PCI_VENDOR_ID_TEKRAM                0x1de1
+#define PCI_VENDOR_ID_RPI                   0x1de4
 #define PCI_VENDOR_ID_TEHUTI                0x1fc9
 #define PCI_VENDOR_ID_SUNIX                 0x1fd4
 #define PCI_VENDOR_ID_HINT                  0x3388

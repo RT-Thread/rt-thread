@@ -20,6 +20,7 @@
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/core/dm.h>
+#include <drivers/misc.h>
 
 #include "../ofw/ofw_internal.h"
 
@@ -42,6 +43,20 @@ static const struct rt_ofw_node_id platform_ofw_ids[] =
     { /* sentinel */ }
 };
 
+static void ofw_address_to_string(char *buffer, rt_size_t size, rt_uint64_t address)
+{
+    rt_uint32_t address_hi = rt_upper_32_bits(address);
+
+    if (address_hi)
+    {
+        rt_snprintf(buffer, size, "%x%08x", address_hi, rt_lower_32_bits(address));
+    }
+    else
+    {
+        rt_snprintf(buffer, size, "%x", rt_lower_32_bits(address));
+    }
+}
+
 static void ofw_device_rename(struct rt_device *dev)
 {
     rt_uint32_t mask;
@@ -60,18 +75,21 @@ static void ofw_device_rename(struct rt_device *dev)
     {
         if (!rt_ofw_get_address(np, 0, &addr, RT_NULL))
         {
+            char addr_str[sizeof(addr) * 2 + 1];
             const char *node_name = rt_fdt_node_name(np->full_name);
             rt_size_t tag_len = strchrnul(node_name, '@') - node_name;
 
+            ofw_address_to_string(addr_str, sizeof(addr_str), addr);
+
             if (!rt_ofw_prop_read_u32(np, "mask", &mask))
             {
-                rt_dm_dev_set_name(dev, dev_name ? "%lx.%x.%.*s:%s" : "%lx.%x.%.*s",
-                    addr, __rt_ffs(mask) - 1, tag_len, node_name, dev_name);
+                rt_dm_dev_set_name(dev, dev_name ? "%s.%x.%.*s:%s" : "%s.%x.%.*s",
+                    addr_str, __rt_ffs(mask) - 1, tag_len, node_name, dev_name);
             }
             else
             {
-                rt_dm_dev_set_name(dev, dev_name ? "%lx.%.*s:%s" : "%lx.%.*s",
-                    addr, tag_len, node_name, dev_name);
+                rt_dm_dev_set_name(dev, dev_name ? "%s.%.*s:%s" : "%s.%.*s",
+                    addr_str, tag_len, node_name, dev_name);
             }
 
             return;
@@ -227,14 +245,22 @@ rt_err_t rt_platform_ofw_request(struct rt_ofw_node *np)
             /*
              * Device was already created (np->dev != NULL).
              * - If it's already probed (dev->drv != NULL), nothing to do.
-             * - If not yet probed (dev->drv == NULL), it belongs to its native bus
-             *   (e.g. I2C/SPI) which will handle probing; platform bus should not reload
-             *   or transfer it, to avoid cross-bus conflicts.
+             * - Retry only devices created by the OFW platform scanner. Other
+             *   devices belong to their native bus (e.g. I2C/SPI) and must not
+             *   be transferred to or probed through the platform bus.
              */
-            err = RT_EOK;
+            if (!dev->drv && rt_ofw_node_test_flag(np, RT_OFW_F_PLATFORM))
+            {
+                err = rt_bus_probe_device(dev);
+            }
+            else
+            {
+                err = RT_EOK;
+            }
         }
         else
         {
+            struct rt_ofw_node_id *id;
             struct rt_platform_device *pdev = alloc_ofw_platform_device(np);
 
             if (pdev)
@@ -244,6 +270,16 @@ rt_err_t rt_platform_ofw_request(struct rt_ofw_node *np)
                 LOG_D("%s register to bus", np->full_name);
 
                 err = rt_platform_device_register(pdev);
+
+                if (!err && np->child && (id = rt_ofw_node_match(np, platform_ofw_ids)))
+                {
+                    rt_err_t sub_err;
+
+                    if ((sub_err = platform_ofw_device_probe_once(np)))
+                    {
+                        LOG_W("%s child platform device probe failed", np->full_name);
+                    }
+                }
             }
             else
             {

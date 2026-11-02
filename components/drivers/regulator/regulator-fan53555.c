@@ -550,7 +550,7 @@ static rt_err_t fan53555_regulator_probe(struct rt_i2c_client *client)
         {
             int slew_idx = freg->slew_rate;
 
-            if (slew_idx > RT_ARRAY_SIZE(slew_rates))
+            if (slew_idx >= RT_ARRAY_SIZE(slew_rates))
             {
                 LOG_E("Invalid slew rate");
 

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2022-2024, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2022-2026, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-20     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
  */
 
 #include <rtthread.h>
@@ -24,15 +25,17 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Define for TCA9539 */
-#define BSP_TCA9539_I2C_BUS_NAME        "i2c1"
-#define BSP_TCA9539_DEV_ADDR            (0x74U)
+#define BSP_TCA9539_I2C_BUS_NAME "i2c1"
+#define BSP_TCA9539_DEV_ADDR     (0x74U)
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
-    #define TCA9539_RST_PIN             (45)    /* PC13 */
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
+#define TCA9539_RST_PIN (45)    /* PC13 */
 #elif defined(HC32F448)
-    #define TCA9539_RST_PIN             (31)    /* PB15 */
+#define TCA9539_RST_PIN (31)    /* PB15 */
 #elif defined(HC32F472)
-    #define TCA9539_RST_PIN             (44)    /* PC12 */
+#define TCA9539_RST_PIN (44)    /* PC12 */
+#elif defined(HC32F467)
+#define TCA9539_RST_PIN (141)   /* PI13 */
 #endif
 
 /*******************************************************************************
@@ -78,10 +81,10 @@ static rt_err_t BSP_TCA9539_I2C_Write(struct rt_i2c_bus_device *bus, rt_uint8_t 
             return -RT_ERROR;
         }
     }
-    msgs.addr   = BSP_TCA9539_DEV_ADDR;
-    msgs.flags  = RT_I2C_WR;
-    msgs.buf    = buf;
-    msgs.len    = len + 1;
+    msgs.addr = BSP_TCA9539_DEV_ADDR;
+    msgs.flags = RT_I2C_WR;
+    msgs.buf = buf;
+    msgs.len = len + 1;
     if (rt_i2c_transfer(bus, &msgs, 1) == 1)
     {
         return RT_EOK;
@@ -110,10 +113,10 @@ static rt_err_t BSP_TCA9539_I2C_Read(struct rt_i2c_bus_device *bus, rt_uint8_t r
     {
         return -RT_ERROR;
     }
-    msgs.addr   = BSP_TCA9539_DEV_ADDR;
-    msgs.flags  = RT_I2C_RD;
-    msgs.buf    = data;
-    msgs.len    = len;
+    msgs.addr = BSP_TCA9539_DEV_ADDR;
+    msgs.flags = RT_I2C_RD;
+    msgs.buf = data;
+    msgs.len = len;
     if (rt_i2c_transfer(bus, &msgs, 1) == 1)
     {
         return RT_EOK;
@@ -137,6 +140,10 @@ static void TCA9539_Reset(void)
     rt_pin_write(TCA9539_RST_PIN, PIN_LOW);
     rt_thread_mdelay(3U);
     rt_pin_write(TCA9539_RST_PIN, PIN_HIGH);
+#if defined(HC32F467)
+    rt_thread_mdelay(3U);
+    rt_pin_write(TCA9539_RST_PIN, PIN_LOW); // reused MD pin, logic low level to reset
+#endif
 }
 
 /**

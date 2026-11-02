@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice SOC_SAML10_SEL
     prompt "select chip type"
     default SOC_SAML10E16
 

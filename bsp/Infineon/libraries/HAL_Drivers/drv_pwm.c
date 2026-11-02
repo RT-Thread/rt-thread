@@ -29,8 +29,7 @@ struct ifx_pwm
     rt_uint8_t gpio;
 };
 
-static struct ifx_pwm ifx_pwm_obj[] =
-{
+static struct ifx_pwm ifx_pwm_obj[] = {
 #ifdef BSP_USING_PWM0_CH0_PORT0
     PWM0_CH0_PORT0_CONFIG,
 #endif
@@ -75,7 +74,7 @@ static struct ifx_pwm ifx_pwm_obj[] =
     PWM0_CH7_PORT12_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_CH7_PORT13
+#ifdef BSP_USING_PWM0_CH3_PORT13
     PWM0_CH3_PORT13_CONFIG,
 #endif
 };
@@ -89,12 +88,12 @@ static rt_err_t drv_pwm_enable(cyhal_pwm_t *htim, struct rt_pwm_configuration *c
     {
         if (!enable)
         {
-                        htim->tcpwm.resource.channel_num = channel;
+            htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_stop(htim);
         }
         else
         {
-                        htim->tcpwm.resource.channel_num = channel;
+            htim->tcpwm.resource.channel_num = channel;
             cyhal_pwm_start(htim);
         }
     }
@@ -163,7 +162,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     }
 }
 
-static struct rt_pwm_ops drv_ops = {drv_pwm_control};
+static struct rt_pwm_ops drv_ops = { drv_pwm_control };
 
 static rt_err_t ifx_hw_pwm_init(struct ifx_pwm *device)
 {
@@ -218,7 +217,7 @@ __exit:
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
 
-#define PWM_DEV_NAME "pwm0"
+#define PWM_DEV_NAME    "pwm0"
 #define PWM_DEV_CHANNEL 4
 
 struct rt_device_pwm *pwm_dev;

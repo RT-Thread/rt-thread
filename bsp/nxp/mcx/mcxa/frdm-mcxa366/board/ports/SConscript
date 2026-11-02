@@ -1,9 +1,12 @@
 from building import *
+import os
 
 cwd = GetCurrentDir()
-# add the general drivers.
-src = Glob('*.c')
+src = []
 CPPPATH = [cwd]
+
+if GetDepend(['BSP_USING_SLCD']):
+    src += ['drv_slcd.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

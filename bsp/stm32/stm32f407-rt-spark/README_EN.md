@@ -113,6 +113,16 @@ This BSP only enables GPIO and Serial1 by default. If you want to use more advan
 
 For a more detailed description of this chapter, please refer to [STM32 Series BSP Peripheral Driver Tutorial](... /docs/STM32 Series BSP Peripheral Driver Tutorial.md).
 
+### Enabling the Device Model (DM)
+
+This BSP uses `RT_USING_DM` to select either the device-model drivers or the legacy BSP drivers. When DM is enabled, GPIO and EXTI are described by the device tree and the legacy STM32 GPIO driver is excluded from the build.
+
+1. Run `scons --menuconfig` in this BSP directory.
+2. Open `Device Drivers` and enable `Enable device driver model with device tree`.
+3. Save the configuration and run `scons -jN` for a GCC build.
+
+The BSP automatically selects OFW, built-in FDT, PIC, NVIC, and PIN support with `RT_USING_DM`, and uses `board/dts/stm32f407-rt-spark.dts`. The build converts and embeds the DTB automatically.
+
 ## Notes
 
 Not available at this time

@@ -1,0 +1,11 @@
+menuconfig RT_TEE_OPTEE
+    bool "OP-TEE"
+    depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
+    default n
+
+config RT_TEE_OPTEE_EXAMPLES
+    bool "Examples"
+    depends on RT_TEE_OPTEE
+    depends on RT_USING_CONSOLE
+    depends on RT_USING_FINSH
+    default y

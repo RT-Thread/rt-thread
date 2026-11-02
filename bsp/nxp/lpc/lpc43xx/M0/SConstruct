@@ -36,12 +36,12 @@ if rtconfig.PLATFORM in ['gcc']:
     if sys.platform.startswith('linux'):
         import glob
         ocwd = os.getcwd()
-        res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
+        res = os.system('cd ../libraries/; find -name \*.o -exec rm {} \;')
         os.chdir(ocwd)
     else:
         # Assume Windows.
         ocwd = os.getcwd()
-        print('TODO: remove the object files in ../Libraries')
+        print('TODO: remove the object files in ../libraries')
         os.chdir(ocwd)
 
 # do building

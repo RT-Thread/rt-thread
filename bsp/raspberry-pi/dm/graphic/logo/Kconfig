@@ -1,0 +1,2 @@
+config RT_GRAPHIC_LOGO_RASPI_CLUT224
+    bool "Standard 224-color Raspberry PI logo"

@@ -162,7 +162,7 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-        choice
+        choice NRFX_UART_SEL
         prompt "UART or UARTE"
         default NRFX_USING_UART
         help
@@ -471,7 +471,7 @@ menu "On-chip Peripheral Drivers"
         endif
 endmenu
 
-choice
+choice BLE_STACK_SEL
 prompt "BLE STACK"
 default BLE_STACK_USING_NULL
 help

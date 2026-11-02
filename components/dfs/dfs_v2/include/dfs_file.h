@@ -124,6 +124,7 @@ struct dfs_file
 int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops);
 struct dfs_vnode *dfs_vnode_create(void);
 int dfs_vnode_destroy(struct dfs_vnode* vnode);
+rt_err_t dfs_vnode_lock_init(struct dfs_vnode *vnode, struct dfs_dentry *dentry);
 
 struct dfs_vnode *dfs_vnode_ref(struct dfs_vnode *vnode);
 void dfs_vnode_unref(struct dfs_vnode *vnode);
@@ -148,6 +149,7 @@ void dfs_file_init(struct dfs_file *file);
 void dfs_file_deinit(struct dfs_file *file);
 
 int dfs_file_open(struct dfs_file *file, const char *path, int flags, mode_t mode);
+int dfs_file_mknod(const char *path, int type, mode_t mode);
 int dfs_file_close(struct dfs_file *file);
 
 off_t dfs_file_get_fpos(struct dfs_file *file);
@@ -161,9 +163,13 @@ off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
 int dfs_file_stat(const char *path, struct stat *buf);
 int dfs_file_lstat(const char *path, struct stat *buf);
 int dfs_file_setattr(const char *path, struct dfs_attr *attr);
+int dfs_file_fsetattr(struct dfs_file *file, struct dfs_attr *attr);
 int dfs_file_fstat(struct dfs_file *file, struct stat *buf);
 int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args);
 int dfs_file_fcntl(int fd, int cmd, unsigned long arg);
+int dfs_record_lock_init(void);
+int dfs_record_lock_fcntl(struct dfs_file *file, int cmd, struct flock *flock);
+void dfs_record_lock_release(struct dfs_file *file, struct dfs_fdtable *owner);
 int dfs_file_fsync(struct dfs_file *file);
 int dfs_file_unlink(const char *path);
 int dfs_file_link(const char *oldname, const char *newname);

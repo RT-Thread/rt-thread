@@ -1,7 +1,7 @@
 name: PR Format Notification
 on:
   pull_request_target:
-    types: [opened]
+    types: [opened, reopened, synchronize]
 
 
 concurrency:
@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   notify-format:
-    if: github.repository_owner == 'RT-Thread'
     runs-on: ubuntu-latest
     steps:
       - name: Check if first commit and add comment
@@ -40,7 +39,7 @@ jobs:
             echo "PR commit count: $commit_count"
 
             should_comment=false
-            if [ "$PR_ACTION" = "opened" ]; then
+            if [ "$PR_ACTION" = "opened" ] || [ "$PR_ACTION" = "reopened" ]; then
               should_comment=true
             elif [ "$PR_ACTION" = "synchronize" ] && [ "$commit_count" -eq 1 ]; then
               should_comment=true
@@ -53,7 +52,7 @@ jobs:
               branch="$PR_HEAD_REF"
               fork_repo="$PR_HEAD_REPO"
               workflow_url="https://github.com/${fork_repo}/actions/workflows/pr_clang_format.yml"
-              direct_link="${workflow_url}?branch=${branch}"
+              direct_link="${workflow_url}"
 
               # 使用数组存储多行消息
               message_lines=(
@@ -71,14 +70,16 @@ jobs:
                 "[点击进入工作流 → | Click to open workflow →](${direct_link})"
                 ""
                 "2. **点击 \`Run workflow\` | Click \`Run workflow\`**"
+                "- \`Use workflow from\` 保持默认分支（通常为 \`master\`）"
+                "Keep the default branch (usually \`master\`) in \`Use workflow from\`"
+                "- 在 \`branch\` 输入框填写 PR 分支 **\`${branch}\`**"
+                "Enter PR branch **\`${branch}\`** in the \`branch\` field"
                 "- 设置需排除的文件/目录（目录请以\"/\"结尾）"
                 "Set files/directories to exclude (directories should end with \"/\")"
-                "- 将目标分支设置为 \ Set the target branch to：**\`${branch}\`**"
-                "- 设置PR number为 \ Set the PR number to：**\`${PR_NUMBER}\`**"
                 ""
                 "3. **等待工作流完成 | Wait for the workflow to complete**"
-                "格式化后的代码将自动推送至你的分支。"
-                "The formatted code will be automatically pushed to your branch."
+                "格式化后的代码将作为独立提交推送至你的分支。"
+                "The formatting changes will be pushed to your branch as a separate commit."
                 ""
                 "完成后，提交将自动更新至 \`${branch}\` 分支，关联的 Pull Request 也会同步更新。"
                 "Once completed, commits will be pushed to the \`${branch}\` branch automatically, and the related Pull Request will be updated."

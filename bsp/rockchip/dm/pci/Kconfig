@@ -1,3 +1,26 @@
+config RT_PCIE_ROCKCHIP
+    bool "Rockchip PCIe controller"
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_RESET
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_PHYE
+    default n
+
+config RT_PCIE_ROCKCHIP_EP
+    bool "Rockchip PCIe endpoint"
+    depends on RT_PCI_ENDPOINT
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_RESET
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_PHYE
+    default n
+
 config RT_PCI_DW_ROCKCHIP
     bool "Rockchip DesignWare PCIe"
     depends on RT_PCI_DW

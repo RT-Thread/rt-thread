@@ -1,0 +1,14 @@
+config RT_PINCTRL_BCM2712
+    bool "Broadcom BCM2712 PINCONF driver"
+    depends on RT_USING_PINCTRL
+    default n
+
+config RT_PINCTRL_BCM2835
+    bool "Broadcom BCM2835 GPIO (with PINCONF) driver"
+    depends on RT_USING_PINCTRL
+    default n
+
+config RT_PINCTRL_RP1
+    bool "Pinctrl driver for RP1"
+    depends on RT_USING_PINCTRL
+    default n

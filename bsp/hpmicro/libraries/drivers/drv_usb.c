@@ -83,6 +83,10 @@ rt_err_t hpm_usb_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_BLK_GETGEOME:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
         struct rt_device_blk_geometry *geometry = (struct rt_device_blk_geometry *)args;
         geometry->sector_count = tuh_msc_get_block_count(usb_dev_addr, LUN_USB);
         geometry->bytes_per_sector = tuh_msc_get_block_size(usb_dev_addr, LUN_USB);
@@ -93,11 +97,11 @@ rt_err_t hpm_usb_control(rt_device_t dev, int cmd, void *args)
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 
-    return RT_EOK;
+    return ret;
 }
 
 int rt_hw_usb_init(void)
@@ -112,6 +116,16 @@ int rt_hw_usb_init(void)
         LOG_E("rt device %s failed, status=%d\n", "usb", err);
         return err;
     }
+    
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+    /* Register usb device to irq table */
+    extern void hpm_isr_usb0(void);
+    rt_hw_interrupt_install(IRQn_USB0, (rt_isr_handler_t)hpm_isr_usb0, HPM_USB0, "usb0");
+#ifdef HPM_USB1_BASE
+    extern void hpm_isr_usb1(void);
+    rt_hw_interrupt_install(IRQn_USB1, (rt_isr_handler_t)hpm_isr_usb1, HPM_USB1, "usb1");
+#endif
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
     return err;
 }

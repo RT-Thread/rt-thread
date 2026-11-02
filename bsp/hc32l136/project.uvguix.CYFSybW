@@ -1873,7 +1873,7 @@
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
-        <Name>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</Name>
+        <Name>libraries\HC32L136_StdPeriph_Driver\src\ddl.c</Name>
         <ColumnNumber>0</ColumnNumber>
         <TopLine>187</TopLine>
         <CurrentLine>191</CurrentLine>

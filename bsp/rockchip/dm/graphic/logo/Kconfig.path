@@ -1,0 +1,10 @@
+if RT_GRAPHIC_LOGO_RADXA_CLUT224
+    config RT_GRAPHIC_LOGO_RADXA_CLUT224_PATH
+        string
+        default "../dm/graphic/logo/logo-radxa-clut224.ppm"
+endif
+if RT_GRAPHIC_LOGO_ROCKCHIP_CLUT224
+    config RT_GRAPHIC_LOGO_ROCKCHIP_CLUT224_PATH
+        string
+        default "../dm/graphic/logo/logo-rockchip-clut224.ppm"
+endif

@@ -1,0 +1,5 @@
+config RT_PCIE_BRCMSTB
+    bool "Broadcom Brcmstb PCIe controller"
+    depends on RT_PCI_MSI
+    depends on RT_USING_OFW
+    default n

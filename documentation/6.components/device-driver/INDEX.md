@@ -17,6 +17,8 @@
 - @subpage page_device_rtc_dm
 - @subpage page_device_clock_time
 - @subpage page_device_hwtimer
+- @subpage page_device_ptp
+- @subpage page_device_tee
 - @subpage page_device_watchdog
 - @subpage page_device_wlan
 - @subpage page_device_sensor

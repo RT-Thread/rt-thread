@@ -19,6 +19,15 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_DM
+#include <drivers/core/power.h>
+#endif
+
+rt_weak int rt_hw_cpu_id(void)
+{
+    return 0;
+}
+
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
                   /* Clang */ || (defined ( __CLANG_ARM ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
                   /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
@@ -428,7 +437,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 /**
  * shutdown CPU
  */
-void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 
@@ -438,10 +447,28 @@ void rt_hw_cpu_shutdown(void)
 /**
  * reset CPU
  */
-rt_weak void rt_hw_cpu_reset(void)
+static void cortex_m_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }
+
+#ifdef RT_USING_DM
+static int cortex_m_cpu_reset_init(void)
+{
+    if (!rt_dm_machine_reset)
+    {
+        rt_dm_machine_reset = cortex_m_cpu_reset;
+    }
+
+    return RT_EOK;
+}
+INIT_BOARD_EXPORT(cortex_m_cpu_reset_init);
+#else
+rt_weak void rt_hw_cpu_reset(void)
+{
+    cortex_m_cpu_reset();
+}
+#endif
 
 void TaskSwitch_StackCheck(void)
 {

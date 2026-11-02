@@ -460,6 +460,11 @@ int fsync(int fildes)
     }
 
     ret = dfs_file_flush(d);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
 
     return ret;
 }
@@ -977,10 +982,6 @@ int chdir(const char *path)
     return 0;
 }
 RTM_EXPORT(chdir);
-
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
-#endif
 #endif
 
 /**

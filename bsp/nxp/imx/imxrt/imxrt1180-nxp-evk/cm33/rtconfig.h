@@ -66,13 +66,16 @@
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 2048
 
 /* kservice options */
 
@@ -113,7 +116,6 @@
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
-#define ARCH_ARM_CORTEX_FPU
 #define ARCH_ARM_CORTEX_SECURE
 #define ARCH_ARM_CORTEX_M33
 
@@ -147,8 +149,9 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
+#define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -419,8 +422,13 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_DMA
+#define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
+#define BSP_LPUART1_RX_USING_DMA
+#define BSP_LPUART1_RX_DMA_CHANNEL 0
+#define BSP_LPUART1_TX_USING_DMA
+#define BSP_LPUART1_TX_DMA_CHANNEL 1
 /* end of On-chip Peripheral Drivers */
 
 /* Onboard Peripheral Drivers */
@@ -429,6 +437,7 @@
 
 /* Board extended module Drivers */
 
+#define BSP_LINKER_SCRIPT_FLEXSPI_NOR
 /* end of Hardware Drivers Config */
 
 #endif

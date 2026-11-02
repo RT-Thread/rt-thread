@@ -6,19 +6,73 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    ROM (rx) : ORIGIN = 0x15000000, LENGTH = 1920k /* 1920KB flash */
-    RAM (rw) : ORIGIN = 0x24000000, LENGTH =  128k /* 128K AXI_SRAM */
+    FLASH     (rx)  : ORIGIN = 0x15000000, LENGTH = 1920k   /* 1920 KB NOR-Flash (XIP) */
+    ITCM      (xrw) : ORIGIN = 0x00000000, LENGTH =  768k   /* 768K ITCM               */
+    DTCM      (xrw) : ORIGIN = 0x20000000, LENGTH =  256k   /* 256K DTCM               */
+    AXI_SRAM  (xrw) : ORIGIN = 0x24000000, LENGTH =  128k   /* 128K AXI-SRAM           */
+    AHB_SRAM  (xrw) : ORIGIN = 0x30000000, LENGTH =  320k   /* 320K AHB-SRAM           */
+    AHB_SRAM5 (xrw) : ORIGIN = 0x30050000, LENGTH =   32k   /* 32K AHB-SRAM5 FDCAN1-8  */
 }
+
+/* Entry Point */
 ENTRY(Reset_Handler)
-_system_stack_size = 0x400;
+
+_estack = ORIGIN(AHB_SRAM) + LENGTH(AHB_SRAM);   /* boot-time stack (AHB_SRAM top) */
+
+_system_stack_size = 0x2000;
 
 SECTIONS
 {
-    .text :
+    /* ===== Stage 1: Boot code in NOR-Flash (XIP) ===== */
+
+    /* Boot vector table: SP + Reset_Handler, placed at FLASH base */
+    .isr_vector_boot :
     {
         . = ALIGN(4);
-        _stext = .;
-        KEEP(*(.isr_vector))            /* Startup code */
+        KEEP(*(.isr_vector_boot))
+        . = ALIGN(4);
+    } > FLASH
+
+    /* Boot text: reset handler, lowlevel_init, _main, copy routines, Default_Handler
+     *
+     * SDK object files that are called during boot (before TCM copy) must also
+     * be placed here.  
+     *
+     * We use a wildcard object-file pattern to match regardless of
+     * build-dir prefix, for example ".../system_n32h7xx.o".
+     */
+    .text.boot :
+    {
+        . = ALIGN(4);
+        KEEP(*(.text.reset))
+        KEEP(*(.text.Default_Handler))
+        *(.boot_text)
+        *(.boot_text*)
+        *(.rodata.boot)
+        *(.rodata.boot*)
+
+        /* SDK: system init -- called from lowlevel_init via SystemInit() */
+        */system_n32h7xx.o(.text*)
+        */system_n32h7xx.o(.rodata*)
+
+        . = ALIGN(4);
+    } > FLASH
+
+    /* ===== Stage 2: Runtime image copied into ITCM as one block ===== */
+
+    .runtime_image :
+    {
+        . = ALIGN(4);
+        __image_copy_start__ = .;
+
+        /* Runtime vector table sits at the start of the relocated image. */
+        __tcm_vector_start__ = .;
+        KEEP(*(.tcm_vector))
+        __tcm_vector_end__ = .;
+
+        . = ALIGN(4);
+        /* Application code follows contiguously so _main() can copy one image. */
+        __itcm_text_start__ = .;
 
         . = ALIGN(4);
         *(.text)                        /* remaining code */
@@ -56,22 +110,33 @@ SECTIONS
         . = ALIGN(4);
 
         _etext = .;
-    } > ROM = 0
+
+        . = ALIGN(4);
+        __itcm_text_end__ = .;
+
+        __image_copy_end__ = .;
+    } > ITCM AT > FLASH
+
+    __image_copy_load_start__ = LOADADDR(.runtime_image);
+    __tcm_vector_load_start__ = __image_copy_load_start__;
+    __itcm_text_load_start__ = __image_copy_load_start__ + (__itcm_text_start__ - __image_copy_start__);
+
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
-    __exidx_start = .;
     .ARM.exidx :
     {
+        . = ALIGN(4);
+        __exidx_start = .;
+
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
 
-        /* This is used by the startup in order to initialize the .data secion */
-        _sidata = .;
-    } > ROM
-    __exidx_end = .;
+        . = ALIGN(4);
+        __exidx_end = .;
+    } > FLASH
 
     /* .data section which is used for initialized data */
 
-    .data : AT (_sidata)
+    .data :
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
@@ -89,37 +154,40 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >RAM
+    } > AHB_SRAM AT > FLASH
+    _sidata = LOADADDR(.data);
 
-    .stack :
-    {
-        . = ALIGN(4);
-        _sstack = .;
-        . = . + _system_stack_size;
-        . = ALIGN(4);
-        _estack = .;
-    } >RAM
-
-    __bss_start = .;
-    .bss :
+    .bss (NOLOAD) :
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _sbss = .;
+        __bss_start = _sbss;
 
         *(.bss)
-        *(.bss.*)
+        *(.bss*)
         *(COMMON)
+
+        *(.bss.init)
 
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
-        _ebss = . ;
-
-        *(.bss.init)
-    } > RAM
-    __bss_end = .;
+        _ebss = .;
+        __bss_end = _ebss;
+    } > AHB_SRAM
 
     _end = .;
+
+    .stack :
+    {
+        . = ALIGN(4);
+        _app_sstack = .;
+
+        . = . + _system_stack_size;
+
+        . = ALIGN(4);
+        _app_estack = .;
+    } > AXI_SRAM
 
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }

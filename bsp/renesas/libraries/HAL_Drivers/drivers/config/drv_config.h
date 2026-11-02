@@ -287,6 +287,16 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA2A1 */
 
+#if defined(SOC_FAMILY_RENESAS_RA_WIRELESS)
+#if defined(SOC_SERIES_R7SA6W1)
+#include "raw/ra6w1/uart_config.h"
+#ifdef BSP_USING_ADC
+#include "raw/ra6w1/adc_config.h"
+#endif
+
+#endif /* SOC_SERIES_R7SA6W1 */
+#endif /* SOC_FAMILY_RENESAS_RA_WIRELESS */
+
 #ifdef __cplusplus
 }
 #endif

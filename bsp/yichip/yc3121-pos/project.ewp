@@ -364,9 +364,9 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\Libraries\sdk</state>
-          <state>$PROJ_DIR$\Libraries\core</state>
-          <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\libraries\sdk</state>
+          <state>$PROJ_DIR$\libraries\core</state>
+          <state>$PROJ_DIR$\libraries</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -1406,9 +1406,9 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\Libraries\sdk</state>
-          <state>$PROJ_DIR$\Libraries\core</state>
-          <state>$PROJ_DIR$\Libraries</state>
+          <state>$PROJ_DIR$\libraries\sdk</state>
+          <state>$PROJ_DIR$\libraries\core</state>
+          <state>$PROJ_DIR$\libraries</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -2288,28 +2288,28 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_dma.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_gpio.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_systick.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_systick.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_uart.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_wdt.c</name>
+      <name>$PROJ_DIR$\libraries\sdk\yc_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\core\misc.c</name>
+      <name>$PROJ_DIR$\libraries\core\misc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\core\system.c</name>
+      <name>$PROJ_DIR$\libraries\core\system.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\startup\flash_start_iar.s</name>
+      <name>$PROJ_DIR$\libraries\startup\flash_start_iar.s</name>
     </file>
   </group>
   <group>

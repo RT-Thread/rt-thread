@@ -17,8 +17,19 @@
 
 #ifdef RT_USING_WDT
 
+#if defined(SOC_SERIES_R7SA6W1)
+
+#define R_WDT_Refresh    R_WDOG_W_Refresh
+#define R_WDT_TimeoutGet R_WDOG_W_TimeoutGet
+#define R_WDT_TimeoutSet R_WDOG_W_TimeoutSet
+#define R_WDT_Open       R_WDOG_W_Open
+#define g_wdt_ctrl       g_wdog_w_ctrl
+#define g_wdt_cfg        g_wdog_w_cfg
+
+#endif
+
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.wdt"
+#define LOG_TAG "drv.wdt"
 #include <rtdbg.h>
 
 static struct rt_watchdog_device ra_wdt_dev;
@@ -32,7 +43,7 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
 static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     rt_err_t ret = -RT_ERROR;
-    struct st_wdt_timeout_values *wdt_value = {0};
+    struct st_wdt_timeout_values *wdt_value = { 0 };
     switch (cmd)
     {
     /* feed the watchdog */
@@ -40,7 +51,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
         {
             LOG_E("watch dog keepalive fail.");
-            ret =  -RT_ERROR;
+            ret = -RT_ERROR;
         }
         else
         {
@@ -58,7 +69,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         if (R_WDT_TimeoutGet(&g_wdt_ctrl, wdt_value) != FSP_SUCCESS)
         {
             LOG_E("wdt get timeout failed.");
-            ret =  -RT_ERROR;
+            ret = -RT_ERROR;
         }
         else
         {
@@ -71,7 +82,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
             {
                 LOG_E("wdt start failed.");
-                ret =  -RT_ERROR;
+                ret = -RT_ERROR;
             }
             else
             {
@@ -81,12 +92,12 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         else
         {
             LOG_E("wdt start failed.");
-            ret =  -RT_ERROR;
+            ret = -RT_ERROR;
         }
         break;
     default:
         LOG_W("This command is not supported.");
-        ret =  -RT_ERROR;
+        ret = -RT_ERROR;
     }
     return ret;
 }

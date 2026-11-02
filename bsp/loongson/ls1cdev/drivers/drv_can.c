@@ -386,9 +386,13 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
     else
         pmsg->id = RxMessage.StdId;
     pmsg->len = RxMessage.DLC;
+    if (pmsg->len > sizeof(RxMessage.Data))
+    {
+        pmsg->len = sizeof(RxMessage.Data);
+    }
     pmsg->rtr = RxMessage.RTR;
     pmsg->hdr_index = 0;
-    for(i= 0;i< RxMessage.DLC; i++)
+    for (i = 0; i < pmsg->len; i++)
     {
       pmsg->data[i] = RxMessage.Data[i];
     }

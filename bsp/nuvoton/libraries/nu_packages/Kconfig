@@ -50,7 +50,7 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_ILI9341
 
-            choice
+            choice NU_PKG_ILI9341_SEL
                 prompt "Select ili9341 interface"
 
                 config NU_PKG_USING_ILI9341_SPI
@@ -110,7 +110,7 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_SSD1963
 
-            choice
+            choice SSD1963_IF_SEL
                 prompt "Select SSD1963 interface"
 
                 config NU_PKG_USING_SSD1963_EBI
@@ -152,7 +152,7 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_FSA506
 
-            choice
+            choice FSA506_IF_SEL
                 prompt "Select FSA506 interface"
 
                 config NU_PKG_USING_FSA506_EBI
@@ -194,7 +194,7 @@ menu "Nuvoton Packages Config"
         select RT_USING_I2C
 
     if NU_PKG_USING_TPC
-        choice
+        choice NU_PKG_TPC_SEL
             prompt "Select TPC drivers"
             config NU_PKG_USING_TPC_ILI
                 bool "ILI Series TPC"

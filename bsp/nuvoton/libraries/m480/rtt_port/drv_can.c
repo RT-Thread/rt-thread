@@ -566,6 +566,10 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
     pmsg->rtr = (tMsg.FrameType == CAN_DATA_FRAME) ? RT_CAN_DTR : RT_CAN_RTR;
     pmsg->id  = tMsg.Id;
     pmsg->len = tMsg.DLC ;
+    if (pmsg->len > sizeof(tMsg.Data))
+    {
+        pmsg->len = sizeof(tMsg.Data);
+    }
 
     if (pmsg->data && pmsg->len)
         rt_memcpy(pmsg->data, &tMsg.Data[0], pmsg->len);

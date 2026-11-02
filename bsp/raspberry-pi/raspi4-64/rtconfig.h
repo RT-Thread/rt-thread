@@ -8,16 +8,6 @@
 /* rt_vsnprintf options */
 
 #define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-#define RT_KLIBC_USING_VSNPRINTF_STANDARD
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
-#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -72,7 +62,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 12
+#define RT_NAME_MAX 24
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
@@ -89,6 +79,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -109,6 +101,7 @@
 
 /* Memory Management */
 
+#define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
@@ -127,10 +120,11 @@
 
 /* AArch64 Architecture Configuration */
 
-#define ARCH_TEXT_OFFSET 0x200000
+#define ARCH_TEXT_OFFSET 0x208000
 #define ARCH_RAM_OFFSET 0
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_USING_GENERIC_CPUID
 #define ARCH_HEAP_SIZE 0x4000000
 #define ARCH_INIT_PAGE_SIZE 0x200000
 /* end of AArch64 Architecture Configuration */
@@ -142,13 +136,14 @@
 #define ARCH_ARM_MMU
 #define ARCH_ARMV8
 #define ARCH_USING_ASID
+#define ARCH_USING_HW_THREAD_SELF
 #define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 8192
+#define RT_MAIN_THREAD_STACK_SIZE 16384
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
@@ -194,6 +189,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
@@ -204,25 +200,86 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_PL011
+#define RT_SERIAL_8250
+#define RT_SERIAL_8250_BCM2835AUX
 #define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
+#define RT_CLOCK_TIME_BCM2835
+#define RT_USING_ETHERNET
+#define RT_ETHERNET_BCMGENET
 #define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
+#define RT_I2C_BCM2835
+#define RT_I2C_BRCMSTB
+#define RT_USING_PHY_V2
+#define RT_PHY_MDIO_BCM_UNIMAC
+#define RT_PHY_BCM54213
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
+#define RT_PWM_BCM2835
+#define RT_PWM_BRCMSTB
 #define RT_USING_RTC
-#define RT_USING_SOFT_RTC
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 8192
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_RTC_DS1307
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 8192
+#define RT_MMCSD_STACK_SIZE 16384
 #define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SDHCI
+#define RT_SDIO_SDHCI_BRCMSTB
+#define RT_SDIO_SDHCI_IPROC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
+#define RT_SPI_BCM2835
+#define RT_SPI_BCM2835AUX
 #define RT_USING_WDT
+#define RT_WDT_BCM2835
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_BCM2835_I2S
 #define RT_USING_TOUCH
 #define RT_USING_LCD
+#define RT_USING_GRAPHIC
+#define RT_GRAPHIC_BACKLIGHT
+#define RT_GRAPHIC_BACKLIGHT_RPI
+#define RT_GRAPHIC_FB
+#define RT_GRAPHIC_FB_ILI9486
+#define RT_GRAPHIC_FB_SIMPLE
+#define RT_GRAPHIC_FB_BCM2708
+#define RT_GRAPHIC_FB_RPISENSE
+#define RT_GRAPHIC_LOGO
+#define RT_GRAPHIC_LOGO_RASPI_CLUT224
+#define RT_GRAPHIC_LOGO_RASPI_CLUT224_PATH "../dm/graphic/logo/logo-raspi-clut224.ppm"
+#define RT_USING_HWCRYPTO
+#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
+#define RT_HWCRYPTO_IV_MAX_SIZE 16
+#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
+#define RT_HWCRYPTO_USING_RNG
+#define RT_HWCRYPTO_RNG_BCM2835
+#define RT_HWCRYPTO_RNG_IPROC_RNG200
+#define RT_USING_LED
+#define RT_LED_GPIO
+#define RT_USING_INPUT
+#define RT_INPUT_POWER
+#define RT_INPUT_JOYSTICK
+#define RT_INPUT_JOYSTICK_RPISENSE
+#define RT_INPUT_TOUCHSCREEN
+#define RT_INPUT_TOUCHSCREEN_ADS7846
+#define RT_INPUT_TOUCHSCREEN_RASPBERRYPI_FW
+#define RT_USING_MBOX
+#define RT_MBOX_BCM2835
+#define RT_USING_PHYE
+#define RT_PHYE_GENERIC_USB
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -230,7 +287,88 @@
 #define RT_BLK_PARTITION_DFS
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
+#define RT_USING_SCSI
+#define RT_SCSI_SD
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_RASPBERRYPI
+#define RT_USING_DVFS
+#define RT_USING_DVFS_EVENT
+#define RT_USING_DVFS_OPP_RETRY_MAX 10
+
+/* DVFS Event Drivers */
+
+/* DVFS CPUfreq Drivers */
+
+#define RT_DVFS_RASPBERRY_CPUFREQ
+
+/* DVFS Devfreq Drivers */
+
+#define RT_USING_REGULATOR
+#define RT_REGULATOR_FIXED
+#define RT_REGULATOR_GPIO
+#define RT_USING_RESET
+#define RT_RESET_SIMPLE
+#define RT_RESET_BRCMSTB_RESCAL
+#define RT_RESET_BRCMSTB
+#define RT_RESET_RASPBERRYPI
+
+/* Power Management (PM) Domains device drivers */
+
+#define RT_PMDOMAIN_RASPBERRYPI
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_THERMAL
+
+/* Thermal Sensors Drivers */
+
+#define RT_THERMAL_BCM2835
+#define RT_THERMAL_BCM2711
+
+/* Thermal Cool Drivers */
+
+#define RT_USING_NVMEM
+#define RT_NVMEM_RASPBERRYPI_OTP
+#define RT_USING_DMA
+#define RT_DMA_BCM2835
+#define RT_USING_MFD
+#define RT_MFD_SYSCON
+#define RT_MFD_BCM2835_PM
+#define RT_MFD_RPI_SENSE
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PCI
+#define RT_PCI_MSI
+#define RT_PCI_SYS_64BIT
+#define RT_PCI_CACHE_LINE_SIZE 8
+
+/* PCI Device Drivers */
+
+#define RT_PCI_ECAM
+#define RT_PCI_HOST_COMMON
+#define RT_PCI_HOST_GENERIC
+#define RT_PCIE_BRCMSTB
+#define RT_USING_PIC
+#define MAX_HANDLERS 512
+#define RT_PIC_ARM_GIC
+#define RT_PIC_ARM_GIC_MAX_NR 1
+#define RT_PIC_BCM2835_INTC
+#define RT_PIC_BCM2836_L1_INTC
+#define RT_PIC_BRCMSTB_L2_IRQ
 #define RT_USING_PIN
+#define RT_PIN_BCM_VIRT
+#define RT_PIN_BRCMSTB
+#define RT_PIN_RASPBERRYPI_EXP
+#define RT_USING_PINCTRL
+#define RT_PINCTRL_BCM2835
+#define RT_USING_CLK
+#define RT_CLK_BCM2711_DVP
+#define RT_CLK_BCM2835
+#define RT_CLK_RASPBERRYPI
+
+/* SoC (System on Chip) Drivers */
+
+#define RT_SOC_BROADCOM_RASPBERRYPI_VOLTAGE_MONITOR
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -354,6 +492,8 @@
 
 #define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
 #define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMBLOCK
+#define RT_INIT_MEMORY_REGIONS 128
 
 /* Debugging */
 
@@ -490,14 +630,6 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -577,30 +709,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-#define BCM2711_SOC
-#define BSP_SUPPORT_FPU
-
-/* Hardware Drivers Config */
-
-/* BCM Peripheral Drivers */
-
-#define BSP_USING_UART
-#define RT_USING_UART0
-#define RT_USING_UART3
-#define RT_USING_UART4
-#define BSP_USING_GIC
-#define BSP_USING_GICV2
-#define BSP_USING_PIN
-#define BSP_USING_CORETIMER
-#define BSP_USING_WDT
-#define BSP_USING_SDIO
-#define BSP_USING_SDIO0
-/* end of BCM Peripheral Drivers */
-
-/* Board Peripheral Drivers */
-
-#define BSP_USING_HDMI
-/* end of Board Peripheral Drivers */
-/* end of Hardware Drivers Config */
+#define SOC_BCM2711
 
 #endif

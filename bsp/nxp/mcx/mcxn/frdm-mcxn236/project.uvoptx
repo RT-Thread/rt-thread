@@ -537,7 +537,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_can.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_can.c</PathWithFileName>
       <FilenameWithoutPath>drv_can.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -549,7 +549,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_pin.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_pin.c</PathWithFileName>
       <FilenameWithoutPath>drv_pin.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -561,7 +561,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_uart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_uart.c</PathWithFileName>
       <FilenameWithoutPath>drv_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -573,7 +573,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_wdt.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_wdt.c</PathWithFileName>
       <FilenameWithoutPath>drv_wdt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -941,7 +941,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_spi_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -953,7 +953,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_mrt.c</PathWithFileName>
       <FilenameWithoutPath>fsl_mrt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -965,7 +965,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_cdog.c</PathWithFileName>
       <FilenameWithoutPath>fsl_cdog.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -977,7 +977,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_i3c_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_i3c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -989,7 +989,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_uart_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1001,7 +1001,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1013,7 +1013,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\system_MCXN236.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\system_MCXN236.c</PathWithFileName>
       <FilenameWithoutPath>system_MCXN236.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1025,7 +1025,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_common_arm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1037,7 +1037,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_freqme.c</PathWithFileName>
       <FilenameWithoutPath>fsl_freqme.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1049,7 +1049,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpflexcomm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpflexcomm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1061,7 +1061,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lptmr.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lptmr.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1073,7 +1073,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_ctimer.c</PathWithFileName>
       <FilenameWithoutPath>fsl_ctimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1085,7 +1085,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_i3c.c</PathWithFileName>
       <FilenameWithoutPath>fsl_i3c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1097,7 +1097,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_irtc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_irtc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1109,7 +1109,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpi2c_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpi2c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1121,7 +1121,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_i2c_master.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_i2c_master.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1133,7 +1133,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\arm\startup_MCXN236.S</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\arm\startup_MCXN236.S</PathWithFileName>
       <FilenameWithoutPath>startup_MCXN236.S</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1145,7 +1145,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_ewm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_ewm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_ewm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1157,7 +1157,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_edma_soc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_edma_soc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1169,7 +1169,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexcan.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexcan.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1181,7 +1181,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_evtg.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_evtg.c</PathWithFileName>
       <FilenameWithoutPath>fsl_evtg.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1193,7 +1193,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_mculcd_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1205,7 +1205,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_clock.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_clock.c</PathWithFileName>
       <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1217,7 +1217,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_cache_lpcac.c</PathWithFileName>
       <FilenameWithoutPath>fsl_cache_lpcac.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1229,7 +1229,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_eim.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_eim.c</PathWithFileName>
       <FilenameWithoutPath>fsl_eim.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1241,7 +1241,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_erm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_erm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_erm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1253,7 +1253,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_uart.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1265,7 +1265,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_wwdt.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_wwdt.c</PathWithFileName>
       <FilenameWithoutPath>fsl_wwdt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1277,7 +1277,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpadc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpadc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpadc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1289,7 +1289,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_vref.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_vref.c</PathWithFileName>
       <FilenameWithoutPath>fsl_vref.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1301,7 +1301,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpspi_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpspi_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1313,7 +1313,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexcan_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexcan_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1325,7 +1325,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpi2c.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpi2c.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpi2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1337,7 +1337,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_crc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_crc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_crc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1349,7 +1349,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpuart.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpuart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1361,7 +1361,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1373,7 +1373,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_spi.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_spi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1385,7 +1385,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_spc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_spc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_spc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1397,7 +1397,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_common.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_common.c</PathWithFileName>
       <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1409,7 +1409,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_reset.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_reset.c</PathWithFileName>
       <FilenameWithoutPath>fsl_reset.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1421,7 +1421,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_gpio.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_gpio.c</PathWithFileName>
       <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1433,7 +1433,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_lpspi.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpspi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1445,7 +1445,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_flexio_mculcd.c</PathWithFileName>
       <FilenameWithoutPath>fsl_flexio_mculcd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1457,7 +1457,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN236\MCXN236\drivers\fsl_cmc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXN236\MCXN236\drivers\fsl_cmc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_cmc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

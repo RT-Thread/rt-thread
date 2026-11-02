@@ -12,6 +12,15 @@ config RT_SOC_ROCKCHIP_HW_DECOMPRESS
     bool "HardWare Decompress (LZ4, GZIP, ZLIB)"
     default n
 
+config RT_ROCKCHIP_JPEG_DEC
+    bool "JPEG decoder"
+    default n
+
+config RT_ROCKCHIP_RGA2
+    bool "RGA2 graphics accelerator"
+    depends on RT_USING_OFW
+    default n
+
 config RT_SOC_ROCKCHIP_IODOMAIN
     bool "IO domain support"
     depends on RT_MFD_SYSCON

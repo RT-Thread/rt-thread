@@ -1,0 +1,3 @@
+config RT_MBOX_BCM2835
+    bool "BCM2835 Mailbox"
+    default n

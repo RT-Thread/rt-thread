@@ -16,13 +16,25 @@
 
 #ifdef BSP_USING_ONCHIP_RTC
 
-#define DBG_TAG              "drv.rtc"
+#define DBG_TAG "drv.rtc"
 #ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
+
+#if defined(SOC_SERIES_R7SA6W1)
+
+#define R_RTC_Open             R_RTC_W_Open
+#define R_RTC_CalendarTimeGet  R_RTC_W_CalendarTimeGet
+#define R_RTC_CalendarTimeSet  R_RTC_W_CalendarTimeSet
+#define R_RTC_CalendarAlarmGet R_RTC_W_CalendarAlarmGet
+#define R_RTC_CalendarAlarmSet R_RTC_W_CalendarAlarmSet
+#define g_rtc_ctrl             g_rtc_w_ctrl
+#define g_rtc_cfg              g_rtc_w_cfg
+
+#endif
 
 static rt_err_t ra_rtc_init(void)
 {
@@ -35,14 +47,13 @@ static rt_err_t ra_rtc_init(void)
     }
 
 #if defined(SOC_SERIES_R9A07G0)
-    rtc_time_t default_set_time =
-    {
-        .tm_sec  = 0,
-        .tm_min  = 0,
+    rtc_time_t default_set_time = {
+        .tm_sec = 0,
+        .tm_min = 0,
         .tm_hour = 0,
         .tm_mday = 1,
         .tm_wday = 1,
-        .tm_mon  = 1,
+        .tm_mon = 1,
         .tm_year = 1900,
     };
 
@@ -53,21 +64,21 @@ static rt_err_t ra_rtc_init(void)
 
 static time_t get_rtc_timestamp(void)
 {
-    struct tm tm_new = {0};
-    rtc_time_t g_current_time = {0};
+    struct tm tm_new = { 0 };
+    rtc_time_t g_current_time = { 0 };
 
     R_RTC_CalendarTimeGet(&g_rtc_ctrl, &g_current_time);
 
-    tm_new.tm_year  = g_current_time.tm_year;
-    tm_new.tm_mon   = g_current_time.tm_mon;
-    tm_new.tm_mday  = g_current_time.tm_mday;
+    tm_new.tm_year = g_current_time.tm_year;
+    tm_new.tm_mon = g_current_time.tm_mon;
+    tm_new.tm_mday = g_current_time.tm_mday;
 
-    tm_new.tm_hour  = g_current_time.tm_hour;
-    tm_new.tm_min   = g_current_time.tm_min;
-    tm_new.tm_sec   = g_current_time.tm_sec;
+    tm_new.tm_hour = g_current_time.tm_hour;
+    tm_new.tm_min = g_current_time.tm_min;
+    tm_new.tm_sec = g_current_time.tm_sec;
 
-    tm_new.tm_wday  = g_current_time.tm_wday;
-    tm_new.tm_yday  = g_current_time.tm_yday;
+    tm_new.tm_wday = g_current_time.tm_wday;
+    tm_new.tm_yday = g_current_time.tm_yday;
     tm_new.tm_isdst = g_current_time.tm_isdst;
 
     return timegm(&tm_new);
@@ -75,30 +86,29 @@ static time_t get_rtc_timestamp(void)
 
 static rt_err_t ra_get_secs(time_t *sec)
 {
-    *(rt_uint32_t *)sec = get_rtc_timestamp();
-    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)sec);
+    *sec = get_rtc_timestamp();
+    LOG_D("RTC: get rtc_time %x\n", (rt_uint32_t)*sec);
 
     return RT_EOK;
 }
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    struct tm now;
-    rtc_time_t g_current_time = {0};
-    gmtime_r(&time_stamp, &now);
-    if (now.tm_year < 100)
+    struct tm now = { 0 };
+    rtc_time_t g_current_time = { 0 };
+    if (RT_NULL == gmtime_r(&time_stamp, &now))
     {
         return -RT_ERROR;
     }
 
-    g_current_time.tm_sec    = now.tm_sec ;
-    g_current_time.tm_min    = now.tm_min ;
-    g_current_time.tm_hour   = now.tm_hour;
-    g_current_time.tm_mday   = now.tm_mday;
-    g_current_time.tm_mon    = now.tm_mon;
-    g_current_time.tm_year   = now.tm_year;
-    g_current_time.tm_wday   = now.tm_wday;
-    g_current_time.tm_yday   = now.tm_yday;
+    g_current_time.tm_sec = now.tm_sec;
+    g_current_time.tm_min = now.tm_min;
+    g_current_time.tm_hour = now.tm_hour;
+    g_current_time.tm_mday = now.tm_mday;
+    g_current_time.tm_mon = now.tm_mon;
+    g_current_time.tm_year = now.tm_year;
+    g_current_time.tm_wday = now.tm_wday;
+    g_current_time.tm_yday = now.tm_yday;
 
     if (R_RTC_CalendarTimeSet(&g_rtc_ctrl, &g_current_time) != FSP_SUCCESS)
     {
@@ -111,14 +121,13 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
 static rt_err_t ra_set_secs(time_t *sec)
 {
-
     rt_err_t result = RT_EOK;
 
-    if (set_rtc_time_stamp(*(rt_uint32_t *)sec))
+    if (set_rtc_time_stamp(*sec))
     {
         result = -RT_ERROR;
     }
-    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)sec);
+    LOG_D("RTC: set rtc_time %x\n", (rt_uint32_t)*sec);
 
     return result;
 }
@@ -128,22 +137,21 @@ static rt_err_t ra_get_alarm(struct rt_rtc_wkalarm *alarm)
 {
     rt_err_t result = RT_EOK;
     struct rt_rtc_wkalarm *wkalarm = alarm;
-    rtc_alarm_time_t alarm_time_get =
-    {
-        .sec_match        =  RT_FALSE,
-        .min_match        =  RT_FALSE,
-        .hour_match       =  RT_FALSE,
-        .mday_match       =  RT_FALSE,
-        .mon_match        =  RT_FALSE,
-        .year_match       =  RT_FALSE,
-        .dayofweek_match  =  RT_FALSE,
+    rtc_alarm_time_t alarm_time_get = {
+        .sec_match = RT_FALSE,
+        .min_match = RT_FALSE,
+        .hour_match = RT_FALSE,
+        .mday_match = RT_FALSE,
+        .mon_match = RT_FALSE,
+        .year_match = RT_FALSE,
+        .dayofweek_match = RT_FALSE,
     };
 
     if (RT_EOK == R_RTC_CalendarAlarmGet(&g_rtc_ctrl, &alarm_time_get))
     {
         wkalarm->tm_hour = alarm_time_get.time.tm_hour;
-        wkalarm->tm_min  = alarm_time_get.time.tm_min;
-        wkalarm->tm_sec  = alarm_time_get.time.tm_sec;
+        wkalarm->tm_min = alarm_time_get.time.tm_min;
+        wkalarm->tm_sec = alarm_time_get.time.tm_sec;
     }
     else
     {
@@ -157,20 +165,19 @@ static rt_err_t ra_set_alarm(struct rt_rtc_wkalarm *alarm)
 {
     rt_err_t result = RT_EOK;
     struct rt_rtc_wkalarm *wkalarm = alarm;
-    rtc_alarm_time_t alarm_time_set =
-    {
-        .sec_match        =  RT_TRUE,
-        .min_match        =  RT_TRUE,
-        .hour_match       =  RT_TRUE,
-        .mday_match       =  RT_FALSE,
-        .mon_match        =  RT_FALSE,
-        .year_match       =  RT_FALSE,
-        .dayofweek_match  =  RT_FALSE,
+    rtc_alarm_time_t alarm_time_set = {
+        .sec_match = RT_TRUE,
+        .min_match = RT_TRUE,
+        .hour_match = RT_TRUE,
+        .mday_match = RT_FALSE,
+        .mon_match = RT_FALSE,
+        .year_match = RT_FALSE,
+        .dayofweek_match = RT_FALSE,
     };
 
     alarm_time_set.time.tm_hour = wkalarm->tm_hour;
-    alarm_time_set.time.tm_min  = wkalarm->tm_min;
-    alarm_time_set.time.tm_sec  = wkalarm->tm_sec;
+    alarm_time_set.time.tm_min = wkalarm->tm_min;
+    alarm_time_set.time.tm_sec = wkalarm->tm_sec;
     if (1 == wkalarm->enable)
     {
         if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc_ctrl, &alarm_time_set))
@@ -181,9 +188,9 @@ static rt_err_t ra_set_alarm(struct rt_rtc_wkalarm *alarm)
     }
     else
     {
-        alarm_time_set.sec_match        =  RT_FALSE;
-        alarm_time_set.min_match        =  RT_FALSE;
-        alarm_time_set.hour_match       =  RT_FALSE;
+        alarm_time_set.sec_match = RT_FALSE;
+        alarm_time_set.min_match = RT_FALSE;
+        alarm_time_set.hour_match = RT_FALSE;
         if (RT_EOK != R_RTC_CalendarAlarmSet(&g_rtc_ctrl, &alarm_time_set))
         {
             LOG_E("Calendar alarm Stop failed.");
@@ -205,11 +212,10 @@ void rtc_callback(rtc_callback_args_t *p_args)
 #endif
 }
 
-static const struct rt_rtc_ops ra_rtc_ops =
-{
-    .init      = ra_rtc_init,
-    .get_secs  = ra_get_secs,
-    .set_secs  = ra_set_secs,
+static const struct rt_rtc_ops ra_rtc_ops = {
+    .init = ra_rtc_init,
+    .get_secs = ra_get_secs,
+    .set_secs = ra_set_secs,
 #ifdef RT_USING_ALARM
     .set_alarm = ra_set_alarm,
     .get_alarm = ra_get_alarm,

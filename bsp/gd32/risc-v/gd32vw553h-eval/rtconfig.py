@@ -1,4 +1,5 @@
 import os
+import sys
 
 # toolchains options
 ARCH='risc-v'
@@ -12,6 +13,12 @@ if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
+
+BSP_ROOT = os.path.dirname(os.path.abspath(__file__))
+if not os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.path.normpath(os.path.join(BSP_ROOT, '..', '..', '..', '..'))
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from env_package import find_package_path
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
@@ -57,7 +64,7 @@ if PLATFORM == 'gcc':
     # Linking Parameters
     # 添加 --no-warn-mismatch 以忽略预编译库与当前工具链的特权规范版本差异
     # 添加 WiFi ROM 符号表
-    wifi_pkg_path = os.path.join(os.path.dirname(__file__), 'packages', 'gd32vw55x-wifi-latest')
+    wifi_pkg_path = find_package_path(BSP_ROOT, 'gd32vw55x-wifi-latest')
     rom_symbol = os.path.join(wifi_pkg_path, 'rom_export', 'symbol', 'rom_symbol_m.gcc')
     rom_symbol_flag = ''
     if os.path.exists(rom_symbol):

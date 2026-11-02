@@ -14,10 +14,12 @@
 #include <rtdef.h>
 #include <cpuport.h>
 
+#ifndef RT_BITS_PER_LONG
 #ifdef ARCH_CPU_64BIT
 #define RT_BITS_PER_LONG 64
 #else
 #define RT_BITS_PER_LONG 32
+#endif
 #endif
 #define RT_BITS_PER_LONG_LONG 64
 

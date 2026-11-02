@@ -74,11 +74,11 @@
 
 /* I2C */
 #if defined(BSP_USING_ARDUINO_AHT10)
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4" /* i2c4 - AHT10 (On Board) */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c4" /* swi2c4 - AHT10 (On Board) */
 #elif defined(BSP_USING_ARDUINO_AP3216) || defined(BSP_USING_ARDUINO_ICM20608)
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c3" /* i2c3 - ICM20608, AP3216C (On Board) */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c3" /* swi2c3 - ICM20608, AP3216C (On Board) */
 #else
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1" /* i2c1 - PC7-SDA PC6-SCL (User I2C) */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1" /* swi2c1 - PC7-SDA PC6-SCL (User I2C) */
 #endif /* BSP_USING_ARDUINO_AHT10 */
 
 /* SPI */

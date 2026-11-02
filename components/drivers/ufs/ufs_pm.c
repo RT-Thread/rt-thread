@@ -18,7 +18,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define RT_UFS_DME_ATTR_SET_NOR         0
+#define RT_UFS_DME_ATTR_SET_NOR 0
 
 rt_inline rt_uint32_t ufs_uic_arg_attr_type(rt_uint8_t t)
 {
@@ -27,7 +27,7 @@ rt_inline rt_uint32_t ufs_uic_arg_attr_type(rt_uint8_t t)
 
 rt_err_t rt_ufs_dme_set(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32_t value)
 {
-    rt_err_t err;
+    rt_err_t    err;
     rt_uint32_t arg2 = ufs_uic_arg_attr_type(RT_UFS_DME_ATTR_SET_NOR);
 
     if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_SET, attr_sel, &arg2, value)))
@@ -43,10 +43,46 @@ rt_err_t rt_ufs_dme_set(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32
     return RT_EOK;
 }
 
+rt_err_t rt_ufs_dme_reset(struct rt_ufs_host *ufs)
+{
+    rt_err_t    err;
+    rt_uint32_t arg2 = 0;
+
+    if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_RESET, 0, &arg2, 0)))
+    {
+        return err;
+    }
+
+    if ((arg2 & RT_UFS_CMDRES_MASK) != RT_UFS_CMDRES_SUCCESS)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+rt_err_t rt_ufs_dme_enable(struct rt_ufs_host *ufs)
+{
+    rt_err_t    err;
+    rt_uint32_t arg2 = 0;
+
+    if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_ENABLE, 0, &arg2, 0)))
+    {
+        return err;
+    }
+
+    if ((arg2 & RT_UFS_CMDRES_MASK) != RT_UFS_CMDRES_SUCCESS)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
 rt_err_t rt_ufs_dme_get(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32_t *value)
 {
     rt_uint32_t arg2 = 0;
-    rt_err_t err;
+    rt_err_t    err;
 
     if (!value)
     {
@@ -75,7 +111,7 @@ rt_err_t rt_ufs_uic_pa_pwrmode(struct rt_ufs_host *ufs, rt_uint8_t mode)
 
 rt_err_t rt_ufs_pa_power_mode_set(struct rt_ufs_host *ufs, const struct rt_ufs_pa_layer_attr *attr, rt_bool_t force)
 {
-    rt_err_t err;
+    rt_err_t   err;
     rt_uint8_t mode;
 
     if (!ufs || !attr || !ufs->regs)
@@ -192,7 +228,7 @@ rt_err_t rt_ufs_pa_power_mode_set(struct rt_ufs_host *ufs, const struct rt_ufs_p
         return err;
     }
 
-    ufs->pwr_active = *attr;
+    ufs->pwr_active       = *attr;
     ufs->pwr_active_valid = 1;
 
     return RT_EOK;
@@ -255,7 +291,7 @@ rt_err_t rt_ufs_auto_hibern8_set(struct rt_ufs_host *ufs, rt_uint32_t reg_val)
     }
 
     HWREG32(ufs->regs + RT_UFS_REG_AHIT) = reg_val;
-    ufs->ahit = reg_val;
+    ufs->ahit                            = reg_val;
 
     return RT_EOK;
 }

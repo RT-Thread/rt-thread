@@ -1,0 +1,15 @@
+config RT_ETHERNET_CADENCE
+    bool "Cadence GEM/MACB Ethernet"
+    depends on RT_USING_PHY_V2
+    depends on RT_USING_DMA
+    depends on RT_USING_PIN
+
+config RT_ETHERNET_CADENCE_PCI
+    bool "PCI supported"
+    depends on RT_ETHERNET_CADENCE
+    depends on RT_USING_PCI
+
+config RT_ETHERNET_CADENCE_PTP
+    bool "PTP supported"
+    depends on RT_ETHERNET_CADENCE
+    depends on RT_USING_PTP

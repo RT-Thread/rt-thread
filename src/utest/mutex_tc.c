@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-09.01     luckyzjq     the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
+ * 2026-07-15     meng-plus    add cross-thread delete owner regression (#11619)
  */
 
 /**
@@ -22,6 +23,7 @@
  * - Priority inheritance when high-priority threads are blocked by lower-priority holders
  * - Behavior differences between static and dynamic mutexes
  * - Mutex release error handling, invalid release, and cleanup
+ * - Cross-thread delete of a mutex owner must release the lock and wake waiters
  * Verification Metrics:
  * - Correct return codes for all mutex operations (RT_EOK, timeouts, error states)
  * - Proper priority inheritance and restoration during contention
@@ -124,7 +126,9 @@ static void test_static_mutex_take(void)
     /* take mutex and not release */
     result = rt_mutex_take(&static_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_take_entry,
@@ -148,7 +152,9 @@ static void test_static_mutex_take(void)
 
     result = rt_mutex_detach(&static_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -188,12 +194,16 @@ static void test_static_mutex_release(void)
     /* take mutex */
     result = rt_mutex_take(&static_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     /* release mutex */
     result = rt_mutex_release(&static_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_release_entry,
@@ -217,7 +227,9 @@ static void test_static_mutex_release(void)
 
     result = rt_mutex_detach(&static_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -253,7 +265,9 @@ static void test_static_mutex_trytake(void)
     /* take mutex and not release */
     result = rt_mutex_take(&static_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_trytake_entry,
@@ -277,7 +291,9 @@ static void test_static_mutex_trytake(void)
 
     result = rt_mutex_detach(&static_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -363,7 +379,9 @@ static void test_static_pri_reverse(void)
                             10 - 1,
                             10);
     if (tid1 != RT_NULL)
+    {
         rt_thread_startup(tid1);
+    }
 
     /* thread2 */
     tid2 = rt_thread_create("thread2",
@@ -373,7 +391,9 @@ static void test_static_pri_reverse(void)
                             10,
                             10);
     if (tid2 != RT_NULL)
+    {
         rt_thread_startup(tid2);
+    }
 
     /* thread3 */
     tid3 = rt_thread_create("thread3",
@@ -383,7 +403,9 @@ static void test_static_pri_reverse(void)
                             10 + 1,
                             10);
     if (tid3 != RT_NULL)
+    {
         rt_thread_startup(tid3);
+    }
 
     while (_sync_flag != 3)
     {
@@ -392,7 +414,9 @@ static void test_static_pri_reverse(void)
 
     result = rt_mutex_detach(&static_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -464,7 +488,9 @@ static void test_dynamic_mutex_take(void)
     /* take mutex and not release */
     result = rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_take_entry,
@@ -488,7 +514,9 @@ static void test_dynamic_mutex_take(void)
 
     result = rt_mutex_delete(dynamic_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -527,12 +555,16 @@ static void test_dynamic_mutex_release(void)
     /* take mutex */
     result = rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     /* release mutex */
     result = rt_mutex_release(dynamic_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_release_entry,
@@ -556,7 +588,9 @@ static void test_dynamic_mutex_release(void)
 
     result = rt_mutex_delete(dynamic_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -591,7 +625,9 @@ static void test_dynamic_mutex_trytake(void)
     /* take mutex and not release */
     result = rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_trytake_entry,
@@ -615,7 +651,9 @@ static void test_dynamic_mutex_trytake(void)
 
     result = rt_mutex_delete(dynamic_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -696,7 +734,9 @@ static void test_dynamic_pri_reverse(void)
                             10 - 1,
                             10);
     if (tid1 != RT_NULL)
+    {
         rt_thread_startup(tid1);
+    }
 
     /* thread2 */
     tid2 = rt_thread_create("thread2",
@@ -706,7 +746,9 @@ static void test_dynamic_pri_reverse(void)
                             10,
                             10);
     if (tid2 != RT_NULL)
+    {
         rt_thread_startup(tid2);
+    }
 
     /* thread3 */
     tid3 = rt_thread_create("thread3",
@@ -716,7 +758,9 @@ static void test_dynamic_pri_reverse(void)
                             10 + 1,
                             10);
     if (tid3 != RT_NULL)
+    {
         rt_thread_startup(tid3);
+    }
 
     while (_sync_flag != 3)
     {
@@ -725,7 +769,9 @@ static void test_dynamic_pri_reverse(void)
 
     result = rt_mutex_delete(dynamic_mutex);
     if (RT_EOK != result)
+    {
         uassert_true(RT_FALSE);
+    }
 
     uassert_true(RT_TRUE);
 }
@@ -768,7 +814,9 @@ static void test_recurse_lock(void)
     _sync_flag = -1;
 
     if (tid != RT_NULL)
+    {
         rt_thread_startup(tid);
+    }
 
     result = rt_mutex_release(&static_mutex);
     uassert_true(result == RT_EOK);
@@ -789,6 +837,118 @@ static void test_recurse_lock(void)
     result = rt_mutex_detach(&static_mutex);
     uassert_true(result == RT_EOK);
 }
+
+#ifdef RT_USING_HEAP
+/*
+ * Issue #11619: deleting a thread that still holds a mutex must not leave an
+ * orphan lock; waiters blocked on that mutex must be woken and acquire ownership.
+ */
+static volatile int _holder_ready;
+static volatile int _waiter_got;
+
+static void orphan_mutex_holder_entry(void *param)
+{
+    rt_mutex_t mutex = (rt_mutex_t)param;
+
+    if (rt_mutex_take(mutex, RT_WAITING_FOREVER) != RT_EOK)
+    {
+        uassert_true(RT_FALSE);
+        return;
+    }
+
+    _holder_ready = 1;
+
+    /* Hold forever until deleted by another thread */
+    while (1)
+    {
+        rt_thread_mdelay(1000);
+    }
+}
+
+static void orphan_mutex_waiter_entry(void *param)
+{
+    rt_err_t result;
+    rt_mutex_t mutex = (rt_mutex_t)param;
+
+    result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
+    uassert_true(result == RT_EOK);
+
+    result = rt_mutex_release(mutex);
+    uassert_true(result == RT_EOK);
+
+    /* Signal after release so the main thread can take without racing */
+    _waiter_got = 1;
+}
+
+static void test_cross_thread_delete_mutex_owner(void)
+{
+    rt_err_t result;
+    rt_thread_t holder;
+    rt_thread_t waiter;
+    int timeout;
+
+    _holder_ready = 0;
+    _waiter_got = 0;
+
+    result = rt_mutex_init(&static_mutex, "orphan_mtx", RT_IPC_FLAG_PRIO);
+    uassert_true(result == RT_EOK);
+
+    /* Lower priority holder takes the mutex and keeps it */
+    holder = rt_thread_create("mtx_hold",
+                              orphan_mutex_holder_entry,
+                              &static_mutex,
+                              THREAD_STACKSIZE,
+                              12,
+                              10);
+    uassert_true(holder != RT_NULL);
+    rt_thread_startup(holder);
+
+    timeout = 100;
+    while ((_holder_ready == 0) && (timeout-- > 0))
+    {
+        rt_thread_mdelay(10);
+    }
+    uassert_true(_holder_ready == 1);
+
+    /* Higher priority waiter blocks on the held mutex */
+    waiter = rt_thread_create("mtx_wait",
+                              orphan_mutex_waiter_entry,
+                              &static_mutex,
+                              THREAD_STACKSIZE,
+                              10,
+                              10);
+    uassert_true(waiter != RT_NULL);
+    rt_thread_startup(waiter);
+
+    /* Ensure waiter is pending before cross-thread delete */
+    rt_thread_mdelay(50);
+    uassert_true(_waiter_got == 0);
+
+    result = rt_thread_delete(holder);
+    uassert_true(result == RT_EOK);
+
+    timeout = 100;
+    while ((_waiter_got == 0) && (timeout-- > 0))
+    {
+        rt_thread_mdelay(10);
+    }
+    uassert_true(_waiter_got == 1);
+
+    /* After waiter releases, mutex must be acquirable again */
+    result = rt_mutex_take(&static_mutex, rt_tick_from_millisecond(500));
+    uassert_true(result == RT_EOK);
+    uassert_true(rt_mutex_get_hold(&static_mutex) == 1);
+
+    result = rt_mutex_release(&static_mutex);
+    uassert_true(result == RT_EOK);
+
+    result = rt_mutex_detach(&static_mutex);
+    uassert_true(result == RT_EOK);
+
+    /* Let waiter thread exit cleanly */
+    rt_thread_mdelay(50);
+}
+#endif /* RT_USING_HEAP */
 
 static rt_err_t utest_tc_init(void)
 {
@@ -821,6 +981,7 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_dynamic_mutex_release);
     UTEST_UNIT_RUN(test_dynamic_mutex_trytake);
     UTEST_UNIT_RUN(test_dynamic_pri_reverse);
+    UTEST_UNIT_RUN(test_cross_thread_delete_mutex_owner);
 #endif
     UTEST_UNIT_RUN(test_recurse_lock);
 }

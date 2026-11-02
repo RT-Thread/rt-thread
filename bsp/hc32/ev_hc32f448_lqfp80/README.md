@@ -47,7 +47,7 @@ EV_F448_LQ80 开发板常用 **板载资源** 如下：
 | DAC           |     支持      |                                       |
 | FLASH         |     支持      |                                       |
 | GPIO          |     支持      | PA0，PA1...PH2 ---> PIN：0，1...82    |
-| HwTimer       |     支持      |                                       |
+| CLOCK_TIMER       |     支持      |                                       |
 | I2C           |     支持      | 软件、硬件 I2C                        |
 | InputCapture  |     支持      |                                       |
 | MCAN          |     支持      |                                       |

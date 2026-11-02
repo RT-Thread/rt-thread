@@ -83,6 +83,18 @@ rt_mem_region_t static_regions[NUM_STATIC_REGIONS] = {
 - 如果开启了`RT_USING_HW_STACK_GUARD`：`NUM_STATIC_REGIONS` + `NUM_CONFIGURABLE_REGIONS` + `NUM_EXCLUSIVE_REGIONS` + 2 <= `NUM_MEM_REGIONS`
 - 如果没有开启`RT_USING_HW_STACK_GUARD`：`NUM_STATIC_REGIONS` + `NUM_CONFIGURABLE_REGIONS` + `NUM_EXCLUSIVE_REGIONS` <= `NUM_MEM_REGIONS`
 
+`NUM_MEM_REGIONS` / `NUM_CONFIGURABLE_REGIONS` / `NUM_EXCLUSIVE_REGIONS` 在 Kconfig 中均已提供默认值（分别为 `8` / `0` / `0`），即使不显式配置也不会生成空宏导致编译失败。其中 `NUM_MEM_REGIONS` 取决于具体 MCU，请务必按目标芯片实际的 MPU region 数量修改，否则 MPU 初始化时会因配置值与硬件不符而报错。
+
+## STM32 CubeMX 集成注意事项
+如果从 STM32 CubeMX 生成的工程集成，需要注意 `stm32f4xx_it.c`（或对应型号的 `stm32xxx_it.c`）中由 CubeMX 默认生成的 `MemManage_Handler` 会与本组件冲突：
+
+- `libcpu/arm/cortex-m4/mpu.c`（以及 `cortex-m7`、`cortex-m33` 的 `mpu.c`）已经提供了 `MemManage_Handler`，用于读取 `CFSR`/`MMFAR`、定位 MPU region 并调用异常钩子；
+- CubeMX 生成的 `stm32f4xx_it.c` 同样包含一个强符号的 `MemManage_Handler`（默认为 `while(1)` 死循环），两者同时参与链接会报 `multiple definition of 'MemManage_Handler'`。
+
+解决方法（任选其一）：
+1. 确保 `stm32f4xx_it.c` 不参与编译（RT-Thread 官方 STM32 BSP 默认如此）；
+2. 若确需编译 `stm32f4xx_it.c`，删除其中 CubeMX 生成的 `MemManage_Handler` 函数定义。
+
 ## 异常检测
 程序可以注册钩子函数，用来检测内存异常：
 ```

@@ -39,8 +39,8 @@
 
 #define F_CPU          160000000L  /* CPU:160MHz */
 
-/* i2c1 : PB9-SDA PB8-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+/* swi2c1 : PB9-SDA PB8-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 /* spi1 : PA5-SCK  PA6-MISO  PA7-MOSI */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"

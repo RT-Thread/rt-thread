@@ -10,7 +10,7 @@ def _has(sym: str) -> bool:
     except Exception:
         return bool(GetDepend(sym))
 
-if not _has('RT_USING_RUST'):
+if not _has('RT_USING_RUST') and not GetOption('clean'):
     Return('objs')
 
 cwd = GetCurrentDir()

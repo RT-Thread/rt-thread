@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['rga2_drv.c', 'rga2_hw.c']
+CPPPATH = [cwd, cwd + '/../../include']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_ROCKCHIP_RGA2'],
+                    CPPPATH = CPPPATH)
+
+Return('group')

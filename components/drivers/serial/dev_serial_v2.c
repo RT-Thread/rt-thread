@@ -36,6 +36,11 @@
 #include <sys/ioctl.h>
 #include <dfs_file.h>
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#endif
+
 #ifdef RT_USING_POSIX_TERMIOS
 #include <termios.h>
 #endif
@@ -89,9 +94,6 @@ static int serial_fops_open(struct dfs_file *fd)
         break;
     }
 
-    if ((fd->flags & O_ACCMODE) != O_WRONLY)
-        rt_device_set_rx_indicate(device, serial_fops_rx_ind);
-
     flags |= RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING;
 
     /* preserve RT_DEVICE_FLAG_STREAM if it was set before close */
@@ -102,9 +104,12 @@ static int serial_fops_open(struct dfs_file *fd)
 
     rt_device_close(device);
     ret = rt_device_open(device, flags);
-    
+
     if (ret == RT_EOK)
     {
+        if ((fd->flags & O_ACCMODE) != O_WRONLY)
+            rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+
         serial = (struct rt_serial_device *)device;
         serial->is_posix_mode = RT_TRUE;
     }
@@ -145,6 +150,129 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     default:
         break;
     }
+
+#ifdef RT_USING_LWP
+    if (lwp_self() != RT_NULL)
+    {
+        union serial_user_ioctl_arg
+        {
+            struct serial_configure config;
+            struct winsize winsize;
+#ifdef RT_USING_POSIX_TERMIOS
+            struct termios termios;
+#endif
+            rt_uint16_t oflag;
+            int unread_bytes;
+            rt_ssize_t unread_count;
+            rt_int32_t timeout;
+        } karg;
+        size_t arg_size = 0;
+        void *kptr = args;
+        rt_bool_t copy_in = RT_FALSE;
+        rt_bool_t copy_out = RT_FALSE;
+
+        rt_memset(&karg, 0, sizeof(karg));
+
+        switch ((rt_ubase_t)cmd)
+        {
+        case RT_DEVICE_CTRL_CONFIG:
+            arg_size = sizeof(karg.config);
+            kptr = &karg.config;
+            copy_in = RT_TRUE;
+            break;
+        case RT_SERIAL_CTRL_GET_CONFIG:
+            arg_size = sizeof(karg.config);
+            kptr = &karg.config;
+            copy_out = RT_TRUE;
+            break;
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            return -RT_EPERM;
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            arg_size = sizeof(karg.oflag);
+            kptr = &karg.oflag;
+            copy_out = RT_TRUE;
+            break;
+        case RT_SERIAL_CTRL_SET_RX_TIMEOUT:
+        case RT_SERIAL_CTRL_SET_TX_TIMEOUT:
+            arg_size = sizeof(karg.timeout);
+            kptr = &karg.timeout;
+            copy_in = RT_TRUE;
+            break;
+        case RT_SERIAL_CTRL_GET_RX_TIMEOUT:
+        case RT_SERIAL_CTRL_GET_TX_TIMEOUT:
+            arg_size = sizeof(karg.timeout);
+            kptr = &karg.timeout;
+            copy_out = RT_TRUE;
+            break;
+        case FIONREAD:
+            arg_size = sizeof(karg.unread_bytes);
+            kptr = &karg.unread_bytes;
+            copy_out = RT_TRUE;
+            break;
+        case RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT:
+            arg_size = sizeof(karg.unread_count);
+            kptr = &karg.unread_count;
+            copy_out = RT_TRUE;
+            break;
+#ifdef RT_USING_POSIX_TERMIOS
+        case TCGETA:
+        case TCGETS:
+            arg_size = sizeof(karg.termios);
+            kptr = &karg.termios;
+            copy_out = RT_TRUE;
+            break;
+        case TCSETA:
+        case TCSETAW:
+        case TCSETAF:
+        case TCSETS:
+        case TCSETSW:
+        case TCSETSF:
+            arg_size = sizeof(karg.termios);
+            kptr = &karg.termios;
+            copy_in = RT_TRUE;
+            break;
+#endif
+        case TIOCSWINSZ:
+            arg_size = sizeof(karg.winsize);
+            kptr = &karg.winsize;
+            copy_in = RT_TRUE;
+            break;
+        case TIOCGWINSZ:
+            arg_size = sizeof(karg.winsize);
+            kptr = &karg.winsize;
+            copy_out = RT_TRUE;
+            break;
+        default:
+            break;
+        }
+
+        if (arg_size)
+        {
+            int ret;
+
+            if (args == RT_NULL || !lwp_user_accessable(args, arg_size))
+            {
+                return -RT_EFAULT;
+            }
+            if (copy_in && lwp_get_from_user(kptr, args, arg_size) != arg_size)
+            {
+                return -RT_EFAULT;
+            }
+
+            ret = rt_device_control(device, cmd, kptr);
+            if (ret != RT_EOK)
+            {
+                return ret;
+            }
+
+            if (copy_out && lwp_put_to_user(args, kptr, arg_size) != arg_size)
+            {
+                return -RT_EFAULT;
+            }
+            return ret;
+        }
+    }
+#endif
 
     return rt_device_control(device, cmd, args);
 }
@@ -1388,6 +1516,21 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
 }
 #endif /* RT_USING_POSIX_TERMIOS */
 
+#ifdef RT_SERIAL_USING_DMA
+/**
+ * @brief Check whether one serial RX DMA event mode value is valid.
+ * @param mode RX DMA event mode value.
+ * @return RT_TRUE if the mode value is valid.
+ */
+static rt_bool_t rt_serial_rx_dma_event_mode_valid(enum rt_serial_rx_dma_event_mode mode)
+{
+    return ((mode == RT_SERIAL_RX_DMA_EVENT_AUTO) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_NONE) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_FULL_ONLY) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_HALF_FULL)) ? RT_TRUE : RT_FALSE;
+}
+#endif /* RT_SERIAL_USING_DMA */
+
 /**
   * @brief Control the serial device.
   * @param dev The pointer of device driver structure
@@ -1425,20 +1568,40 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         else
         {
             struct serial_configure *pconfig = (struct serial_configure *)args;
+#ifdef RT_SERIAL_USING_DMA
+            if (rt_serial_rx_dma_event_mode_valid(pconfig->rx_dma_event_mode) != RT_TRUE)
+            {
+                ret = -RT_EINVAL;
+                break;
+            }
+#endif /* RT_SERIAL_USING_DMA */
+
             if (((pconfig->rx_bufsz != serial->config.rx_bufsz) || (pconfig->tx_bufsz != serial->config.tx_bufsz)
 #ifdef RT_SERIAL_USING_DMA
                  || (pconfig->dma_ping_bufsz != serial->config.dma_ping_bufsz)
-#endif
+                 || (pconfig->rx_dma_event_mode != serial->config.rx_dma_event_mode)
+#endif /* RT_SERIAL_USING_DMA */
                      ) &&
                 serial->parent.ref_count != 0)
             {
-                /*can not change buffer size*/
+                /* can not change buffer or DMA event configuration while opened */
                 ret = -RT_EBUSY;
+                break;
+            }
+
+            if (pconfig->baud_rate == 0)
+            {
+                ret = -RT_EINVAL;
+                break;
+            }
+
+            ret = serial->ops->configure(serial, pconfig);
+            if (ret != RT_EOK)
+            {
                 break;
             }
             /* set serial configure */
             serial->config = *pconfig;
-            serial->ops->configure(serial, (struct serial_configure *)args);
         }
         break;
     case RT_SERIAL_CTRL_GET_CONFIG:
@@ -1585,6 +1748,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 #ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
     case TCGETA:
+    case TCGETS:
     {
         struct termios *tio = (struct termios *)args;
         if (tio == RT_NULL)
@@ -1627,6 +1791,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     case TCSETAW:
     case TCSETAF:
     case TCSETA:
+    case TCSETSW:
+    case TCSETSF:
+    case TCSETS:
     {
         int baudrate;
         struct serial_configure config;
@@ -1676,9 +1843,13 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         else
             config.flowcontrol = RT_SERIAL_FLOWCONTROL_NONE;
 
+        ret = serial->ops->configure(serial, &config);
+        if (ret != RT_EOK)
+        {
+            break;
+        }
         /* set serial configure */
         serial->config = config;
-        serial->ops->configure(serial, &config);
     }
     break;
     case TCFLSH:
@@ -1793,9 +1964,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             rt_ssize_t unread_bytes = 0;
             ret = _serial_get_unread_bytes_count(serial, &unread_bytes);
             if (ret == RT_EOK)
-                *(rt_size_t *)args = (rt_size_t)unread_bytes;
+                *(int *)args = (int)unread_bytes;
             else
-                *(rt_size_t *)args = 0;
+                *(int *)args = 0;
         }
         break;
 #endif /* RT_USING_POSIX_STDIO */

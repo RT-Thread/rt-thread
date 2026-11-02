@@ -3,3 +3,23 @@ config RT_HWCRYPTO_RNG_ROCKCHIP
     depends on RT_HWCRYPTO_USING_RNG
     depends on RT_USING_RESET
     default n
+
+config RT_HWCRYPTO_CRYPTO_ROCKCHIP_V2
+    bool "Rockchip Crypto V2 (cipher/hash/pka)"
+    depends on RT_USING_RESET
+    depends on (RT_HWCRYPTO_USING_AES && \
+                (RT_HWCRYPTO_USING_AES_ECB || RT_HWCRYPTO_USING_AES_CBC || \
+                 RT_HWCRYPTO_USING_AES_CFB || RT_HWCRYPTO_USING_AES_CTR || \
+                 RT_HWCRYPTO_USING_AES_OFB)) || \
+               (RT_HWCRYPTO_USING_DES && \
+                (RT_HWCRYPTO_USING_DES_ECB || RT_HWCRYPTO_USING_DES_CBC)) || \
+               (RT_HWCRYPTO_USING_3DES && \
+                (RT_HWCRYPTO_USING_3DES_ECB || RT_HWCRYPTO_USING_3DES_CBC)) || \
+               (RT_HWCRYPTO_USING_GCM && RT_HWCRYPTO_USING_AES) || \
+               RT_HWCRYPTO_USING_MD5 || RT_HWCRYPTO_USING_SHA1 || \
+               (RT_HWCRYPTO_USING_SHA2 && \
+                (RT_HWCRYPTO_USING_SHA2_224 || RT_HWCRYPTO_USING_SHA2_256 || \
+                 RT_HWCRYPTO_USING_SHA2_384 || RT_HWCRYPTO_USING_SHA2_512)) || \
+               (RT_HWCRYPTO_USING_BIGNUM && \
+                RT_HWCRYPTO_USING_BIGNUM_EXPTMOD)
+    default n

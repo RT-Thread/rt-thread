@@ -86,6 +86,39 @@ typedef rt_ubase_t UBaseType_t;
 typedef rt_tick_t TickType_t;
 #define portMAX_DELAY (TickType_t) RT_TICK_MAX
 
+/*
+ * FreeRTOS V11 definitions that ESP-IDF v6.1 headers expect but the
+ * FreeRTOS-Wrapper kernel (FreeRTOS V10.4.6) does not provide.
+ */
+/* RISC-V has no privilege levels, so the annotation expands to nothing. */
+#ifndef PRIVILEGED_FUNCTION
+#define PRIVILEGED_FUNCTION
+#endif
+/* FreeRTOS V11 renamed nothing here: `StaticList_t` is just an alias of
+   `struct xLIST`.  Used by components/esp_ringbuf/include/freertos/ringbuf.h. */
+#ifndef RT_FREERTOS_WRAPPER_STATIC_LIST_T
+#define RT_FREERTOS_WRAPPER_STATIC_LIST_T
+#include "freertos/list.h"
+typedef List_t StaticList_t;
+#endif
+
+/*
+ * ESP-IDF v6.1's components/esp_ringbuf blocks on the FreeRTOS task event
+ * lists, which FreeRTOS V11 provides and FreeRTOS-Wrapper does not.
+ * components/rtthread/scons/event_list.c implements the two functions below on
+ * top of the wrapper's list implementation; the declarations have to be visible
+ * here because esp_ringbuf calls them after a plain <freertos/FreeRTOS.h>.
+ * vTaskInternalSetTimeOutState() already exists in the wrapper's tasks.c but is
+ * not declared in its task.h.
+ */
+void vTaskPlaceOnEventList(List_t *const pxEventList, TickType_t xTicksToWait);
+BaseType_t xTaskRemoveFromEventList(List_t *const pxEventList);
+/* The wrapper's tasks.c defines this with TimeOut_t, which is a typedef of
+   `struct xTIME_OUT` in its freertos/task.h.  Spell the tag out, because
+   task.h is not included here and a different tag would be a different type. */
+struct xTIME_OUT;
+void vTaskInternalSetTimeOutState(struct xTIME_OUT *const pxTimeOut);
+
 struct rt_semaphore_wrapper
 {
     struct rt_semaphore sem;
@@ -245,6 +278,32 @@ FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
     return (BaseType_t) esp_cpu_get_core_id();
 }
 
+/*
+ * The ESP-IDF v6.1 <freertos/stream_buffer.h> refers to StaticStreamBuffer_t,
+ * which FreeRTOS V11 defines in its FreeRTOS.h.  The FreeRTOS-Wrapper kernel
+ * is V10.4.6 and provides no stream buffers, so nothing in the RT-Thread
+ * scons build can allocate one; the type only has to exist for the headers
+ * to parse.  Same layout as ESP-IDF's components/freertos/FreeRTOS-Kernel.
+ */
+#ifndef RT_FREERTOS_WRAPPER_STATIC_STREAM_BUFFER_T
+#define RT_FREERTOS_WRAPPER_STATIC_STREAM_BUFFER_T
+typedef struct xSTATIC_STREAM_BUFFER
+{
+    size_t uxDummy1[4];
+    void * pvDummy2[3];
+    uint8_t ucDummy3;
+#if ( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy4;
+#endif
+#if ( configUSE_SB_COMPLETED_CALLBACK == 1 )
+    void * pvDummy5[2];
+#endif
+    portMUX_TYPE xDummyStreamBufferLock;
+} StaticStreamBuffer_t;
+/* Message buffers are built on stream buffers. */
+typedef StaticStreamBuffer_t StaticMessageBuffer_t;
+#endif
+
 
 
 /* ------------------------------------------- FreeRTOS Porting Interface ----------------------------------------------
@@ -290,7 +349,7 @@ FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
         portEXIT_CRITICAL(mux);             \
     }                                       \
 })
-#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout)   portENTER_CRITICAL_SAFE(mux, timeout)
+#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout)   portTRY_ENTER_CRITICAL(mux, timeout)
 
 // ---------------------- Yielding -------------------------
 

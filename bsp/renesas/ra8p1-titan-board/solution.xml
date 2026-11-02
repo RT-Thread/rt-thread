@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<raSolution>
+  <generalSettings>
+    <option key="#Board#" value="board.custom"/>
+    <option key="#TargetName#" value="R7KA8P1KFLCAC"/>
+    <option key="#FSPVersion#" value="6.2.0"/>
+    <option key="#SELECTED_TOOLCHAIN#" value="com.arm.toolchain"/>
+  </generalSettings>
+  <raPartitions>
+    <memory Pname="CPU0" name="RAM_CPU0_S" offset="0x0" parent="RAM" security="s" size="0x174000"/>
+    <memory Pname="CPU0" name="SHARED_MEM" offset="0x174000" parent="RAM" security="s" size="0x20000" userDefined="true"/>
+    <memory Pname="CPU0" name="RAM_CPU0_C" offset="0x174000" parent="RAM" security="c" size="0x0"/>
+    <memory Pname="CPU1" name="RAM_CPU1_S" offset="0x194000" parent="RAM" security="s" size="0x40000"/>
+    <memory Pname="CPU1" name="RAM_CPU1_C" offset="0x1D4000" parent="RAM" security="c" size="0x0"/>
+    <memory Pname="CPU0" name="FLASH_CPU0_S" offset="0x0" parent="FLASH" security="s" size="0xC0000"/>
+    <memory Pname="CPU0" name="FLASH_CPU0_C" offset="0xC0000" parent="FLASH" security="c" size="0x0"/>
+    <memory Pname="CPU1" name="FLASH_CPU1_S" offset="0xC0000" parent="FLASH" security="s" size="0x40000"/>
+    <memory Pname="CPU1" name="FLASH_CPU1_C" offset="0x100000" parent="FLASH" security="c" size="0x0"/>
+    <memory Pname="CPU0" name="DATA_FLASH_CPU0_S" offset="0x0" parent="DATA_FLASH" security="s" size="0x0"/>
+    <memory Pname="CPU1" name="DATA_FLASH_CPU1_S" offset="0x0" parent="DATA_FLASH" security="s" size="0x0"/>
+    <memory Pname="CPU0" name="SDRAM_CPU0_S" offset="0x0" parent="SDRAM" security="s" size="0x4000000"/>
+    <memory Pname="CPU1" name="SDRAM_CPU1_S" offset="0x4000000" parent="SDRAM" security="s" size="0x4000000"/>
+    <memory Pname="CPU0" name="OSPI0_CS0_CPU0_S" offset="0x0" parent="OSPI0_CS0" security="s" size="0x8000000"/>
+    <memory Pname="CPU1" name="OSPI0_CS0_CPU1_S" offset="0x8000000" parent="OSPI0_CS0" security="s" size="0x8000000"/>
+    <memory Pname="CPU0" name="OSPI0_CS1_CPU0_S" offset="0x0" parent="OSPI0_CS1" security="s" size="0x8000000"/>
+    <memory Pname="CPU1" name="OSPI0_CS1_CPU1_S" offset="0x8000000" parent="OSPI0_CS1" security="s" size="0x8000000"/>
+    <memory Pname="CPU0" name="OSPI1_CS0_CPU0_S" offset="0x0" parent="OSPI1_CS0" security="s" size="0x4000000"/>
+    <memory Pname="CPU1" name="OSPI1_CS0_CPU1_S" offset="0x4000000" parent="OSPI1_CS0" security="s" size="0x4000000"/>
+    <memory Pname="CPU0" name="OSPI1_CS1_CPU0_S" offset="0x0" parent="OSPI1_CS1" security="s" size="0x4000000"/>
+    <memory Pname="CPU1" name="OSPI1_CS1_CPU1_S" offset="0x4000000" parent="OSPI1_CS1" security="s" size="0x4000000"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS0_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS0" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS0_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS0" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS2_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS2" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS2_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS2" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_SAS_CPU0_S" offset="0x0" parent="OPTION_SETTING_SAS" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_SAS_CPU1_S" offset="0x2" parent="OPTION_SETTING_SAS" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS1_SEC_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS1_SEC" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS1_SEC_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS1_SEC" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS1_SEL_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS1_SEL" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS1_SEL_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS1_SEL" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS3_SEC_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS3_SEC" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS3_SEC_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS3_SEC" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OFS3_SEL_CPU0_S" offset="0x0" parent="OPTION_SETTING_OFS3_SEL" security="s" size="0x2"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OFS3_SEL_CPU1_S" offset="0x2" parent="OPTION_SETTING_OFS3_SEL" security="s" size="0x2"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_BPS_SEC_CPU0_S" offset="0x0" parent="OPTION_SETTING_BPS_SEC" security="s" size="0x40"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_BPS_SEC_CPU1_S" offset="0x40" parent="OPTION_SETTING_BPS_SEC" security="s" size="0x40"/>
+    <memory Pname="CPU0" name="OPTION_SETTING_OTP_PBPS_SEC_CPU0_S" offset="0x0" parent="OPTION_SETTING_OTP_PBPS_SEC" security="s" size="0x40"/>
+    <memory Pname="CPU1" name="OPTION_SETTING_OTP_PBPS_SEC_CPU1_S" offset="0x40" parent="OPTION_SETTING_OTP_PBPS_SEC" security="s" size="0x40"/>
+    <memory Pname="CPU0" name="ITCM_CPU0_S" offset="0x0" parent="ITCM" security="s" size="0x20000"/>
+    <memory Pname="CPU0" name="DTCM_CPU0_S" offset="0x0" parent="DTCM" security="s" size="0x20000"/>
+    <memory Pname="CPU1" name="CTCM_CPU1_S" offset="0x0" parent="CTCM" security="s" size="0x10000"/>
+    <memory Pname="CPU1" name="STCM_CPU1_S" offset="0x0" parent="STCM" security="s" size="0x10000"/>
+  </raPartitions>
+  <raSmartBundles>
+    <bundle>m85/Objects/template.sbd</bundle>
+    <bundle>m33/Objects/template.sbd</bundle>
+  </raSmartBundles>
+</raSolution>

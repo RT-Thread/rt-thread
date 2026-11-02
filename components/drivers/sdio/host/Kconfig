@@ -19,4 +19,10 @@ config RT_SDIO_DW_MMC_PCI
     depends on RT_USING_PCI
     default n
 
+config RT_SDIO_SDHCI_DWCMSHC
+    bool "Synopsys DWC MSHC SDHCI"
+    depends on RT_USING_OFW
+    select RT_USING_SDHCI
+    default n
+
 osource "$(SOC_DM_SDIO_DIR)/Kconfig"

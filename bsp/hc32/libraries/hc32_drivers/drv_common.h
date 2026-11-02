@@ -18,9 +18,9 @@ extern "C" {
 void _Error_Handler(char *s, int num);
 
 #ifndef Error_Handler
-#define Error_Handler()                 _Error_Handler(__FILE__, __LINE__)
+#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
 #endif
-void  SysTick_Configuration(void);
+void SysTick_Configuration(void);
 
 #ifdef __cplusplus
 }

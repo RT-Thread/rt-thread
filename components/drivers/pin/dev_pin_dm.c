@@ -122,7 +122,7 @@ static rt_err_t pin_api_detach_irq(struct rt_device *device, rt_base_t pin)
         }
         else
         {
-            return gpio->ops->pin_detach_irq(&gpio->parent, pin);
+            return gpio->ops->pin_detach_irq(&gpio->parent, pin_index);
         }
     }
 

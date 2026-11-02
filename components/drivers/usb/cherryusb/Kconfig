@@ -28,6 +28,8 @@ if RT_USING_CHERRYUSB
                 bool "CUSTOM (Implement it yourself)"
             config RT_CHERRYUSB_DEVICE_FSDEV_ST
                 bool "fsdev_st"
+            config RT_CHERRYUSB_DEVICE_FSDEV_NATION
+                bool "fsdev_nation"
             config RT_CHERRYUSB_DEVICE_FSDEV_CUSTOM
                 bool "fsdev_custom"
             config RT_CHERRYUSB_DEVICE_DWC2_ST

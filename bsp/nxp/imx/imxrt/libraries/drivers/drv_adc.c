@@ -20,7 +20,7 @@
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-#define LOG_TAG             "drv.adc"
+#define LOG_TAG "drv.adc"
 #include <drv_log.h>
 #include "drv_adc.h"
 #include "fsl_adc.h"
@@ -52,8 +52,7 @@ static rt_err_t imxrt_hp_adc_convert(struct rt_adc_device *device, rt_uint32_t c
     return RT_EOK;
 }
 
-static struct rt_adc_ops imxrt_adc_ops =
-{
+static struct rt_adc_ops imxrt_adc_ops = {
     .enabled = imxrt_hp_adc_enabled,
     .convert = imxrt_hp_adc_convert,
 };

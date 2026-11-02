@@ -24,7 +24,7 @@
 #endif /* BSP_USING_TOUCH_FT6X36 */
 
 /* Touch chip connection information */
-#define BSP_TOUCH_I2C_BUS_NAME      "i2c1"
+#define BSP_TOUCH_I2C_BUS_NAME       "swi2c1"
 #define BSP_TOUCH_I2C_RESET_PIN      119 /* PH.7 */
 /* RT-Thread touch device name */
 #define TOUCH_DEV_NAME "touch"

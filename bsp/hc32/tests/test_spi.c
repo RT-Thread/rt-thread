@@ -6,6 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-04     CDT          Support HC32F467
+ * 2026-07-10     CDT          Modify SPI maxium clock to 30MHz
  */
 
 /*
@@ -24,54 +27,54 @@
 #if defined(BSP_USING_SPI)
 #include "drv_spi.h"
 
-#define W25Q_FLAG_BUSY                  (0x01)
-#define W25Q_WR_ENABLE                  (0x06)
-#define W25Q_SECTOR_ERASE               (0x20)
-#define W25Q_RD_STATUS_REG1             (0x05)
-#define W25Q_PAGE_PROGRAM               (0x02)
-#define W25Q_STD_RD                     (0x03)
+#define W25Q_FLAG_BUSY      (0x01)
+#define W25Q_WR_ENABLE      (0x06)
+#define W25Q_SECTOR_ERASE   (0x20)
+#define W25Q_RD_STATUS_REG1 (0x05)
+#define W25Q_PAGE_PROGRAM   (0x02)
+#define W25Q_STD_RD         (0x03)
 
-#define W25Q_PAGE_SIZE                  (256UL)
-#define W25Q_SECTOR_SIZE                (1024UL * 4UL)
-#define W25Q_PAGE_PER_SECTOR            (W25Q_SECTOR_SIZE / W25Q_PAGE_SIZE)
-#define W25Q_MAX_ADDR                   (0x800000UL)
+#define W25Q_PAGE_SIZE       (256UL)
+#define W25Q_SECTOR_SIZE     (1024UL * 4UL)
+#define W25Q_PAGE_PER_SECTOR (W25Q_SECTOR_SIZE / W25Q_PAGE_SIZE)
+#define W25Q_MAX_ADDR        (0x800000UL)
 
-#define W25Q_SPI_WR_RD_ADDR             0x4000
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448) || defined (HC32F4A8)
-    #define W25Q_SPI_DATA_BUF_LEN       0x2000
-#elif defined (HC32F334)
-    #define W25Q_SPI_DATA_BUF_LEN       0x1000
+#define W25Q_SPI_WR_RD_ADDR 0x4000
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F467)
+#define W25Q_SPI_DATA_BUF_LEN 0x2000
+#elif defined(HC32F334)
+#define W25Q_SPI_DATA_BUF_LEN 0x1000
 #endif
 
 
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
-    #define SPI_CS_PORT                 SPI1_CS_PORT
-    #define SPI_CS_PIN                  SPI1_CS_PIN
-    #define SPI_CS_PORT_PIN             GET_PIN(C, 7)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F467)
+#define SPI_CS_PORT     SPI1_CS_PORT
+#define SPI_CS_PIN      SPI1_CS_PIN
+#define SPI_CS_PORT_PIN GET_PIN(C, 7)
 
-    #define W25Q_SPI_BUS_NAME           "spi1"
-    #define W25Q_SPI_DEVICE_NAME        "spi10"
+#define W25Q_SPI_BUS_NAME    "spi1"
+#define W25Q_SPI_DEVICE_NAME "spi10"
 #elif defined(HC32F472)
-    #define SPI_CS_PORT                 SPI1_CS_PORT
-    #define SPI_CS_PIN                  SPI1_CS_PIN
-    #define SPI_CS_PORT_PIN             GET_PIN(B, 12)
+#define SPI_CS_PORT     SPI1_CS_PORT
+#define SPI_CS_PIN      SPI1_CS_PIN
+#define SPI_CS_PORT_PIN GET_PIN(B, 12)
 
-    #define W25Q_SPI_BUS_NAME           "spi1"
-    #define W25Q_SPI_DEVICE_NAME        "spi10"
+#define W25Q_SPI_BUS_NAME    "spi1"
+#define W25Q_SPI_DEVICE_NAME "spi10"
 #elif defined(HC32F460)
-    #define SPI_CS_PORT                 SPI3_CS_PORT
-    #define SPI_CS_PIN                  SPI3_CS_PIN
-    #define SPI_CS_PORT_PIN             GET_PIN(C, 7)
+#define SPI_CS_PORT     SPI3_CS_PORT
+#define SPI_CS_PIN      SPI3_CS_PIN
+#define SPI_CS_PORT_PIN GET_PIN(C, 7)
 
-    #define W25Q_SPI_BUS_NAME           "spi3"
-    #define W25Q_SPI_DEVICE_NAME        "spi30"
+#define W25Q_SPI_BUS_NAME    "spi3"
+#define W25Q_SPI_DEVICE_NAME "spi30"
 #elif defined(HC32F334)
-    #define SPI_CS_PORT                 SPI1_CS_PORT
-    #define SPI_CS_PIN                  SPI1_CS_PIN
-    #define SPI_CS_PORT_PIN             GET_PIN(C, 1)
+#define SPI_CS_PORT     SPI1_CS_PORT
+#define SPI_CS_PIN      SPI1_CS_PIN
+#define SPI_CS_PORT_PIN GET_PIN(C, 1)
 
-    #define W25Q_SPI_BUS_NAME           "spi1"
-    #define W25Q_SPI_DEVICE_NAME        "spi10"
+#define W25Q_SPI_BUS_NAME    "spi1"
+#define W25Q_SPI_DEVICE_NAME "spi10"
 #endif
 
 
@@ -96,8 +99,8 @@ INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 void w25q_read_uid(struct rt_spi_device *device)
 {
     rt_uint8_t w25x_read_uid = 0x4B;    /* 命令 */
-    rt_uint8_t u8UID[8] = {0};
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t u8UID[8] = { 0 };
+    rt_uint8_t txBuf[5] = { 0 };
 
     memset(txBuf, 0xFF, 5);
     txBuf[0] = w25x_read_uid;
@@ -115,19 +118,19 @@ void w25q_read_uid(struct rt_spi_device *device)
     /* 方式2：使用 rt_spi_transfer_message()发送命令读取ID */
     struct rt_spi_message msg1, msg2;
 
-    msg1.send_buf   = txBuf;
-    msg1.recv_buf   = RT_NULL;
-    msg1.length     = 5;
-    msg1.cs_take    = 1;
+    msg1.send_buf = txBuf;
+    msg1.recv_buf = RT_NULL;
+    msg1.length = 5;
+    msg1.cs_take = 1;
     msg1.cs_release = 0;
-    msg1.next       = &msg2;
+    msg1.next = &msg2;
 
-    msg2.send_buf   = RT_NULL;
-    msg2.recv_buf   = u8UID;
-    msg2.length     = 8;
-    msg2.cs_take    = 0;
+    msg2.send_buf = RT_NULL;
+    msg2.recv_buf = u8UID;
+    msg2.length = 8;
+    msg2.cs_take = 0;
     msg2.cs_release = 1;
-    msg2.next       = RT_NULL;
+    msg2.next = RT_NULL;
 
     rt_spi_transfer_message(device, &msg1);
     rt_kprintf("use rt_spi_transfer_message() read w25q ID is: UID is: %02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x\r\n",
@@ -138,8 +141,8 @@ int32_t w25q_check_process_done(struct rt_spi_device *device, uint32_t u32Timeou
 {
     __IO uint32_t u32Count = 0U;
     int32_t i32Ret = LL_ERR_TIMEOUT;
-    rt_uint8_t rxBuf[5] = {0};
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t rxBuf[5] = { 0 };
+    rt_uint8_t txBuf[5] = { 0 };
 
     txBuf[0] = W25Q_RD_STATUS_REG1;
     while (u32Count < u32Timeout)
@@ -166,7 +169,7 @@ int32_t w25q_check_process_done(struct rt_spi_device *device, uint32_t u32Timeou
 int32_t w25q_read_data(struct rt_spi_device *device, uint32_t u32Addr, uint8_t *pu8ReadBuf, uint32_t u32Size)
 {
     int32_t i32Ret = LL_OK;
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t txBuf[5] = { 0 };
 
     txBuf[0] = W25Q_STD_RD;
     txBuf[1] = (u32Addr >> 16) & 0xFFU;
@@ -221,9 +224,9 @@ int32_t w25q_write_data(struct rt_spi_device *device, uint32_t u32Addr, uint8_t 
             break;
         }
 
-        u32Addr       += u32TempSize;
+        u32Addr += u32TempSize;
         u32AddrOffset += u32TempSize;
-        u32Size       -= u32TempSize;
+        u32Size -= u32TempSize;
     }
 
     return i32Ret;
@@ -283,11 +286,11 @@ void w25q_write_read_data(struct rt_spi_device *device, uint32_t u32Addr)
     {
         rt_kprintf("spi erase sector failed!\n");
     }
-    if (LL_OK !=  w25q_write_data(device, u32Addr, u8WrBuf, W25Q_SPI_DATA_BUF_LEN))
+    if (LL_OK != w25q_write_data(device, u32Addr, u8WrBuf, W25Q_SPI_DATA_BUF_LEN))
     {
         rt_kprintf("spi write data failed!\n");
     }
-    if (LL_OK !=  w25q_read_data(device, u32Addr, u8RdBuf, W25Q_SPI_DATA_BUF_LEN))
+    if (LL_OK != w25q_read_data(device, u32Addr, u8RdBuf, W25Q_SPI_DATA_BUF_LEN))
     {
         rt_kprintf("spi read data failed!\n");
     }
@@ -308,7 +311,7 @@ static void spi_thread_entry(void *parameter)
 
     cfg.data_width = 8;
     cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;
-    cfg.max_hz = 80 * 1000 * 1000;  /* 80M */
+    cfg.max_hz = 30 * 1000 * 1000;  /* 30M */
     rt_spi_configure(spi_dev_w25q, &cfg);
     /* 读取UID */
     w25q_read_uid(spi_dev_w25q);

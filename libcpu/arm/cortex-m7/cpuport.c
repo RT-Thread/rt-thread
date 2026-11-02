@@ -18,9 +18,17 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_DM
+#include <drivers/core/power.h>
+#endif
 #ifdef RT_USING_HW_STACK_GUARD
 #include <mprotect.h>
 #endif
+
+rt_weak int rt_hw_cpu_id(void)
+{
+    return 0;
+}
 
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
                   /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
@@ -455,10 +463,28 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 /**
  * reset CPU
  */
-void rt_hw_cpu_reset(void)
+static void cortex_m_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }
+
+#ifdef RT_USING_DM
+static int cortex_m_cpu_reset_init(void)
+{
+    if (!rt_dm_machine_reset)
+    {
+        rt_dm_machine_reset = cortex_m_cpu_reset;
+    }
+
+    return RT_EOK;
+}
+INIT_BOARD_EXPORT(cortex_m_cpu_reset_init);
+#else
+void rt_hw_cpu_reset(void)
+{
+    cortex_m_cpu_reset();
+}
+#endif
 
 #ifdef RT_USING_CPU_FFS
 /**

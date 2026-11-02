@@ -194,7 +194,7 @@ rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
 #endif
 
 
-#if defined (RT_USING_SPI)
+#if defined(RT_USING_SPI)
 rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
 {
     rt_err_t result = RT_EOK;
@@ -208,17 +208,17 @@ rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
     case (rt_uint32_t)CM_SPI1:
         GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinState = PIN_STAT_SET;
-        stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+        stcGpioInit.u16PinDir = PIN_DIR_OUT;
         GPIO_Init(SPI1_WP_PORT, SPI1_WP_PIN, &stcGpioInit);
         GPIO_Init(SPI1_HOLD_PORT, SPI1_HOLD_PIN, &stcGpioInit);
 
         (void)GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
         stcGpioInit.u16PinInputType = PIN_IN_TYPE_CMOS;
-        (void)GPIO_Init(SPI1_SCK_PORT,  SPI1_SCK_PIN,  &stcGpioInit);
+        (void)GPIO_Init(SPI1_SCK_PORT, SPI1_SCK_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI1_MOSI_PORT, SPI1_MOSI_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI1_MISO_PORT, SPI1_MISO_PIN, &stcGpioInit);
-        GPIO_SetFunc(SPI1_SCK_PORT,  SPI1_SCK_PIN,  SPI1_SCK_FUNC);
+        GPIO_SetFunc(SPI1_SCK_PORT, SPI1_SCK_PIN, SPI1_SCK_FUNC);
         GPIO_SetFunc(SPI1_MOSI_PORT, SPI1_MOSI_PIN, SPI1_MOSI_FUNC);
         GPIO_SetFunc(SPI1_MISO_PORT, SPI1_MISO_PIN, SPI1_MISO_FUNC);
         break;
@@ -342,24 +342,24 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
-#if defined (BSP_USING_INPUT_CAPTURE)
+#if defined(BSP_USING_INPUT_CAPTURE)
 rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
 {
     rt_err_t result = RT_EOK;
 
     switch ((rt_uint32_t)tmr_instance)
     {
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
     case (rt_uint32_t)CM_TMR6_1:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, INPUT_CAPTURE_TMR6_1_FUNC);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
     case (rt_uint32_t)CM_TMR6_2:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, INPUT_CAPTURE_TMR6_2_FUNC);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_10)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_10)
     case (rt_uint32_t)CM_TMR6_10:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_10_PORT, INPUT_CAPTURE_TMR6_10_PIN, INPUT_CAPTURE_TMR6_10_FUNC);
         break;
@@ -373,7 +373,7 @@ rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
 #endif
 
 #ifdef RT_USING_PM
-#define PLL_SRC                                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+#define PLL_SRC ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
 
 void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode)
 {
@@ -401,8 +401,8 @@ rt_err_t rt_hw_qspi_board_init(void)
     (void)GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
 #ifndef BSP_QSPI_USING_SOFT_CS
-    (void)GPIO_Init(QSPI_FLASH_CS_PORT,  QSPI_FLASH_CS_PIN,  &stcGpioInit);
-    GPIO_SetFunc(QSPI_FLASH_CS_PORT,  QSPI_FLASH_CS_PIN,  QSPI_FLASH_CS_FUNC);
+    (void)GPIO_Init(QSPI_FLASH_CS_PORT, QSPI_FLASH_CS_PIN, &stcGpioInit);
+    GPIO_SetFunc(QSPI_FLASH_CS_PORT, QSPI_FLASH_CS_PIN, QSPI_FLASH_CS_FUNC);
 #endif
     (void)GPIO_Init(QSPI_FLASH_SCK_PORT, QSPI_FLASH_SCK_PIN, &stcGpioInit);
     (void)GPIO_Init(QSPI_FLASH_IO0_PORT, QSPI_FLASH_IO0_PIN, &stcGpioInit);

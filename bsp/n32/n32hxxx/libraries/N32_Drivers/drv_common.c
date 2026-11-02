@@ -12,15 +12,15 @@
 #include <board.h>
 
 #ifdef RT_USING_PIN
-    #include <drv_gpio.h>
+#include <drv_gpio.h>
 #endif
 
 #ifdef RT_USING_SERIAL
-    #ifdef RT_USING_SERIAL_V2
-        #include <drv_usart_v2.h>
-    #else
-        #include <drv_usart.h>
-    #endif /* RT_USING_SERIAL */
+#ifdef RT_USING_SERIAL_V2
+#include <drv_usart_v2.h>
+#else
+#include <drv_usart.h>
+#endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
 #define DBG_TAG "drv_common"
@@ -42,20 +42,30 @@ static uint32_t _systick_ms = 1;
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
+#if defined(SOC_SERIES_N32H7xx)
     RCC_ClocksTypeDef RCC_Clocks = { 0 };
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    RCC_ClocksType RCC_Clocks = { 0 };
+#endif
 
     /* Get clock frequency */
     RCC_GetClocksFreqValue(&RCC_Clocks);
 
     /* Set Systick */
+#if defined(SOC_SERIES_N32H7xx)
     SysTick_Config(RCC_Clocks.M7ClkFreq / RT_TICK_PER_SECOND);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    SysTick_Config(RCC_Clocks.SysclkFreq / RT_TICK_PER_SECOND);
+#endif
 
     NVIC_SetPriorityGrouping(SCB_AIRCR_PRIGROUP3);
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 
     _systick_ms = 1000u / RT_TICK_PER_SECOND;
     if (_systick_ms == 0)
+    {
         _systick_ms = 1;
+    }
 }
 
 void System_Tick_Increase(void)
@@ -66,7 +76,9 @@ void System_Tick_Increase(void)
 uint32_t System_Tick_Get(void)
 {
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         System_Tick_Increase();
+    }
 
     return uwTick;
 }
@@ -81,7 +93,9 @@ void SysTick_Handler(void)
     rt_interrupt_enter();
 
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         System_Tick_Increase();
+    }
 
     rt_tick_increase();
 

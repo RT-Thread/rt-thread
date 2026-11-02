@@ -2,6 +2,17 @@ menuconfig RT_USING_CLOCK_TIME
     bool "Clock time subsystem"
     default n
 
+config RT_USING_CLOCK_TIMER_TRIGGER
+    bool "Enable clock timer hardware trigger output"
+    depends on RT_USING_CLOCK_TIME
+    default n
+    help
+        Enable clock timer hardware trigger output controls. Timer backends
+        may use this to expose update/TRGO trigger events to ADC drivers. The
+        selected timer must be dedicated to trigger output; the framework does
+        not arbitrate shared use with clock-time timeouts, PWM, or other timer
+        consumers.
+
 if RT_USING_CLOCK_TIME
     config CLOCK_TIMER_FREQ
         int "Clock time timer freq"

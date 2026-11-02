@@ -348,7 +348,7 @@
               <MiscControls />
               <Define>CORE_M0, __STDC_LIMIT_MACROS, USE_SPIFI, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\drivers;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\Libraries\Device\NXP\LPC43xx\Include;..\applications;.;..\Libraries\CMSIS\Include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\net\utest;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\drivers;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\extension;..\libraries\Device\NXP\LPC43xx\Include;..\applications;.;..\libraries\CMSIS\Include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\net\utest;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,14 +409,14 @@
             <File>
               <FileName>system_LPC43xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
+              <FilePath>..\libraries\Device\NXP\LPC43xx\Source\Templates\system_LPC43xx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_LPC43xx_M0.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
+              <FilePath>..\libraries\Device\NXP\LPC43xx\Source\Templates\ARM\startup_LPC43xx_M0.s</FilePath>
             </File>
           </Files>
         </Group>

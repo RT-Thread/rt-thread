@@ -28,7 +28,7 @@
 
 #define CHIP_ADDRESS    0x30 /* OV2640 address */
 // #define CHIP_ADDRESS    0x3C /* OV5640 address */
-#define I2C_NAME        "i2c1"
+#define I2C_NAME    "swi2c1"
 #define PWDN_PIN    GET_PIN(D, 14)
 
 struct rt_i2c_bus_device *i2c_bus  = RT_NULL;

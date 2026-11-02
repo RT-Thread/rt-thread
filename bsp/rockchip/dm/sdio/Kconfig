@@ -1,5 +1,11 @@
 config RT_SDIO_DW_MMC_ROCKCHIP
-    bool "Rockchip"
+    bool "Rockchip DesignWare MMC"
     depends on RT_SDIO_DW_MMC
+    depends on RT_USING_OFW
+    default n
+
+config RT_SDIO_SDHCI_DWCMSHC_ROCKCHIP
+    bool "Rockchip DWC MSHC SDHCI"
+    depends on RT_SDIO_SDHCI_DWCMSHC
     depends on RT_USING_OFW
     default n

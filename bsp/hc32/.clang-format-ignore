@@ -1,2 +1,3 @@
-# clang-format ignore file  
+# clang-format ignore file
 /libraries/hc32_drivers/
+*/rtconfig.h

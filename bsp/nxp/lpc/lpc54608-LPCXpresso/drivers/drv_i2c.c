@@ -12,79 +12,9 @@
 #include <rtdevice.h>
 #include "board.h"
 #include "fsl_iocon.h"
-#include "fsl_gpio.h"
 #include "fsl_i2c.h"
 
 #ifdef RT_USING_I2C
-
-#ifdef RT_USING_I2C_BITOPS
-
-struct lpc_i2c_bit_data
-{
-    struct
-    {
-        GPIO_Type *base;
-        uint32_t port;
-        uint32_t pin;
-    } scl, sda;
-};
-
-static void gpio_set_sda(void *data, rt_int32_t state)
-{
-    struct lpc_i2c_bit_data *bd = data;
-
-    if (state)
-    {
-        //bd->sda.base->B[bd->sda.port][bd->sda.pin] = 1;
-        GPIO_WritePinOutput(bd->sda.base, bd->sda.port, bd->sda.pin, 1);
-    }
-    else
-    {
-        GPIO_WritePinOutput(bd->sda.base, bd->sda.port, bd->sda.pin, 0);
-    }
-}
-
-static void gpio_set_scl(void *data, rt_int32_t state)
-{
-    struct lpc_i2c_bit_data *bd = data;
-
-    if (state)
-    {
-        //bd->scl.base->B[bd->sda.port][bd->sda.pin] = 1;
-        GPIO_WritePinOutput(bd->scl.base, bd->scl.port, bd->scl.pin, 1);
-    }
-    else
-    {
-        //bd->scl.base->B[bd->sda.port][bd->sda.pin] = 0;
-        GPIO_WritePinOutput(bd->scl.base, bd->scl.port, bd->scl.pin, 0);
-    }
-}
-
-static rt_int32_t gpio_get_sda(void *data)
-{
-    struct lpc_i2c_bit_data *bd = data;
-
-    return GPIO_ReadPinInput(bd->sda.base, bd->sda.port, bd->sda.pin) & 0x01;
-}
-
-static rt_int32_t gpio_get_scl(void *data)
-{
-    struct lpc_i2c_bit_data *bd = data;
-
-    return GPIO_ReadPinInput(bd->scl.base, bd->scl.port, bd->scl.pin) & 0x01;
-}
-
-static void gpio_udelay(rt_uint32_t us)
-{
-    volatile rt_int32_t i;
-    for (; us > 0; us--)
-    {
-        i = 10;
-        while (i--);
-    }
-}
-
-#else /* RT_USING_I2C_BITOPS */
 
 #define IOCON_PIO_DIGITAL_EN        0x0100u   /*!< Enables digital function */
 #define IOCON_PIO_FUNC0               0x00u   /*!< Selects pin function 0 */
@@ -205,53 +135,8 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
     RT_NULL
 };
 
-#endif /* RT_USING_I2C_BITOPS */
-
 int rt_hw_i2c_init(void)
 {
-#ifdef RT_USING_I2C_BITOPS
-    /* register I2C1: SCL/P0_20 SDA/P0_19 */
-    {
-        static struct rt_i2c_bus_device i2c_device;
-
-        static const struct lpc_i2c_bit_data _i2c_bdata =
-        {
-            /* SCL */ {GPIO, 3, 24},
-            /* SDA */ {GPIO, 3, 23},
-        };
-
-        static const struct rt_i2c_bit_ops _i2c_bit_ops =
-        {
-            (void*)&_i2c_bdata,
-            gpio_set_sda,
-            gpio_set_scl,
-            gpio_get_sda,
-            gpio_get_scl,
-
-            gpio_udelay,
-
-            5,
-            100
-        };
-
-        gpio_pin_config_t pin_config = {
-            kGPIO_DigitalOutput, 0,
-        };
-
-        CLOCK_EnableClock(kCLOCK_Gpio3);
-
-        /* Enable touch panel controller */
-        GPIO_PinInit(GPIO, _i2c_bdata.sda.port, _i2c_bdata.sda.pin, &pin_config);
-        GPIO_PinInit(GPIO, _i2c_bdata.scl.port, _i2c_bdata.scl.pin, &pin_config);
-
-        GPIO_WritePinOutput(GPIO, _i2c_bdata.sda.port, _i2c_bdata.sda.pin, 1);
-        GPIO_WritePinOutput(GPIO, _i2c_bdata.scl.port, _i2c_bdata.scl.pin, 1);
-
-        i2c_device.priv = (void *)&_i2c_bit_ops;
-        rt_i2c_bit_add_bus(&i2c_device, "i2c2");
-    } /* register I2C */
-
-#else /* RT_USING_I2C_BITOPS */
     static struct lpc_i2c_bus lpc_i2c2;
 
     /* attach 12 MHz clock to FLEXCOMM2 (I2C master for touch controller) */
@@ -294,8 +179,6 @@ int rt_hw_i2c_init(void)
     lpc_i2c2.parent.ops = &i2c_ops;
     lpc_i2c2.I2C = I2C2;
     rt_i2c_bus_device_register(&lpc_i2c2.parent, "i2c2");
-
-#endif /* RT_USING_I2C_BITOPS */
 
     return 0;
 }

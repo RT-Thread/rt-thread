@@ -18,8 +18,8 @@
 
 #if defined(BSP_RTC_USING_XTAL32) || defined(RT_USING_PM)
 
-#define XTAL32_FCM_THREAD_STACK_SIZE    (1024)
-#define XTAL32_FCM_UNIT                 (CM_FCM)
+#define XTAL32_FCM_THREAD_STACK_SIZE (1024)
+#define XTAL32_FCM_UNIT              (CM_FCM)
 
 /**
  * @brief This thread is used to monitor whether XTAL32 is stable.
@@ -36,13 +36,13 @@ void xtal32_fcm_thread_entry(void *parameter)
     /* FCM config */
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, ENABLE);
     (void)FCM_StructInit(&stcFcmInit);
-    stcFcmInit.u32RefClock       = FCM_REF_CLK_MRC;
-    stcFcmInit.u32RefClockDiv    = FCM_REF_CLK_DIV8192; /* ~1ms cycle */
-    stcFcmInit.u32RefClockEdge   = FCM_REF_CLK_RISING;
-    stcFcmInit.u32TargetClock    = FCM_TARGET_CLK_XTAL32;
+    stcFcmInit.u32RefClock = FCM_REF_CLK_MRC;
+    stcFcmInit.u32RefClockDiv = FCM_REF_CLK_DIV8192; /* ~1ms cycle */
+    stcFcmInit.u32RefClockEdge = FCM_REF_CLK_RISING;
+    stcFcmInit.u32TargetClock = FCM_TARGET_CLK_XTAL32;
     stcFcmInit.u32TargetClockDiv = FCM_TARGET_CLK_DIV1;
-    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 96UL / 100UL);
-    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 104UL / 100UL);
+    stcFcmInit.u16LowerLimit = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 96UL / 100UL);
+    stcFcmInit.u16UpperLimit = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 104UL / 100UL);
     (void)FCM_Init(XTAL32_FCM_UNIT, &stcFcmInit);
     /* Enable FCM, to ensure xtal32 stable */
     FCM_Cmd(XTAL32_FCM_UNIT, ENABLE);

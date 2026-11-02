@@ -16,7 +16,7 @@ config BSP_USING_PSRAM
     bool "Enable PSRAM"
     default n
 
-choice
+choice BSP_BL61X_MODULE_SEL
     prompt "Choose Module"
 
     default BSP_USING_BL61X_MODULE_DEFAULT

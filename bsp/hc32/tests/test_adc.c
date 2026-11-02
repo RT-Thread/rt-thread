@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
  */
 
 /*
@@ -22,29 +23,33 @@
 
 #ifdef BSP_USING_ADC
 
-#define REFER_VOLTAGE                   3300        /* 参考电压 3.3V,单位mv */
-#define CONVERT_BITS                    (1 << 12)   /* 转换位数为12位       */
+#define REFER_VOLTAGE 3300        /* 参考电压 3.3V,单位mv */
+#define CONVERT_BITS  (1 << 12)   /* 转换位数为12位       */
 
 /* ADC Channel Max */
-#if defined (HC32F460)
-    #define ADC1_CH_MAX                 (16U)
-    #define ADC2_CH_MAX                 (8U)
-#elif defined (HC32F472)
-    #define ADC1_CH_MAX                 (21U)
-    #define ADC2_CH_MAX                 (21U)
-    #define ADC3_CH_MAX                 (22U)
-#elif defined (HC32F4A0) || defined (HC32F4A8)
-    #define ADC1_CH_MAX                 (16U)
-    #define ADC2_CH_MAX                 (16U)
-    #define ADC3_CH_MAX                 (20U)
-#elif defined (HC32F448)
-    #define ADC1_CH_MAX                 (16U)
-    #define ADC2_CH_MAX                 (8U)
-    #define ADC3_CH_MAX                 (12U)
-#elif defined (HC32F334)
-    #define ADC1_CH_MAX                 (16U)
-    #define ADC2_CH_MAX                 (12U)
-    #define ADC3_CH_MAX                 (10U)
+#if defined(HC32F460)
+#define ADC1_CH_MAX (16U)
+#define ADC2_CH_MAX (8U)
+#elif defined(HC32F472)
+#define ADC1_CH_MAX (21U)
+#define ADC2_CH_MAX (21U)
+#define ADC3_CH_MAX (22U)
+#elif defined(HC32F467)
+#define ADC1_CH_MAX (16U)
+#define ADC2_CH_MAX (16U)
+#define ADC3_CH_MAX (16U)
+#elif defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
+#define ADC1_CH_MAX (16U)
+#define ADC2_CH_MAX (16U)
+#define ADC3_CH_MAX (20U)
+#elif defined(HC32F448)
+#define ADC1_CH_MAX (16U)
+#define ADC2_CH_MAX (8U)
+#define ADC3_CH_MAX (12U)
+#elif defined(HC32F334)
+#define ADC1_CH_MAX (16U)
+#define ADC2_CH_MAX (12U)
+#define ADC3_CH_MAX (10U)
 #endif
 
 
@@ -59,7 +64,7 @@ rt_err_t adc_dma_trig_config(void)
 {
     stc_tmr0_init_t stcTmr0Init;
 
-#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || defined (HC32F334)
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334) || defined(HC32F467)
     FCG_Fcg2PeriphClockCmd(FCG2_PERIPH_TMR0_1, ENABLE);
 #endif
     (void)TMR0_StructInit(&stcTmr0Init);
@@ -105,7 +110,7 @@ static int adc_vol_sample(int argc, char **argv)
             rt_strcpy(adc_device, "adc2");
             adc_max_channel = ADC2_CH_MAX;
         }
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F472) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334) || defined(HC32F467)
         else if (0 == rt_strcmp(argv[1], "adc3"))
         {
             rt_strcpy(adc_device, "adc3");
@@ -131,8 +136,8 @@ static int adc_vol_sample(int argc, char **argv)
     /* DMA配置 */
     adc_priv.flag = ADC_USING_EOCA_DMA_FLAG;
     priv_ops.dma_trig_config = &adc_dma_trig_config;
-    priv_ops.dma_trig_start  = &adc_dma_trig_start;
-    priv_ops.dma_trig_stop   = &adc_dma_trig_stop;
+    priv_ops.dma_trig_start = &adc_dma_trig_start;
+    priv_ops.dma_trig_stop = &adc_dma_trig_stop;
     adc_priv.ops = &priv_ops;
     adc_dev->parent.user_data = &adc_priv;
 #endif
@@ -148,7 +153,7 @@ static int adc_vol_sample(int argc, char **argv)
         /* 转换为对应电压值 */
         vol = value * REFER_VOLTAGE / CONVERT_BITS;
         rt_kprintf("Simulate voltage is :%d mv\r\n", vol);
-        vol =  rt_adc_voltage(adc_dev, adc_channel);
+        vol = rt_adc_voltage(adc_dev, adc_channel);
         rt_kprintf("Read voltage is :%d mv\r\n", vol);
         rt_kprintf("*********************\r\n");
     }
@@ -157,5 +162,5 @@ static int adc_vol_sample(int argc, char **argv)
 }
 
 /* 导出到 msh 命令列表中 */
-MSH_CMD_EXPORT(adc_vol_sample, adc convert sample: select < adc1 | adc2 | adc3 >);
+MSH_CMD_EXPORT(adc_vol_sample, adc convert sample : select<adc1 | adc2 | adc3>);
 #endif

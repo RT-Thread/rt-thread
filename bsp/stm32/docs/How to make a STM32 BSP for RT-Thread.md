@@ -50,6 +50,12 @@ Copy the `stm32f10x` folder under the template folder and change the name of the
 
 ![Copying common templates](./figures_en/copy.png)
 
+Note: Do not run `menuconfig` or `scons` directly inside `bsp/stm32/libraries/templates/<series>`.
+The template directory is two levels deeper than a real BSP because of `libraries/templates`, so the
+relative paths in `Kconfig` match only after the template has been copied to `bsp/stm32/<board>`.
+Copy the matching series template into `bsp/stm32/`, rename it to the target BSP name, and then run
+`menuconfig`, `pkgs --update`, and `scons` from the new BSP directory.
+
 Modify the configuration file in the board folder. The modified content is shown in the following table: 
 
 | Item                      | Instruction                                                  |

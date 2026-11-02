@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         default y
         if BSP_USING_UART
-            choice
+            choice BSP_SERIAL_V_SEL
                 prompt "Select UART framework version"
                 default BSP_USING_SERIAL_V1
                 
@@ -287,7 +287,7 @@ menu "On-chip Peripheral Drivers"
                 select RT_USING_ALARM
                 default n
             if BSP_USING_ALARM
-                choice
+                choice BSP_ALARM_SEL
                     prompt "Select rtc alarm device"
                     default BSP_USING_ALARM0
 
@@ -342,7 +342,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
             if BSP_USING_CAN0
-                choice
+                choice BSP_CAN0_TX_P_SEL
                     prompt "Select CAN0 TX source"
                     default BSP_CAN0_TX_PD1
 
@@ -356,7 +356,7 @@ menu "On-chip Peripheral Drivers"
                         bool "GPIOH pin 13"
                 endchoice
 
-                choice
+                choice BSP_CAN0_RX_P_SEL
                     prompt "Select CAN0 RX source"
                     default BSP_CAN0_RX_PD0
 
@@ -376,7 +376,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
             if BSP_USING_CAN1
-                choice
+                choice BSP_CAN1_TX_PB_SEL
                     prompt "Select CAN1 TX source"
                     default BSP_CAN1_TX_PB6
 
@@ -386,7 +386,7 @@ menu "On-chip Peripheral Drivers"
                         bool "GPIOB pin 13"
                 endchoice
 
-                choice
+                choice BSP_CAN1_RX_P_SEL
                     prompt "Select CAN1 RX source"
                     default BSP_CAN1_RX_PB5
 

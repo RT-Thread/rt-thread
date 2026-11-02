@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-09     CDT          first version
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 #include <board.h>
@@ -16,24 +18,24 @@
 #if defined(BSP_USING_PM)
 
 // #define DRV_DEBUG
-#define LOG_TAG                         "drv_wktm"
+#define LOG_TAG "drv_wktm"
 #include <drv_log.h>
 
-#define CMPVAL_MAX                      (0xFFFUL)
+#define CMPVAL_MAX (0xFFFUL)
 
 #if defined(BSP_USING_WKTM_XTAL32)
-    #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_XTAL32)
-    #define PWC_WKT_COUNT_FRQ           (32768UL)
+#define PWC_WKT_CLK_SRC   (PWC_WKT_CLK_SRC_XTAL32)
+#define PWC_WKT_COUNT_FRQ (32768UL)
 #elif defined(BSP_USING_WKTM_64HZ)
-    #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_64HZ)
-    #define PWC_WKT_COUNT_FRQ           (64U)
+#define PWC_WKT_CLK_SRC   (PWC_WKT_CLK_SRC_64HZ)
+#define PWC_WKT_COUNT_FRQ (64U)
 #else
-    #if defined(HC32F4A0) || defined(HC32F4A8)
-        #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_RTCLRC)
-    #elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
-        #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_LRC)
-    #endif
-    #define PWC_WKT_COUNT_FRQ           (32768UL)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+#define PWC_WKT_CLK_SRC (PWC_WKT_CLK_SRC_RTCLRC)
+#elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
+#define PWC_WKT_CLK_SRC (PWC_WKT_CLK_SRC_LRC)
+#endif
+#define PWC_WKT_COUNT_FRQ (32768UL)
 #endif
 
 /**
@@ -119,8 +121,8 @@ int rt_hw_wktm_init(void)
     /* WKTM init */
     PWC_WKT_Config(PWC_WKT_CLK_SRC, CMPVAL_MAX);
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
-    /* F4A0 if select RTCLRC clock need open the LRCEN by RTC->CR3 register */
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+    /* F4A0/F4A2 if select RTCLRC clock need open the LRCEN by RTC->CR3 register */
 #if (PWC_WKT_CLK_SRC == PWC_WKT_CLK_SRC_RTCLRC)
     MODIFY_REG8(CM_RTC->CR3, RTC_CR3_LRCEN, 0x01U << RTC_CR3_LRCEN_POS);
 #endif

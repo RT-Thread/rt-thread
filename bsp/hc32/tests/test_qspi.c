@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-10     CDT          Support HC32F467
  */
 
 /*
@@ -24,73 +26,73 @@
 #if defined(BSP_USING_QSPI)
 #include "drv_qspi.h"
 
-#define W25Q_QSPI_DEVICE_NAME           "qspi10"
+#define W25Q_QSPI_DEVICE_NAME "qspi10"
 
-#define W25Q_FLAG_BUSY                  (0x01)
-#define W25Q_WR_ENABLE                  (0x06)
-#define W25Q_SECTOR_ERASE               (0x20)
-#define W25Q_RD_STATUS_REG1             (0x05)
-#define W25Q_PAGE_PROGRAM               (0x02)
-#define W25Q64_QUAD_INPUT_PAGE_PROGRAM  (0x32)
+#define W25Q_FLAG_BUSY                 (0x01)
+#define W25Q_WR_ENABLE                 (0x06)
+#define W25Q_SECTOR_ERASE              (0x20)
+#define W25Q_RD_STATUS_REG1            (0x05)
+#define W25Q_PAGE_PROGRAM              (0x02)
+#define W25Q64_QUAD_INPUT_PAGE_PROGRAM (0x32)
 
-#define W25Q_STD_RD                     (0x03)
-#define W25Q_FAST_RD                    (0x0B)
-#define W25Q_FAST_RD_DUAL_OUTPUT        (0x3B)
-#define W25Q_FAST_RD_DUAL_IO            (0xBB)
-#define W25Q_FAST_RD_QUAD_OUTPUT        (0x6B)
-#define W25Q_FAST_RD_QUAD_IO            (0xEB)
+#define W25Q_STD_RD              (0x03)
+#define W25Q_FAST_RD             (0x0B)
+#define W25Q_FAST_RD_DUAL_OUTPUT (0x3B)
+#define W25Q_FAST_RD_DUAL_IO     (0xBB)
+#define W25Q_FAST_RD_QUAD_OUTPUT (0x6B)
+#define W25Q_FAST_RD_QUAD_IO     (0xEB)
 
-#define W25Q64_RD_STATUS_REG1           (0x05)
-#define W25Q64_WR_STATUS_REG1           (0x01)
-#define W25Q64_RD_STATUS_REG2           (0x35)
-#define W25Q64_WR_STATUS_REG2           (0x31)
-#define W25Q64_RD_STATUS_REG3           (0x15)
-#define W25Q64_WR_STATUS_REG3           (0x11)
+#define W25Q64_RD_STATUS_REG1 (0x05)
+#define W25Q64_WR_STATUS_REG1 (0x01)
+#define W25Q64_RD_STATUS_REG2 (0x35)
+#define W25Q64_WR_STATUS_REG2 (0x31)
+#define W25Q64_RD_STATUS_REG3 (0x15)
+#define W25Q64_WR_STATUS_REG3 (0x11)
 
-#define W25Q_PAGE_SIZE                  (256UL)
-#define W25Q_SECTOR_SIZE                (1024UL * 4UL)
-#define W25Q_PAGE_PER_SECTOR            (W25Q_SECTOR_SIZE / W25Q_PAGE_SIZE)
-#define W25Q_MAX_ADDR                   (0x800000UL)
+#define W25Q_PAGE_SIZE       (256UL)
+#define W25Q_SECTOR_SIZE     (1024UL * 4UL)
+#define W25Q_PAGE_PER_SECTOR (W25Q_SECTOR_SIZE / W25Q_PAGE_SIZE)
+#define W25Q_MAX_ADDR        (0x800000UL)
 
-#define W25Q_QSPI_DATA_LINE_WIDTH       1
-#define W25Q_QSPI_RD_MD                 (W25Q_FAST_RD_QUAD_IO)
+#define W25Q_QSPI_DATA_LINE_WIDTH 1
+#define W25Q_QSPI_RD_MD           (W25Q_FAST_RD_QUAD_IO)
 
-#define W25Q_QSPI_WR_RD_ADDR            0x4000
-#define W25Q_QSPI_DATA_BUF_LEN          0x2000
-#define W25Q_QSPI_WR_CMD                W25Q64_QUAD_INPUT_PAGE_PROGRAM
+#define W25Q_QSPI_WR_RD_ADDR   0x4000
+#define W25Q_QSPI_DATA_BUF_LEN 0x2000
+#define W25Q_QSPI_WR_CMD       W25Q64_QUAD_INPUT_PAGE_PROGRAM
 
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F472)
-    #ifndef BSP_QSPI_USING_SOFT_CS
-        #if (W25Q_QSPI_WR_CMD == W25Q64_QUAD_INPUT_PAGE_PROGRAM)
-            #error "QUAD PAGE PROGRAM must use soft CS pin!!"
-        #endif
-    #endif
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F467)
+#ifndef BSP_QSPI_USING_SOFT_CS
+#if (W25Q_QSPI_WR_CMD == W25Q64_QUAD_INPUT_PAGE_PROGRAM)
+#error "QUAD PAGE PROGRAM must use soft CS pin!!"
+#endif
+#endif
 #endif
 
 #if W25Q_QSPI_RD_MD == W25Q_STD_RD
-    #define W25Q_QSPI_RD_DUMMY_CYCLE    0
+#define W25Q_QSPI_RD_DUMMY_CYCLE 0
 #elif W25Q_QSPI_RD_MD == W25Q_FAST_RD_DUAL_IO
-    #define W25Q_QSPI_RD_DUMMY_CYCLE    4
+#define W25Q_QSPI_RD_DUMMY_CYCLE 4
 #elif W25Q_QSPI_RD_MD == W25Q_FAST_RD_QUAD_IO
-    #define W25Q_QSPI_RD_DUMMY_CYCLE    6
+#define W25Q_QSPI_RD_DUMMY_CYCLE 6
 #else
-    #define W25Q_QSPI_RD_DUMMY_CYCLE    8
+#define W25Q_QSPI_RD_DUMMY_CYCLE 8
 #endif
 
 #if (W25Q_QSPI_RD_MD == W25Q_FAST_RD_QUAD_IO)
-    #define W25Q_QSPI_ADDR_LINE         4
+#define W25Q_QSPI_ADDR_LINE 4
 #elif (W25Q_QSPI_RD_MD == W25Q_FAST_RD_DUAL_IO)
-    #define W25Q_QSPI_ADDR_LINE         2
+#define W25Q_QSPI_ADDR_LINE 2
 #else
-    #define W25Q_QSPI_ADDR_LINE         1
+#define W25Q_QSPI_ADDR_LINE 1
 #endif
 
 #if (W25Q_QSPI_RD_MD == W25Q_STD_RD) || (W25Q_QSPI_RD_MD == W25Q_FAST_RD)
-    #define W25Q_QSPI_DATA_LINE         1
+#define W25Q_QSPI_DATA_LINE 1
 #elif (W25Q_QSPI_RD_MD == W25Q_FAST_RD_DUAL_OUTPUT) || (W25Q_QSPI_RD_MD == W25Q_FAST_RD_DUAL_IO)
-    #define W25Q_QSPI_DATA_LINE         2
+#define W25Q_QSPI_DATA_LINE 2
 #else
-    #define W25Q_QSPI_DATA_LINE         4
+#define W25Q_QSPI_DATA_LINE 4
 #endif
 
 
@@ -105,9 +107,9 @@ static int rt_hw_qspi_flash_init(void)
 #ifndef BSP_QSPI_USING_SOFT_CS
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
 #else
-#if defined (HC32F472)
+#if defined(HC32F472)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(B, 12), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
-#elif defined (HC32F4A0) || defined (HC32F460) || defined (HC32F448) || defined (HC32F4A8)
+#elif defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8) || defined(HC32F467)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(C, 7), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
 #endif
 #endif
@@ -125,8 +127,8 @@ INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_init);
 void w25q_read_uid(struct rt_qspi_device *device)
 {
     rt_uint8_t w25x_read_uid = 0x4B;    /* 命令 */
-    rt_uint8_t u8UID[8] = {0};
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t u8UID[8] = { 0 };
+    rt_uint8_t txBuf[5] = { 0 };
 
     rt_memset(txBuf, 0xFF, 5);
     txBuf[0] = w25x_read_uid;
@@ -147,8 +149,8 @@ int32_t w25q_check_process_done(struct rt_qspi_device *device, uint32_t u32Timeo
 {
     __IO uint32_t u32Count = 0U;
     int32_t i32Ret = LL_ERR_TIMEOUT;
-    rt_uint8_t rxBuf[5] = {0};
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t rxBuf[5] = { 0 };
+    rt_uint8_t txBuf[5] = { 0 };
 
     txBuf[0] = W25Q_RD_STATUS_REG1;
     while (u32Count < u32Timeout)
@@ -206,7 +208,7 @@ rt_err_t bsp_qspi_send_then_recv(struct rt_qspi_device *device, const void *send
     else
     {
         /* no address stage */
-        message.address.content = 0 ;
+        message.address.content = 0;
         message.address.qspi_lines = 0;
         message.address.size = 0;
     }
@@ -247,7 +249,7 @@ rt_err_t bsp_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_s
 
     struct rt_qspi_message message;
     unsigned char *ptr = (unsigned char *)send_buf;
-    rt_size_t  count = 0;
+    rt_size_t count = 0;
     rt_err_t result = 0;
 
     message.instruction.content = ptr[0];
@@ -276,16 +278,15 @@ rt_err_t bsp_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_s
         else
         {
             /* no address stage */
-            message.address.content = 0 ;
+            message.address.content = 0;
             message.address.qspi_lines = 0;
             message.address.size = 0;
         }
-
     }
     else
     {
         /* no address stage */
-        message.address.content = 0 ;
+        message.address.content = 0;
         message.address.qspi_lines = 0;
         message.address.size = 0;
     }
@@ -327,10 +328,9 @@ rt_err_t bsp_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_s
 }
 
 
-
 void w25q_write_sr(struct rt_qspi_device *device, uint8_t reg, uint8_t value)
 {
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t txBuf[5] = { 0 };
 
     txBuf[0] = W25Q_WR_ENABLE;
     if (1 != rt_qspi_send(device, txBuf, 1))
@@ -353,7 +353,7 @@ void w25q_write_sr(struct rt_qspi_device *device, uint8_t reg, uint8_t value)
 int32_t w25q_read_data(struct rt_qspi_device *device, uint32_t u32Addr, uint8_t *pu8ReadBuf, uint32_t u32Size)
 {
     int32_t i32Ret = LL_OK;
-    rt_uint8_t txBuf[5] = {0};
+    rt_uint8_t txBuf[5] = { 0 };
 
     txBuf[0] = W25Q_QSPI_RD_MD;
     txBuf[1] = (u32Addr >> 16) & 0xFFU;
@@ -419,9 +419,9 @@ int32_t w25q_write_data(struct rt_qspi_device *device, uint32_t u32Addr, uint8_t
             break;
         }
 
-        u32Addr       += u32TempSize;
+        u32Addr += u32TempSize;
         u32AddrOffset += u32TempSize;
-        u32Size       -= u32TempSize;
+        u32Size -= u32TempSize;
     }
 
     return i32Ret;
@@ -481,11 +481,11 @@ void w25q_write_read_data(struct rt_qspi_device *device, uint32_t u32Addr)
     {
         rt_kprintf("qspi erase sector failed!\n");
     }
-    if (LL_OK !=  w25q_write_data(device, u32Addr, u8WrBuf, W25Q_QSPI_DATA_BUF_LEN))
+    if (LL_OK != w25q_write_data(device, u32Addr, u8WrBuf, W25Q_QSPI_DATA_BUF_LEN))
     {
         rt_kprintf("qspi write data failed!\n");
     }
-    if (LL_OK !=  w25q_read_data(device, u32Addr, u8RdBuf, W25Q_QSPI_DATA_BUF_LEN))
+    if (LL_OK != w25q_read_data(device, u32Addr, u8RdBuf, W25Q_QSPI_DATA_BUF_LEN))
     {
         rt_kprintf("qspi read data failed!\n");
     }
@@ -502,14 +502,14 @@ void w25q_write_read_data(struct rt_qspi_device *device, uint32_t u32Addr)
 static void qspi_thread_entry(void *parameter)
 {
     rt_err_t ret;
-    struct rt_qspi_configuration qcfg = {0};
+    struct rt_qspi_configuration qcfg = { 0 };
     uint32_t u32Addr = W25Q_QSPI_WR_RD_ADDR;
 
-    qcfg.medium_size        = W25Q_MAX_ADDR;
-    qcfg.qspi_dl_width      = W25Q_QSPI_DATA_LINE_WIDTH;
-    qcfg.parent.mode        = RT_SPI_MODE_0;
-    qcfg.parent.data_width  = 8;
-    qcfg.parent.max_hz      = 10000000UL;
+    qcfg.medium_size = W25Q_MAX_ADDR;
+    qcfg.qspi_dl_width = W25Q_QSPI_DATA_LINE_WIDTH;
+    qcfg.parent.mode = RT_SPI_MODE_0;
+    qcfg.parent.data_width = 8;
+    qcfg.parent.max_hz = 10000000UL;
     ret = rt_qspi_configure(qspi_dev_w25q, &qcfg);
     if ((RT_EOK != ret) && (-RT_EBUSY != ret))
     {

@@ -45,9 +45,6 @@ if GetDepend(['RT_USING_SERIAL']):
     else:
         src += ['rt_drivers/drv_usart.c']
 
-if GetDepend(['RT_USING_I2C','RT_USING_I2C_BITOPS']):
-    src += ['rt_drivers/drv_soft_i2c.c']
-
 if GetDepend(['RT_USING_SPI', 'BSP_USING_SPI']):
     src += ['rt_drivers/drv_spi.c']
 

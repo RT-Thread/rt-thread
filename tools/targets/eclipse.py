@@ -27,6 +27,8 @@ from utils import xml_indent
 MODULE_VER_NUM = 6
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.cc', '*.s', '*.S', '*.asm','*.cmd']
+# Source control metadata directories should not be recursively scanned.
+scm_metadata_dirs = ('.git', '.svn', '.hg')
 
 
 def OSPath(path):
@@ -94,16 +96,19 @@ def CollectAllFilesinPath(path, pattern):
     for item in pattern:
         files += glob.glob(path + '/' + item)
 
-    list = os.listdir(path)
-    if len(list):
-        for item in list:
-            if item.startswith('.'):
+    items = os.listdir(path)
+    if len(items):
+        for item in items:
+            # Do not recursively scan source control metadata.
+            if item in scm_metadata_dirs:
                 continue
             if item == 'bsp':
                 continue
 
-            if os.path.isdir(os.path.join(path, item)):
-                files = files + CollectAllFilesinPath(os.path.join(path, item), pattern)
+            fullpath = os.path.join(path, item)
+            if os.path.isdir(fullpath):
+                files = files + CollectAllFilesinPath(fullpath, pattern)
+
     return files
 
 
@@ -125,19 +130,26 @@ def ExcludeFiles(infiles, files):
 def ExcludePaths(rootpath, paths):
     ret = []
 
+    # The scan root itself may be a source control metadata directory.
+    if os.path.basename(os.path.normpath(OSPath(rootpath))) in scm_metadata_dirs:
+        return [OSPath(rootpath)]
+
     files = os.listdir(OSPath(rootpath))
     for file in files:
-        if file.startswith('.'):
-            continue
-
         fullname = os.path.join(OSPath(rootpath), file)
 
         if os.path.isdir(fullname):
-            # print(fullname)
-            if not fullname in paths:
-                ret = ret + [fullname]
+            # Source control metadata should always be excluded directly.
+            if file in scm_metadata_dirs:
+                ret.append(fullname)
+                continue
+
+            # Hidden directories must follow the same exclusion rules
+            # as normal directories.
+            if fullname not in paths:
+                ret.append(fullname)
             else:
-                ret = ret + ExcludePaths(fullname, paths)
+                ret.extend(ExcludePaths(fullname, paths))
 
     return ret
 
@@ -183,6 +195,7 @@ def HandleToolOption(tools, env, project, reset):
     paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
     compile_include_paths_options = []
+    assembler_include_paths_options = []
     compile_include_files_options = []
     compile_defs_options = []
     linker_scriptfile_option = None
@@ -200,7 +213,9 @@ def HandleToolOption(tools, env, project, reset):
             # find all compile options
             for option in options:
                 option_id = option.get('id')
-                if ('compiler.include.paths' in  option_id) or ('compiler.option.includepaths' in  option_id) or ('compiler.tasking.include' in  option_id):
+                if ('assembler.include.paths' in option_id) or ('assembler.option.includepaths' in option_id):
+                    assembler_include_paths_options += [option]
+                elif ('compiler.include.paths' in  option_id) or ('compiler.option.includepaths' in  option_id) or ('compiler.tasking.include' in  option_id):
                     compile_include_paths_options += [option]
                 elif option.get('id').find('compiler.include.files') != -1 or option.get('id').find('compiler.option.includefiles') != -1 :
                     compile_include_files_options += [option]
@@ -229,7 +244,7 @@ def HandleToolOption(tools, env, project, reset):
                     linker_newlib_nano_option = option
 
     # change the inclue path
-    for option in compile_include_paths_options:
+    for option in compile_include_paths_options + assembler_include_paths_options:
         # find all of paths in this project
         include_paths = option.findall('listOptionValue')
         for item in include_paths:
@@ -423,16 +438,24 @@ def GenExcluding(env, project):
 
     paths = exclude_paths
     exclude_paths = []
-    # remove the folder which not has source code by source_pattern
+
+    # Remove folders which do not contain source files matching source_pattern.
     for path in paths:
-        # add bsp and libcpu folder and not collect source files (too more files)
+        # Add bsp and libcpu directly and do not collect source files
+        # because these trees contain too many files.
         if path.endswith('rt-thread\\bsp') or path.endswith('rt-thread\\libcpu'):
-            exclude_paths += [path]
+            exclude_paths.append(path)
             continue
 
-        set = CollectAllFilesinPath(path, source_pattern)
-        if len(set):
-            exclude_paths += [path]
+        # Source control metadata is never part of the target build and may
+        # contain a very large number of files, so do not recursively scan it.
+        if os.path.basename(os.path.normpath(path)) in scm_metadata_dirs:
+            exclude_paths.append(path)
+            continue
+
+        files = CollectAllFilesinPath(path, source_pattern)
+        if len(files):
+            exclude_paths.append(path)
 
     exclude_paths = [RelativeProjectPath(env, path).replace('\\', '/') for path in exclude_paths]
 

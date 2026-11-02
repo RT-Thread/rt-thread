@@ -94,7 +94,10 @@ rt_inline int pmbr_part_valid(gpt_mbr_record *part)
 static int is_pmbr_valid(legacy_mbr *mbr, rt_size_t total_sectors)
 {
     rt_uint32_t sz = 0;
+    rt_uint32_t disk_size;
     int part = 0, ret = 0; /* invalid by default */
+
+    disk_size = total_sectors - 1 > RT_UINT32_MAX ? RT_UINT32_MAX : (rt_uint32_t)(total_sectors - 1);
 
     if (!mbr || rt_le16_to_cpu(mbr->signature) != MSDOS_MBR_SIGNATURE)
     {
@@ -148,10 +151,10 @@ _check_hybrid:
     {
         sz = rt_le32_to_cpu(mbr->partition_record[part].size_in_lba);
 
-        if (sz != (rt_uint32_t)total_sectors - 1 && sz != 0xffffffff)
+        if (sz != disk_size && sz != RT_UINT32_MAX)
         {
             LOG_W("GPT: mbr size in lba (%u) different than whole disk (%u)",
-                    sz, rt_min_t(rt_uint32_t, total_sectors - 1, 0xffffffff));
+                  sz, disk_size);
         }
     }
 
@@ -169,31 +172,108 @@ _done:
  * @return number of bytes read on success, 0 on error.
  */
 static rt_size_t read_lba(struct rt_blk_disk *disk,
-        rt_uint64_t lba, rt_uint8_t *buffer, rt_size_t count)
+                          rt_uint64_t lba, rt_uint8_t *buffer, rt_size_t count)
 {
+    rt_uint32_t lbs;
+    rt_ssize_t cap_ss, lbs_ss;
     rt_size_t totalreadcount = 0;
+    rt_uint8_t *secbuf = RT_NULL;
+    rt_uint64_t capacity, disk_bytes, n512;
 
-    if (!buffer || lba > last_lba(disk))
+    if (!buffer || count == 0)
     {
         return 0;
     }
 
-    for (rt_uint64_t n = lba; count; ++n)
+    cap_ss = rt_blk_disk_get_capacity(disk);
+    lbs_ss = rt_blk_disk_get_logical_block_size(disk);
+    if (cap_ss < 0 || lbs_ss < 0)
+    {
+        return 0;
+    }
+
+    lbs = (rt_uint32_t)lbs_ss;
+    capacity = (rt_uint64_t)cap_ss;
+
+    if (lbs < 512 || (lbs % 512) != 0)
+    {
+        return 0;
+    }
+
+    if (lba >= capacity)
+    {
+        return 0;
+    }
+
+    disk_bytes = capacity * (rt_uint64_t)lbs;
+    n512 = lba * ((rt_uint64_t)lbs / 512);
+
+    secbuf = rt_malloc(lbs);
+    if (!secbuf)
+    {
+        return 0;
+    }
+
+    while (count > 0)
     {
         int copied = 512;
+        rt_ssize_t rd;
+        rt_uint32_t off;
+        rt_uint64_t log_sec, byte_off = n512 * 512;
 
-        disk->ops->read(disk, n, buffer, 1);
-
-        if (copied > count)
+        if (byte_off >= disk_bytes)
         {
-            copied = count;
+            break;
+        }
+
+        if (copied > (int)count)
+        {
+            copied = (int)count;
+        }
+
+        if ((rt_uint64_t)copied > disk_bytes - byte_off)
+        {
+            copied = (int)(disk_bytes - byte_off);
+        }
+
+        log_sec = byte_off / lbs;
+        off = (rt_uint32_t)(byte_off % lbs);
+
+        if (off + (rt_uint32_t)copied <= lbs)
+        {
+            rd = disk->ops->read(disk, (rt_off_t)log_sec, secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer, secbuf + off, copied);
+        }
+        else
+        {
+            rt_uint32_t first = lbs - off;
+
+            rd = disk->ops->read(disk, (rt_off_t)log_sec, secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer, secbuf + off, first);
+
+            rd = disk->ops->read(disk, (rt_off_t)(log_sec + 1), secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer + first, secbuf, copied - first);
         }
 
         buffer += copied;
         totalreadcount += copied;
         count -= copied;
+        ++n512;
     }
 
+    rt_free(secbuf);
     return totalreadcount;
 }
 
@@ -205,7 +285,7 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
  * @return ptes on success, null on error.
  */
 static gpt_entry *alloc_read_gpt_entries(struct rt_blk_disk *disk,
-        gpt_header *gpt)
+                                         gpt_header *gpt)
 {
     rt_size_t count;
     gpt_entry *pte;
@@ -255,7 +335,14 @@ static gpt_entry *alloc_read_gpt_entries(struct rt_blk_disk *disk,
 static gpt_header *alloc_read_gpt_header(struct rt_blk_disk *disk, rt_uint64_t lba)
 {
     gpt_header *gpt;
-    rt_uint32_t ssz = rt_blk_disk_get_logical_block_size(disk);
+    rt_uint32_t ssz;
+    rt_ssize_t lbs_ss = rt_blk_disk_get_logical_block_size(disk);
+
+    if (lbs_ss <= 0)
+    {
+        return RT_NULL;
+    }
+    ssz = (rt_uint32_t)lbs_ss;
 
     gpt = rt_malloc(ssz);
 
@@ -287,7 +374,7 @@ static gpt_header *alloc_read_gpt_header(struct rt_blk_disk *disk, rt_uint64_t l
  *  If valid, returns pointers to newly allocated GPT header and PTEs.
  */
 static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
-        rt_uint64_t lba, gpt_header **gpt, gpt_entry **ptes)
+                              rt_uint64_t lba, gpt_header **gpt, gpt_entry **ptes)
 {
     rt_uint32_t crc, origcrc;
     rt_uint64_t lastlba, pt_size;
@@ -307,22 +394,26 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu((*gpt)->signature) != GPT_HEADER_SIGNATURE)
     {
         LOG_D("%s: GUID Partition Table Header signature is wrong: %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->signature),
-                (rt_uint64_t)GPT_HEADER_SIGNATURE);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->signature),
+              (rt_uint64_t)GPT_HEADER_SIGNATURE);
 
         goto _fail;
     }
 
     /* Check the GUID Partition Table header size is too big */
     logical_block_size = rt_blk_disk_get_logical_block_size(disk);
+    if (logical_block_size <= 0)
+    {
+        goto _fail;
+    }
 
-    if (rt_le32_to_cpu((*gpt)->header_size) > logical_block_size)
+    if (rt_le32_to_cpu((*gpt)->header_size) > (rt_uint32_t)logical_block_size)
     {
         LOG_D("%s: GUID Partition Table Header size is too large: %u > %u",
-                to_disk_name(disk),
-                rt_le32_to_cpu((*gpt)->header_size),
-                logical_block_size);
+              to_disk_name(disk),
+              rt_le32_to_cpu((*gpt)->header_size),
+              (rt_uint32_t)logical_block_size);
 
         goto _fail;
     }
@@ -331,9 +422,9 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (rt_le32_to_cpu((*gpt)->header_size) < sizeof(gpt_header))
     {
         LOG_D("%s: GUID Partition Table Header size is too small: %u < %u",
-                to_disk_name(disk),
-                rt_le32_to_cpu((*gpt)->header_size),
-                sizeof(gpt_header));
+              to_disk_name(disk),
+              rt_le32_to_cpu((*gpt)->header_size),
+              sizeof(gpt_header));
 
         goto _fail;
     }
@@ -346,7 +437,7 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (crc != origcrc)
     {
         LOG_D("%s: GUID Partition Table Header CRC is wrong: %x != %x",
-                to_disk_name(disk), crc, origcrc);
+              to_disk_name(disk), crc, origcrc);
 
         goto _fail;
     }
@@ -360,9 +451,9 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu((*gpt)->start_lba) != lba)
     {
         LOG_D("%s: GPT start_lba incorrect: %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->start_lba),
-                (rt_uint64_t)lba);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->start_lba),
+              (rt_uint64_t)lba);
 
         goto _fail;
     }
@@ -373,9 +464,9 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu((*gpt)->first_usable_lba) > lastlba)
     {
         LOG_D("%s: GPT: first_usable_lba incorrect: %lld > %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->first_usable_lba),
-                (rt_uint64_t)lastlba);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->first_usable_lba),
+              (rt_uint64_t)lastlba);
 
         goto _fail;
     }
@@ -383,18 +474,18 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu((*gpt)->last_usable_lba) > lastlba)
     {
         LOG_D("%s: GPT: last_usable_lba incorrect: %lld > %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->last_usable_lba),
-                (rt_uint64_t)lastlba);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->last_usable_lba),
+              (rt_uint64_t)lastlba);
 
         goto _fail;
     }
     if (rt_le64_to_cpu((*gpt)->last_usable_lba) < rt_le64_to_cpu((*gpt)->first_usable_lba))
     {
         LOG_D("%s: GPT: last_usable_lba incorrect: %lld > %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->last_usable_lba),
-                (rt_uint64_t)rt_le64_to_cpu((*gpt)->first_usable_lba));
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->last_usable_lba),
+              (rt_uint64_t)rt_le64_to_cpu((*gpt)->first_usable_lba));
 
         goto _fail;
     }
@@ -409,7 +500,7 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
 
     /* Sanity check partition table size */
     pt_size = (rt_uint64_t)rt_le32_to_cpu((*gpt)->num_partition_entries) *
-            rt_le32_to_cpu((*gpt)->sizeof_partition_entry);
+              rt_le32_to_cpu((*gpt)->sizeof_partition_entry);
 
     if (pt_size > (rt_uint64_t)RT_UINT32_MAX)
     {
@@ -473,7 +564,7 @@ rt_inline rt_bool_t is_pte_valid(const gpt_entry *pte, const rt_size_t lastlba)
  * @param lastlba the last LBA number.
  */
 static void compare_gpts(struct rt_blk_disk *disk,
-        gpt_header *pgpt, gpt_header *agpt, rt_uint64_t lastlba)
+                         gpt_header *pgpt, gpt_header *agpt, rt_uint64_t lastlba)
 {
     int error_found = 0;
 
@@ -485,9 +576,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(pgpt->start_lba) != rt_le64_to_cpu(agpt->alternate_lba))
     {
         LOG_W("%s: GPT:Primary header LBA(%lld) != Alt(%lld), header alternate_lba",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(pgpt->start_lba),
-                (rt_uint64_t)rt_le64_to_cpu(agpt->alternate_lba));
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(pgpt->start_lba),
+              (rt_uint64_t)rt_le64_to_cpu(agpt->alternate_lba));
 
         ++error_found;
     }
@@ -495,9 +586,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(pgpt->alternate_lba) != rt_le64_to_cpu(agpt->start_lba))
     {
         LOG_W("%s: GPT:Primary header alternate_lba(%lld) != Alt(%lld), header start_lba",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(pgpt->alternate_lba),
-                (rt_uint64_t)rt_le64_to_cpu(agpt->start_lba));
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(pgpt->alternate_lba),
+              (rt_uint64_t)rt_le64_to_cpu(agpt->start_lba));
 
         ++error_found;
     }
@@ -505,9 +596,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(pgpt->first_usable_lba) != rt_le64_to_cpu(agpt->first_usable_lba))
     {
         LOG_W("%s: GPT:first_usable_lbas don't match %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(pgpt->first_usable_lba),
-                (rt_uint64_t)rt_le64_to_cpu(agpt->first_usable_lba));
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(pgpt->first_usable_lba),
+              (rt_uint64_t)rt_le64_to_cpu(agpt->first_usable_lba));
 
         ++error_found;
     }
@@ -515,9 +606,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(pgpt->last_usable_lba) != rt_le64_to_cpu(agpt->last_usable_lba))
     {
         LOG_W("%s: GPT:last_usable_lbas don't match %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(pgpt->last_usable_lba),
-                (rt_uint64_t)rt_le64_to_cpu(agpt->last_usable_lba));
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(pgpt->last_usable_lba),
+              (rt_uint64_t)rt_le64_to_cpu(agpt->last_usable_lba));
 
         ++error_found;
     }
@@ -530,34 +621,34 @@ static void compare_gpts(struct rt_blk_disk *disk,
     }
 
     if (rt_le32_to_cpu(pgpt->num_partition_entries) !=
-            rt_le32_to_cpu(agpt->num_partition_entries))
+        rt_le32_to_cpu(agpt->num_partition_entries))
     {
         LOG_W("%s: GPT:num_partition_entries don't match: 0x%x != 0x%x",
-                to_disk_name(disk),
-                rt_le32_to_cpu(pgpt->num_partition_entries),
-                rt_le32_to_cpu(agpt->num_partition_entries));
+              to_disk_name(disk),
+              rt_le32_to_cpu(pgpt->num_partition_entries),
+              rt_le32_to_cpu(agpt->num_partition_entries));
 
         ++error_found;
     }
 
     if (rt_le32_to_cpu(pgpt->sizeof_partition_entry) !=
-            rt_le32_to_cpu(agpt->sizeof_partition_entry))
+        rt_le32_to_cpu(agpt->sizeof_partition_entry))
     {
         LOG_W("%s: GPT:sizeof_partition_entry values don't match: 0x%x != 0x%x",
-                to_disk_name(disk),
-                rt_le32_to_cpu(pgpt->sizeof_partition_entry),
-                rt_le32_to_cpu(agpt->sizeof_partition_entry));
+              to_disk_name(disk),
+              rt_le32_to_cpu(pgpt->sizeof_partition_entry),
+              rt_le32_to_cpu(agpt->sizeof_partition_entry));
 
         ++error_found;
     }
 
     if (rt_le32_to_cpu(pgpt->partition_entry_array_crc32) !=
-            rt_le32_to_cpu(agpt->partition_entry_array_crc32))
+        rt_le32_to_cpu(agpt->partition_entry_array_crc32))
     {
         LOG_W("%s: GPT:partition_entry_array_crc32 values don't match: 0x%x != 0x%x",
-                to_disk_name(disk),
-                rt_le32_to_cpu(pgpt->partition_entry_array_crc32),
-                rt_le32_to_cpu(agpt->partition_entry_array_crc32));
+              to_disk_name(disk),
+              rt_le32_to_cpu(pgpt->partition_entry_array_crc32),
+              rt_le32_to_cpu(agpt->partition_entry_array_crc32));
 
         ++error_found;
     }
@@ -565,9 +656,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(pgpt->alternate_lba) != lastlba)
     {
         LOG_W("%s: GPT:Primary header thinks Alt. header is not at the end of the disk: %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(pgpt->alternate_lba),
-                (rt_uint64_t)lastlba);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(pgpt->alternate_lba),
+              (rt_uint64_t)lastlba);
 
         ++error_found;
     }
@@ -575,9 +666,9 @@ static void compare_gpts(struct rt_blk_disk *disk,
     if (rt_le64_to_cpu(agpt->start_lba) != lastlba)
     {
         LOG_W("%s: GPT:Alternate GPT header not at the end of the disk: %lld != %lld",
-                to_disk_name(disk),
-                (rt_uint64_t)rt_le64_to_cpu(agpt->start_lba),
-                (rt_uint64_t)lastlba);
+              to_disk_name(disk),
+              (rt_uint64_t)rt_le64_to_cpu(agpt->start_lba),
+              (rt_uint64_t)lastlba);
 
         ++error_found;
     }
@@ -605,19 +696,26 @@ static void compare_gpts(struct rt_blk_disk *disk,
  *  the user to decide to use the Alternate GPT.
  */
 static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
-        gpt_header **gpt, gpt_entry **ptes)
+                                gpt_header **gpt, gpt_entry **ptes)
 {
     int good_pgpt = 0, good_agpt = 0, good_pmbr = 0;
     gpt_header *pgpt = RT_NULL, *agpt = RT_NULL;
     gpt_entry *pptes = RT_NULL, *aptes = RT_NULL;
     legacy_mbr *legacymbr;
-    rt_size_t total_sectors = rt_blk_disk_get_capacity(disk);
+    rt_ssize_t cap_ss = rt_blk_disk_get_capacity(disk);
+    rt_size_t total_sectors;
     rt_size_t lastlba;
 
     if (!ptes)
     {
         return RT_FALSE;
     }
+
+    if (cap_ss < 0)
+    {
+        return RT_FALSE;
+    }
+    total_sectors = (rt_size_t)cap_ss;
 
     lastlba = last_lba(disk);
 
@@ -631,7 +729,11 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
             return RT_FALSE;
         }
 
-        read_lba(disk, 0, (rt_uint8_t *)legacymbr, sizeof(*legacymbr));
+        if (read_lba(disk, 0, (rt_uint8_t *)legacymbr, sizeof(*legacymbr)) < sizeof(*legacymbr))
+        {
+            rt_free(legacymbr);
+            return RT_FALSE;
+        }
         good_pmbr = is_pmbr_valid(legacymbr, total_sectors);
         rt_free(legacymbr);
 
@@ -641,7 +743,7 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
         }
 
         LOG_D("%s: Device has a %s MBR", to_disk_name(disk),
-                good_pmbr == GPT_MBR_PROTECTIVE ? "protective" : "hybrid");
+              good_pmbr == GPT_MBR_PROTECTIVE ? "protective" : "hybrid");
     }
 
     good_pgpt = is_gpt_valid(disk, GPT_PRIMARY_PARTITION_TABLE_LBA, &pgpt, &pptes);
@@ -723,7 +825,7 @@ rt_err_t efi_partition(struct rt_blk_disk *disk)
     {
         rt_uint64_t start = rt_le64_to_cpu(ptes[i].starting_lba);
         rt_uint64_t size = rt_le64_to_cpu(ptes[i].ending_lba) -
-                rt_le64_to_cpu(ptes[i].starting_lba) + 1ULL;
+                           rt_le64_to_cpu(ptes[i].starting_lba) + 1ULL;
 
         if (!is_pte_valid(&ptes[i], last_lba(disk)))
         {

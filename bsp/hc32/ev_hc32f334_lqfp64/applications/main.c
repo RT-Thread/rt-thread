@@ -13,7 +13,7 @@
 #include <board.h>
 
 /* defined the LED_BLUE pin: PC13 */
-#define LED_BLUE_PIN    GET_PIN(C, 13)
+#define LED_BLUE_PIN GET_PIN(C, 13)
 
 int main(void)
 {

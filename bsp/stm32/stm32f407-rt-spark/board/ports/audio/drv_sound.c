@@ -411,7 +411,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     RT_ASSERT(audio != RT_NULL);
     snd_dev = (struct sound_device *)audio->parent.user_data;
 
-    es8388_init("i2c2", RT_NULL);
+    es8388_init("swi2c2", RT_NULL);
     I2S3_Init();
     LOG_I("ES8388 init success.");
     /* set default params */

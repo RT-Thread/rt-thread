@@ -332,7 +332,7 @@
               <MiscControls />
               <Define>USE_TAE_DRIVER, TAE32F53xx, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __DEBUG</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\phy;..\..\components\finsh;..\..\libcpu\arm\cortex-m3;board;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\TAE32F53xx_StdPeriph_Driver\inc;..\..\components\net\utest;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;Libraries\CMSIS\Include;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension;drivers;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\posix\io\eventfd;..\..\include;application;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\poll;.</IncludePath>
+              <IncludePath>..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\phy;..\..\components\finsh;..\..\libcpu\arm\cortex-m3;board;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\TAE32F53xx_StdPeriph_Driver\inc;..\..\components\net\utest;libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;libraries\CMSIS\Include;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension;drivers;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\posix\io\eventfd;..\..\include;application;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\poll;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1162,77 +1162,77 @@
             <File>
               <FileName>system_tae32f53xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\system_tae32f53xx.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\system_tae32f53xx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_fpll.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_gpio.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_dma.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_uart.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_tmr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_tmr.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_tmr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tae32f53xx_ll_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
+              <FilePath>libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_tae32f53xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
             </File>
           </Files>
         </Group>

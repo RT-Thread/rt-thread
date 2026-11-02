@@ -329,7 +329,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\include;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;..\..\components\drivers\phy;..\..\components\net\utest;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;board;..\..\libcpu\arm\cortex-m0;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\drivers\include;.;..\..\components\drivers\include;drivers;..\..\components\drivers\include;applications;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\include;..\..\components\finsh;Libraries\CMSIS\Device\HDSC\HC32L196\Include;Libraries\HC32L196_StdPeriph_Driver\inc;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\CMSIS\Include</IncludePath>
+              <IncludePath>..\..\include;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;..\..\components\drivers\phy;..\..\components\net\utest;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;board;..\..\libcpu\arm\cortex-m0;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\drivers\include;.;..\..\components\drivers\include;drivers;..\..\components\drivers\include;applications;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\include;..\..\components\finsh;libraries\CMSIS\Device\HDSC\HC32L196\Include;libraries\HC32L196_StdPeriph_Driver\inc;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -709,56 +709,56 @@
             <File>
               <FileName>system_hc32l19x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L196\Source\system_hc32l19x.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L196\Source\system_hc32l19x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>interrupts_hc32l19x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L196\Source\interrupts_hc32l19x.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L196\Source\interrupts_hc32l19x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32l196_ddl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_ddl.c</FilePath>
+              <FilePath>libraries\HC32L196_StdPeriph_Driver\src\hc32l196_ddl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32l196_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_gpio.c</FilePath>
+              <FilePath>libraries\HC32L196_StdPeriph_Driver\src\hc32l196_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32l196_sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_sysctrl.c</FilePath>
+              <FilePath>libraries\HC32L196_StdPeriph_Driver\src\hc32l196_sysctrl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32l196_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_flash.c</FilePath>
+              <FilePath>libraries\HC32L196_StdPeriph_Driver\src\hc32l196_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hc32l196_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L196_StdPeriph_Driver\src\hc32l196_uart.c</FilePath>
+              <FilePath>libraries\HC32L196_StdPeriph_Driver\src\hc32l196_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_hc32l19x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L196\Source\ARM\startup_hc32l19x.s</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L196\Source\ARM\startup_hc32l19x.s</FilePath>
             </File>
           </Files>
         </Group>

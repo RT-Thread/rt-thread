@@ -43,7 +43,7 @@
  *     ret = rt_dac_enable(dac_dev, DAC_DEV_CHANNEL);
  *
  *     value = atoi(argv[1]);
- *     rt_dac_write(dac_dev, DAC_DEV_NAME, DAC_DEV_CHANNEL, value);
+ *     rt_dac_write(dac_dev, DAC_DEV_CHANNEL, value);
  *     rt_kprintf("the value is :%d \n", value);
  *
  *     vol = value * REFER_VOLTAGE / CONVERT_BITS;

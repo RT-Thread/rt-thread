@@ -6,6 +6,10 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
+    config BSP_USING_BDMA
+        bool
+        default n
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -39,7 +43,44 @@ menu "On-chip Peripheral Drivers"
                 endif
 
         endif
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
 
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+            
+            config BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
+
+            config BSP_SPI6_TX_USING_DMA
+                bool "Enable SPI6 TX DMA"
+                depends on BSP_USING_SPI6
+                default n
+
+            config BSP_SPI6_RX_USING_DMA
+                bool "Enable SPI6 RX DMA"
+                depends on BSP_USING_SPI6
+                select BSP_SPI6_TX_USING_DMA
+                default n
+
+            # SPI6 BDMA (BSP_SPI6_TX/RX_USING_BDMA) is provided by the shared
+            # HAL_Drivers Kconfig below, sourced for all STM32H7 series BSPs.
+        endif
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu

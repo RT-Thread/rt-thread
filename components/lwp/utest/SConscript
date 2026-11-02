@@ -8,6 +8,9 @@ CPPPATH = [cwd]
 if GetDepend(['RT_UTEST_LWP', 'RT_USING_SMART']):
     src += ['condvar_timedwait_tc.c', 'condvar_broadcast_tc.c', 'condvar_signal_tc.c']
 
+if GetDepend(['RT_UTEST_SCHEDULER', 'RT_USING_SMART']):
+    src += ['channel_timeout_tc.c']
+
 if GetDepend(['RT_UTEST_LWP_TTY_PTMX', 'RT_USING_SMART']):
     src += ['tty_ptmx_tc.c']
 

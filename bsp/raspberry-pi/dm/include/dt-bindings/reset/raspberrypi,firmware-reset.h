@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#ifndef __DT_BINDINGS_POWER_RASPBERRYPI_FIRMWARE_RESET_H__
+#define __DT_BINDINGS_POWER_RASPBERRYPI_FIRMWARE_RESET_H__
+
+#define RASPBERRYPI_FIRMWARE_RESET_ID_USB       0
+#define RASPBERRYPI_FIRMWARE_RESET_NUM_IDS      1
+
+#endif /* __DT_BINDINGS_POWER_RASPBERRYPI_FIRMWARE_RESET_H__ */

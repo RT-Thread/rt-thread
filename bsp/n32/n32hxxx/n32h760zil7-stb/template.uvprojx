@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>N32H760xIx7</Device>
           <Vendor>Nationstech</Vendor>
-          <PackID>Nationstech.N32H76x_DFP.1.1.0</PackID>
+          <PackID>Nationstech.N32H7xx_DFP.1.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x24000000,0x20000) IROM(0x15000000,0x1E0000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -373,7 +373,7 @@
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--entry Reset_Handler</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>

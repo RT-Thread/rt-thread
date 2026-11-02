@@ -15,16 +15,15 @@
 #ifdef RT_USING_SERIAL_V2
 
 //#define DRV_DEBUG
-#define DBG_TAG              "drv.usart"
+#define DBG_TAG "drv.usart"
 #ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
-static struct ra_uart_config uart_config[] =
-{
+static struct ra_uart_config uart_config[] = {
 #ifdef BSP_USING_UART0
     UART0_CONFIG,
 #endif
@@ -109,7 +108,7 @@ enum
 #endif
 };
 
-static struct ra_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
+static struct ra_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = { 0 };
 
 static void ra_uart_get_config(void)
 {
@@ -213,6 +212,16 @@ static rt_err_t ra_uart_configure(struct rt_serial_device *serial, struct serial
 
 #if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
     err = R_SCI_B_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
+#elif defined(SOC_SERIES_R7SA6W1)
+    uart_w_extended_cfg_t *p_extend = (uart_w_extended_cfg_t *)uart->config->p_cfg->p_extend;
+    RT_ASSERT(p_extend != RT_NULL);
+    RT_ASSERT(p_extend->p_baud_setting != RT_NULL);
+
+    err = R_UART_W_BaudCalculate(cfg->baud_rate, p_extend->p_baud_setting);
+    if (FSP_SUCCESS == err)
+    {
+        err = R_UART_W_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
+    }
 #else
     err = R_SCI_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
 #endif
@@ -237,18 +246,28 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
     uart = rt_container_of(serial, struct ra_uart, serial);
     RT_ASSERT(uart != RT_NULL);
 
-#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
+#if defined(SOC_SERIES_R7SA6W1)
+    uart_w_instance_ctrl_t *p_ctrl = (uart_w_instance_ctrl_t *)uart->config->p_api_ctrl;
+
+    p_ctrl->p_reg->UART_DR_REG = c;
+
+    while (p_ctrl->p_reg->UART_FR_REG_b.BUSY);
+#elif defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
     sci_b_uart_instance_ctrl_t *p_ctrl = (sci_b_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
-#else
-    sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
-#endif
 
     p_ctrl->p_reg->TDR = c;
 
-#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R9A07G0) || defined(SOC_SERIES_R7KA8P1)
+    while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
+#else
+    sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
+
+    p_ctrl->p_reg->TDR = c;
+
+#if defined(SOC_SERIES_R9A07G0)
     while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
 #else
     while ((p_ctrl->p_reg->SSR_b.TEND) == 0);
+#endif
 #endif
 
     return RT_EOK;
@@ -259,10 +278,10 @@ static int ra_uart_getc(struct rt_serial_device *serial)
     return RT_EOK;
 }
 
-static rt_ssize_t ra_uart_transmit(struct rt_serial_device     *serial,
-                                   rt_uint8_t           *buf,
-                                   rt_size_t             size,
-                                   rt_uint32_t           tx_flag)
+static rt_ssize_t ra_uart_transmit(struct rt_serial_device *serial,
+                                   rt_uint8_t *buf,
+                                   rt_size_t size,
+                                   rt_uint32_t tx_flag)
 {
     struct ra_uart *uart;
 
@@ -467,8 +486,7 @@ void user_uart9_callback(uart_callback_args_t *p_args)
 }
 #endif
 
-static const struct rt_uart_ops ra_uart_ops =
-{
+static const struct rt_uart_ops ra_uart_ops = {
     .configure = ra_uart_configure,
     .control = ra_uart_control,
     .putc = ra_uart_putc,

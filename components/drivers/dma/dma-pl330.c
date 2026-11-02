@@ -213,25 +213,25 @@
 #define PL330_CMD_DMAWMB 0x13
 
 /** @brief Microcode instruction sizes */
-#define PL330_SIZE_DMAADDH 3
-#define PL330_SIZE_DMAEND 1
+#define PL330_SIZE_DMAADDH   3
+#define PL330_SIZE_DMAEND    1
 #define PL330_SIZE_DMAFLUSHP 2
-#define PL330_SIZE_DMALD 1
-#define PL330_SIZE_DMALDP 2
-#define PL330_SIZE_DMALP 2
-#define PL330_SIZE_DMALPEND 2
-#define PL330_SIZE_DMAKILL 1
-#define PL330_SIZE_DMAMOV 6
-#define PL330_SIZE_DMANOP 1
-#define PL330_SIZE_DMARMB 1
-#define PL330_SIZE_DMASEV 2
-#define PL330_SIZE_DMAST 1
-#define PL330_SIZE_DMASTP 2
-#define PL330_SIZE_DMASTZ 1
-#define PL330_SIZE_DMAWFE 2
-#define PL330_SIZE_DMAWFP 2
-#define PL330_SIZE_DMAWMB 1
-#define PL330_SIZE_DMAGO 6
+#define PL330_SIZE_DMALD     1
+#define PL330_SIZE_DMALDP    2
+#define PL330_SIZE_DMALP     2
+#define PL330_SIZE_DMALPEND  2
+#define PL330_SIZE_DMAKILL   1
+#define PL330_SIZE_DMAMOV    6
+#define PL330_SIZE_DMANOP    1
+#define PL330_SIZE_DMARMB    1
+#define PL330_SIZE_DMASEV    2
+#define PL330_SIZE_DMAST     1
+#define PL330_SIZE_DMASTP    2
+#define PL330_SIZE_DMASTZ    1
+#define PL330_SIZE_DMAWFE    2
+#define PL330_SIZE_DMAWFP    2
+#define PL330_SIZE_DMAWMB    1
+#define PL330_SIZE_DMAGO     6
 
 /** @brief DMAMOV to Source Address Register */
 #define PL330_DIR_SAR 0
@@ -242,12 +242,14 @@
 
 /** @brief Source address increment flag in CCR */
 #define PL330_SRC_INC RT_BIT(0)
+#define PL330_SRC_NS  RT_BIT(9)
 /** @brief Source burst size shift in CCR */
 #define PL330_SRC_BURST_SIZE_SHIFT 1
 /** @brief Source burst length shift in CCR */
 #define PL330_SRC_BURST_LEN_SHIFT 4
 /** @brief Destination address increment flag in CCR */
 #define PL330_DST_INC RT_BIT(14)
+#define PL330_DST_NS  RT_BIT(23)
 /** @brief Destination burst size shift in CCR */
 #define PL330_DST_BURST_SIZE_SHIFT 15
 /** @brief Destination burst length shift in CCR */
@@ -269,20 +271,22 @@
  * @brief PL330 DMA channel descriptor
  *
  * Extends the generic DMA channel with microcode buffer management.
- * The microcode is generated at prep time and stored in microcode_raw
- * with alignment padding.
+ * The microcode is generated at prep time in DMA-coherent memory.
  */
 struct pl330_chan
 {
     struct rt_dma_chan parent;                       /**< Generic DMA channel */
 
     rt_bool_t enabled;                               /**< Channel is currently in use */
+    rt_bool_t is_slave;                              /**< Channel serves a peripheral request */
+    rt_bool_t start_logged;                          /**< First-start diagnostic emitted */
+    rt_bool_t irq_logged;                            /**< First-IRQ diagnostic emitted */
+    rt_uint8_t peri_id;                              /**< PL330 peripheral request ID */
     rt_size_t size;                                  /**< Transfer size for callback reporting */
 
     void *microcode;                                 /**< Aligned microcode buffer pointer */
     rt_size_t microcode_len;                         /**< Microcode length in bytes */
     rt_ubase_t microcode_dma;                        /**< Physical address of microcode buffer */
-    rt_uint8_t microcode_raw[PL330_MICROCODE_SIZE + 4]; /**< Raw microcode storage (+4 for alignment) */
 };
 
 /**
@@ -331,7 +335,7 @@ static void pl330_read_config(struct pl330 *pl330)
     void *regs = pl330->regs;
 
     value = HWREG32(regs + PL330_REG_CR(0));
-    pl330->mode_ns = !!PL330_CR0_NUM_EVENTS(value);
+    pl330->mode_ns = PL330_CR0_MGR_NS_AT_RST(value);
     pl330->num_chan = PL330_CR0_NUM_CHNLS(value) + 1;
     pl330->num_events = PL330_CR0_NUM_EVENTS(value) + 1;
 
@@ -358,11 +362,32 @@ static void pl330_read_config(struct pl330 *pl330)
  *
  * @return RT_EOK on success, -RT_EINVAL if address width is unsupported
  */
-static rt_err_t pl330_ccr_config(struct rt_dma_slave_config *conf, rt_uint32_t *ccr)
+static rt_err_t pl330_ccr_config(struct rt_dma_slave_config *conf,
+                                 rt_bool_t nonsecure, rt_uint32_t *ccr)
 {
-    *ccr = PL330_SRC_INC | PL330_DST_INC;
-    *ccr |= conf->src_maxburst << PL330_SRC_BURST_LEN_SHIFT;
-    *ccr |= conf->dst_maxburst << PL330_DST_BURST_LEN_SHIFT;
+    if (!conf->src_maxburst || conf->src_maxburst > 16 ||
+        !conf->dst_maxburst || conf->dst_maxburst > 16)
+    {
+        return -RT_EINVAL;
+    }
+
+    *ccr = (conf->src_maxburst - 1) << PL330_SRC_BURST_LEN_SHIFT;
+    *ccr |= (conf->dst_maxburst - 1) << PL330_DST_BURST_LEN_SHIFT;
+
+    if (conf->direction != RT_DMA_DEV_TO_MEM)
+    {
+        *ccr |= PL330_SRC_INC;
+    }
+
+    if (conf->direction != RT_DMA_MEM_TO_DEV)
+    {
+        *ccr |= PL330_DST_INC;
+    }
+
+    if (nonsecure)
+    {
+        *ccr |= PL330_SRC_NS | PL330_DST_NS;
+    }
 
     switch (conf->src_addr_width)
     {
@@ -512,6 +537,45 @@ static int pl330_cmd_dmast(rt_uint8_t *microcode, rt_uint32_t cond)
     return PL330_SIZE_DMAST;
 }
 
+static int pl330_cmd_dmaflushp(rt_uint8_t *microcode, rt_uint8_t peri)
+{
+    *microcode++ = PL330_CMD_DMAFLUSHP;
+    *microcode = (peri & 0x1f) << 3;
+
+    return PL330_SIZE_DMAFLUSHP;
+}
+
+static int pl330_cmd_dmaldp(rt_uint8_t *microcode, rt_uint32_t cond,
+                            rt_uint8_t peri)
+{
+    *microcode++ = PL330_CMD_DMALDP |
+                   (cond == PL330_COND_BURST ? RT_BIT(1) : 0);
+    *microcode = (peri & 0x1f) << 3;
+
+    return PL330_SIZE_DMALDP;
+}
+
+static int pl330_cmd_dmastp(rt_uint8_t *microcode, rt_uint32_t cond,
+                            rt_uint8_t peri)
+{
+    *microcode++ = PL330_CMD_DMASTP |
+                   (cond == PL330_COND_BURST ? RT_BIT(1) : 0);
+    *microcode = (peri & 0x1f) << 3;
+
+    return PL330_SIZE_DMASTP;
+}
+
+static int pl330_cmd_dmawfp(rt_uint8_t *microcode, rt_uint32_t cond,
+                            rt_uint8_t peri)
+{
+    *microcode++ = PL330_CMD_DMAWFP |
+                   (cond == PL330_COND_BURST ? RT_BIT(1) : 0) |
+                   (cond == PL330_COND_ALWAYS ? RT_BIT(0) : 0);
+    *microcode = (peri & 0x1f) << 3;
+
+    return PL330_SIZE_DMAWFP;
+}
+
 /**
  * @brief Emit a DMALP (loop begin) microcode instruction
  *
@@ -653,9 +717,8 @@ static rt_uint32_t pl330_chan_id(struct pl330 *pl330, struct pl330_chan *pc)
 /**
  * @brief Request a DMA channel from the PL330 controller
  *
- * If fw_data (device tree args) specifies a channel number, that
- * specific channel is requested. Otherwise any unallocated channel
- * is used. Marks the channel as enabled and unmasks its IRQ.
+ * Device-tree arguments identify a peripheral request line, while the
+ * controller allocates any free execution channel.
  *
  * @param[in] ctrl   DMA controller
  * @param[in] slave  Requesting device
@@ -666,46 +729,34 @@ static rt_uint32_t pl330_chan_id(struct pl330 *pl330, struct pl330_chan *pc)
 static struct rt_dma_chan *pl330_dma_request_chan(struct rt_dma_controller *ctrl,
                                                   struct rt_device *slave, void *fw_data)
 {
-    int idx = -1;
+    int peri_id = -1;
     struct pl330_chan *pc;
     struct pl330 *pl330 = raw_to_pl330(ctrl);
     struct rt_ofw_cell_args *args = fw_data;
 
-    if (args && (idx = args->args[0]) >= pl330->num_chan)
+    if (args && (peri_id = args->args[0]) >= pl330->num_peri)
     {
         return rt_err_ptr(-RT_EINVAL);
     }
 
-    if (idx >= 0)
+    for (int i = 0; i < pl330->num_chan; ++i)
     {
-        pc = &pl330->chans[idx];
+        pc = &pl330->chans[i];
 
-        if (pc->enabled)
+        if (!pc->enabled)
         {
-            return rt_err_ptr(-RT_EBUSY);
+            goto _found;
         }
     }
-    else
-    {
-        /*
-         * Memory to Memory is often called after after DM has been initialized,
-         * So just return unused chan
-         */
-        for (int i = 0; i < pl330->num_chan; ++i)
-        {
-            pc = &pl330->chans[i];
 
-            if (!pc->enabled)
-            {
-                goto _found;
-            }
-        }
-
-        return RT_NULL;
-    }
+    return RT_NULL;
 
 _found:
     pc->enabled = RT_TRUE;
+    pc->is_slave = peri_id >= 0;
+    pc->start_logged = RT_FALSE;
+    pc->irq_logged = RT_FALSE;
+    pc->peri_id = peri_id >= 0 ? peri_id : 0;
     HWREG32(pl330->regs + PL330_REG_INTEN) |= RT_BIT(pl330_chan_id(pl330, pc));
 
     return &pc->parent;
@@ -723,6 +774,7 @@ static rt_err_t pl330_dma_release_chan(struct rt_dma_chan *chan)
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
 
     pc->enabled = RT_FALSE;
+    pc->is_slave = RT_FALSE;
 
     return RT_EOK;
 }
@@ -740,6 +792,7 @@ static rt_err_t pl330_dma_release_chan(struct rt_dma_chan *chan)
  */
 static rt_err_t pl330_dma_start(struct rt_dma_chan *chan)
 {
+    rt_uint32_t id, inst0;
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
 
@@ -750,9 +803,33 @@ static rt_err_t pl330_dma_start(struct rt_dma_chan *chan)
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, pc->microcode, pc->microcode_len);
 
-    HWREG32(pl330->regs + PL330_REG_DBGINST0) = ((pl330_chan_id(pl330, pc) + 1) << 8) | (PL330_CMD_DMAGO << 16);
+    id = pl330_chan_id(pl330, pc);
+    inst0 = ((PL330_CMD_DMAGO | (pl330->mode_ns ? RT_BIT(1) : 0)) << 16) |
+            (id << 24);
+
+    /* DMAGO is issued by the manager thread; its second byte selects a channel. */
+    HWREG32(pl330->regs + PL330_REG_DBGINST0) = inst0;
     HWREG32(pl330->regs + PL330_REG_DBGINST1) = pc->microcode_dma;
     HWREG32(pl330->regs + PL330_REG_DBGCMD) = 0;
+
+    if (!pc->start_logged)
+    {
+        pc->start_logged = RT_TRUE;
+        LOG_D("ch%u start peri=%u csr=%x inten=%08x mc=%08x", id, pc->peri_id,
+              HWREG32(pl330->regs + PL330_REG_CSR(id)) & 0xf,
+              HWREG32(pl330->regs + PL330_REG_INTEN),
+              (rt_uint32_t)pc->microcode_dma);
+
+        if ((HWREG32(pl330->regs + PL330_REG_CSR(id)) & 0xf) == PL330_CS_FAULT)
+        {
+            LOG_E("ch%u fault ftr=%08x fsrc=%08x fsrd=%08x dsr=%08x cpc=%08x",
+                  id, HWREG32(pl330->regs + PL330_REG_FTR(id)),
+                  HWREG32(pl330->regs + PL330_REG_FSRC),
+                  HWREG32(pl330->regs + PL330_REG_FSRD),
+                  HWREG32(pl330->regs + PL330_REG_DSR),
+                  HWREG32(pl330->regs + PL330_REG_CPC(id)));
+        }
+    }
 
     return RT_EOK;
 }
@@ -769,6 +846,7 @@ static rt_err_t pl330_dma_start(struct rt_dma_chan *chan)
  */
 static rt_err_t pl330_dma_stop(struct rt_dma_chan *chan)
 {
+    rt_uint32_t id;
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
 
@@ -777,7 +855,11 @@ static rt_err_t pl330_dma_stop(struct rt_dma_chan *chan)
         rt_hw_cpu_relax();
     }
 
-    HWREG32(pl330->regs + PL330_REG_DBGINST0) = ((pl330_chan_id(pl330, pc) + 1) << 8) | PL330_CMD_DMAKILL;
+    id = pl330_chan_id(pl330, pc);
+
+    /* DMAKILL is executed in the selected channel debug thread. */
+    HWREG32(pl330->regs + PL330_REG_DBGINST0) =
+        (PL330_CMD_DMAKILL << 16) | RT_BIT(0) | (id << 8);
     HWREG32(pl330->regs + PL330_REG_DBGINST1) = 0;
     HWREG32(pl330->regs + PL330_REG_DBGCMD) = 0;
 
@@ -840,7 +922,7 @@ static rt_err_t pl330_dma_prep_memcpy(struct rt_dma_chan *chan,
 
     mc = pc->microcode;
 
-    if ((err = pl330_ccr_config(conf, &value)))
+    if ((err = pl330_ccr_config(conf, pl330->mode_ns, &value)))
     {
         return err;
     }
@@ -959,7 +1041,7 @@ static rt_err_t pl330_dma_prep_cyclic(struct rt_dma_chan *chan,
 
     mc = pc->microcode;
 
-    if ((err = pl330_ccr_config(conf, &ccr_val)))
+    if ((err = pl330_ccr_config(conf, pl330->mode_ns, &ccr_val)))
     {
         return err;
     }
@@ -1065,10 +1147,11 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
     struct rt_dma_slave_config *conf = &chan->conf;
+    rt_uint32_t cond;
 
     mc = pc->microcode;
 
-    if ((err = pl330_ccr_config(conf, &ccr_val)))
+    if ((err = pl330_ccr_config(conf, pl330->mode_ns, &ccr_val)))
     {
         return err;
     }
@@ -1084,6 +1167,11 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     {
         mc += pl330_cmd_dmamov(mc, PL330_DIR_SAR, conf->src_addr);
         mc += pl330_cmd_dmamov(mc, PL330_DIR_DAR, dma_buf_addr);
+    }
+
+    if (pc->is_slave && !(pl330->quirk & PL330_QUIRK_BROKEN_NO_FLUSHP))
+    {
+        mc += pl330_cmd_dmaflushp(mc, pc->peri_id);
     }
 
     burst_bytes = conf->src_addr_width * conf->src_maxburst;
@@ -1106,8 +1194,28 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     mc += pl330_cmd_dmalp(mc, 0 /* LC0 */, loop);
     rt_uint8_t ljmp = mc - pc->microcode;
 
-    mc += pl330_cmd_dmald(mc, PL330_COND_ALWAYS);
-    mc += pl330_cmd_dmast(mc, PL330_COND_ALWAYS);
+    cond = conf->src_maxburst > 1 ? PL330_COND_BURST : PL330_COND_SINGLE;
+
+    if (pc->is_slave)
+    {
+        mc += pl330_cmd_dmawfp(mc, cond, pc->peri_id);
+
+        if (dir == RT_DMA_MEM_TO_DEV)
+        {
+            mc += pl330_cmd_dmald(mc, cond);
+            mc += pl330_cmd_dmastp(mc, cond, pc->peri_id);
+        }
+        else
+        {
+            mc += pl330_cmd_dmaldp(mc, cond, pc->peri_id);
+            mc += pl330_cmd_dmast(mc, cond);
+        }
+    }
+    else
+    {
+        mc += pl330_cmd_dmald(mc, PL330_COND_ALWAYS);
+        mc += pl330_cmd_dmast(mc, PL330_COND_ALWAYS);
+    }
 
     mc += pl330_cmd_dmalpend(mc,
                              PL330_COND_ALWAYS,
@@ -1140,11 +1248,8 @@ static const struct rt_dma_controller_ops pl330_dma_ops = {
 /**
  * @brief PL330 interrupt service routine
  *
- * Handles all channel interrupts. Reads the Interrupt Status Register
- * to identify which channel triggered, then checks the Channel Status
- * Register:
- * - PL330_CS_CMPLT / PL330_CS_STOP: transfer completed successfully
- * - PL330_CS_FAULT / PL330_CS_FLTCMP: transfer faulted
+ * Handles completion events and reports channel faults. DMASEV can be
+ * observed before the following DMAEND instruction is executed.
  *
  * @param[in] irqno  Hardware IRQ number
  * @param[in] params Controller instance pointer
@@ -1170,13 +1275,15 @@ static void pl330_isr(int irqno, void *params)
 
         csr = HWREG32(pl330->regs + PL330_REG_CSR(i)) & 0xf;
 
+        if (!pc->irq_logged)
+        {
+            pc->irq_logged = RT_TRUE;
+            LOG_D("ch%d irq mis=%08x csr=%x cpc=%08x", i, isr, csr,
+                  HWREG32(pl330->regs + PL330_REG_CPC(i)));
+        }
+
         switch (csr)
         {
-        case PL330_CS_CMPLT:
-        case PL330_CS_STOP:
-            rt_dma_chan_done(&pc->parent, pc->size);
-            break;
-
         case PL330_CS_FAULT:
         case PL330_CS_FLTCMP:
             LOG_E("Channel[%d] fault", i);
@@ -1184,7 +1291,8 @@ static void pl330_isr(int irqno, void *params)
             break;
 
         default:
-            LOG_E("Unhandle CSR = %x", csr);
+            /* DMASEV may be observed before the following DMAEND executes. */
+            rt_dma_chan_done(&pc->parent, pc->size);
             break;
         }
     }
@@ -1225,6 +1333,17 @@ static void pl330_free(struct pl330 *pl330)
 
     if (pl330->chans)
     {
+        for (int i = 0; i < pl330->num_chan; ++i)
+        {
+            struct pl330_chan *chan = &pl330->chans[i];
+
+            if (chan->microcode)
+            {
+                rt_dma_free_coherent(pl330->parent.dev, PL330_MICROCODE_SIZE,
+                                     chan->microcode, chan->microcode_dma);
+            }
+        }
+
         rt_free(pl330->chans);
     }
 
@@ -1261,6 +1380,8 @@ static rt_err_t pl330_probe(struct rt_platform_device *pdev)
     {
         return -RT_ENOMEM;
     }
+
+    pl330->parent.dev = dev;
 
     pl330->regs = rt_dm_dev_iomap(dev, 0);
 
@@ -1357,17 +1478,17 @@ static rt_err_t pl330_probe(struct rt_platform_device *pdev)
 
     for (int i = 0; i < pl330->num_chan; ++i)
     {
-        int offset = 0;
         struct pl330_chan *chan = &pl330->chans[i];
 
-        chan->microcode_dma = (rt_ubase_t)rt_kmem_v2p(chan->microcode_raw);
-        offset = RT_ALIGN(chan->microcode_dma, 4) - chan->microcode_dma;
-
-        chan->microcode = chan->microcode_raw + offset;
-        chan->microcode_dma += offset;
+        chan->microcode = rt_dma_alloc_coherent(dev, PL330_MICROCODE_SIZE,
+                                                &chan->microcode_dma);
+        if (!chan->microcode)
+        {
+            err = -RT_ENOMEM;
+            goto _fail;
+        }
     }
 
-    pl330->parent.dev = dev;
     pl330->parent.ops = &pl330_dma_ops;
     rt_dma_controller_add_direction(&pl330->parent, RT_DMA_MEM_TO_MEM);
     rt_dma_controller_add_direction(&pl330->parent, RT_DMA_MEM_TO_DEV);

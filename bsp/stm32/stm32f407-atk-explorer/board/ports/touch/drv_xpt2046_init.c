@@ -12,7 +12,6 @@
 
 #include <rtdevice.h>
 #include "drv_touch_xpt.h"
-#include "drv_soft_spi.h"
 
 #ifdef PKG_USING_GUIENGINE
 #include <rtgui/event.h>
@@ -31,9 +30,11 @@ static rt_bool_t touch_down = RT_FALSE;
  * the drv_touch_xpt.h file,and set BSP_TOUCH_CALIBRATE to RT_FALSE */
 #define BSP_TOUCH_CALIBRATE RT_TRUE
 
-#define BSP_XPT2046_SPI_BUS "sspi1"
+#define BSP_XPT2046_SPI_BUS "swspi1"
 #define TOUCH_DEVICE_NAME   "xpt0"
 #define TFTLCD_DEVICE_NAME  "lcd"
+
+static struct rt_spi_device xpt2046_spi_device;
 
 void xpt2046_init_hw(void)
 {
@@ -64,7 +65,8 @@ void xpt2046_init_hw(void)
 
     /* Mount the spi device to the spi bus, here is the soft spi,
      * if you use other spi, please modify the following */
-    rt_hw_softspi_device_attach(BSP_XPT2046_SPI_BUS, dev_name, rt_pin_get(BSP_XPT2046_CS_PIN));
+    rt_spi_bus_attach_device_cspin(&xpt2046_spi_device, dev_name, BSP_XPT2046_SPI_BUS,
+                                   rt_pin_get(BSP_XPT2046_CS_PIN), RT_NULL);
 
     /* configure spi device */
     rt_xpt2046_t tc = (rt_xpt2046_t)touch;
@@ -78,7 +80,7 @@ void xpt2046_init_hw(void)
 
 #if (BSP_TOUCH_CALIBRATE == RT_TRUE)
     /* Calibrate touch */
-    xpt2046_calibration(TFTLCD_DEVICE_NAME,TOUCH_DEVICE_NAME);
+    xpt2046_calibration(TFTLCD_DEVICE_NAME, TOUCH_DEVICE_NAME);
 #endif /* BSP_TOUCH_CALIBRATE == RT_TRUE */
 
     /* init the TFT LCD */
@@ -97,14 +99,14 @@ void xpt2046_entry(void *parameter)
         return;
     }
 
-    #ifndef PKG_USING_LVGL
+#ifndef PKG_USING_LVGL
     rt_device_t lcd = rt_device_find(TFTLCD_DEVICE_NAME);
     if (lcd == RT_NULL)
     {
         rt_kprintf("can't find display device:%s\n", TFTLCD_DEVICE_NAME);
         return;
     }
-    #endif
+#endif
 
     static rt_bool_t is_touching = RT_FALSE;
     static int no_touch_count = 0;
@@ -113,9 +115,9 @@ void xpt2046_entry(void *parameter)
     static int stable_x = 0, stable_y = 0;
 
     /* 5-point moving average filter for coordinate smoothing */
-    #define HISTORY_SIZE 5
-    static int history_x[HISTORY_SIZE] = {0};
-    static int history_y[HISTORY_SIZE] = {0};
+#define HISTORY_SIZE 5
+    static int history_x[HISTORY_SIZE] = { 0 };
+    static int history_y[HISTORY_SIZE] = { 0 };
     static int history_index = 0;
     static int history_count = 0;
 
@@ -140,7 +142,8 @@ void xpt2046_entry(void *parameter)
             history_x[history_index] = current_x;
             history_y[history_index] = current_y;
             history_index = (history_index + 1) % HISTORY_SIZE;
-            if (history_count < HISTORY_SIZE) history_count++;
+            if (history_count < HISTORY_SIZE)
+                history_count++;
 
             int avg_x = 0, avg_y = 0;
             if (history_count > 0)
@@ -161,7 +164,7 @@ void xpt2046_entry(void *parameter)
 
             no_touch_count = 0;
 
-            #ifdef PKG_USING_LVGL
+#ifdef PKG_USING_LVGL
             if (!is_touching)
             {
                 touch_hold_count++;
@@ -206,10 +209,10 @@ void xpt2046_entry(void *parameter)
                 }
             }
 
-            #else
+#else
             const rt_uint32_t black = 0x0;
             rt_graphix_ops(lcd)->set_pixel((const char *)(&black), avg_x, avg_y);
-            #endif
+#endif
         }
         else
         {
@@ -220,9 +223,9 @@ void xpt2046_entry(void *parameter)
             {
                 if (no_touch_count >= RELEASE_DEBOUNCE_COUNT)
                 {
-                    #ifdef PKG_USING_LVGL
+#ifdef PKG_USING_LVGL
                     lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_REL);
-                    #endif
+#endif
 
                     is_touching = RT_FALSE;
                     no_touch_count = 0;
@@ -234,9 +237,9 @@ void xpt2046_entry(void *parameter)
                 }
                 else
                 {
-                    #ifdef PKG_USING_LVGL
+#ifdef PKG_USING_LVGL
                     lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_PR);
-                    #endif
+#endif
                 }
             }
         }

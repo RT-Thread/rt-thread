@@ -1,0 +1,22 @@
+; ****************************************************************
+; Scatter-Loading Description File
+; ****************************************************************
+LR_IROM1 0x00000000 0x00200000  {    ; load region size_region
+    ER_IROM1 0x00000000 0x00200000  {  ; load address = execution address
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        .ANY (+RO)
+        .ANY (+XO)
+    }
+    RW_IRAM1 0x1FFE0000 UNINIT 0x00000008  {  ; RW data
+        *(.bss.noinit)
+    }
+    RW_IRAM2 0x1FFE0008 0x0007FFF8  {  ; RW data
+        .ANY (+RW +ZI)
+        .ANY (RAMCODE)
+    }
+    RW_IRAMB 0x200F0000 0x00001000  {  ; RW data
+        .ANY (+RW +ZI)
+    }
+}
+

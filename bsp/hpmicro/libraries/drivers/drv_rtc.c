@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -67,10 +67,18 @@ static struct rt_device hpm_rtc= {
 #endif
 };
 
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+static struct rtc_isr_t {
+    RTC_Type *rtc_base;
+    struct rt_device *rtc_dev;
+} hpm_rtc_isr;
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
+
 /*****************************************************
  * RTC interrupt handler
 ******************************************************/
 #ifdef RT_USING_ALARM
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void rtc_isr(void)
 {
     uint32_t rtc_alarm_flag = rtc_get_alarm_flags(HPM_RTC);
@@ -80,7 +88,20 @@ void rtc_isr(void)
     }
     rtc_clear_alarm_flags(HPM_RTC, RTC_ALARM_FLAG_ALARM0_MASK | RTC_ALARM_FLAG_ALARM1_MASK);
 }
-RTT_DECLARE_EXT_ISR_M(IRQn_RTC, rtc_isr);
+SDK_DECLARE_EXT_ISR_M(IRQn_RTC, rtc_isr);
+#else
+void rtc_isr(int vector, struct rtc_isr_t *hpm_rtc)
+{
+    RTC_Type *rtc_base = hpm_rtc->rtc_base;
+    struct rt_device *rtc_dev = hpm_rtc->rtc_dev;
+    uint32_t rtc_alarm_flag = rtc_get_alarm_flags(rtc_base);
+    if ((rtc_alarm_flag & RTC_ALARM_FLAG_ALARM0_MASK) != 0)
+    {
+        rt_alarm_update(rtc_dev, 1);
+    }
+    rtc_clear_alarm_flags(rtc_base, RTC_ALARM_FLAG_ALARM0_MASK | RTC_ALARM_FLAG_ALARM1_MASK);
+}
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 #endif
 /*******************************************************************************************
  *
@@ -117,6 +138,11 @@ static rt_err_t hpm_rtc_control(rt_device_t dev, int cmd, void *args)
 
     struct timeval tv;
 
+    if (args == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
     switch(cmd) {
         case RT_DEVICE_CTRL_RTC_GET_TIME:
             if (sizeof(uint32_t) == sizeof(time_t)) {
@@ -143,7 +169,7 @@ static rt_err_t hpm_rtc_control(rt_device_t dev, int cmd, void *args)
             err = hpm_rtc_get_alarm((struct rt_rtc_wkalarm *)args);
             break;
         default:
-            err = RT_EINVAL;
+            err = -RT_EINVAL;
             break;
     }
 
@@ -247,6 +273,15 @@ int rt_hw_rtc_init(void)
     }
 
     rt_device_open(&hpm_rtc, RT_DEVICE_FLAG_RDWR);
+
+#ifdef RT_USING_ALARM
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+    hpm_rtc_isr.rtc_base = HPM_RTC;
+    hpm_rtc_isr.rtc_dev = &hpm_rtc;
+    /* Register RTC device to irq table */
+    rt_hw_interrupt_install(IRQn_RTC, (rt_isr_handler_t)rtc_isr, &hpm_rtc_isr, "RTC");
+#endif
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
     return RT_EOK;
 }

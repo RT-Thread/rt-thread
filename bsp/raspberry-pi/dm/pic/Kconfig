@@ -1,0 +1,19 @@
+config RT_PIC_BCM2712_MIP
+    bool "Broadcom 2712 MSI-X Interrupt Peripheral support" if RT_PCI_MSI
+    depends on RT_USING_OFW
+    default n
+
+config RT_PIC_BCM2835_INTC
+    bool "BCM2835 intc"
+    depends on RT_USING_OFW
+    default n
+
+config RT_PIC_BCM2836_L1_INTC
+    bool "BCM2836 L1 intc"
+    depends on RT_USING_OFW
+    default n
+
+config RT_PIC_BRCMSTB_L2_IRQ
+    bool "BRCMSTB L2 IRQ"
+    depends on RT_USING_OFW
+    default n

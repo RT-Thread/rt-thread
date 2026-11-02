@@ -1,11 +1,3 @@
-menuconfig RT_USING_ADC
-    bool "Using ADC device drivers"
-    default n
-
-if RT_USING_DM && RT_USING_ADC
-    osource "$(SOC_DM_ADC_DIR)/Kconfig"
-endif
-
 config RT_USING_DAC
     bool "Using DAC device drivers"
     default n

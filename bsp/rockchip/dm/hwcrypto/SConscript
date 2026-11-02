@@ -2,10 +2,15 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = []
-CPPPATH = [cwd + '/../include']
+CPPPATH = [cwd + '/../include', cwd]
 
 if GetDepend(['RT_HWCRYPTO_RNG_ROCKCHIP']):
     src += ['hw-rng-rockchip.c']
+
+if GetDepend(['RT_HWCRYPTO_CRYPTO_ROCKCHIP_V2']):
+    src += [
+        'hw-crypto-rockchip-v2.c',
+    ]
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

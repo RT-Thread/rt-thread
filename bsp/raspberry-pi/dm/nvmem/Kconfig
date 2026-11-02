@@ -1,0 +1,4 @@
+config RT_NVMEM_RASPBERRYPI_OTP
+    bool "Raspberry Pi OTP support"
+    depends on RT_USING_NVMEM
+    default n

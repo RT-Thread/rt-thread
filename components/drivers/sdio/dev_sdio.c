@@ -613,12 +613,14 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
                        "type %u", tpl_link, curr->data[0]);
             }
 
+            rt_free(curr);
             break;
         case CISTPL_VERS_1:
             if (tpl_link < 2)
             {
                 LOG_D("CISTPL_VERS_1 too short");
             }
+            rt_free(curr);
             break;
         default:
             /* this tuple is unknown to the core */
@@ -1378,10 +1380,11 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
     for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
     {
         sd = (struct sdio_driver *)rt_list_entry(l, struct sdio_driver, list);
-        if (sd->drv != driver)
+        if (sd->drv == driver)
         {
-            sd = RT_NULL;
+            break;
         }
+        sd = RT_NULL;
     }
 
     if (sd == RT_NULL)
@@ -1396,10 +1399,11 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
         if (card != RT_NULL)
         {
             driver->remove(card);
-            rt_list_remove(&sd->list);
-            rt_free(sd);
         }
     }
+
+    rt_list_remove(&sd->list);
+    rt_free(sd);
 
     return 0;
 }

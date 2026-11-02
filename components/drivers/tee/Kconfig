@@ -1,0 +1,9 @@
+menuconfig RT_USING_TEE
+    bool "Using Trusted Execution Environment (TEE) support"
+    depends on RT_USING_DM
+    default n
+
+if RT_USING_TEE
+    rsource "optee/Kconfig"
+    osource "$(SOC_DM_TEE_DIR)/Kconfig"
+endif

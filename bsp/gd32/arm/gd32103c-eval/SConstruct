@@ -68,7 +68,7 @@ Export('SDK_LIB')
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript'), variant_dir='build/libraries/gd32_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

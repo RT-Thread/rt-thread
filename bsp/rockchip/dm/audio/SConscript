@@ -1,0 +1,18 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_AUDIO_ROCKCHIP_I2S_TDM']):
+    src += ['rockchip-i2s-tdm.c']
+
+if GetDepend(['RT_AUDIO_ROCKCHIP_CODEC_RK817']):
+    src += ['codec/rk817-codec.c']
+
+if GetDepend(['RT_AUDIO_ROCKCHIP_CARD', 'RT_AUDIO_ROCKCHIP_I2S_TDM']):
+    src += ['rockchip-audio-card.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-08-13     tyx          the first version
  * 2024-03-24     Evlers       fixed a duplicate issue with the wifi scan command
+ * 2026-08-11     Kai          fixed silent failure of wifi cmd when wlan device mode is not bound
  */
 
 #include <rtthread.h>
@@ -88,6 +89,39 @@ static const struct wifi_cmd_des debug_tab[] = {
 };
 #endif
 
+/* Check that the STA/AP device is bound to its mode before issuing
+ * commands that would otherwise fail silently at the mgnt layer.
+ * The mode can only be bound from the shell when RT_WLAN_CMD_DEBUG
+ * is enabled ('wifi -d mode ...'); otherwise tell the user to bind
+ * it in code via rt_wlan_set_mode(). */
+static int wifi_check_sta_mode(void)
+{
+    if (rt_wlan_get_mode(RT_WLAN_DEVICE_STA_NAME) != RT_WLAN_STATION)
+    {
+#ifdef RT_WLAN_CMD_DEBUG
+        LOG_E("sta mode not set, run 'wifi -d mode sta wlan0' first!");
+#else
+        LOG_E("sta mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION)!");
+#endif
+        return -RT_ERROR;
+    }
+    return RT_EOK;
+}
+
+static int wifi_check_ap_mode(void)
+{
+    if (rt_wlan_get_mode(RT_WLAN_DEVICE_AP_NAME) != RT_WLAN_AP)
+    {
+#ifdef RT_WLAN_CMD_DEBUG
+        LOG_E("ap mode not set, run 'wifi -d mode ap wlan1' first!");
+#else
+        LOG_E("ap mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP)!");
+#endif
+        return -RT_ERROR;
+    }
+    return RT_EOK;
+}
+
 static int wifi_help(int argc, char *argv[])
 {
     rt_kprintf("wifi\n");
@@ -111,7 +145,9 @@ static int wifi_status(int argc, char *argv[])
     struct rt_wlan_info info;
 
     if (argc > 2)
+    {
         return -1;
+    }
 
     if (rt_wlan_is_connected() == 1)
     {
@@ -200,7 +236,9 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
     rt_base_t level;
 
     if ((info == RT_NULL) || (info->ssid.len == 0))
+    {
         return -RT_EINVAL;
+    }
 
     LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
           info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
@@ -274,10 +312,14 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
 
     /* Insert the end */
     if (insert == -1)
+    {
         insert = scan_result.num;
+    }
 
     if (scan_result.num >= RT_WLAN_SCAN_CACHE_NUM)
+    {
         return RT_EOK;
+    }
 
     /* malloc memory */
     ptable = rt_malloc(sizeof(struct rt_wlan_info) * (scan_result.num + 1));
@@ -425,7 +467,9 @@ static int wifi_scan(int argc, char *argv[])
     int i = 0;
 
     if (argc > 3)
+    {
         return -1;
+    }
 
     if (argc == 3)
     {
@@ -434,11 +478,16 @@ static int wifi_scan(int argc, char *argv[])
         info = &filter;
     }
 
+    if (wifi_check_sta_mode() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
     ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, user_ap_info_callback, &i);
     if (ret != RT_EOK)
     {
         LOG_E("Scan register user callback error:%d!\n", ret);
-        return 0;
+        return -RT_ERROR;
     }
 
     if (info)
@@ -460,7 +509,7 @@ static int wifi_scan(int argc, char *argv[])
     {
         scan_filter = RT_NULL;
     }
-    return 0;
+    return ret;
 }
 
 static int wifi_join(int argc, char *argv[])
@@ -470,6 +519,10 @@ static int wifi_join(int argc, char *argv[])
     struct rt_wlan_cfg_info cfg_info;
 
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
+    if (wifi_check_sta_mode() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
     if (argc == 2)
     {
 #ifdef RT_WLAN_CFG_ENABLE
@@ -478,7 +531,9 @@ static int wifi_join(int argc, char *argv[])
         {
             ssid = (char *)(&cfg_info.info.ssid.val[0]);
             if (cfg_info.key.len)
+            {
                 key = (char *)(&cfg_info.key.val[0]);
+            }
         }
         else
 #endif
@@ -509,6 +564,7 @@ static int wifi_ap(int argc, char *argv[])
 {
     const char *ssid = RT_NULL;
     const char *key = RT_NULL;
+    rt_err_t err;
 
     if (argc == 3)
     {
@@ -524,7 +580,16 @@ static int wifi_ap(int argc, char *argv[])
         return -1;
     }
 
-    rt_wlan_start_ap(ssid, key);
+    if (wifi_check_ap_mode() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+    err = rt_wlan_start_ap(ssid, key);
+    if (err != RT_EOK)
+    {
+        LOG_E("start ap failed:%d!", err);
+        return -RT_ERROR;
+    }
     return 0;
 }
 
@@ -534,7 +599,13 @@ static int wifi_list_sta(int argc, char *argv[])
     int num, i;
 
     if (argc > 2)
+    {
         return -1;
+    }
+    if (wifi_check_ap_mode() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
     num = rt_wlan_ap_get_sta_num();
     sta_info = rt_malloc(sizeof(struct rt_wlan_info) * num);
     if (sta_info == RT_NULL)
@@ -561,18 +632,30 @@ static int wifi_disconnect(int argc, char *argv[])
         return -1;
     }
 
+    if (wifi_check_sta_mode() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
     rt_wlan_disconnect();
     return 0;
 }
 
 static int wifi_ap_stop(int argc, char *argv[])
 {
+    rt_err_t err;
+
     if (argc != 2)
     {
         return -1;
     }
 
-    rt_wlan_ap_stop();
+    err = rt_wlan_ap_stop();
+    if (err != RT_EOK)
+    {
+        LOG_E("ap stop failed:%d!", err);
+        return -RT_ERROR;
+    }
     return 0;
 }
 
@@ -695,7 +778,9 @@ static int wifi_debug_set_mode(int argc, char *argv[])
     rt_wlan_mode_t mode;
 
     if (argc != 3)
+    {
         return -1;
+    }
 
     if (rt_strcmp("sta", argv[1]) == 0)
     {
@@ -710,7 +795,9 @@ static int wifi_debug_set_mode(int argc, char *argv[])
         mode = RT_WLAN_NONE;
     }
     else
+    {
         return -1;
+    }
 
     rt_wlan_set_mode(argv[2], mode);
     return 0;
@@ -737,9 +824,13 @@ static int wifi_debug_set_autoconnect(int argc, char *argv[])
     if (argc == 2)
     {
         if (rt_strcmp(argv[1], "enable") == 0)
+        {
             rt_wlan_config_autoreconnect(RT_TRUE);
+        }
         else if (rt_strcmp(argv[1], "disable") == 0)
+        {
             rt_wlan_config_autoreconnect(RT_FALSE);
+        }
     }
     else
     {

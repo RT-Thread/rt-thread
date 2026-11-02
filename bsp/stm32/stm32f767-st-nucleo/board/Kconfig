@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_ETH
-            choice
+            choice ON_BOARD_PHY_CHIP_SEL
                 prompt "On-board PHY chip"
                 default PHY_USING_LAN8720A
 

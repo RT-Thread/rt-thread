@@ -30,7 +30,7 @@
 #define BOARD_DEBUG_UART_CLK_ROOT kCLOCK_Root_Lpuart0102
 #endif
 #ifndef BOARD_DEBUG_UART_BASEADDR
-#define BOARD_DEBUG_UART_BASEADDR (uint32_t) LPUART1
+#define BOARD_DEBUG_UART_BASEADDR (uint32_t)LPUART1
 #endif
 #ifndef BOARD_DEBUG_UART_INSTANCE
 #define BOARD_DEBUG_UART_INSTANCE 1U
@@ -88,7 +88,7 @@
 #define BOARD_USER_BUTTON_IRQ_HANDLER GPIO1_0_IRQHandler
 #define BOARD_USER_BUTTON_NAME        "SW8"
 
-#define BOARD_WAKEUP_BUTTON_NAME      "SW4"
+#define BOARD_WAKEUP_BUTTON_NAME "SW4"
 
 /*! @brief The board flash size */
 #define BOARD_FLASH_SIZE (0x1000000U)
@@ -161,28 +161,32 @@ void DCDC_SetVoltage(uint8_t core, uint8_t targetVoltage);
 void BOARD_NETC_Init(void);
 void BOARD_RequestTRDC(bool bRequestAON, bool bRequestWakeup, bool bReqeustMega);
 void BOARD_CommonSetting(void);
+void PHY_Reset(void);
 
 /* </RDTConfigurator>*/
 #if defined(__ARMCC_VERSION)
 extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
 extern int Image$$ARM_LIB_HEAP$$ZI$$Limit;
-#define HEAP_BEGIN  ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Base)
-#define HEAP_END    ((void*)&Image$$ARM_LIB_HEAP$$ZI$$Limit)
+#define HEAP_BEGIN ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Base)
+#define HEAP_END   ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Limit)
 #elif defined(__ICCARM__)
-#pragma section="HEAP"
-#define HEAP_BEGIN    (__section_begin("HEAP"))
-#define HEAP_END      (__section_end("HEAP"))
+#pragma section = "HEAP"
+#define HEAP_BEGIN (__section_begin("HEAP"))
+#define HEAP_END   (__section_end("HEAP"))
 #elif defined(__GNUC__)
 extern int __HeapBase;
 extern int __HeapLimit;
-#define HEAP_BEGIN  ((void *)&__HeapBase)
-#define HEAP_END  ((void *)&__HeapLimit)
+#define HEAP_BEGIN ((void *)&__HeapBase)
+#define HEAP_END   ((void *)&__HeapLimit)
 #endif
 
-/*! @brief The board flash size */
-#define BOARD_FLASH_SIZE (0x1000000U)
-
 void rt_hw_board_init(void);
+
+status_t BOARD_GetCore1ImageAddrSize(uint32_t *pImageSrcAddr,
+                                     uint32_t *pImageDestAddr,
+                                     uint32_t *pImageSize,
+                                     uint32_t *pImageBootAddr);
+void BOARD_PrepareCore1(uint32_t image_src_addr, uint32_t image_dest_addr, uint32_t image_size, uint32_t boot_addr);
 
 #if defined(__cplusplus)
 }

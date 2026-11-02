@@ -263,7 +263,7 @@ static rt_err_t mic_init(struct rt_audio_device *audio)
     RT_ASSERT(audio != RT_NULL);
     mic_dev = (struct mic_device *)audio->parent.user_data;
 
-    es8388_init("i2c2", RT_NULL);
+    es8388_init("swi2c2", RT_NULL);
     I2S3_Init();
     LOG_I("ES8388 init success.");
     /* set default params */
@@ -280,7 +280,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     snd_dev = (struct sound_device *)audio->parent.user_data;
 
     I2S3_Init();
-    es8388_init("i2c2", RT_NULL);
+    es8388_init("swi2c2", RT_NULL);
     /* set default params */
     // I2S_Frequency_Set(snd_dev->replay_config.samplerate);
     // SAIA_Channels_Set(snd_dev->replay_config.channels);

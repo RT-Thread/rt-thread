@@ -310,11 +310,6 @@ long list_thread(void)
                                thread->remaining_tick,
                                rt_strerror(thread->error),
                                thread);
-#ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
-#else
-                    rt_kprintf("  N/A\n");
-#endif
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
@@ -326,11 +321,11 @@ long list_thread(void)
                                RT_SCHED_PRIV(thread).remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#endif
 #ifdef RT_USING_CPU_USAGE_TRACER
                     rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
 #else
                     rt_kprintf("  N/A\n");
-#endif
 #endif
                 }
             }
