@@ -545,9 +545,13 @@ _fail:
  */
 rt_inline rt_bool_t is_pte_valid(const gpt_entry *pte, const rt_size_t lastlba)
 {
+    rt_uint64_t start = rt_le64_to_cpu(pte->starting_lba);
+    rt_uint64_t end = rt_le64_to_cpu(pte->ending_lba);
+
     if ((!efi_guidcmp(pte->partition_type_guid, NULL_GUID)) ||
-        rt_le64_to_cpu(pte->starting_lba) > lastlba ||
-        rt_le64_to_cpu(pte->ending_lba) > lastlba)
+        start > lastlba ||
+        end > lastlba ||
+        end < start)
     {
         return RT_FALSE;
     }
@@ -823,14 +827,16 @@ rt_err_t efi_partition(struct rt_blk_disk *disk)
 
     for (int i = 0; i < entries_nr && i < disk->max_partitions; ++i)
     {
-        rt_uint64_t start = rt_le64_to_cpu(ptes[i].starting_lba);
-        rt_uint64_t size = rt_le64_to_cpu(ptes[i].ending_lba) -
-                           rt_le64_to_cpu(ptes[i].starting_lba) + 1ULL;
+        rt_uint64_t start;
+        rt_uint64_t size;
 
         if (!is_pte_valid(&ptes[i], last_lba(disk)))
         {
             continue;
         }
+
+        start = rt_le64_to_cpu(ptes[i].starting_lba);
+        size = rt_le64_to_cpu(ptes[i].ending_lba) - start + 1ULL;
 
         if (blk_put_partition(disk, "gpt", start, size, i) == -RT_ENOMEM)
         {
