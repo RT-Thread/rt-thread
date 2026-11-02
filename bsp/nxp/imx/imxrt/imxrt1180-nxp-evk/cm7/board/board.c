@@ -1256,8 +1256,8 @@ void PHY_Reset(void)
 
 void rt_hw_board_init()
 {
-    BOARD_ConfigMPU();
     BOARD_CommonSetting();
+    BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_BootClockRUN();
 
