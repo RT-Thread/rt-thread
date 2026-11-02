@@ -100,6 +100,46 @@ comments should describe what the code does. It should describe complicated
 algorithms, for example. Comments for statements should be placed before the
 statements or to the right of them. Any other locations are invalid.
 
+**Macro comments**
+
+Like statement comments, a macro can be documented either to the right of the
+definition or above it. What decides it is how much explanation the macro needs,
+and only then the line length.
+
+Use a trailing `/**<` for simple constant macros, so that a group of values can
+be read in one pass:
+
+    #define RT_EOK                          0               /**< There is no error */
+    #define RT_ERROR                        255             /**< A generic/unknown error happens */
+
+Such lines are column aligned and often exceed 80 columns once the comment is
+added (the `RT_ERROR` line above is 95 columns). That is accepted: for a group of
+constant macros, keeping the columns aligned matters more than the line length.
+
+When the macro needs more than one line of explanation - for example a
+function-like macro whose arguments, expansion or restrictions have to be
+described - move the comment above the definition, use a `/**` block and mark the
+macro with `@def`:
+
+    /**
+     * @ingroup group_basic_definition
+     *
+     * @def RT_ALIGN(size, align)
+     * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
+     * would return 16.
+     * @note align Must be an integer power of 2 or the result will be incorrect
+     */
+    #define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
+
+In short: if a single line of comment says it, keep it trailing; if it takes a
+paragraph, put it above.
+
+Doxygen accepts both forms, but there is one difference worth knowing: with
+`MACRO_EXPANSION` enabled, a trailing `/**<` is attached to the expansion site,
+so a macro expanded in several places can carry its comment somewhere unexpected.
+A block comment above the definition always stays with the definition, so prefer
+it for macros that get expanded frequently.
+
 
 # 9. Indent
 
