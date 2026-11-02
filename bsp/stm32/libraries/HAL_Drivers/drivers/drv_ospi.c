@@ -33,7 +33,8 @@ struct stm32_ospi_bus _stm32_ospi_bus;
 static int stm32_ospi_init(struct rt_ospi_device *device, struct rt_ospi_configuration *ospi_cfg)
 {
     int result = RT_EOK;
-    unsigned int i = 1;
+    uint32_t ospi_clk;
+    unsigned int prescaler;
 
     OSPIM_CfgTypeDef OSPIM_Cfg_Struct = { 0 };
 
@@ -47,17 +48,21 @@ static int stm32_ospi_init(struct rt_ospi_device *device, struct rt_ospi_configu
     OSPI_HandleTypeDef OSPI_Handler_config = OSPI_BUS_CONFIG;
     ospi_bus->OSPI_Handler = OSPI_Handler_config;
 
-    while (cfg->max_hz < HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_OSPI) / (i + 1))
+    if (cfg->max_hz == 0)
     {
-        i++;
-        if (i == 255)
-        {
-            LOG_E("OSPI init failed, OSPI frequency(%d) is too low.", cfg->max_hz);
-            return -RT_ERROR;
-        }
+        LOG_E("OSPI init failed, OSPI frequency is 0.");
+        return -RT_ERROR;
     }
 
-    ospi_bus->OSPI_Handler.Init.ClockPrescaler = i;
+    ospi_clk = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_OSPI);
+    prescaler = (ospi_clk + cfg->max_hz - 1) / cfg->max_hz;
+    if (prescaler < 1 || prescaler > 256)
+    {
+        LOG_E("OSPI init failed, OSPI frequency(%d) is out of range.", cfg->max_hz);
+        return -RT_ERROR;
+    }
+
+    ospi_bus->OSPI_Handler.Init.ClockPrescaler = prescaler;
 
     if (!(cfg->mode & RT_SPI_CPOL))
     {

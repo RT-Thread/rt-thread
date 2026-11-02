@@ -383,6 +383,38 @@ static sfud_ospi_mode_t get_ospi_mode(const struct __sfud_spi *spi)
         return SFUD_OSPI_MODE_OFF;
     }
 }
+
+/**
+ * set OSPI mode
+ */
+static void set_ospi_mode(const struct __sfud_spi *spi, sfud_ospi_mode_t mode)
+{
+    const sfud_flash *sfud_dev = (const sfud_flash *)spi->user_data;
+    struct spi_flash_device *rtt_dev = (struct spi_flash_device *)(sfud_dev->user_data);
+
+    RT_ASSERT(spi);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(rtt_dev);
+
+    if (!(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_OSPI))
+    {
+        return;
+    }
+
+    struct rt_ospi_device *ospi_dev = (struct rt_ospi_device *)(rtt_dev->rt_spi_device);
+    switch (mode)
+    {
+    case SFUD_OSPI_MODE_STR:
+        ospi_dev->ospi_mode = RT_OSPI_MODE_STR;
+        break;
+    case SFUD_OSPI_MODE_DTR:
+        ospi_dev->ospi_mode = RT_OSPI_MODE_DTR;
+        break;
+    default:
+        ospi_dev->ospi_mode = RT_OSPI_MODE_OFF;
+        break;
+    }
+}
 #endif
 
 static void spi_lock(const sfud_spi *spi)
@@ -459,6 +491,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash)
 #ifdef SFUD_USING_OSPI
     flash->spi.ospi_write_read = ospi_write_read;
     flash->spi.get_ospi_mode = get_ospi_mode;
+    flash->spi.set_ospi_mode = set_ospi_mode;
 #endif
     flash->spi.lock = spi_lock;
     flash->spi.unlock = spi_unlock;
@@ -588,6 +621,24 @@ static rt_spi_flash_device_t rt_sfud_flash_probe_internal(const char *spi_flash_
             rtt_dev->rt_spi_device->user_data = rtt_dev;
             rtt_dev->flash_device.user_data = rtt_dev;
             sfud_dev->user_data = rtt_dev;
+#ifdef SFUD_USING_OSPI
+            if (rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_OSPI)
+            {
+                /* SFUD SPI port callbacks should be registered before reset */
+                if (sfud_spi_port_init(sfud_dev) != SFUD_SUCCESS)
+                {
+                    LOG_E("ERROR: Init SFUD SPI port for %s failed.", spi_dev_name);
+                    goto error;
+                }
+                /* reset flash in all modes */
+                ospi_dev->ospi_mode = RT_OSPI_MODE_STR;
+                (void)sfud_reset(sfud_dev);
+                ospi_dev->ospi_mode = RT_OSPI_MODE_DTR;
+                (void)sfud_reset(sfud_dev);
+                ospi_dev->ospi_mode = RT_OSPI_MODE_OFF;
+                (void)sfud_reset(sfud_dev);
+            }
+#endif
             /* initialize SFUD device */
             if (sfud_device_init(sfud_dev) != SFUD_SUCCESS)
             {

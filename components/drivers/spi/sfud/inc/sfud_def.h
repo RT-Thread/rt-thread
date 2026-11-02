@@ -328,6 +328,8 @@ typedef struct __sfud_spi
                                 const uint8_t *send_buf, size_t send_size, uint8_t *read_buf, size_t read_size);
     /* get OSPI mode function */
     sfud_ospi_mode_t (*get_ospi_mode)(const struct __sfud_spi *spi);
+    /* set OSPI mode function */
+    void (*set_ospi_mode)(const struct __sfud_spi *spi, sfud_ospi_mode_t mode);
 #endif
     /* lock SPI bus */
     void (*lock)(const struct __sfud_spi *spi);
@@ -357,10 +359,6 @@ typedef struct
 
 #ifdef SFUD_USING_QSPI
     sfud_qspi_read_cmd_format read_cmd_format;   /**< fast read cmd format */
-#endif
-
-#ifdef SFUD_USING_OSPI
-    sfud_ospi_cmd_format ospi_cmd_format;        /**< ospi cmd format */
 #endif
 
 #ifdef SFUD_USING_SFDP
