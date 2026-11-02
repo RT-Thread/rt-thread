@@ -61,7 +61,7 @@ int rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
      */
     return vsprintf(buf, format, arg_ptr);
 #else
-    return rt_vsnprintf(buf, (size_t) - 1, format, arg_ptr);
+    return rt_vsnprintf(buf, (size_t)-1, format, arg_ptr);
 #endif
 }
 RTM_EXPORT(rt_vsprintf);
