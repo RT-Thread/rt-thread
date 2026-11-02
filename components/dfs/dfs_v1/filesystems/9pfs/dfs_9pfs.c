@@ -367,7 +367,7 @@ rt_err_t dfs_9pfs_del_tag(struct p9_protocol *p9p)
 
 static int p9_to_fs_err(int rc)
 {
-    const int p9_err[] = {
+    const int p9_err[1 - P9_MSG_SIZE_TOO_BIG] = {
         [0] = RT_EOK,
         [-P9_ERROR] = -EIO,
         [-P9_UNKNOWN_VERSION] = -ENOSYS,
@@ -383,6 +383,12 @@ static int p9_to_fs_err(int rc)
         [-P9_NO_BUFFER] = -ENOSPC,
         [-P9_MSG_SIZE_TOO_BIG] = -ENOSPC,
     };
+
+    /* Unknown or positive result codes cannot index the error table. */
+    if (rc > 0 || rc < P9_MSG_SIZE_TOO_BIG)
+    {
+        return -EIO;
+    }
 
     return p9_err[-rc];
 }
@@ -547,7 +553,7 @@ rt_inline int p9_walk_subpath(struct p9_connection *conn, const char *path)
 
 static int dfs_9pfs_open(struct dfs_file *fd)
 {
-    int rc;
+    int rc = 0;
     rt_uint32_t size;
     rt_bool_t is_root;
     struct p9_connection *conn;
