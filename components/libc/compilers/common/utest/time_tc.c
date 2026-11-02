@@ -310,11 +310,33 @@ static void gmtime_r_before_epoch_test(void)
 {
     size_t i;
 
+    /*
+     * A timestamp before the epoch only exists when time_t is signed. Some
+     * toolchains (armclang/AC6 among them) define time_t as an unsigned 32-bit
+     * type; there (time_t)-1 is 4294967295, i.e. 2106-02-07, so the negative
+     * cases below do not describe anything and the first entry has to be
+     * checked on its own.
+     */
+    if ((time_t)-1 < (time_t)0)
+    {
+        LOG_I("time_t is signed, checking pre-epoch timestamps");
+    }
+    else
+    {
+        LOG_I("time_t is unsigned, only checking the epoch itself");
+    }
+
     for (i = 0; i < sizeof(gmtime_r_cases) / sizeof(gmtime_r_cases[0]); i++)
     {
         const struct gmtime_r_case *c = &gmtime_r_cases[i];
         struct tm r;
         time_t timestamp = c->timestamp;
+
+        /* the pre-epoch cases are meaningless when time_t cannot hold them */
+        if (i > 0 && !((time_t)-1 < (time_t)0))
+        {
+            continue;
+        }
 
         rt_memset(&r, 0, sizeof(r));
 
