@@ -13,6 +13,7 @@ menu "RT-Thread Utestcases"
         menu "Kernel Components"
 
             menu "Drivers"
+                rsource "../../../components/drivers/adc/utest/Kconfig"
                 rsource "../../../components/drivers/core/utest/Kconfig"
                 rsource "../../../components/drivers/audio/utest/Kconfig"
                 rsource "../../../components/drivers/ipc/utest/Kconfig"

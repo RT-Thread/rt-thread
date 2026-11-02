@@ -1,3 +1,4 @@
+import os
 from building import *
 
 cwd = GetCurrentDir()
@@ -19,5 +20,10 @@ if GetDepend(['RT_USING_ADC_V2', 'RT_USING_FINSH', 'RT_ADC_V2_USING_MSH']):
 
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_ADC'], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
