@@ -48,7 +48,8 @@
 #include <lwip/init.h>
 
 #if (LWIP_VERSION) < 0x02000000U
-    #error "not support old LWIP"
+// cppcheck-suppress preprocessorErrorDirective
+#error "not support old LWIP"
 #endif
 
 #if !LWIP_IPV4
