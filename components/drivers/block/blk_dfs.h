@@ -17,7 +17,5 @@
 #define RT_DEVICE_CTRL_ALL_BLK_SSIZEGET  0x80081272     /**< get number of bytes per sector * sector counts */
 
 void device_set_blk_fops(struct rt_device *dev);
-void device_get_blk_ssize(struct rt_device *dev, void *args);
-void device_get_all_blk_ssize(struct rt_device *dev, void *args);
 
 #endif /* __BLK_DFS_H__ */
