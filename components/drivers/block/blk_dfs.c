@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 
+#include "blk_dev.h"
 #include "blk_dfs.h"
 
 #include <drivers/classes/block.h>
@@ -26,16 +27,30 @@ static int blk_fops_open(struct dfs_file *file)
 {
     struct rt_device *dev = file->vnode->data;
     struct blk_fops_data *data = rt_malloc(sizeof(*data));
+    rt_uint64_t total_size;
+    rt_err_t err;
 
     if (!data)
     {
         return (int)-RT_ENOMEM;
     }
 
-    dev->user_data = data;
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &data->geometry);
-    rt_device_control(dev, RT_DEVICE_CTRL_ALL_BLK_SSIZEGET, &file->vnode->size);
+    err = blk_get_geometry_k(dev, &data->geometry);
+    if (err != RT_EOK)
+    {
+        rt_free(data);
+        return (int)err;
+    }
 
+    err = blk_get_total_size_k(dev, &total_size);
+    if (err != RT_EOK)
+    {
+        rt_free(data);
+        return (int)err;
+    }
+
+    file->vnode->size = (size_t)total_size;
+    dev->user_data = data;
     return 0;
 }
 
@@ -255,27 +270,3 @@ void device_set_blk_fops(struct rt_device *dev)
 {
 }
 #endif /* RT_USING_POSIX_DEVIO && RT_USING_DFS_V2 */
-
-void device_get_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint32_t bytes_per_sector;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    bytes_per_sector = geometry.bytes_per_sector;
-
-    RT_ASSERT(sizeof(bytes_per_sector) == sizeof(geometry.bytes_per_sector));
-
-    rt_memcpy(args, &bytes_per_sector, sizeof(bytes_per_sector));
-}
-
-void device_get_all_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint64_t count_mul_per;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    count_mul_per = geometry.bytes_per_sector * geometry.sector_count;
-
-    rt_memcpy(args, &count_mul_per, sizeof(count_mul_per));
-}
