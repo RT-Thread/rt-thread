@@ -15,6 +15,9 @@ if RT_UTEST_SPI_LOOPBACK
 config RT_UTEST_SPI_LOOPBACK_BUS_NAME
     string "SPI bus name for loopback test"
     default "spi2"
+    help
+        On BSPs without a real SPI controller (e.g. qemu-vexpress-a9) the
+        virtual loopback bus "spi2" is registered by spi_virt_bus.c.
 
 config RT_UTEST_SPI_LOOPBACK_DEV_NAME
     string "Temporary SPI device name for loopback test"

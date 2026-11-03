@@ -225,6 +225,21 @@
 #define RT_USING_PIN
 /* end of Device Drivers */
 
+/* Utilities */
+
+#define RT_USING_UTESTCASES
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 8192
+#define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
+#define RT_UTEST_SPI_LOOPBACK
+#define RT_UTEST_SPI_LOOPBACK_BUS_NAME "spi2"
+#define RT_UTEST_SPI_LOOPBACK_DEV_NAME "spi_loop"
+#define RT_UTEST_SPI_LOOPBACK_DATA_SIZE 512
+#define RT_UTEST_SPI_LOOPBACK_MAX_HZ 10000000
+#define RT_UTEST_SPI_LOOPBACK_TIMEOUT 60
+/* end of Utilities */
+
 /* C/C++ and POSIX layer */
 
 /* ISO-ANSI C layer */
