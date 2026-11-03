@@ -268,8 +268,7 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
             ipaddr = ntohl(dhcpserver->start.addr);
         }
         dhcpserver->current.addr = htonl(ipaddr);
-    }
-    while (dhcpserver->current.addr != first_candidate);
+    } while (dhcpserver->current.addr != first_candidate);
 
     if (node != NULL)
     {
@@ -455,7 +454,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
             }
 #else
             /* default use gatewary dns server */
-            SMEMCPY(opt_buf, &(dhcp_server->netif->ip_addr), 4);
+            SMEMCPY(opt_buf, &ip_2_ip4(&dhcp_server->netif->ip_addr), 4);
 #endif /* DHCP_DNS_SERVER_IP */
             opt_buf += 4;
 
@@ -532,7 +531,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
                         }
 #else
                         /* default use gatewary dns server */
-                        SMEMCPY(opt_buf, &(dhcp_server->netif->ip_addr), 4);
+                        SMEMCPY(opt_buf, &ip_2_ip4(&dhcp_server->netif->ip_addr), 4);
 #endif /* DHCP_DNS_SERVER_IP */
                         opt_buf += 4;
 
