@@ -168,8 +168,8 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
-    *(.text)                 /* .text sections (code) */
-    *(.text*)                /* .text* sections (code) */
+    *(EXCLUDE_FILE(*fsl_flexspi.o *drv_flexspi_nor_flash.o *drv_flexspi.o) .text)
+    *(EXCLUDE_FILE(*fsl_flexspi.o *drv_flexspi_nor_flash.o *drv_flexspi.o) .text*)
     *(.rodata)               /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)              /* .rodata* sections (constants, strings, etc.) */
     *(.glue_7)               /* glue arm to thumb code */
@@ -297,6 +297,11 @@ SECTIONS
     . = ALIGN(32);
     __ram_function_start__ = .;
     *(CodeQuickAccess)
+    /* The FlexSPI drivers must run from TCM while the flash is being
+       reconfigured, mirroring the Keil/IAR QuickAccess placement. */
+    *fsl_flexspi.o(.text*)
+    *drv_flexspi_nor_flash.o(.text*)
+    *drv_flexspi.o(.text*)
     . = ALIGN(128);
     __ram_function_end__ = .;
   } > m_qacode

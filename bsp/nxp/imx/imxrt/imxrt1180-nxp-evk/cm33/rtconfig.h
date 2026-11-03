@@ -253,6 +253,9 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+
+/* GD32EmbeddedUI demos require LVGL v8.3.11 */
+
 /* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */

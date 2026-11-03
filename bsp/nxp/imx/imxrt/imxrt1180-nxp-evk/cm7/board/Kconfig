@@ -821,6 +821,17 @@ choice
         help
             Link the image to run entirely from internal SRAM.
 
+    config BSP_LINKER_SCRIPT_RAM_INDUSTRY
+        bool "RAM - Industrial Ethernet (512KB TCM + 512KB OCRAM1 + 96KB OCRAM2 + 32KB shared memory)"
+        help
+            Link the image to run from internal SRAM for industrial Ethernet
+            development. CM7 uses 256KB ITCM and 256KB DTCM, all accessible
+            OCRAM1 (496KB; the first 16KB is blocked by TRDC), and 96KB OCRAM2
+            exclusively. The last 32KB OCRAM2 is shared with CM33 and must
+            match the CM33 industry layout. The GCC linker script (.ld),
+            ARMCLANG scatter file (.scf) and IAR configuration file (.icf)
+            are provided.
+
     config BSP_LINKER_SCRIPT_HYPERRAM
         bool "HyperRAM (internal SRAM + external HyperRAM)"
         help
@@ -843,9 +854,9 @@ choice
         help
             Link the image to XIP from external NOR flash for industrial
             Ethernet development. CM7 uses the whole OCRAM1, 96KB OCRAM2
-            exclusively and shares 32KB OCRAM2 with CM33. The ARMCLANG
-            scatter file (.scf) and the IAR linker configuration file (.icf)
-            are provided.
+            exclusively and shares 32KB OCRAM2 with CM33. The GCC linker
+            script (.ld), the ARMCLANG scatter file (.scf) and the IAR linker
+            configuration file (.icf) are provided.
 endchoice
 
 endmenu
