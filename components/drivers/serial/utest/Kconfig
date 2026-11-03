@@ -5,6 +5,11 @@ menu "Serial Test"
         default n
         depends on RT_USING_SERIAL_BYPASS
 
+    config RT_UTEST_SERIAL_V1
+        bool "Serial V1 Test"
+        default n
+        depends on RT_USING_SERIAL_V1
+
     config RT_UTEST_SERIAL_V2
         bool "Serial V2 Test"
         default n
