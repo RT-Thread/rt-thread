@@ -226,6 +226,16 @@ config RT_USING_UTEST
             help
                 If enable this option, the test cases will be run automatically when board boot up.
 
+        config RT_UTEST_AUTO_RUN_LOOP
+            int "Loop count of the automatic run"
+            depends on RT_UTEST_USING_AUTO_RUN
+            range 1 100
+            default 1
+            help
+                How many times the automatic run repeats the registered test cases.
+                When it is greater than 1, "free" and "ps" are executed after each
+                loop, so memory or thread leaks show up in the log as growing numbers.
+
         if FINSH_USING_OPTION_COMPLETION
             config RT_UTEST_MAX_OPTIONS
                 int "Maximum number of utest cases for auto-completion"
