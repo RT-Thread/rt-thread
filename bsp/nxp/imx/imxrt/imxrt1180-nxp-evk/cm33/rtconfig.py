@@ -29,11 +29,11 @@ elif CROSS_TOOL == 'iar':
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
-# BUILD = 'release'
+# BUILD = 'debug'
+BUILD = 'release'
 
 # Read linker script selection from rtconfig.h (set by Kconfig BSP_LINKER_SCRIPT_* choice).
-# Supported types: RAM, FLEXSPI_NOR, FLEXSPI_NOR_HYPERRAM, RAM_INDUSTRY
+# Supported types: RAM, RAM_INDUSTRY, FLEXSPI_NOR, FLEXSPI_NOR_HYPERRAM
 # Default to RAM when no match is found.
 _LINKER_SCRIPT_TYPE = 'RAM'
 _rtconfig_h = os.path.join(os.path.dirname(__file__), 'rtconfig.h')
@@ -60,9 +60,9 @@ if os.path.exists(_rtconfig_h):
 # Base filename (without extension) for the selected linker script.
 _LINKER_SCRIPT_BASE = {
     'RAM':                  'MIMXRT1189xxxxx_cm33_ram',
+    'RAM_INDUSTRY':         'MIMXRT1189xxxxx_cm33_ram_industry',
     'FLEXSPI_NOR':          'MIMXRT1189xxxxx_cm33_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'MIMXRT1189xxxxx_cm33_flexspi_nor_hyperram',
-    'RAM_INDUSTRY':         'MIMXRT1189xxxxx_cm33_ram_industry',
 }[_LINKER_SCRIPT_TYPE]
 
 
@@ -236,9 +236,9 @@ elif PLATFORM == 'iccarm':
 # Map from linker script type to the matching Keil target name.
 _LINKER_SCRIPT_TO_KEIL_TARGET = {
     'RAM':                  'rtthread_ram',
+    'RAM_INDUSTRY':         'rtthread_ram_industry',
     'FLEXSPI_NOR':          'rtthread_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'rtthread_flexspi_nor_hyperram',
-    'RAM_INDUSTRY':         'rtthread_ram_industry',
 }
 
 def update_keil_active_target(uvoptx_path='project.uvoptx'):
@@ -252,6 +252,10 @@ def update_keil_active_target(uvoptx_path='project.uvoptx'):
 
     tree = etree.parse(uvoptx_path)
     root = tree.getroot()
+
+    if not any(tgt.findtext('TargetName') == active for tgt in tree.findall('Target')):
+        print('Keil target not found: ' + active + '; active target unchanged')
+        return
 
     for tgt in tree.findall('Target'):
         tname = tgt.find('TargetName')
