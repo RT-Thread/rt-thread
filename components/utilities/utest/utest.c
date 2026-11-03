@@ -14,6 +14,10 @@
 #include "utest.h"
 #include "utest_log.h"
 
+#ifdef RT_USING_FINSH
+#include <msh.h>
+#endif
+
 #define DBG_TAG "utest"
 #ifdef UTEST_DEBUG
 #define DBG_LVL DBG_LOG
@@ -222,6 +226,44 @@ static int utest_help(void)
     return 0;
 }
 
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+static void utest_loop_runtime_info(rt_uint32_t loop)
+{
+    if (tc_loop <= 1)
+    {
+        return;
+    }
+
+    LOG_I("[==========] [ utest    ] loop %u/%u runtime info", (rt_uint32_t)loop, (rt_uint32_t)tc_loop);
+
+#ifdef RT_USING_FINSH
+    {
+        static char free_cmd[] = "free";
+        static char ps_cmd[] = "ps";
+        int ret = 0;
+
+        ret |= msh_exec(free_cmd, sizeof(free_cmd) - 1);
+        ret |= msh_exec(ps_cmd, sizeof(ps_cmd) - 1);
+        if (ret != 0)
+        {
+            /* do not fail the test run just because the commands are absent, but make it visible */
+            LOG_W("[==========] [ utest    ] 'free'/'ps' are not available, runtime info is incomplete");
+        }
+    }
+#else
+    {
+        rt_size_t total = 0;
+        rt_size_t used = 0;
+        rt_size_t max_used = 0;
+
+        rt_memory_info(&total, &used, &max_used);
+        LOG_I("[==========] [ utest    ] memory total:%u used:%u maximum:%u",
+              (rt_uint32_t)total, (rt_uint32_t)used, (rt_uint32_t)max_used);
+    }
+#endif /* RT_USING_FINSH */
+}
+#endif /* RT_UTEST_AUTO_RUN_LOOP */
+
 static void utest_do_run(const char *utest_name)
 {
     rt_size_t i;
@@ -352,7 +394,18 @@ static void utest_do_run(const char *utest_name)
         }
 
         LOG_I("[==========] [ utest    ] finished");
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+        utest_loop_runtime_info(index + 1);
+#endif
     }
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    /* Emitted once, after every loop and its runtime info. CI uses this line
+     * instead of the per-loop "finished" one, otherwise it would stop after the
+     * first loop and miss the remaining loops and their free/ps output. */
+    LOG_I("[==========] [ utest    ] all loops finished");
+#endif
 }
 
 static void utest_thr_entry(void *para)
@@ -378,7 +431,16 @@ static void utest_thread_create(const char *utest_name)
 #ifdef RT_UTEST_USING_AUTO_RUN
 static int utest_auto_run(void)
 {
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    tc_loop = RT_UTEST_AUTO_RUN_LOOP;
+#else
     tc_loop = 1;
+#endif
+    if (tc_loop == 0)
+    {
+        tc_loop = 1;
+    }
+
     utest_thread_create(RT_NULL);
     return RT_EOK;
 }
