@@ -2188,6 +2188,7 @@ static void _resr_cleanup(struct rt_lwp *lwp)
 
     LWP_LOCK(lwp);
     lwp_signal_detach(&lwp->signal);
+    lwp_signal_notify_detach(lwp);
 
     /**
      * @brief Detach children from lwp

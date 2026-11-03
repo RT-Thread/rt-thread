@@ -83,6 +83,15 @@ struct rt_lwp_notify
      * @param signo Signal number
      */
     void (*notify)(rt_wqueue_t *signalfd_queue, int signo);
+    /**
+     * @brief Callback invoked when the registered process exits
+     * @param signalfd_queue Wait queue for signal file descriptors
+     * @param lwp The exiting process
+     * @note Called under LWP_LOCK after the node has been unlinked from
+     *       lwp->signalfd_notify_head; the node is freed by the caller
+     *       once this returns.
+     */
+    void (*detach)(rt_wqueue_t *signalfd_queue, struct rt_lwp *lwp);
     rt_wqueue_t *signalfd_queue;         /**< Wait queue for signal file descriptors */
     rt_slist_t list_node;                /**< List node for notification */
 };

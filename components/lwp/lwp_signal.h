@@ -96,6 +96,49 @@ rt_err_t lwp_signal_init(struct lwp_signal *sig);
 
 rt_err_t lwp_signal_detach(struct lwp_signal *signal);
 
+struct rt_lwp_notify;
+
+/**
+ * @brief Register a signal notification listener on a process
+ *
+ * @param lwp target process
+ * @param notify listener node; owned by the process list until it is removed
+ *
+ * @note Takes LWP_LOCK, the lock lwp_signal_notify() walks the list under.
+ */
+void lwp_signal_notify_add(struct rt_lwp *lwp, struct rt_lwp_notify *notify);
+
+/**
+ * @brief Unlink one listener node from a process
+ *
+ * @param lwp target process
+ * @param notify listener node to unlink
+ *
+ * @return RT_TRUE if the node was on the list and has been unlinked,
+ *         RT_FALSE if it was already gone. The node is not freed.
+ */
+rt_bool_t lwp_signal_notify_remove(struct rt_lwp *lwp, struct rt_lwp_notify *notify);
+
+/**
+ * @brief Unlink and free every listener of a wait queue on a process
+ *
+ * @param lwp target process
+ * @param signalfd_queue wait queue the listeners belong to
+ *
+ * @note Takes LWP_LOCK; no notification can be inside a node once it returns.
+ */
+void lwp_signal_notify_remove_queue(struct rt_lwp *lwp, rt_wqueue_t *signalfd_queue);
+
+/**
+ * @brief Release every listener of an exiting process
+ *
+ * @param lwp the exiting process
+ *
+ * @note Caller holds LWP_LOCK. Each listener's detach callback runs after
+ *       its node is unlinked; the node is freed afterwards.
+ */
+void lwp_signal_notify_detach(struct rt_lwp *lwp);
+
 rt_inline void lwp_thread_signal_detach(struct lwp_thread_signal *tsig)
 {
     lwp_sigqueue_clear(&tsig->sig_queue);

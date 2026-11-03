@@ -448,6 +448,83 @@ static void lwp_signal_notify(rt_slist_t *list_head, lwp_siginfo_t siginfo)
     }
 }
 
+void lwp_signal_notify_add(struct rt_lwp *lwp, struct rt_lwp_notify *notify)
+{
+    LWP_LOCK(lwp);
+    rt_slist_append(&lwp->signalfd_notify_head, &notify->list_node);
+    LWP_UNLOCK(lwp);
+}
+
+rt_bool_t lwp_signal_notify_remove(struct rt_lwp *lwp, struct rt_lwp_notify *notify)
+{
+    rt_slist_t *node;
+    rt_bool_t found = RT_FALSE;
+
+    LWP_LOCK(lwp);
+    rt_slist_for_each(node, &lwp->signalfd_notify_head)
+    {
+        if (node == &notify->list_node)
+        {
+            found = RT_TRUE;
+            break;
+        }
+    }
+    if (found)
+    {
+        rt_slist_remove(&lwp->signalfd_notify_head, &notify->list_node);
+    }
+    LWP_UNLOCK(lwp);
+
+    return found;
+}
+
+void lwp_signal_notify_remove_queue(struct rt_lwp *lwp, rt_wqueue_t *signalfd_queue)
+{
+    rt_slist_t *prev;
+    rt_slist_t *curr;
+
+    LWP_LOCK(lwp);
+    prev = &lwp->signalfd_notify_head;
+    curr = prev->next;
+    while (curr != RT_NULL)
+    {
+        struct rt_lwp_notify *n = rt_slist_entry(curr, struct rt_lwp_notify, list_node);
+
+        if (n->signalfd_queue == signalfd_queue)
+        {
+            prev->next = curr->next;
+            rt_free(n);
+            curr = prev->next;
+        }
+        else
+        {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+    LWP_UNLOCK(lwp);
+}
+
+void lwp_signal_notify_detach(struct rt_lwp *lwp)
+{
+    rt_slist_t *node;
+
+    LWP_ASSERT_LOCKED(lwp);
+
+    while ((node = rt_slist_first(&lwp->signalfd_notify_head)) != RT_NULL)
+    {
+        struct rt_lwp_notify *n = rt_slist_entry(node, struct rt_lwp_notify, list_node);
+
+        lwp->signalfd_notify_head.next = node->next;
+        node->next = RT_NULL;
+        if (n->detach)
+        {
+            n->detach(n->signalfd_queue, lwp);
+        }
+        rt_free(n);
+    }
+}
+
 rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
     rt_err_t rc = RT_EOK;
