@@ -78,8 +78,7 @@ static rt_ssize_t spi_virt_xfer(struct rt_spi_device *device, struct rt_spi_mess
     return (rt_ssize_t)message->length;
 }
 
-static const struct rt_spi_ops spi_virt_ops =
-{
+static const struct rt_spi_ops spi_virt_ops = {
     .configure = spi_virt_configure,
     .xfer = spi_virt_xfer,
 };
