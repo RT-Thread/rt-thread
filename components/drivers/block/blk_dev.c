@@ -19,6 +19,10 @@
 #include <dfs_fs.h>
 #endif
 
+#ifdef RT_USING_LWP
+#include <lwp_user_mm.h>
+#endif
+
 static rt_err_t blk_dev_open(rt_device_t dev, rt_uint16_t oflag)
 {
     struct rt_blk_device *blk = to_blk(dev);
@@ -106,15 +110,25 @@ static rt_err_t blk_dev_control(rt_device_t dev, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_BLK_PARTITION:
-        if (args)
-        {
-            rt_memcpy(args, &blk->partition, sizeof(blk->partition));
-        }
-        else
+        if (!args)
         {
             err = -RT_EINVAL;
+            break;
         }
-
+#ifdef RT_USING_LWP
+        if (lwp_self() != RT_NULL)
+        {
+            struct dfs_partition kpart;
+            rt_memcpy(&kpart, &blk->partition, sizeof(kpart));
+            if (lwp_put_to_user(args, &kpart, sizeof(kpart)) != sizeof(kpart))
+                err = -RT_EFAULT;
+            else
+                err = RT_EOK;
+            break;
+        }
+#endif
+        rt_memcpy(args, &blk->partition, sizeof(blk->partition));
+        err = RT_EOK;
         break;
 
     case RT_DEVICE_CTRL_BLK_SSIZEGET:
