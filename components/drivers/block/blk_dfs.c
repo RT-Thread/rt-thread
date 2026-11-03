@@ -10,12 +10,19 @@
 
 #include <rtthread.h>
 
+#include "blk_dev.h"
 #include "blk_dfs.h"
 
 #include <drivers/classes/block.h>
 
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DFS_V2)
 #include <dfs_file.h>
+#include <dfs_fs.h>
+
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#endif
 
 struct blk_fops_data
 {
@@ -26,16 +33,48 @@ static int blk_fops_open(struct dfs_file *file)
 {
     struct rt_device *dev = file->vnode->data;
     struct blk_fops_data *data = rt_malloc(sizeof(*data));
+    rt_uint16_t oflag = RT_DEVICE_OFLAG_RDONLY;
+    rt_uint64_t total_size;
+    rt_err_t err;
 
     if (!data)
     {
         return (int)-RT_ENOMEM;
     }
 
-    dev->user_data = data;
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &data->geometry);
-    rt_device_control(dev, RT_DEVICE_CTRL_ALL_BLK_SSIZEGET, &file->vnode->size);
+    if ((file->flags & O_ACCMODE) != O_RDONLY)
+    {
+        oflag = RT_DEVICE_OFLAG_RDWR;
+    }
 
+    err = rt_device_open(dev, oflag);
+    if (err != RT_EOK)
+    {
+        rt_free(data);
+
+        return (int)err;
+    }
+
+    err = blk_get_geometry_k(dev, &data->geometry);
+    if (err != RT_EOK)
+    {
+        rt_device_close(dev);
+        rt_free(data);
+
+        return (int)err;
+    }
+
+    err = blk_get_total_size_k(dev, &total_size);
+    if (err != RT_EOK)
+    {
+        rt_device_close(dev);
+        rt_free(data);
+
+        return (int)err;
+    }
+
+    file->vnode->size = (size_t)total_size;
+    dev->user_data = data;
     return 0;
 }
 
@@ -45,6 +84,7 @@ static int blk_fops_close(struct dfs_file *file)
 
     rt_free(dev->user_data);
     dev->user_data = RT_NULL;
+    rt_device_close(dev);
 
     return 0;
 }
@@ -52,6 +92,76 @@ static int blk_fops_close(struct dfs_file *file)
 static int blk_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
 {
     struct rt_device *dev = file->vnode->data;
+
+#ifdef RT_USING_LWP
+    if (lwp_self() != RT_NULL)
+    {
+        rt_err_t err;
+        union blk_user_ioctl_arg
+        {
+            struct rt_device_blk_geometry geometry;
+            rt_uint32_t sector_size;
+            rt_uint64_t total_size;
+            struct dfs_partition partition;
+        } karg;
+        size_t arg_size = 0;
+        void *kptr = arg;
+
+        switch (cmd)
+        {
+        case RT_DEVICE_CTRL_BLK_GETGEOME:
+            arg_size = sizeof(karg.geometry);
+            kptr = &karg.geometry;
+            break;
+
+        case RT_DEVICE_CTRL_BLK_SSIZEGET:
+            arg_size = sizeof(karg.sector_size);
+            kptr = &karg.sector_size;
+            break;
+
+        case RT_DEVICE_CTRL_ALL_BLK_SSIZEGET:
+            arg_size = sizeof(karg.total_size);
+            kptr = &karg.total_size;
+            break;
+
+        case RT_DEVICE_CTRL_BLK_PARTITION:
+            arg_size = sizeof(karg.partition);
+            kptr = &karg.partition;
+            break;
+
+        default:
+            break;
+        }
+
+        if (arg_size)
+        {
+            if (arg == RT_NULL || !lwp_user_accessable(arg, arg_size))
+            {
+                return (int)-RT_EFAULT;
+            }
+
+            rt_memset(&karg, 0, sizeof(karg));
+
+            err = rt_device_control(dev, cmd, kptr);
+            if (err != RT_EOK)
+            {
+                return (int)err;
+            }
+
+            if (cmd == RT_DEVICE_CTRL_BLK_PARTITION)
+            {
+                karg.partition.lock = RT_NULL;
+            }
+
+            if (lwp_put_to_user(arg, kptr, arg_size) != arg_size)
+            {
+                return (int)-RT_EFAULT;
+            }
+
+            return 0;
+        }
+    }
+#endif /* RT_USING_LWP */
 
     return (int)rt_device_control(dev, cmd, arg);
 }
@@ -255,27 +365,3 @@ void device_set_blk_fops(struct rt_device *dev)
 {
 }
 #endif /* RT_USING_POSIX_DEVIO && RT_USING_DFS_V2 */
-
-void device_get_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint32_t bytes_per_sector;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    bytes_per_sector = geometry.bytes_per_sector;
-
-    RT_ASSERT(sizeof(bytes_per_sector) == sizeof(geometry.bytes_per_sector));
-
-    rt_memcpy(args, &bytes_per_sector, sizeof(bytes_per_sector));
-}
-
-void device_get_all_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint64_t count_mul_per;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    count_mul_per = geometry.bytes_per_sector * geometry.sector_count;
-
-    rt_memcpy(args, &count_mul_per, sizeof(count_mul_per));
-}
