@@ -215,15 +215,11 @@ enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type_get(rt_ubase_t cmd)
     case TIOCGWINSZ:
         return LWP_PTMX_IOCTL_WINSIZE_OUT;
 
-    case TIOCSETA:
-    case TIOCSETAW:
-    case TIOCSETAF:
     case TCSETS:
     case TCSETSW:
     case TCSETSF:
         return LWP_PTMX_IOCTL_TERMIOS_IN;
 
-    case TIOCGETA:
     case TCGETS:
         return LWP_PTMX_IOCTL_TERMIOS_OUT;
 
