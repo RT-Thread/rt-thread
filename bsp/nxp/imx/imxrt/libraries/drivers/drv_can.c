@@ -247,6 +247,11 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         {
             mask = kFLEXCAN_ErrorInterruptEnable;
         }
+        else
+        {
+            res = -RT_EINVAL;
+            break;
+        }
         FLEXCAN_EnableInterrupts(can->base, mask);
         NVIC_SetPriority(can->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0));
         EnableIRQ(can->irqn);
@@ -302,17 +307,27 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             /* user does not specify hdr index,set hdr_bank from RX MB 1 */
             if (item->hdr_bank == -1)
             {
-                for (i = 0; i < 32; i++)
+                for (index = 0; index < RX_MB_COUNT; index++)
                 {
-                    if (!(filter_mask & (1U << i)))
+                    if (!(filter_mask & (1U << index)))
                     {
-                        index = i;
                         break;
                     }
+                }
+                if (index == RX_MB_COUNT)
+                {
+                    res = -RT_ERROR;
+                    LOG_E("%s filter is full!\n", can->name);
+                    break;
                 }
             }
             else    /* use user specified hdr_bank */
             {
+                if ((rt_uint32_t)item->hdr_bank >= RX_MB_COUNT)
+                {
+                    res = -RT_EINVAL;
+                    break;
+                }
                 if (filter_mask & (1U << item->hdr_bank))
                 {
                     res = -RT_ERROR;
