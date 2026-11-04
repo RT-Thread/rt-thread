@@ -39,6 +39,7 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_POSIX_STDIO
+#include <stdlib.h>
 #include <dfs_file.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -1339,12 +1340,16 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 }
                 else config.parity = PARITY_NONE;
 
-                ret = serial->ops->configure(serial, &config);
-                if (ret != RT_EOK)
+                /* Software-only termios changes must not reset the UART FIFO. */
+                if (rt_memcmp(&config, &serial->config, sizeof(config)) != 0)
                 {
-                    return ret;
+                    ret = serial->ops->configure(serial, &config);
+                    if (ret != RT_EOK)
+                    {
+                        return ret;
+                    }
+                    serial->config = config;
                 }
-                serial->config = config;
             }
             break;
 #ifndef RT_USING_TTY
@@ -1370,85 +1375,58 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TIOCGWINSZ:
             {
-                struct winsize* p_winsize;
-                p_winsize = (struct winsize*)args;
+                struct winsize *winsize = (struct winsize *)args;
+                char response[32] = { 0 };
+                const char query[] = "\033[18t";
+                rt_tick_t start_tick;
+                rt_size_t i = 0;
+                unsigned long rows, columns;
+                char *end;
 
-                if(rt_thread_self() != rt_thread_find("tshell"))
+                if (winsize == RT_NULL)
                 {
-                    /* only can be used in tshell thread; otherwise, return default size */
-                    p_winsize->ws_col = 80;
-                    p_winsize->ws_row = 24;
+                    ret = -RT_EINVAL;
+                    break;
                 }
-                else
+
+                rt_memset(winsize, 0, sizeof(*winsize));
+                winsize->ws_row = 24;
+                winsize->ws_col = 80;
+                rt_device_write(dev, -1, query, sizeof(query) - 1);
+
+                start_tick = rt_tick_get();
+                while (i < sizeof(response) - 1 &&
+                       rt_tick_get_delta(start_tick) < rt_tick_from_millisecond(200))
                 {
-                    #include <shell.h>
-                    #define _TIO_BUFLEN 20
-                    char _tio_buf[_TIO_BUFLEN];
-                    unsigned char cnt1, cnt2, cnt3, i;
-                    char row_s[4], col_s[4];
-                    char *p;
-
-                    rt_memset(_tio_buf, 0, _TIO_BUFLEN);
-
-                    /* send the command to terminal for getting the window size of the terminal */
-                    rt_kprintf("\033[18t");
-
-                    /* waiting for the response from the terminal */
-                    i = 0;
-                    while(i < _TIO_BUFLEN)
+                    if (rt_device_read(dev, -1, &response[i], 1) == 1)
                     {
-                        _tio_buf[i] = finsh_getchar();
-                        if(_tio_buf[i] != 't')
-                        {
-                            i ++;
-                        }
-                        else
+                        if (response[i++] == 't')
                         {
                             break;
                         }
                     }
-                    if(i == _TIO_BUFLEN)
+                    else
                     {
-                        /* buffer overloaded, and return default size */
-                        p_winsize->ws_col = 80;
-                        p_winsize->ws_row = 24;
-                        break;
+                        rt_thread_mdelay(1);
                     }
-
-                    /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
-                    rt_memset(row_s,0,4);
-                    rt_memset(col_s,0,4);
-                    cnt1 = 0;
-                    while(cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
-                    {
-                        cnt1++;
-                    }
-                    cnt2 = ++cnt1;
-                    while(cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
-                    {
-                        cnt2++;
-                    }
-                    p = row_s;
-                    while(cnt1 < cnt2)
-                    {
-                        *p++ = _tio_buf[cnt1++];
-                    }
-                    p = col_s;
-                    cnt2++;
-                    cnt3 = rt_strlen(_tio_buf) - 1;
-                    while(cnt2 < cnt3)
-                    {
-                        *p++ = _tio_buf[cnt2++];
-                    }
-
-                    /* load the window size date */
-                    p_winsize->ws_col = atoi(col_s);
-                    p_winsize->ws_row = atoi(row_s);
-                #undef _TIO_BUFLEN
                 }
 
-                p_winsize->ws_xpixel = 0;/* unused */
-                p_winsize->ws_ypixel = 0;/* unused */
+                if (rt_memcmp(response, "\033[8;", 4) != 0)
+                {
+                    break;
+                }
+                rows = strtoul(response + 4, &end, 10);
+                if (*end != ';')
+                {
+                    break;
+                }
+                columns = strtoul(end + 1, &end, 10);
+                if (*end == 't' && end[1] == '\0' &&
+                    rows != 0 && rows <= 999 && columns != 0 && columns <= 999)
+                {
+                    winsize->ws_row = rows;
+                    winsize->ws_col = columns;
+                }
             }
             break;
         case FIONREAD:
