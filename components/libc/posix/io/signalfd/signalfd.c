@@ -21,7 +21,7 @@
 
 #define SIGNALFD_MUTEX_NAME "signalfd"
 #define SIGINFO_MAX         10
-#define SIGNALFD_SHART_MAX  RT_SIGNALFD_MAX_NUM
+#define SIGNALFD_SHARE_MAX  RT_SIGNALFD_MAX_NUM
 
 struct rt_signalfd_ctx
 {
@@ -30,7 +30,7 @@ struct rt_signalfd_ctx
     siginfo_t info[SIGINFO_MAX];
     int sig_num;
     rt_wqueue_t signalfd_queue;
-    struct rt_lwp *lwp[SIGNALFD_SHART_MAX];
+    struct rt_lwp *lwp[SIGNALFD_SHARE_MAX];
 };
 
 static int signalfd_close(struct dfs_file *file);
@@ -54,6 +54,12 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd);
  * Each registered process holds one LWP reference. The slot in sfd->lwp[] is
  * the registration: whoever clears a slot (close or the process exit hook)
  * drops that reference, so the pointer stays valid until it is cleared.
+ *
+ * The context itself is pinned by the descriptor the caller is operating on:
+ * read, poll and the registration they perform assume that the same
+ * descriptor is not closed concurrently by another thread, as the existing
+ * read/poll paths already do. close() only tears the context down once the
+ * vnode reference count has dropped to one.
  */
 
 static const struct dfs_file_ops signalfd_fops = {
@@ -85,20 +91,24 @@ static int signalfd_close(struct dfs_file *file)
 
     if (sfd)
     {
-        for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
+        struct rt_lwp *lwps[SIGNALFD_SHARE_MAX];
+
+        /* clear every slot first, then unlink the listeners outside sfd->lock */
+        rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
+        for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
         {
-            struct rt_lwp *lwp;
-
-            rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-            lwp = sfd->lwp[i];
+            lwps[i] = sfd->lwp[i];
             sfd->lwp[i] = RT_NULL;
-            rt_mutex_release(&sfd->lock);
+        }
+        rt_mutex_release(&sfd->lock);
 
-            if (lwp)
+        for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
+        {
+            if (lwps[i])
             {
-                /* the slot held a reference, so lwp is still valid here */
-                lwp_signal_notify_remove_queue(lwp, &sfd->signalfd_queue);
-                lwp_ref_dec(lwp);
+                /* the slot held a reference, so the process is still valid here */
+                lwp_signal_notify_remove_queue(lwps[i], &sfd->signalfd_queue);
+                lwp_ref_dec(lwps[i]);
             }
         }
         rt_mutex_detach(&sfd->lock);
@@ -278,7 +288,7 @@ static void signalfd_detach(rt_wqueue_t *signalfd_queue, struct rt_lwp *lwp)
     sfd = rt_container_of(signalfd_queue, struct rt_signalfd_ctx, signalfd_queue);
 
     rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-    for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
+    for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
     {
         if (sfd->lwp[i] == lwp)
         {
@@ -307,7 +317,7 @@ static int signalfd_find_slot(struct rt_signalfd_ctx *sfd, struct rt_lwp *lwp, i
 {
     *empty_slot = -1;
 
-    for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
+    for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
     {
         if (sfd->lwp[i] == lwp)
         {
@@ -460,7 +470,7 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
                     dfs_vnode_init(df->vnode, FT_REGULAR, &signalfd_fops);
                     df->vnode->data = sfd;
 
-                    for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
+                    for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
                     {
                         sfd->lwp[i] = RT_NULL;
                     }
