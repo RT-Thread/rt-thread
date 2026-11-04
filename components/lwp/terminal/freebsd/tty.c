@@ -1146,38 +1146,12 @@ static int tty_generic_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, void *data,
             /* This device supports non-blocking operation. */
             return 0;
         case FIONREAD:
-        {
-            int nread = ttyinq_bytescanonicalized(&tp->t_inq);
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_put_to_user(data, &nread, sizeof(int)) != sizeof(int))
-                {
-                    return -EFAULT;
-                }
-            }
-            else
-            {
-                *(int *)data = nread;
-            }
+            *(int *)data = ttyinq_bytescanonicalized(&tp->t_inq);
             return 0;
-        }
         case FIONWRITE:
         case TIOCOUTQ:
-        {
-            int nused = ttyoutq_bytesused(&tp->t_outq);
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_put_to_user(data, &nused, sizeof(int)) != sizeof(int))
-                {
-                    return -EFAULT;
-                }
-            }
-            else
-            {
-                *(int *)data = nused;
-            }
+            *(int *)data = ttyoutq_bytesused(&tp->t_outq);
             return 0;
-        }
 #if BSD_USING_FIO_OWNERSHIP
         case FIOSETOWN:
             if (tp->t_session != NULL && !tty_is_ctty(tp, td->lwp))
@@ -1295,65 +1269,28 @@ static int tty_generic_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, void *data,
             *(int *)data = TTYDISC;
             return 0;
         case TIOCGPGRP:
-        {
-            int pgrp;
             if (!tty_is_ctty(tp, td->lwp))
-            {
                 return -ENOTTY;
-            }
 
-            pgrp = (tp->t_pgrp != NULL) ? tp->t_pgrp->pgid : NO_PID;
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_put_to_user(data, &pgrp, sizeof(int)) != sizeof(int))
-                {
-                    return -EFAULT;
-                }
-            }
+            if (tp->t_pgrp != NULL)
+                *(int *)data = tp->t_pgrp->pgid;
             else
-            {
-                *(int *)data = pgrp;
-            }
+                *(int *)data = NO_PID;
             return 0;
-        }
         case TIOCGSID:
-        {
-            int sid;
             if (!tty_is_ctty(tp, td->lwp))
-            {
                 return -ENOTTY;
-            }
 
             MPASS(tp->t_session);
-            sid = tp->t_session->sid;
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_put_to_user(data, &sid, sizeof(int)) != sizeof(int))
-                {
-                    return -EFAULT;
-                }
-            }
-            else
-            {
-                *(int *)data = sid;
-            }
+            *(int *)data = tp->t_session->sid;
             return 0;
-        }
         case TIOCNOTTY:
             return tty_drop_ctty(tp, td->lwp);
         case TIOCSCTTY:
             return lwp_tty_set_ctrl_proc(tp, td);
         case TIOCSPGRP: {
-            int pgid;
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_get_from_user(&pgid, data, sizeof(int)) != sizeof(int))
-                    return -EFAULT;
-            }
-            else
-            {
-                pgid = *(int *)data;
-            }
+            /* data is a kernel buffer: the ioctl adapters are the uaccess boundary */
+            int pgid = *(int *)data;
             return lwp_tty_assign_foreground(tp, td, pgid);
         }
         case TIOCFLUSH: {
@@ -1393,33 +1330,11 @@ static int tty_generic_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, void *data,
             return (error);
         case TIOCGWINSZ:
             /* Obtain window size. */
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_put_to_user(data, &tp->t_winsize, sizeof(struct winsize)) != sizeof(struct winsize))
-                {
-                    return -EFAULT;
-                }
-            }
-            else
-            {
-                *(struct winsize *)data = tp->t_winsize;
-            }
+            *(struct winsize *)data = tp->t_winsize;
             return 0;
         case TIOCSWINSZ:
             /* Set window size. */
-            if (lwp_in_user_space((void *)data))
-            {
-                struct winsize ws;
-                if (lwp_get_from_user(&ws, data, sizeof(struct winsize)) != sizeof(struct winsize))
-                {
-                    return -EFAULT;
-                }
-                tty_set_winsize(tp, &ws);
-            }
-            else
-            {
-                tty_set_winsize(tp, data);
-            }
+            tty_set_winsize(tp, data);
             return 0;
         case TIOCEXCL:
             tp->t_flags |= TF_EXCLUDE;

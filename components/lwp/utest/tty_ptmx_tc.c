@@ -32,13 +32,13 @@
  * - Software configuration: RT_USING_SMART must be enabled.
  *
  * Expected Results:
- * - Final output: "[ PASSED ] [ result ] testcase (testcases.lwp.tty_ptmx.buffer_bounds)"
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.lwp.tty_ptmx.regression)"
  * - No assertion failures during test execution.
  */
 
 #include "utest_assert.h"
 
-#include "../terminal/tty_internal.h"
+#include "tty_internal.h"
 #include <rtdef.h>
 #include <string.h>
 #include <stdio.h>
@@ -157,11 +157,13 @@ static void tty_ptmx_buffer_bounds_tc(void)
 
 static void tty_ptmx_ioctl_arg_type_tc(void)
 {
-    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCSPGRP), LWP_PTMX_IOCTL_INT_IN);
-    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCMGET), LWP_PTMX_IOCTL_INT_OUT);
-    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCSTI), LWP_PTMX_IOCTL_CHAR_IN);
-    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCEXCL), LWP_PTMX_IOCTL_NONE);
-    uassert_int_equal(lwp_ptmx_ioctl_arg_type(0xffffffffU), LWP_PTMX_IOCTL_UNSUPPORTED);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCSPGRP), LWP_PTMX_IOCTL_INT_IN);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCMGET), LWP_PTMX_IOCTL_INT_OUT);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCSTI), LWP_PTMX_IOCTL_CHAR_IN);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCEXCL), LWP_PTMX_IOCTL_NONE);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCGETA), LWP_PTMX_IOCTL_TERMIOS_OUT);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(TIOCSETAW), LWP_PTMX_IOCTL_TERMIOS_IN);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type_get(0xffffffffU), LWP_PTMX_IOCTL_UNSUPPORTED);
 }
 
 static void tty_ptmx_ioctl_forward_tc(void)
@@ -252,4 +254,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(tty_ptmx_ioctl_arg_type_tc);
     UTEST_UNIT_RUN(tty_ptmx_ioctl_forward_tc);
 }
-UTEST_TC_EXPORT(testcase, "testcases.lwp.tty_ptmx.buffer_bounds", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "testcases.lwp.tty_ptmx.regression", utest_tc_init, utest_tc_cleanup, 10);

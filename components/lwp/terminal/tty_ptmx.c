@@ -159,7 +159,7 @@ static ssize_t ptm_fops_write(struct dfs_file *file, const void *buf,
     return rc;
 }
 
-enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type(rt_ubase_t cmd)
+enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type_get(rt_ubase_t cmd)
 {
     switch (cmd)
     {
@@ -215,11 +215,15 @@ enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type(rt_ubase_t cmd)
     case TIOCGWINSZ:
         return LWP_PTMX_IOCTL_WINSIZE_OUT;
 
+    case TIOCSETA:
+    case TIOCSETAW:
+    case TIOCSETAF:
     case TCSETS:
     case TCSETSW:
     case TCSETSF:
         return LWP_PTMX_IOCTL_TERMIOS_IN;
 
+    case TIOCGETA:
     case TCGETS:
         return LWP_PTMX_IOCTL_TERMIOS_OUT;
 
@@ -247,7 +251,10 @@ int lwp_ptmx_ioctl_forward(rt_ubase_t cmd, void *arg,
         struct termios termios_value;
     } value;
 
-    arg_type = lwp_ptmx_ioctl_arg_type(cmd);
+    /* *_OUT commands copy this back to the caller; never expose stale stack */
+    rt_memset(&value, 0, sizeof(value));
+
+    arg_type = lwp_ptmx_ioctl_arg_type_get(cmd);
     switch (arg_type)
     {
     case LWP_PTMX_IOCTL_NONE:

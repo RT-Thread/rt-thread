@@ -31,7 +31,7 @@ enum lwp_ptmx_ioctl_arg_type
     LWP_PTMX_IOCTL_TERMIOS_OUT,
 };
 
-enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type(rt_ubase_t cmd);
+enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type_get(rt_ubase_t cmd);
 
 typedef rt_size_t (*lwp_ptmx_copy_fn)(void *dst, void *src, rt_size_t size,
                                       void *context);
