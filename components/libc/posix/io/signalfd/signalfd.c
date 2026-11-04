@@ -17,7 +17,9 @@
 #include <sys/time.h>
 #include <lwp_signal.h>
 #include <lwp.h>
+#include <lwp_internal.h>
 #include <poll.h>
+#include <rtdevice.h>
 
 #define SIGNALFD_MUTEX_NAME "signalfd"
 #define SIGINFO_MAX         10
@@ -31,6 +33,8 @@ struct rt_signalfd_ctx
     int sig_num;
     rt_wqueue_t signalfd_queue;
     struct rt_lwp *lwp[SIGNALFD_SHARE_MAX];
+    int closing;                    /* set by close(); registration refuses afterwards */
+    struct rt_work release_work;    /* unlinks the listeners and frees the context */
 };
 
 static int signalfd_close(struct dfs_file *file);
@@ -43,23 +47,33 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd);
 
 /*
- * Lock order: LWP_LOCK(lwp) -> sfd->lock.
+ * Lock order: LWP_LOCK(lwp) -> sfd->lock, never the reverse.
  *
  * lwp_signal_notify() walks lwp->signalfd_notify_head under LWP_LOCK and the
- * callback takes sfd->lock inside it. The listener list is therefore only
- * changed through the lwp_signal_notify_* helpers, which take LWP_LOCK, and
- * sfd->lock is never held while calling them. A node is unlinked under
- * LWP_LOCK, so no notification can still be inside it when it is freed.
+ * callback takes sfd->lock inside it. Registration takes LWP_LOCK of the
+ * calling process and then sfd->lock, and does the lookup, the slot
+ * assignment and the listener insertion in that one critical section, so a
+ * slot is never visible without its listener and the lookup cannot go stale
+ * between the check and the assignment. The process exit hook runs under
+ * LWP_LOCK and takes sfd->lock the same way.
  *
  * Each registered process holds one LWP reference. The slot in sfd->lwp[] is
- * the registration: whoever clears a slot (close or the process exit hook)
- * drops that reference, so the pointer stays valid until it is cleared.
+ * the registration: whoever clears a slot (the release work or the process
+ * exit hook) drops that reference, so the pointer stays valid until cleared.
  *
- * The context itself is pinned by the descriptor the caller is operating on:
- * read, poll and the registration they perform assume that the same
- * descriptor is not closed concurrently by another thread, as the existing
- * read/poll paths already do. close() only tears the context down once the
- * vnode reference count has dropped to one.
+ * close() is called by dfs_file_close() under the global DFS file lock, and
+ * the process exit path takes that lock while it already holds LWP_LOCK
+ * (__exit_files() under _resr_cleanup()). close() therefore never takes an
+ * LWP lock: it marks the context closing, detaches it from the vnode and
+ * hands the teardown to the system workqueue. The release work unlinks the
+ * listeners under each process's own LWP_LOCK with no other lock held and
+ * frees the context afterwards.
+ *
+ * The context is pinned by the descriptor the caller is operating on: read,
+ * poll and the registration they perform assume that the same descriptor is
+ * not closed concurrently by another thread, as the existing read/poll paths
+ * already do. close() only tears the context down once the vnode reference
+ * count has dropped to one.
  */
 
 static const struct dfs_file_ops signalfd_fops = {
@@ -69,9 +83,50 @@ static const struct dfs_file_ops signalfd_fops = {
 };
 
 /**
+ * @brief   Releases a closed signalfd context from the system workqueue.
+ * @param   work    The release work embedded in the context.
+ * @param   data    Pointer to the signalfd context.
+ * @note    Runs with no lock held, so it may take each registered process's
+ *          LWP_LOCK through lwp_signal_notify_remove_queue(). A process that
+ *          exits before this runs has already cleared its own slot and
+ *          dropped its reference through the exit hook.
+ */
+static void signalfd_release_work(struct rt_work *work, void *data)
+{
+    struct rt_signalfd_ctx *sfd = (struct rt_signalfd_ctx *)data;
+    struct rt_lwp *lwps[SIGNALFD_SHARE_MAX];
+
+    RT_UNUSED(work);
+
+    /* take the slots over, then unlink the listeners outside sfd->lock */
+    rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
+    for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
+    {
+        lwps[i] = sfd->lwp[i];
+        sfd->lwp[i] = RT_NULL;
+    }
+    rt_mutex_release(&sfd->lock);
+
+    for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
+    {
+        if (lwps[i])
+        {
+            /* the slot held a reference, so the process is still valid here */
+            lwp_signal_notify_remove_queue(lwps[i], &sfd->signalfd_queue);
+            lwp_ref_dec(lwps[i]);
+        }
+    }
+
+    rt_mutex_detach(&sfd->lock);
+    rt_free(sfd);
+}
+
+/**
  * @brief   Closes the file descriptor associated with a signalfd file.
  * @param   file    Pointer to the file structure.
  * @return  Upon successful completion, returns 0; otherwise, returns an error code.
+ * @note    Called under the DFS file lock. Takes only sfd->lock; the listener
+ *          teardown runs later from the system workqueue.
  */
 static int signalfd_close(struct dfs_file *file)
 {
@@ -91,29 +146,14 @@ static int signalfd_close(struct dfs_file *file)
 
     if (sfd)
     {
-        struct rt_lwp *lwps[SIGNALFD_SHARE_MAX];
-
-        /* clear every slot first, then unlink the listeners outside sfd->lock */
         rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-        for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
-        {
-            lwps[i] = sfd->lwp[i];
-            sfd->lwp[i] = RT_NULL;
-        }
+        sfd->closing = 1;
         rt_mutex_release(&sfd->lock);
 
-        for (int i = 0; i < SIGNALFD_SHARE_MAX; i++)
-        {
-            if (lwps[i])
-            {
-                /* the slot held a reference, so the process is still valid here */
-                lwp_signal_notify_remove_queue(lwps[i], &sfd->signalfd_queue);
-                lwp_ref_dec(lwps[i]);
-            }
-        }
-        rt_mutex_detach(&sfd->lock);
         file->vnode->data = RT_NULL;
-        rt_free(sfd);
+
+        rt_work_init(&sfd->release_work, signalfd_release_work, sfd);
+        rt_work_submit(&sfd->release_work, 0);
     }
 
     return 0;
@@ -333,17 +373,20 @@ static int signalfd_find_slot(struct rt_signalfd_ctx *sfd, struct rt_lwp *lwp, i
 }
 
 /**
- * @brief   Adds a signal file descriptor notification.
+ * @brief   Registers the calling process on a signalfd context.
  * @param   sfd Pointer to the signalfd context.
  * @return  Upon successful completion, returns 0; otherwise, returns an error code.
+ * @note    Lookup, slot assignment and listener insertion happen in one
+ *          critical section under LWP_LOCK(self) -> sfd->lock, so another
+ *          thread can only see the slot once the listener is installed.
  */
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 {
     struct rt_lwp_notify *lwp_notify;
-    rt_err_t ret = 0;
+    struct rt_lwp *curr_lwp;
     int registered;
     int empty_slot;
-    struct rt_lwp *curr_lwp;
+    int err = 0;
 
     if (!sfd)
     {
@@ -356,21 +399,7 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
         return -EINVAL;
     }
 
-    rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-    registered = signalfd_find_slot(sfd, curr_lwp, &empty_slot);
-    rt_mutex_release(&sfd->lock);
-
-    if (registered)
-    {
-        return 0;
-    }
-
-    if (empty_slot < 0)
-    {
-        rt_set_errno(EMFILE);
-        return -EMFILE;
-    }
-
+    /* allocate before taking any lock; freed again if no slot is taken */
     lwp_notify = (struct rt_lwp_notify *)rt_malloc(sizeof(struct rt_lwp_notify));
     if (!lwp_notify)
     {
@@ -381,58 +410,47 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
     lwp_notify->detach = signalfd_detach;
     lwp_notify->signalfd_queue = &sfd->signalfd_queue;
 
-    /* the slot owns this reference until close or process exit clears it */
-    lwp_ref_inc(curr_lwp);
-
+    LWP_LOCK(curr_lwp);
     rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-    if (sfd->lwp[empty_slot] != RT_NULL)
+
+    if (sfd->closing)
     {
-        /* lost the slot meanwhile: look again */
+        err = -EBADF;
+    }
+    else
+    {
         registered = signalfd_find_slot(sfd, curr_lwp, &empty_slot);
+        if (!registered)
+        {
+            if (empty_slot < 0)
+            {
+                err = -EMFILE;
+            }
+            else
+            {
+                /* the slot owns this reference until the release work or the exit hook clears it */
+                lwp_ref_inc(curr_lwp);
+                sfd->lwp[empty_slot] = curr_lwp;
+                lwp_signal_notify_add(curr_lwp, lwp_notify);
+                lwp_notify = RT_NULL;
+            }
+        }
     }
-    if (!registered && empty_slot >= 0)
-    {
-        sfd->lwp[empty_slot] = curr_lwp;
-    }
-    rt_mutex_release(&sfd->lock);
 
-    if (registered || empty_slot < 0)
+    rt_mutex_release(&sfd->lock);
+    LWP_UNLOCK(curr_lwp);
+
+    if (lwp_notify)
     {
-        lwp_ref_dec(curr_lwp);
         rt_free(lwp_notify);
-        if (registered)
-        {
-            return 0;
-        }
-        rt_set_errno(EMFILE);
-        return -EMFILE;
     }
 
-    lwp_signal_notify_add(curr_lwp, lwp_notify);
-
-    /*
-     * close() clears the slot first and unlinks listeners afterwards. If the
-     * slot is gone now, close is running and may already have walked the
-     * list; take the node back ourselves if it is still there. The reference
-     * was dropped by whoever cleared the slot.
-     */
-    rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-    if (sfd->lwp[empty_slot] != curr_lwp)
+    if (err < 0)
     {
-        ret = -EBADF;
-    }
-    rt_mutex_release(&sfd->lock);
-
-    if (ret < 0)
-    {
-        if (lwp_signal_notify_remove(curr_lwp, lwp_notify))
-        {
-            rt_free(lwp_notify);
-        }
-        rt_set_errno(EBADF);
+        rt_set_errno(-err);
     }
 
-    return ret;
+    return err;
 }
 
 /**
@@ -479,6 +497,7 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
                     memcpy(&sfd->sigmask, mask, sizeof(sigset_t));
 
                     sfd->sig_num = 0;
+                    sfd->closing = 0;
 
                     rt_mutex_init(&sfd->lock, SIGNALFD_MUTEX_NAME, RT_IPC_FLAG_FIFO);
                     rt_wqueue_init(&sfd->signalfd_queue);

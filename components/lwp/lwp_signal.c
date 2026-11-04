@@ -450,32 +450,9 @@ static void lwp_signal_notify(rt_slist_t *list_head, lwp_siginfo_t siginfo)
 
 void lwp_signal_notify_add(struct rt_lwp *lwp, struct rt_lwp_notify *notify)
 {
-    LWP_LOCK(lwp);
+    LWP_ASSERT_LOCKED(lwp);
+
     rt_slist_append(&lwp->signalfd_notify_head, &notify->list_node);
-    LWP_UNLOCK(lwp);
-}
-
-rt_bool_t lwp_signal_notify_remove(struct rt_lwp *lwp, struct rt_lwp_notify *notify)
-{
-    rt_slist_t *node;
-    rt_bool_t found = RT_FALSE;
-
-    LWP_LOCK(lwp);
-    rt_slist_for_each(node, &lwp->signalfd_notify_head)
-    {
-        if (node == &notify->list_node)
-        {
-            found = RT_TRUE;
-            break;
-        }
-    }
-    if (found)
-    {
-        rt_slist_remove(&lwp->signalfd_notify_head, &notify->list_node);
-    }
-    LWP_UNLOCK(lwp);
-
-    return found;
 }
 
 void lwp_signal_notify_remove_queue(struct rt_lwp *lwp, rt_wqueue_t *signalfd_queue)

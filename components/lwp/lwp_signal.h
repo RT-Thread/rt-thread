@@ -104,20 +104,11 @@ struct rt_lwp_notify;
  * @param lwp target process
  * @param notify listener node; owned by the process list until it is removed
  *
- * @note Takes LWP_LOCK, the lock lwp_signal_notify() walks the list under.
+ * @note Caller holds LWP_LOCK, the lock lwp_signal_notify() walks the list
+ *       under, so the caller can publish its own registration state in the
+ *       same critical section.
  */
 void lwp_signal_notify_add(struct rt_lwp *lwp, struct rt_lwp_notify *notify);
-
-/**
- * @brief Unlink one listener node from a process
- *
- * @param lwp target process
- * @param notify listener node to unlink
- *
- * @return RT_TRUE if the node was on the list and has been unlinked,
- *         RT_FALSE if it was already gone. The node is not freed.
- */
-rt_bool_t lwp_signal_notify_remove(struct rt_lwp *lwp, struct rt_lwp_notify *notify);
 
 /**
  * @brief Unlink and free every listener of a wait queue on a process
