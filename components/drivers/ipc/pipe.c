@@ -11,6 +11,7 @@
  *                             fix flag test on pipe_fops_open()
  * 2023-12-02     shell        Make read pipe operation interruptable.
  * 2026-11-02     seteiro      pipe ioctl: copy FIONREAD/FIONWRITE via lwp_put_to_user
+ * 2026-11-04     seteiro      pipe ioctl: skip LWP copyout for kernel callers (lwp_self()==NULL)
  */
 #include <rthw.h>
 #include <rtdevice.h>
@@ -208,17 +209,20 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
                         ? (int)rt_ringbuffer_data_len(pipe->fifo)
                         : (int)rt_ringbuffer_space_len(pipe->fifo);
 #ifdef RT_USING_LWP
-        if (!lwp_user_accessable(args, sizeof(value)))
+        if (lwp_self() != RT_NULL)
         {
-            return -EFAULT;
+            if (!lwp_user_accessable(args, sizeof(value)))
+            {
+                return -EFAULT;
+            }
+            if (lwp_put_to_user(args, &value, sizeof(value)) != sizeof(value))
+            {
+                return -EFAULT;
+            }
+            break;
         }
-        if (lwp_put_to_user(args, &value, sizeof(value)) != sizeof(value))
-        {
-            return -EFAULT;
-        }
-#else
-        *(int *)args = value;
 #endif
+        *(int *)args = value;
         break;
     }
     default:
