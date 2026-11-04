@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 
+#include "blk_dev.h"
 #include "blk_dfs.h"
 
 #include <drivers/classes/block.h>
@@ -33,9 +34,22 @@ static int blk_fops_open(struct dfs_file *file)
     }
 
     dev->user_data = data;
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &data->geometry);
-    rt_device_control(dev, RT_DEVICE_CTRL_ALL_BLK_SSIZEGET, &file->vnode->size);
+    struct rt_blk_device *blk = to_blk(dev);
+    struct rt_blk_disk *disk = blk->disk;
+    struct rt_device_blk_geometry disk_geometry;
 
+    rt_err_t err = disk->ops->getgeome(disk, &disk_geometry);
+    if (err != RT_EOK)
+    {
+        rt_free(data);
+        return (int)err;
+    }
+
+    data->geometry.bytes_per_sector = disk_geometry.bytes_per_sector;
+    data->geometry.block_size = disk_geometry.block_size;
+    data->geometry.sector_count = blk->sector_count;
+
+    file->vnode->size = (off_t)disk_geometry.sector_count * disk_geometry.bytes_per_sector;
     return 0;
 }
 

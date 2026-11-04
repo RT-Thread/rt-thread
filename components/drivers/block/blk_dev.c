@@ -21,6 +21,27 @@
 
 #ifdef RT_USING_LWP
 #include <lwp_user_mm.h>
+
+static rt_err_t blk_copy_to_user(void *dst, const void *src, size_t n)
+{
+   /* if (lwp_self() == RT_NULL)
+    {
+        rt_memcpy(dst, src, n);
+        return RT_EOK;
+    }*/
+
+    if (!lwp_user_accessable(dst, n))
+    {
+        return -RT_EFAULT;
+    }
+
+    if (lwp_put_to_user(dst,(void *)src, n) == 0)
+    {
+        return -RT_EFAULT;
+    }
+
+    return RT_EOK;
+}
 #endif
 
 static rt_err_t blk_dev_open(rt_device_t dev, rt_uint16_t oflag)
@@ -72,25 +93,35 @@ static rt_err_t blk_dev_control(rt_device_t dev, int cmd, void *args)
     rt_err_t err = -RT_EINVAL;
     struct rt_blk_device *blk = to_blk(dev);
     struct rt_blk_disk *disk = blk->disk;
-    struct rt_device_blk_geometry disk_geometry, *geometry;
+    struct rt_device_blk_geometry disk_geometry;
 
     switch (cmd)
     {
     case RT_DEVICE_CTRL_BLK_GETGEOME:
-        if ((geometry = args))
-        {
-            if (!(err = disk->ops->getgeome(disk, &disk_geometry)))
-            {
-                geometry->bytes_per_sector = disk_geometry.bytes_per_sector;
-                geometry->block_size = disk_geometry.block_size;
-                geometry->sector_count = blk->sector_count;
-            }
-        }
-        else
+        if(!args)
         {
             err = -RT_EINVAL;
+            break;
         }
 
+        if((err = disk->ops->getgeome(disk, &disk_geometry)) != RT_EOK)
+        {
+            break;
+        }
+
+        {
+            struct rt_device_blk_geometry kgeo;
+            kgeo.bytes_per_sector = disk_geometry.bytes_per_sector;
+            kgeo.block_size = disk_geometry.block_size;
+            kgeo.sector_count = blk->sector_count;
+
+#ifdef RT_USING_LWP
+            err = blk_copy_to_user(args, &kgeo, sizeof(kgeo));
+#else
+            rt_memcpy(args, &kgeo, sizeof(kgeo));
+            err = RT_EOK;
+#endif
+        }
         break;
 
     case RT_DEVICE_CTRL_BLK_SYNC:
@@ -116,29 +147,63 @@ static rt_err_t blk_dev_control(rt_device_t dev, int cmd, void *args)
             break;
         }
 #ifdef RT_USING_LWP
-        if (lwp_self() != RT_NULL)
-        {
+    {
             struct dfs_partition kpart;
             rt_memcpy(&kpart, &blk->partition, sizeof(kpart));
-            if (lwp_put_to_user(args, &kpart, sizeof(kpart)) != sizeof(kpart))
-                err = -RT_EFAULT;
-            else
-                err = RT_EOK;
-            break;
-        }
-#endif
+            kpart.lock = RT_NULL;
+            err = blk_copy_to_user(args, &kpart, sizeof(kpart));
+    }
+#else
         rt_memcpy(args, &blk->partition, sizeof(blk->partition));
         err = RT_EOK;
+#endif
         break;
 
     case RT_DEVICE_CTRL_BLK_SSIZEGET:
-        device_get_blk_ssize(dev, args);
-        err = RT_EOK;
+        if(!args)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
+        if((err = disk->ops->getgeome(disk, &disk_geometry)) != RT_EOK)
+        {
+            break;
+        }
+
+        {
+            rt_uint32_t ksize = disk_geometry.bytes_per_sector;
+#ifdef RT_USING_LWP
+            err = blk_copy_to_user(args, &ksize, sizeof(ksize));
+#else
+            rt_memcpy(args, &ksize, sizeof(ksize));
+            err = RT_EOK;
+#endif
+        }
         break;
 
     case RT_DEVICE_CTRL_ALL_BLK_SSIZEGET:
-        device_get_all_blk_ssize(dev, args);
-        err = RT_EOK;
+        if(!args)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
+        if((err = disk->ops->getgeome(disk, &disk_geometry)) != RT_EOK)
+        {
+            break;
+        }
+
+        {
+            rt_uint64_t ktotal = (rt_uint64_t)disk_geometry.bytes_per_sector
+                                 * disk_geometry.sector_count;
+#ifdef RT_USING_LWP
+            err = blk_copy_to_user(args, &ktotal, sizeof(ktotal));
+#else
+            rt_memcpy(args, &ktotal, sizeof(ktotal));
+            err = RT_EOK;
+#endif
+        }
         break;
 
     default:
