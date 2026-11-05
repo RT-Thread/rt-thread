@@ -255,9 +255,10 @@ static void sigqueue_enqueue(lwp_sigqueue_t sigqueue, lwp_siginfo_t siginfo)
     rt_bool_t inserted = RT_FALSE;
     rt_list_for_each_entry(idx, &sigqueue->siginfo_list, node)
     {
-        if (idx->ksiginfo.signo >= siginfo->ksiginfo.signo)
+        /* Keep ascending signal order and FIFO order for equal signals. */
+        if (idx->ksiginfo.signo > siginfo->ksiginfo.signo)
         {
-            rt_list_insert_after(&idx->node, &siginfo->node);
+            rt_list_insert_before(&idx->node, &siginfo->node);
             inserted = RT_TRUE;
             break;
         }
@@ -1167,6 +1168,16 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
     lwp_sigqueue_t thread_sigq;
     rt_list_t *thread_list;
     rt_err_t ret = RT_EOK;
+
+    /*
+     * Signal numbers are 1-based. valid_signo_check() accepts 0 for the
+     * kill(pid, 0) probe, so reject it here as well before using signo - 1
+     * to index sig_action[].
+     */
+    if (signo <= 0 || valid_signo_check(signo))
+    {
+        return -RT_EINVAL;
+    }
 
     if (lwp)
     {

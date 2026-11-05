@@ -1,5 +1,6 @@
 Import('RTT_ROOT')
 from building import *
+import os
 
 cwd = GetCurrentDir()
 src = Split("""
@@ -18,5 +19,10 @@ if GetDepend(['RT_USING_DM']):
 path = [cwd + '/../include']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_I2C'], CPPPATH = path)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

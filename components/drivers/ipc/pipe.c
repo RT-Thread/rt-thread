@@ -10,6 +10,8 @@
  * 2023-06-28     shell        return POLLHUP when writer closed its channel on poll()
  *                             fix flag test on pipe_fops_open()
  * 2023-12-02     shell        Make read pipe operation interruptable.
+ * 2026-11-02     seteiro      pipe ioctl: copy FIONREAD/FIONWRITE via lwp_put_to_user
+ * 2026-11-04     seteiro      pipe ioctl: skip LWP copyout for kernel callers (lwp_self()==NULL)
  */
 #include <rthw.h>
 #include <rtdevice.h>
@@ -24,6 +26,9 @@
 #include <sys/ioctl.h>
 #include <dfs_file.h>
 #include <resource_id.h>
+#ifdef RT_USING_LWP
+#include <lwp_user_mm.h>
+#endif
 
 /* check RT_UNAMED_PIPE_NUMBER */
 
@@ -190,7 +195,7 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 
     pipe = (rt_pipe_t *)fd->vnode->data;
 
-    if (args == RT_NULL)
+    if (args == RT_NULL || pipe == RT_NULL || pipe->fifo == RT_NULL)
     {
         return -EINVAL;
     }
@@ -198,11 +203,28 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     switch ((rt_ubase_t)cmd)
     {
     case FIONREAD:
-        *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
-        break;
     case FIONWRITE:
-        *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
+    {
+        int value = (cmd == FIONREAD)
+                        ? (int)rt_ringbuffer_data_len(pipe->fifo)
+                        : (int)rt_ringbuffer_space_len(pipe->fifo);
+#ifdef RT_USING_LWP
+        if (lwp_self() != RT_NULL)
+        {
+            if (!lwp_user_accessable(args, sizeof(value)))
+            {
+                return -EFAULT;
+            }
+            if (lwp_put_to_user(args, &value, sizeof(value)) != sizeof(value))
+            {
+                return -EFAULT;
+            }
+            break;
+        }
+#endif
+        *(int *)args = value;
         break;
+    }
     default:
         ret = -EINVAL;
         break;
