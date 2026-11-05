@@ -261,121 +261,116 @@ static struct udevice_descriptor _dev_desc =
 };
 
 //FS and HS needed
-rt_align(4)
-static struct usb_qualifier_descriptor dev_qualifier =
-{
-    sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
-    0x0200,                         //bcdUSB
-    0x0,                            //bDeviceClass
-    0x0,                            //bDeviceSubClass
-    0x50,                           //bDeviceProtocol
-    64,                             //bMaxPacketSize0
-    0x01,                           //bNumConfigurations
+rt_align(4) static struct usb_qualifier_descriptor dev_qualifier = {
+    sizeof(dev_qualifier),         //bLength
+    USB_DESC_TYPE_DEVICEQUALIFIER, //bDescriptorType
+    0x0200,                        //bcdUSB
+    0x0,                           //bDeviceClass
+    0x0,                           //bDeviceSubClass
+    0x50,                          //bDeviceProtocol
+    64,                            //bMaxPacketSize0
+    0x01,                          //bNumConfigurations
     0,
 };
 
-
 /* hid interface descriptor */
 rt_align(4)
-const static struct uhid_comm_descriptor _hid_comm_desc =
-{
+    const static struct uhid_comm_descriptor _hid_comm_desc = {
 #ifdef RT_USB_DEVICE_COMPOSITE
-    /* Interface Association Descriptor */
-    {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
-        USB_DYNAMIC,
-        0x01,
-        0x03,                       /* bInterfaceClass: HID */
-#if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
-        USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-#else
-        USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-#endif
-#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#elif !defined(RT_USB_DEVICE_HID_MOUSE)
-        USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#else
-        USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#endif
-        0x00,
-    },
-#endif
-    /* Interface Descriptor */
-    {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
-        USB_DYNAMIC,                /* bInterfaceNumber: Number of Interface */
-        0x00,                       /* bAlternateSetting: Alternate setting */
-        0x02,                       /* bNumEndpoints */
-        0x03,                       /* bInterfaceClass: HID */
-#if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
-        USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-#else
-        USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-#endif
-#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#elif !defined(RT_USB_DEVICE_HID_MOUSE)
-        USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#else
-        USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#endif
-#ifdef RT_USB_DEVICE_COMPOSITE
-        HID_INTF_STR_INDEX,         /* iInterface: Index of string descriptor */
-#else
-        0,
-#endif
-    },
-
-    /* HID Descriptor */
-    {
-        HID_DESCRIPTOR_SIZE,        /* bLength: HID Descriptor size */
-        HID_DESCRIPTOR_TYPE,        /* bDescriptorType: HID */
-        0x0110,                     /* bcdHID: HID Class Spec release number */
-        0x00,                       /* bCountryCode: Hardware target country */
-        0x01,                       /* bNumDescriptors: Number of HID class descriptors to follow */
+        /* Interface Association Descriptor */
         {
+            USB_DESC_LENGTH_IAD,
+            USB_DESC_TYPE_IAD,
+            USB_DYNAMIC,
+            0x01,
+            0x03, /* bInterfaceClass: HID */
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) || defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_SUBCLASS_BOOT, /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#else
+            USB_HID_SUBCLASS_NOBOOT, /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#endif
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) && !defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_PROTOCOL_KEYBOARD, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#elif !defined(RT_USB_DEVICE_HID_KEYBOARD) && defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_PROTOCOL_MOUSE, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+            USB_HID_PROTOCOL_NONE, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#endif
+            0x00,
+        },
+#endif
+        /* Interface Descriptor */
+        {
+            USB_DESC_LENGTH_INTERFACE,
+            USB_DESC_TYPE_INTERFACE,
+            USB_DYNAMIC, /* bInterfaceNumber: Number of Interface */
+            0x00,        /* bAlternateSetting: Alternate setting */
+            0x02,        /* bNumEndpoints */
+            0x03,        /* bInterfaceClass: HID */
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) || defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_SUBCLASS_BOOT, /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#else
+            USB_HID_SUBCLASS_NOBOOT, /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+#endif
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) && !defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_PROTOCOL_KEYBOARD, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#elif !defined(RT_USB_DEVICE_HID_KEYBOARD) && defined(RT_USB_DEVICE_HID_MOUSE)
+            USB_HID_PROTOCOL_MOUSE, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+            USB_HID_PROTOCOL_NONE, /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#endif
+#ifdef RT_USB_DEVICE_COMPOSITE
+            HID_INTF_STR_INDEX, /* iInterface: Index of string descriptor */
+#else
+            0,
+#endif
+        },
+
+        /* HID Descriptor */
+        {
+            HID_DESCRIPTOR_SIZE, /* bLength: HID Descriptor size */
+            HID_DESCRIPTOR_TYPE, /* bDescriptorType: HID */
+            0x0110,              /* bcdHID: HID Class Spec release number */
+            0x00,                /* bCountryCode: Hardware target country */
+            0x01,                /* bNumDescriptors: Number of HID class descriptors to follow */
             {
-                0x22,                       /* bDescriptorType */
-                sizeof(_report_desc),       /* wItemLength: Total length of Report descriptor */
+                {
+                    0x22,                 /* bDescriptorType */
+                    sizeof(_report_desc), /* wItemLength: Total length of Report descriptor */
+                },
             },
         },
-    },
 
-    /* Endpoint Descriptor IN */
-    {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
-        USB_DYNAMIC | USB_DIR_IN,
-        USB_EP_ATTR_INT,
-        0x40,
-        0x0A,
-    },
+        /* Endpoint Descriptor IN */
+        {
+            USB_DESC_LENGTH_ENDPOINT,
+            USB_DESC_TYPE_ENDPOINT,
+            USB_DYNAMIC | USB_DIR_IN,
+            USB_EP_ATTR_INT,
+            0x40,
+            0x0A,
+        },
 
-    /* Endpoint Descriptor OUT */
-    {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
-        USB_DYNAMIC | USB_DIR_OUT,
-        USB_EP_ATTR_INT,
-        0x40,
-        0x01,
-    },
-};
+        /* Endpoint Descriptor OUT */
+        {
+            USB_DESC_LENGTH_ENDPOINT,
+            USB_DESC_TYPE_ENDPOINT,
+            USB_DYNAMIC | USB_DIR_OUT,
+            USB_EP_ATTR_INT,
+            0x40,
+            0x01,
+        },
+    };
 
 rt_align(4)
-const static char* _ustring[] =
-{
-    "Language",
-    "RT-Thread Team.",
-    "RTT HID-Device",
-    "32021919830108",
-    "Configuration",
-    "Interface",
-};
+    const static char *_ustring[] = {
+        "Language",
+        "RT-Thread Team.",
+        "RTT HID-Device",
+        "32021919830108",
+        "Configuration",
+        "Interface",
+    };
 
 static void dump_data(rt_uint8_t *data, rt_size_t size)
 {
