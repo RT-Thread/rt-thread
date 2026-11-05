@@ -188,3 +188,125 @@ if SOC_SERIES_STM32H7
         select BSP_USING_BDMA
         default n
 endif
+
+menu "STM32 Input Capture BSP"
+
+    config BSP_USING_INPUT_CAPTURE
+        bool "Enable STM32 timer Input Capture devices"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        help
+            Registers selected STM32 hardware timer Input Capture devices.
+            F1 and H7 have configuration headers; additional series need a
+            matching configuration header before enabling this option.
+            GPIO, clock and interrupt setup are owned by CubeMX HAL IC MSP.
+
+    if BSP_USING_INPUT_CAPTURE
+        config BSP_INPUT_CAPTURE_COUNTER_HZ
+            int "Capture timer counter frequency (Hz)"
+            range 100000 1000000
+            default 1000000
+
+        config BSP_USING_INPUT_CAPTURE_TIM1
+            bool "Enable TIM1 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM1
+            config BSP_INPUT_CAPTURE_TIM1_NAME
+                string "TIM1 Input Capture device name"
+                default "ic1"
+
+            config BSP_INPUT_CAPTURE_TIM1_CHANNEL
+                int "TIM1 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM1_FILTER
+                int "TIM1 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM1_INITIAL_RISING
+                int "TIM1 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM2
+            bool "Enable TIM2 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM2
+            config BSP_INPUT_CAPTURE_TIM2_NAME
+                string "TIM2 Input Capture device name"
+                default "ic2"
+
+            config BSP_INPUT_CAPTURE_TIM2_CHANNEL
+                int "TIM2 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM2_FILTER
+                int "TIM2 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM2_INITIAL_RISING
+                int "TIM2 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM3
+            bool "Enable TIM3 Input Capture"
+            default y
+
+        if BSP_USING_INPUT_CAPTURE_TIM3
+            config BSP_INPUT_CAPTURE_TIM3_NAME
+                string "TIM3 Input Capture device name"
+                default "ic3"
+
+            config BSP_INPUT_CAPTURE_TIM3_CHANNEL
+                int "TIM3 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM3_FILTER
+                int "TIM3 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM3_INITIAL_RISING
+                int "TIM3 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM4
+            bool "Enable TIM4 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM4
+            config BSP_INPUT_CAPTURE_TIM4_NAME
+                string "TIM4 Input Capture device name"
+                default "ic4"
+
+            config BSP_INPUT_CAPTURE_TIM4_CHANNEL
+                int "TIM4 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM4_FILTER
+                int "TIM4 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM4_INITIAL_RISING
+                int "TIM4 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+    endif
+
+endmenu
