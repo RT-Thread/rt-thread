@@ -1115,6 +1115,16 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
     rt_list_t *thread_list;
     rt_err_t ret = RT_EOK;
 
+    /*
+     * Signal numbers are 1-based. valid_signo_check() accepts 0 for the
+     * kill(pid, 0) probe, so reject it here as well before using signo - 1
+     * to index sig_action[].
+     */
+    if (signo <= 0 || valid_signo_check(signo))
+    {
+        return -RT_EINVAL;
+    }
+
     if (lwp)
     {
         /** acquire READ access to lwp */
