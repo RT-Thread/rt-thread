@@ -142,8 +142,10 @@ static rt_err_t virtio_input_init(rt_device_t dev)
 static rt_ssize_t virtio_input_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct virtio_input_device *virtio_input_dev = (struct virtio_input_device *)dev;
+    rt_size_t queue_size = virtio_input_dev->virtio_dev.queues[VIRTIO_INPUT_QUEUE_EVENT].num;
 
-    if (buffer == RT_NULL || pos + size >= virtio_input_dev->virtio_dev.queues[VIRTIO_INPUT_QUEUE_EVENT].num)
+    if (buffer == RT_NULL || pos < 0 || (rt_size_t)pos >= queue_size ||
+        size >= queue_size - (rt_size_t)pos)
     {
         return 0;
     }
@@ -160,8 +162,10 @@ static rt_ssize_t virtio_input_read(rt_device_t dev, rt_off_t pos, void *buffer,
 static rt_ssize_t virtio_input_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct virtio_input_device *virtio_input_dev = (struct virtio_input_device *)dev;
+    rt_size_t queue_size = virtio_input_dev->virtio_dev.queues[VIRTIO_INPUT_QUEUE_EVENT].num;
 
-    if (buffer == RT_NULL || pos + size >= virtio_input_dev->virtio_dev.queues[VIRTIO_INPUT_QUEUE_EVENT].num)
+    if (buffer == RT_NULL || pos < 0 || (rt_size_t)pos >= queue_size ||
+        size >= queue_size - (rt_size_t)pos)
     {
         return 0;
     }
