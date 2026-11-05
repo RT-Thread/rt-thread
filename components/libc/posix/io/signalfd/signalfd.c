@@ -33,8 +33,8 @@ struct rt_signalfd_ctx
     int sig_num;
     rt_wqueue_t signalfd_queue;
     struct rt_lwp *lwp[SIGNALFD_SHARE_MAX];
-    int closing;                    /* set by close(); registration refuses afterwards */
-    struct rt_work release_work;    /* unlinks the listeners and frees the context */
+    int closing;                 /* set by close(); registration refuses afterwards */
+    struct rt_work release_work; /* unlinks the listeners and frees the context */
 };
 
 static int signalfd_close(struct dfs_file *file);
