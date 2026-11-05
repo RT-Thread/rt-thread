@@ -30,7 +30,7 @@
 #ifndef RT_DBG_H__
 #define RT_DBG_H__
 
-#include <rtconfig.h>
+#include <rtthread.h>
 
 #ifdef __cplusplus
 extern "C" {
