@@ -97,7 +97,9 @@ rt_hw_context_switch:
     tst  r6, #(1<<30)
     beq 1f
     vstmdb sp!, {d0-d15}
-    vstmdb sp!, {d16-d31}
+#ifdef RT_USING_VFPD32	/*there art 32 double float registers to save*/
+    vstmdb sp!, {d16-d31}	@ save the upper 16 registers
+#endif
     vmrs r5, fpscr
     stmfd sp!, {r5}
 1:
@@ -237,7 +239,9 @@ rt_hw_context_switch_exit:
     beq 1f
     ldmfd sp!, {r5}
     vmsr fpscr, r5
-    vldmia sp!, {d16-d31}
+#ifdef RT_USING_VFPD32	/*there art 32 double float registers to restore*/
+    vldmia sp!, {d16-d31}	@ restore the upper 16 registers
+#endif
     vldmia sp!, {d0-d15}
 1:
 #endif
