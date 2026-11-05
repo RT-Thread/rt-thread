@@ -27,6 +27,9 @@ if GetDepend(['RT_USING_SERIAL']):
 if GetDepend(['BSP_USING_TIM']):
     src += ['drv_tim.c']
 
+if GetDepend(['BSP_USING_INPUT_CAPTURE']):
+    src += ['drv_inputcapture.c']
+
 if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c', 'drv_tim.c']
 

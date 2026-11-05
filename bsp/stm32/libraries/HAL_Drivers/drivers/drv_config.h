@@ -40,6 +40,7 @@ extern "C" {
 #include "f1/usbd_config.h"
 #include "f1/i2c_hard_config.h"
 #include "f1/pulse_encoder_config.h"
+#include "f1/inputcapture_config.h"
 #elif defined(SOC_SERIES_STM32F2)
 #include "f2/dma_config.h"
 #include "f2/uart_config.h"
@@ -142,6 +143,7 @@ extern "C" {
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
 #include "h7/i2c_hard_config.h"
+#include "h7/inputcapture_config.h"
 #elif defined(SOC_SERIES_STM32H7RS)
 #include "h7/dma_config.h"
 #include "h7/uart_config.h"
