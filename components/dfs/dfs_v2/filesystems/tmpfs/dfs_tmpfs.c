@@ -1022,11 +1022,28 @@ static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
     superblock = d_file->sb;
     RT_ASSERT(superblock != RT_NULL);
 
-    ptr = rt_realloc(d_file->data, offset);
-    if (ptr == RT_NULL)
+    if (offset == 0)
     {
-        rt_set_errno(-ENOMEM);
-        return 0;
+        /* rt_realloc(ptr, 0) frees the block and returns RT_NULL, which cannot
+         * be told apart from an allocation failure. Handle the empty case
+         * explicitly, otherwise d_file->data is left dangling. */
+        if (d_file->data != RT_NULL)
+        {
+            rt_free(d_file->data);
+            d_file->data = RT_NULL;
+        }
+        ptr = RT_NULL;
+    }
+    else
+    {
+        ptr = rt_realloc(d_file->data, offset);
+        if (ptr == RT_NULL)
+        {
+            rt_set_errno(-ENOMEM);
+            return -ENOMEM;
+        }
+
+        d_file->data = ptr;
     }
 
     rt_spin_lock(&superblock->lock);
@@ -1034,7 +1051,6 @@ static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
     rt_spin_unlock(&superblock->lock);
 
     /* update d_file and file size */
-    d_file->data = ptr;
     d_file->size = offset;
     file->vnode->size = d_file->size;
     LOG_D("tmpfile ptr:%x, size:%d", ptr, d_file->size);

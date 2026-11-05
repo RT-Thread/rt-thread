@@ -5,6 +5,9 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
+if GetDepend(['RT_UTEST_TMPFS_TRUNCATE']):
+    src += ['tc_truncate.c']
+
 if GetDepend(['RT_USING_SMART','RT_UTEST_TMPFS_CP']):
     src += ['tmpfs.c']
 
