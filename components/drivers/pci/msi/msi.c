@@ -191,10 +191,11 @@ void rt_pci_msi_shutdown(struct rt_pci_device *pdev)
     if ((desc = rt_pci_msi_first_desc(pdev)))
     {
         msi_unmask(&desc->msi, msi_multi_mask(&desc->msi), pdev);
+
+        /* Restore pdev->irq to its default pin-assertion IRQ */
+        pdev->irq = desc->msi.default_irq;
     }
 
-    /* Restore pdev->irq to its default pin-assertion IRQ */
-    pdev->irq = desc->msi.default_irq;
     pdev->msi_enabled = RT_FALSE;
 }
 
@@ -788,7 +789,7 @@ static void *msix_table_remap(struct rt_pci_device *pdev, rt_size_t entries_nr)
 static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
                                      void *table_base, struct rt_pci_msix_entry *entries, int nvec)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     struct rt_pci_msi_desc desc;
 
     rt_memset(&desc, 0, sizeof(desc));
