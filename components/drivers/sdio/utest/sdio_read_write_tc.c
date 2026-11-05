@@ -30,13 +30,13 @@
 
 #ifdef RT_UTEST_SDIO
 
-#define SDIO_UTEST_DEVICE_NAME       RT_SDIO_UTEST_DEVICE_NAME
-#define SDIO_UTEST_START_SECTOR      ((rt_off_t)RT_SDIO_UTEST_START_SECTOR)
-#define SDIO_UTEST_SECTOR_COUNT      ((rt_size_t)RT_SDIO_UTEST_SECTOR_COUNT)
-#define SDIO_UTEST_LOOP_COUNT        ((rt_size_t)RT_SDIO_UTEST_LOOP_COUNT)
-#define SDIO_UTEST_DEVICE_WAIT_MS    RT_SDIO_UTEST_DEVICE_WAIT_MS
+#define SDIO_UTEST_DEVICE_NAME    RT_SDIO_UTEST_DEVICE_NAME
+#define SDIO_UTEST_START_SECTOR   ((rt_off_t)RT_SDIO_UTEST_START_SECTOR)
+#define SDIO_UTEST_SECTOR_COUNT   ((rt_size_t)RT_SDIO_UTEST_SECTOR_COUNT)
+#define SDIO_UTEST_LOOP_COUNT     ((rt_size_t)RT_SDIO_UTEST_LOOP_COUNT)
+#define SDIO_UTEST_DEVICE_WAIT_MS RT_SDIO_UTEST_DEVICE_WAIT_MS
 
-#define SDIO_UTEST_SECTOR_SIZE       512u
+#define SDIO_UTEST_SECTOR_SIZE 512u
 
 static rt_device_t sdio_test_dev;
 static struct rt_device_blk_geometry sdio_test_geome;
@@ -100,8 +100,8 @@ static void sdio_test_fill_pattern(rt_uint8_t *buffer, rt_uint8_t seed)
 }
 
 static rt_err_t sdio_test_transfer(rt_off_t sector,
-                                    rt_size_t sector_count,
-                                    rt_uint8_t seed)
+                                   rt_size_t sector_count,
+                                   rt_uint8_t seed)
 {
     rt_ssize_t result;
     rt_size_t transfer_size;
@@ -161,8 +161,8 @@ static void sdio_test_start_sector(void)
     for (i = 0; i < SDIO_UTEST_LOOP_COUNT; i++)
     {
         result = sdio_test_transfer(SDIO_UTEST_START_SECTOR,
-                                     SDIO_UTEST_SECTOR_COUNT,
-                                     (rt_uint8_t)(0x21u + i));
+                                    SDIO_UTEST_SECTOR_COUNT,
+                                    (rt_uint8_t)(0x21u + i));
         uassert_int_equal(result, RT_EOK);
         if (result != RT_EOK)
         {
@@ -188,8 +188,8 @@ static void sdio_test_end_sector(void)
     for (i = 0; i < SDIO_UTEST_LOOP_COUNT; i++)
     {
         result = sdio_test_transfer(end_sector,
-                                     SDIO_UTEST_SECTOR_COUNT,
-                                     (rt_uint8_t)(0x61u + i));
+                                    SDIO_UTEST_SECTOR_COUNT,
+                                    (rt_uint8_t)(0x61u + i));
         uassert_int_equal(result, RT_EOK);
         if (result != RT_EOK)
         {
@@ -298,7 +298,7 @@ static rt_err_t utest_tc_init(void)
 
     if (SDIO_UTEST_START_SECTOR < 0 ||
         (rt_uint64_t)SDIO_UTEST_START_SECTOR + SDIO_UTEST_SECTOR_COUNT >
-        sdio_test_geome.sector_count)
+            sdio_test_geome.sector_count)
     {
         LOG_E("SDIO test range is out of bounds: start=%ld, count=%u",
               (long)SDIO_UTEST_START_SECTOR,
