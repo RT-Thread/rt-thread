@@ -120,14 +120,14 @@ LR_m_text   m_text_start   m_text_size
   ER_m_QuickAccessCode    m_qacode_start                                   m_qacode_size
   {
     .ANY (CodeQuickAccess)
+    fsl_flexspi.o (+RO-CODE)
+    drv_flexspi_nor_flash.o (+RO-CODE)
+    drv_flexspi.o (+RO-CODE)
   }
 
   ER_m_QuickAccessData    m_qadata_start                                   m_qadata_size
   {
     .ANY (DataQuickAccess)
-    fsl_flexspi.o (+RO-CODE)
-    drv_flexspi_nor_flash.o (+RO-CODE)
-    drv_flexspi.o (+RO-CODE)    
   }
 
   RW_m_data               m_data_start                                     m_data_size-stack_size

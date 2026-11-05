@@ -83,7 +83,7 @@ static bool error_occurred = false;
 static volatile uint32_t remote_addr = 0U;
 #endif /* BSP_USE_MULTICORE_RPMSG_LITE */
 
-#ifdef BSP_USE_MULTICORE_KICK_OFF
+#if defined(BSP_USE_MULTICORE_KICK_OFF) && defined(BSP_USE_MULTICORE_RPMSG_LITE)
 static volatile uint16_t RPMsgRemoteReadyEventData = 0U;
 #endif
 
@@ -92,11 +92,13 @@ static volatile uint16_t RPMsgRemoteReadyEventData = 0U;
  ******************************************************************************/
 
 #ifdef BSP_USE_MULTICORE_KICK_OFF
+#ifdef BSP_USE_MULTICORE_RPMSG_LITE
 static void RPMsgRemoteReadyEventHandler(mcmgr_core_t coreNum, uint16_t eventData, void *context)
 {
     uint16_t *data = (uint16_t *)context;
     *data = eventData;
 }
+#endif
 
 static rt_err_t multicore_kickoff_init(void)
 {
