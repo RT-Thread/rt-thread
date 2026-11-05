@@ -7,7 +7,10 @@ CPPPATH = [cwd, cwd + '/..', cwd + '/../../include', cwd + '/../sfud/inc',
            cwd + '/../../../utilities/utest']
 
 if GetDepend(['RT_UTEST_SPI_LOOPBACK']):
-    src += ['spi_loopback_tc.c', 'spi_virt_bus.c']
+    src += ['spi_loopback_tc.c']
+
+if GetDepend(['RT_UTEST_SPI_VIRT_BUS']):
+    src += ['spi_virt_bus.c']
 
 if GetDepend(['RT_UTEST_SPI_FLASH']):
     src += ['spi_flash_tc.c']

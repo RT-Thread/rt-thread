@@ -24,6 +24,14 @@ peripheral.LVGL:
       - CONFIG_RT_USING_POSIX_SOCKET=y  
       - ONFIG_RT_USING_LWIP=y 
       - CONFIG_BSP_USING_LVGL=y     
+peripheral.SPI_VIRT_LOOPBACK:
+    kconfig:
+      - CONFIG_RT_USING_UTEST=y
+      - CONFIG_RT_USING_UTESTCASES=y
+      - CONFIG_RT_UTEST_SPI_LOOPBACK=y
+      - CONFIG_RT_UTEST_SPI_LOOPBACK_BUS_NAME="spi_virt"
+      - CONFIG_RT_UTEST_SPI_VIRT_BUS=y
+      - CONFIG_RT_UTEST_SPI_VIRT_BUS_NAME="spi_virt"
       
 # ------ online-packages CI ------
 online-packages.tools.coremark:

@@ -17,13 +17,13 @@
 #include <rtdevice.h>
 #include <drivers/dev_spi.h>
 
-#ifdef RT_UTEST_SPI_LOOPBACK
+#ifdef RT_UTEST_SPI_VIRT_BUS
 
-#ifndef RT_UTEST_SPI_LOOPBACK_BUS_NAME
-#define RT_UTEST_SPI_LOOPBACK_BUS_NAME "spi2"
+#ifndef RT_UTEST_SPI_VIRT_BUS_NAME
+#define RT_UTEST_SPI_VIRT_BUS_NAME "spi_virt"
 #endif
 
-#define SPI_VIRT_BUS_NAME       RT_UTEST_SPI_LOOPBACK_BUS_NAME
+#define SPI_VIRT_BUS_NAME       RT_UTEST_SPI_VIRT_BUS_NAME
 #define SPI_VIRT_BUS_MAX_HZ     10000000
 #define SPI_VIRT_BUS_DEFAULT_HZ 1000000
 
@@ -89,4 +89,4 @@ static int spi_virt_bus_init(void)
 }
 INIT_BOARD_EXPORT(spi_virt_bus_init);
 
-#endif /* RT_UTEST_SPI_LOOPBACK */
+#endif /* RT_UTEST_SPI_VIRT_BUS */
