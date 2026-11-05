@@ -119,7 +119,7 @@
 #define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
@@ -128,7 +128,7 @@
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
-#define KERNEL_VADDR_START 0x150000000
+#define KERNEL_VADDR_START 0x45000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
@@ -195,11 +195,6 @@
 #define RT_PAGECACHE_GC_STOP_LEVEL 70
 /* end of page cache config */
 /* end of DFS: device virtual file system */
-#define RT_USING_FAL
-#define FAL_USING_DEBUG
-#define FAL_PART_HAS_TABLE_CFG
-#define FAL_DEV_NAME_MAX 24
-#define FAL_DEV_BLK_MAX 6
 
 /* Device Drivers */
 
@@ -210,9 +205,8 @@
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
 #define RT_USING_SERIAL_BYPASS
 #define RT_USING_CLOCK_TIME
 #define CLOCK_TIMER_FREQ 0
@@ -581,6 +575,7 @@
 #define BOARD_allwinnerd1
 #define ENABLE_FPU
 #define __STACKSIZE__ 16384
+#define BSP_UART_DEFAULT_BAUDRATE 115200
 
 /* General Drivers Configuration */
 
@@ -631,6 +626,14 @@
 
 /* SDMMC Devices */
 
+#define DRIVERS_SDMMC
+#define USE_SD
+#define USE_SDIO
+#define DETECT_CARD
+#define SDC_DMA_USED
+#define SDIO_IRQ_SUPPORT
+#define SDC_DMA_BUF_SIZE 64
+#define DRIVERS_SDC_CDPIN_PRESENT_VAL 0
 /* end of SDMMC Devices */
 
 /* SPI Devices */
