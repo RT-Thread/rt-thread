@@ -5,13 +5,25 @@ BSP_DIR := .
 RTT_DIR := ../../..
 
 PKGS_DIR := packages
+choice
+    prompt "Select SOC"
+    default SOC_STM32F103C8
+    config SOC_STM32F103C8
+        bool "STM32F103C8"
+        select SOC_SERIES_STM32F1
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
 
-config SOC_STM32F103C8
-    bool
-    select SOC_SERIES_STM32F1
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
+
+    config SOC_STM32F103C6
+        bool "STM32F103C6"
+        select SOC_SERIES_STM32F1
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select RT_USING_SMALL_MEM              
+        select RT_USING_SMALL_MEM_AS_HEAP      
+        select RT_KLIBC_USING_LIBC_VSSCANF 
+endchoice
 
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
