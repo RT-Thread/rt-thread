@@ -11,3 +11,8 @@ All the real-time operating system kernel and open source components can be used
 @subpage page_bsp_contribution_guide_en
 
 @subpage page_howto_doxygen
+
+@subpage page_release_versioning_en
+
+@subpage page_release_process_en
+

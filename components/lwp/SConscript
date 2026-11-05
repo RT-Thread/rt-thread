@@ -57,6 +57,7 @@ if not GetDepend(['LWP_USING_RUNTIME']):
 
 group = DefineGroup('lwProcess', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
+group = group + SConscript(os.path.join('syscall', 'SConscript'))
 group = group + SConscript(os.path.join('vdso', 'SConscript'))
 group = group + SConscript(os.path.join('utest', 'SConscript'))
 Return('group')
