@@ -46,4 +46,29 @@ rt_err_t disk_remove_blk_dev(struct rt_blk_device *blk, rt_bool_t lockless);
 
 rt_uint32_t blk_request_ioprio(void);
 
+#ifdef RT_USING_LWP
+#include <lwp_user_mm.h>
+
+static inline rt_err_t blk_copy_to_user(void *dst, const void *src, size_t n)
+{
+    if (lwp_self() == RT_NULL)
+    {
+        rt_memcpy(dst, src, n);
+        return RT_EOK;
+    }
+
+    if (!lwp_user_accessable(dst, n))
+    {
+        return -RT_EFAULT;
+    }
+
+    if (lwp_put_to_user(dst, (void *)src, n) == 0)
+    {
+        return -RT_EFAULT;
+    }
+
+    return RT_EOK;
+}
+#endif
+
 #endif /* __BLK_DEV_H__ */

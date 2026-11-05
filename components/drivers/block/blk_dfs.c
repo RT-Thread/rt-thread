@@ -27,29 +27,28 @@ static int blk_fops_open(struct dfs_file *file)
 {
     struct rt_device *dev = file->vnode->data;
     struct blk_fops_data *data = rt_malloc(sizeof(*data));
+    rt_err_t err;
 
     if (!data)
     {
         return (int)-RT_ENOMEM;
     }
 
-    dev->user_data = data;
-    struct rt_blk_device *blk = to_blk(dev);
-    struct rt_blk_disk *disk = blk->disk;
-    struct rt_device_blk_geometry disk_geometry;
-
-    rt_err_t err = disk->ops->getgeome(disk, &disk_geometry);
+    err = rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &data->geometry);
     if (err != RT_EOK)
     {
         rt_free(data);
         return (int)err;
     }
 
-    data->geometry.bytes_per_sector = disk_geometry.bytes_per_sector;
-    data->geometry.block_size = disk_geometry.block_size;
-    data->geometry.sector_count = blk->sector_count;
+    err = rt_device_control(dev, RT_DEVICE_CTRL_ALL_BLK_SSIZEGET, &file->vnode->size);
+    if (err != RT_EOK)
+    {
+        rt_free(data);
+        return (int)err;
+    }
 
-    file->vnode->size = (off_t)disk_geometry.sector_count * disk_geometry.bytes_per_sector;
+    dev->user_data = data;
     return 0;
 }
 
@@ -269,27 +268,3 @@ void device_set_blk_fops(struct rt_device *dev)
 {
 }
 #endif /* RT_USING_POSIX_DEVIO && RT_USING_DFS_V2 */
-
-void device_get_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint32_t bytes_per_sector;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    bytes_per_sector = geometry.bytes_per_sector;
-
-    RT_ASSERT(sizeof(bytes_per_sector) == sizeof(geometry.bytes_per_sector));
-
-    rt_memcpy(args, &bytes_per_sector, sizeof(bytes_per_sector));
-}
-
-void device_get_all_blk_ssize(struct rt_device *dev, void *args)
-{
-    rt_uint64_t count_mul_per;
-    struct rt_device_blk_geometry geometry;
-
-    rt_device_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry);
-    count_mul_per = geometry.bytes_per_sector * geometry.sector_count;
-
-    rt_memcpy(args, &count_mul_per, sizeof(count_mul_per));
-}
