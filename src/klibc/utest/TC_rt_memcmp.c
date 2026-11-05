@@ -14,7 +14,7 @@
 
 static void TC_rt_memcmp_str(void)
 {
-    const char* s = "abc 123";
+    const char *s = "abc 123";
 
     uassert_int_equal(rt_memcmp("abc", "abc", 4), 0);
     uassert_int_equal(rt_memcmp(s, "abc", 3), 0);
@@ -28,9 +28,9 @@ static void TC_rt_memcmp_str(void)
 
 static void TC_rt_memcmp_int_array(void)
 {
-    int arr1[] = {1, 2, 3, 4, 5};
-    int arr2[] = {1, 2, 3, 4, 5};
-    int arr3[] = {1, 2, 3, 4, 6};
+    int arr1[] = { 1, 2, 3, 4, 5 };
+    int arr2[] = { 1, 2, 3, 4, 5 };
+    int arr3[] = { 1, 2, 3, 4, 6 };
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
     uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
@@ -39,32 +39,34 @@ static void TC_rt_memcmp_int_array(void)
 
 static void TC_rt_memcmp_float_array(void)
 {
-    float arr1[] = {1.0f, 2.0f, 3.0f};
-    float arr2[] = {1.0f, 2.0f, 3.0f};
-    float arr3[] = {1.0f, 2.0f, 3.1f};
+    float arr1[] = { 1.0f, 2.0f, 3.0f };
+    float arr2[] = { 1.0f, 2.0f, 3.0f };
+    float arr3[] = { 1.0f, 2.0f, 3.1f };
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
     uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
     uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
-typedef struct {
+typedef struct
+{
     int id;
     float value;
 } Item;
 
 static void TC_rt_memcmp_struct_array(void)
 {
-    Item arr1[] = {{1, 1.0f}, {2, 2.0f}};
-    Item arr2[] = {{1, 1.0f}, {2, 2.0f}};
-    Item arr3[] = {{1, 1.0f}, {2, 2.1f}};
+    Item arr1[] = { { 1, 1.0f }, { 2, 2.0f } };
+    Item arr2[] = { { 1, 1.0f }, { 2, 2.0f } };
+    Item arr3[] = { { 1, 1.0f }, { 2, 2.1f } };
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
     uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
     uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
-typedef struct {
+typedef struct
+{
     int id;
     float value;
     char name[10];
@@ -72,21 +74,23 @@ typedef struct {
 
 static void TC_rt_memcmp_mixed_array(void)
 {
-    MixedItem arr1[] = {{1, 1.0f, "item1"}, {2, 2.0f, "item2"}};
-    MixedItem arr2[] = {{1, 1.0f, "item1"}, {2, 2.0f, "item2"}};
-    MixedItem arr3[] = {{1, 1.0f, "item1"}, {2, 2.1f, "item2"}};
+    MixedItem arr1[] = { { 1, 1.0f, "item1" }, { 2, 2.0f, "item2" } };
+    MixedItem arr2[] = { { 1, 1.0f, "item1" }, { 2, 2.0f, "item2" } };
+    MixedItem arr3[] = { { 1, 1.0f, "item1" }, { 2, 2.1f, "item2" } };
 
     uassert_int_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
     uassert_value_less(rt_memcmp(arr1, arr3, sizeof(arr1)), 0);
     uassert_value_greater(rt_memcmp(arr3, arr1, sizeof(arr1)), 0);
 }
 
-typedef struct {
+typedef struct
+{
     int id;
     float score;
 } Student;
 
-typedef struct {
+typedef struct
+{
     Student students[3];
     char className[10];
 } Class;
@@ -94,17 +98,17 @@ typedef struct {
 static void TC_rt_memcmp_nested_struct_array(void)
 {
     Class class1 = {
-        .students = {{1, 90.5}, {2, 85.0}, {3, 92.0}},
+        .students = { { 1, 90.5 }, { 2, 85.0 }, { 3, 92.0 } },
         .className = "ClassA"
     };
 
     Class class2 = {
-        .students = {{1, 90.5}, {2, 85.0}, {3, 92.0}},
+        .students = { { 1, 90.5 }, { 2, 85.0 }, { 3, 92.0 } },
         .className = "ClassA"
     };
 
     Class class3 = {
-        .students = {{1, 90.5}, {2, 85.1}, {3, 92.0}},
+        .students = { { 1, 90.5 }, { 2, 85.1 }, { 3, 92.0 } },
         .className = "ClassA"
     };
 
@@ -131,7 +135,8 @@ static void TC_rt_memcmp_large_array(void)
     uassert_not_null(arr1);
     uassert_not_null(arr2);
 
-    for (int i = 0; i < LARGE_ARRAY_SIZE; i++) {
+    for (int i = 0; i < LARGE_ARRAY_SIZE; i++)
+    {
         arr1[i] = i;
         arr2[i] = i;
     }

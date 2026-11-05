@@ -12,6 +12,16 @@
 /* rt_vsnprintf options */
 
 #define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -67,8 +77,7 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 24
-#define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -76,10 +85,10 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_HOOKLIST
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 16384
-#define SYSTEM_THREAD_STACK_SIZE 16384
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 16384
@@ -114,16 +123,14 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
-#define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_USING_CONSOLE_OUTPUT_CTL
-#define RT_VER_NUM 0x50300
+#define RT_VER_NUM 0x50400
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
-#define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HEAP_SIZE 0x4000000
 #define ARCH_INIT_PAGE_SIZE 0x200000
 #define ARCH_CPU_64BIT
@@ -133,8 +140,6 @@
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
-#define ARCH_RISCV_VECTOR
-#define ARCH_VECTOR_VLEN_128
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 
@@ -190,6 +195,7 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_TMPFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -206,58 +212,14 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
 #define RT_SERIAL_8250
-#define RT_SERIAL_8250_PCI
-#define RT_SERIAL_VIRTUAL
-#define RT_SERIAL_VIRTUAL_FONT_UNI2_FIXED16
 #define RT_SERIAL_EARLY_SBI
 #define RT_USING_CLOCK_TIME
 #define CLOCK_TIMER_FREQ 0
-#define RT_USING_ETHERNET
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
-#define RT_USING_ALARM
-#define RT_ALARM_STACK_SIZE 16384
-#define RT_ALARM_TIMESLICE 5
-#define RT_ALARM_PRIORITY 10
-#define RT_RTC_GOLDFISH
-#define RT_USING_WDT
-#define RT_WDT_I6300ESB
-#define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
-#define RT_AUDIO_INTEL_HDA
-#define RT_USING_TOUCH
-#define RT_USING_LCD
-#define RT_USING_GRAPHIC
-#define RT_GRAPHIC_FB
-#define RT_GRAPHIC_LOGO
-#define RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
-#define RT_USING_HWCRYPTO
-#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
-#define RT_HWCRYPTO_IV_MAX_SIZE 16
-#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
-#define RT_HWCRYPTO_USING_AES
-#define RT_HWCRYPTO_USING_AES_ECB
-#define RT_HWCRYPTO_USING_AES_CBC
-#define RT_HWCRYPTO_USING_AES_CTR
-#define RT_HWCRYPTO_USING_DES
-#define RT_HWCRYPTO_USING_DES_ECB
-#define RT_HWCRYPTO_USING_DES_CBC
-#define RT_HWCRYPTO_USING_3DES
-#define RT_HWCRYPTO_USING_3DES_ECB
-#define RT_HWCRYPTO_USING_3DES_CBC
-#define RT_HWCRYPTO_USING_RC4
-#define RT_HWCRYPTO_USING_RNG
-#define RT_USING_INPUT
-#define RT_INPUT_POWER
-#define RT_INPUT_KEYBOARD
-#define RT_INPUT_TOUCHSCREEN
-#define RT_USING_NVME
-#define RT_USING_NVME_IO_QUEUE 4
-#define RT_NVME_PCI
+#define RT_USING_SOFT_RTC
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -265,56 +227,30 @@
 #define RT_BLK_PARTITION_DFS
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
-#define RT_USING_FIRMWARE
-#define RT_FIRMWARE_QEMU_FW_CFG
 #define RT_USING_RESET
 
 /* Power Management (PM) Domains device drivers */
 
 /* end of Power Management (PM) Domains device drivers */
-#define RT_USING_POWER_RESET
-#define RT_POWER_RESET_SYSCON_POWEROFF
-#define RT_POWER_RESET_SYSCON_REBOOT
 #define RT_USING_VIRTIO
 #define RT_VIRTIO_TRANSPORT_MMIO
-#define RT_VIRTIO_TRANSPORT_PCI
 #define RT_VIRTIO_NET
 #define RT_VIRTIO_BLK
 #define RT_VIRTIO_CONSOLE
-#define RT_VIRTIO_RNG
 #define RT_VIRTIO_RPROC_SERIAL
-#define RT_VIRTIO_GPU
-#define RT_VIRTIO_INPUT
-#define RT_VIRTIO_CRYPTO
-#define RT_VIRTIO_SOUND
 #define RT_USING_DMA
-#define RT_USING_MFD
-#define RT_MFD_EDU
-#define RT_MFD_SYSCON
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
-#define RT_USING_PCI
-#define RT_PCI_MSI
-#define RT_PCI_SYS_64BIT
-#define RT_PCI_CACHE_LINE_SIZE 8
-
-/* PCI Device Drivers */
-
-#define RT_PCI_ECAM
-#define RT_PCI_HOST_COMMON
-#define RT_PCI_HOST_GENERIC
 #define RT_USING_PIC
-#define MAX_HANDLERS 512
-#define RT_PIC_RISCV_AIA
+#define MAX_HANDLERS 256
 #define RT_PIC_RISCV_INTC
 #define RT_PIC_SIFIVE_PLIC
+#define RT_USING_PIN
 #define RT_USING_CLK
 
 /* SoC (System on Chip) Drivers */
 
-#define RT_GRAPHIC_ROMFB_WIDTH 800
-#define RT_GRAPHIC_ROMFB_HEIGHT 600
 /* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
@@ -338,6 +274,7 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_SOCKET
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
@@ -347,7 +284,7 @@
 /* Interprocess Communication (IPC) */
 
 #define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
+#define RT_USING_POSIX_PIPE_SIZE 2048
 
 /* Socket is in the 'Network' category */
 
@@ -415,7 +352,9 @@
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 #define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_NETIF_LOOPBACK
+#define RT_LWIP_USING_LOOPBACK
+#define LWIP_NETIF_LOOPBACK 1
 #define RT_LWIP_USING_PING
 /* end of Network */
 
@@ -592,10 +531,6 @@
 /* NOVOSNS Drivers */
 
 /* end of NOVOSNS Drivers */
-
-/* N32 Drivers */
-
-/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

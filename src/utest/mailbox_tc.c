@@ -60,16 +60,14 @@ static rt_mailbox_t test_dynamic_mb;
 static uint8_t static_mb_recv_thread_finish, static_mb_send_thread_finish;
 static uint8_t dynamic_mb_recv_thread_finish, dynamic_mb_send_thread_finish;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread1_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread1_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread1;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 
-#define THREAD_PRIORITY      9
-#define THREAD_TIMESLICE     5
+#define THREAD_PRIORITY  9
+#define THREAD_TIMESLICE 5
 
 static rt_thread_t mb_send = RT_NULL;
 static rt_thread_t mb_recv = RT_NULL;
@@ -353,11 +351,11 @@ static void test_dynamic_mailbox_send_recv(void)
     }
 
     mb_recv = rt_thread_create("mb_recv_thread",
-                                thread3_recv_dynamic_mb,
-                                RT_NULL,
-                                UTEST_THR_STACK_SIZE,
-                                THREAD_PRIORITY - 1,
-                                THREAD_TIMESLICE);
+                               thread3_recv_dynamic_mb,
+                               RT_NULL,
+                               UTEST_THR_STACK_SIZE,
+                               THREAD_PRIORITY - 1,
+                               THREAD_TIMESLICE);
     if (mb_recv == RT_NULL)
     {
         uassert_false(1);
@@ -365,11 +363,11 @@ static void test_dynamic_mailbox_send_recv(void)
     rt_thread_startup(mb_recv);
 
     mb_send = rt_thread_create("mb_send_thread",
-                                thread4_send_dynamic_mb,
-                                RT_NULL,
-                                UTEST_THR_STACK_SIZE,
-                                THREAD_PRIORITY - 1,
-                                THREAD_TIMESLICE);
+                               thread4_send_dynamic_mb,
+                               RT_NULL,
+                               UTEST_THR_STACK_SIZE,
+                               THREAD_PRIORITY - 1,
+                               THREAD_TIMESLICE);
     if (mb_send == RT_NULL)
     {
         uassert_false(1);
@@ -391,6 +389,17 @@ static void test_dynamic_mailbox_send_recv(void)
 
 static rt_err_t utest_tc_init(void)
 {
+    /* This testcase may be run more than once in a single boot. The finish
+     * flags are set by the worker threads and read by the test body, so they
+     * must be cleared before every run. Otherwise the second run would skip
+     * the wait loop, detach/delete the mailbox while the worker threads are
+     * still blocked in rt_mb_recv(), and those threads would then use an
+     * already detached mailbox. */
+    static_mb_recv_thread_finish = 0;
+    static_mb_send_thread_finish = 0;
+    dynamic_mb_recv_thread_finish = 0;
+    dynamic_mb_send_thread_finish = 0;
+
     return RT_EOK;
 }
 
