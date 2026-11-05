@@ -15,10 +15,10 @@
 #define TEST_STACK_SIZE UTEST_THR_STACK_SIZE
 
 /* Test thread stack overflow */
-static rt_thread_t        test_thread       = RT_NULL;
-static rt_thread_t        fake_thread       = RT_NULL; /* Dynamic fake thread */
+static rt_thread_t test_thread = RT_NULL;
+static rt_thread_t fake_thread = RT_NULL; /* Dynamic fake thread */
 static volatile rt_bool_t overflow_detected = RT_FALSE;
-static volatile rt_bool_t test_completed    = RT_FALSE;
+static volatile rt_bool_t test_completed = RT_FALSE;
 
 /* Stack overflow detection hook - returns RT_EOK to continue, other values to halt */
 static rt_err_t stack_overflow_hook(struct rt_thread *thread)
@@ -240,8 +240,8 @@ cleanup:
 static rt_err_t utest_tc_init(void)
 {
     overflow_detected = RT_FALSE;
-    test_completed    = RT_FALSE;
-    test_thread       = RT_NULL;
+    test_completed = RT_FALSE;
+    test_thread = RT_NULL;
 
     rt_kprintf("Stack overflow test case initialized\n");
     return RT_EOK;
@@ -267,7 +267,7 @@ static rt_err_t utest_tc_cleanup(void)
     }
 
     overflow_detected = RT_FALSE;
-    test_completed    = RT_FALSE;
+    test_completed = RT_FALSE;
 
     rt_kprintf("Stack overflow test case cleanup completed\n");
     return RT_EOK;

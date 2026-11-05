@@ -191,10 +191,11 @@ void rt_pci_msi_shutdown(struct rt_pci_device *pdev)
     if ((desc = rt_pci_msi_first_desc(pdev)))
     {
         msi_unmask(&desc->msi, msi_multi_mask(&desc->msi), pdev);
+
+        /* Restore pdev->irq to its default pin-assertion IRQ */
+        pdev->irq = desc->msi.default_irq;
     }
 
-    /* Restore pdev->irq to its default pin-assertion IRQ */
-    pdev->irq = desc->msi.default_irq;
     pdev->msi_enabled = RT_FALSE;
 }
 
@@ -738,27 +739,57 @@ static void *msix_table_remap(struct rt_pci_device *pdev, rt_size_t entries_nr)
 {
     rt_uint8_t bir;
     rt_uint32_t table_offset;
-    rt_ubase_t table_base_phys;
+    rt_uint64_t table_base_phys, table_bytes;
+    struct rt_pci_bus_resource *res;
 
-    rt_pci_read_config_u32(pdev, pdev->msix_cap + PCIR_MSIX_TABLE, &table_offset);
+    if (rt_pci_read_config_u32(pdev, pdev->msix_cap + PCIR_MSIX_TABLE, &table_offset))
+    {
+        LOG_E("%s: Read MSI-X table offset fail", rt_dm_dev_get_name(&pdev->parent));
+
+        return RT_NULL;
+    }
+
+    /* The BIR field is device-controlled, never use it as a raw array index */
     bir = (rt_uint8_t)(table_offset & PCIM_MSIX_BIR_MASK);
 
-    if (pdev->resource[bir].flags & PCI_BUS_REGION_F_NONE)
+    if (bir >= RT_ARRAY_SIZE(pdev->resource))
+    {
+        LOG_E("%s: MSI-X table BIR %d is out of range", rt_dm_dev_get_name(&pdev->parent), bir);
+
+        return RT_NULL;
+    }
+
+    res = &pdev->resource[bir];
+
+    if (res->flags & PCI_BUS_REGION_F_NONE || res->size == 0)
     {
         LOG_E("%s: BAR[bir = %d] is invalid", rt_dm_dev_get_name(&pdev->parent), bir);
 
         return RT_NULL;
     }
 
-    table_base_phys = pdev->resource[bir].base + (table_offset & ~PCIM_MSIX_BIR_MASK);
+    table_offset &= PCIM_MSIX_TABLE_OFFSET;
+    table_bytes = (rt_uint64_t)entries_nr * PCIM_MSIX_ENTRY_SIZE;
 
-    return rt_ioremap((void *)table_base_phys, entries_nr * PCIM_MSIX_ENTRY_SIZE);
+    /* The whole MSI-X table must be contained in the assigned BAR */
+    if (table_offset > res->size || table_bytes > res->size - table_offset)
+    {
+        LOG_E("%s: MSI-X table(offset = 0x%x, size = %d) exceeds BAR[bir = %d] size 0x%lx",
+              rt_dm_dev_get_name(&pdev->parent), table_offset, (int)table_bytes,
+              bir, (unsigned long)res->size);
+
+        return RT_NULL;
+    }
+
+    table_base_phys = (rt_uint64_t)res->base + table_offset;
+
+    return rt_ioremap((void *)(rt_ubase_t)table_base_phys, table_bytes);
 }
 
 static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
                                      void *table_base, struct rt_pci_msix_entry *entries, int nvec)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     struct rt_pci_msi_desc desc;
 
     rt_memset(&desc, 0, sizeof(desc));
@@ -810,6 +841,18 @@ static rt_ssize_t msix_capability_init(struct rt_pci_device *pdev,
     rt_pci_read_config_u16(pdev, pdev->msix_cap + PCIR_MSIX_CTRL, &msgctl);
     /* Request & Map MSI-X table region */
     table_size = rt_pci_msix_table_size(msgctl);
+
+    /* A device may report different table sizes on repeated reads, make sure
+     * the requested vectors can be covered by the table mapped below */
+    if ((rt_size_t)nvec > table_size)
+    {
+        LOG_E("%s: Requested %d vectors exceed MSI-X table size %d",
+              rt_dm_dev_get_name(&pdev->parent), nvec, (int)table_size);
+
+        err = -RT_EINVAL;
+        goto _out_disbale_msix;
+    }
+
     table_base = msix_table_remap(pdev, table_size);
 
     if (!table_base)

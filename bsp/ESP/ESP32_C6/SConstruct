@@ -152,8 +152,8 @@ def _match_idf_spi_lock_stub_to_spi_config():
     if spi_selected:
         marker = b'skip_name = ('
         if marker not in text:
-            raise RuntimeError('%s has no %s to skip spi_lock_stub.c in'
-                               % (sc, marker.decode()))
+            # In ESP-IDF v6.1+, spi_lock_stub is no longer present; spi_common.c is built directly.
+            return
         text = text.replace(marker, marker + entry, 1)
     else:
         text = text.replace(entry, b'', 1)

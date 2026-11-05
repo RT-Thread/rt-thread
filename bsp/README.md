@@ -809,6 +809,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [ch569w-evt](wch/risc-v/ch569w-evt) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | - | - | - | - |
 | [yd-ch32v307vct6](wch/risc-v/yd-ch32v307vct6) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
 
+#### 🟢 Spacemit
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI | DMA | Ethernet | Audio | Display | Crypto |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|-----|-----|----------|-------|---------|--------|
+| [k1](spacemit/k1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
 #### 🟡 Ultrarisc (RT-Smart) (SMP)
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|

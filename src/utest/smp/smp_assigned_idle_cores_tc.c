@@ -49,9 +49,9 @@
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   20
 static rt_thread_t threads[RT_CPUS_NR - 1];
-static int         tick = 0;
+static int tick = 0;
 static rt_align(sizeof(rt_ubase_t)) int finish_flag = 0;
-static int                num        = 0;
+static int num = 0;
 /* thread entry function */
 static void thread_entry(void *parameter)
 {
@@ -69,9 +69,9 @@ static void thread_entry(void *parameter)
 
 static void thread_on_idle_core_tc(void)
 {
-    static int params[RT_CPUS_NR] = {0};
-    char       thread_name[8];
-    int        i;
+    static int params[RT_CPUS_NR] = { 0 };
+    char thread_name[8];
+    int i;
 
     /* Initialise the thread entry parameters */
     for (i = 0; i < RT_CPUS_NR; i++)
@@ -91,7 +91,7 @@ static void thread_on_idle_core_tc(void)
         }
     }
     /* Waiting for test cases to finish */
-    while (finish_flag != (1<<(RT_CPUS_NR-1))-1);
+    while (finish_flag != (1 << (RT_CPUS_NR - 1)) - 1);
     /* Output the current core running threads */
     extern long list_thread(void);
     list_thread();
