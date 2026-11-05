@@ -391,6 +391,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
     rt_tick_t timeout_tick = 0, delta_tick = 0;
     rt_base_t level = 0;
     uint8_t sleep_mode = PM_SLEEP_MODE_DEEP;
+    rt_uint8_t suspend_mode;
 
     level = rt_pm_enter_critical(pm->sleep_mode);
 
@@ -414,21 +415,24 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
     }
     else
     {
+        /* Tickless selection may change the mode after devices are suspended. */
+        suspend_mode = pm->sleep_mode;
+
         /* Notify app will enter sleep mode */
         if (_pm_notify.notify)
         {
-            _pm_notify.notify(RT_PM_ENTER_SLEEP, pm->sleep_mode, _pm_notify.data);
+            _pm_notify.notify(RT_PM_ENTER_SLEEP, suspend_mode, _pm_notify.data);
         }
 
         /* Suspend all peripheral device */
 #ifdef PM_ENABLE_SUSPEND_SLEEP_MODE
-        rt_err_t ret = _pm_device_suspend(pm->sleep_mode);
+        rt_err_t ret = _pm_device_suspend(suspend_mode);
         if (ret != RT_EOK)
         {
-            _pm_device_resume(pm->sleep_mode);
+            _pm_device_resume(suspend_mode);
             if (_pm_notify.notify)
             {
-                _pm_notify.notify(RT_PM_EXIT_SLEEP, pm->sleep_mode, _pm_notify.data);
+                _pm_notify.notify(RT_PM_EXIT_SLEEP, suspend_mode, _pm_notify.data);
             }
             if (pm->sleep_mode > PM_SUSPEND_SLEEP_MODE)
             {
@@ -439,7 +443,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
             return;
         }
 #else
-        _pm_device_suspend(pm->sleep_mode);
+        _pm_device_suspend(suspend_mode);
 #endif
         /* Tickless*/
         if (pm->timer_mask & (0x01 << pm->sleep_mode))
@@ -473,10 +477,10 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
         }
 
         /* resume all device */
-        _pm_device_resume(pm->sleep_mode);
+        _pm_device_resume(suspend_mode);
 
         if (_pm_notify.notify)
-            _pm_notify.notify(RT_PM_EXIT_SLEEP, pm->sleep_mode, _pm_notify.data);
+            _pm_notify.notify(RT_PM_EXIT_SLEEP, suspend_mode, _pm_notify.data);
 
         rt_pm_exit_critical(level, pm->sleep_mode);
     }
