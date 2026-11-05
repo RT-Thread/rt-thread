@@ -242,6 +242,7 @@ jobs:
           sudo tar xjf riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu_252938-345d8b6e45.tar.bz2 -C /opt
           /opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
       - name: Install Xuantie-900-gcc-elf-newlib Tools
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf-newlib' && success() }}

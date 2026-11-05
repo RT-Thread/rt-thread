@@ -82,7 +82,11 @@
 #define LWIP_DNS                    0
 #endif
 
+#ifdef RT_LWIP_USING_LOOPBACK
+#define LWIP_HAVE_LOOPIF            1
+#else
 #define LWIP_HAVE_LOOPIF            0
+#endif
 
 #define LWIP_PLATFORM_BYTESWAP      0
 
@@ -541,7 +545,12 @@
 #define LWIP_RAW                    0
 #endif
 
+/* A loopback ping queues the request before lwIP generates its reply. */
+#ifdef RT_LWIP_NETIF_LOOPBACK
+#define DEFAULT_RAW_RECVMBOX_SIZE   2
+#else
 #define DEFAULT_RAW_RECVMBOX_SIZE   1
+#endif
 #define DEFAULT_ACCEPTMBOX_SIZE     10
 
 /* ---------- Statistics options ---------- */

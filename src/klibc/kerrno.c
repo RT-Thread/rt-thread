@@ -28,8 +28,8 @@ static volatile int __rt_errno;
  */
 struct _errno_str_t
 {
-    rt_err_t error;      /**< Error code of type rt_err_t, representing different kinds of errors. */
-    const char *str;     /**< Pointer to the error description string. */
+    rt_err_t error;  /**< Error code of type rt_err_t, representing different kinds of errors. */
+    const char *str; /**< Pointer to the error description string. */
 };
 
 /**
@@ -39,23 +39,22 @@ struct _errno_str_t
  * corresponding error description strings. These mappings can be used at runtime
  * to provide more readable error information.
  */
-static struct _errno_str_t  rt_errno_strs[] =
-{
-    {RT_EOK     , "OK     "},  /**< Operation successful. */
-    {RT_ERROR   , "ERROR  "},  /**< General error. */
-    {RT_ETIMEOUT, "ETIMOUT"},  /**< Operation timed out. */
-    {RT_EFULL   , "ERSFULL"},  /**< Resource is full. */
-    {RT_EEMPTY  , "ERSEPTY"},  /**< Resource is empty. */
-    {RT_ENOMEM  , "ENOMEM "},  /**< Not enough memory. */
-    {RT_ENOSYS  , "ENOSYS "},  /**< Function not implemented. */
-    {RT_EBUSY   , "EBUSY  "},  /**< Resource is busy. */
-    {RT_EIO     , "EIO    "},  /**< Input/output error. */
-    {RT_EINTR   , "EINTRPT"},  /**< Interrupted system call. */
-    {RT_EINVAL  , "EINVAL "},  /**< Invalid argument. */
-    {RT_ENOENT  , "ENOENT "},  /**< No such file or directory. */
-    {RT_ENOSPC  , "ENOSPC "},  /**< No space left on device. */
-    {RT_EPERM   , "EPERM  "},  /**< Operation not permitted. */
-    {RT_ETRAP   , "ETRAP  "},  /**< Trap error. */
+static struct _errno_str_t rt_errno_strs[] = {
+    { RT_EOK, "OK     " },      /**< Operation successful. */
+    { RT_ERROR, "ERROR  " },    /**< General error. */
+    { RT_ETIMEOUT, "ETIMOUT" }, /**< Operation timed out. */
+    { RT_EFULL, "ERSFULL" },    /**< Resource is full. */
+    { RT_EEMPTY, "ERSEPTY" },   /**< Resource is empty. */
+    { RT_ENOMEM, "ENOMEM " },   /**< Not enough memory. */
+    { RT_ENOSYS, "ENOSYS " },   /**< Function not implemented. */
+    { RT_EBUSY, "EBUSY  " },    /**< Resource is busy. */
+    { RT_EIO, "EIO    " },      /**< Input/output error. */
+    { RT_EINTR, "EINTRPT" },    /**< Interrupted system call. */
+    { RT_EINVAL, "EINVAL " },   /**< Invalid argument. */
+    { RT_ENOENT, "ENOENT " },   /**< No such file or directory. */
+    { RT_ENOSPC, "ENOSPC " },   /**< No space left on device. */
+    { RT_EPERM, "EPERM  " },    /**< Operation not permitted. */
+    { RT_ETRAP, "ETRAP  " },    /**< Trap error. */
 };
 
 /**
@@ -70,12 +69,16 @@ const char *rt_strerror(rt_err_t error)
     int i = 0;
 
     if (error < 0)
+    {
         error = -error;
+    }
 
     for (i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
     {
         if (rt_errno_strs[i].error == error)
+        {
             return rt_errno_strs[i].str;
+        }
     }
 
     return "EUNKNOW";
@@ -153,7 +156,7 @@ int *_rt_errno(void)
     tid = rt_thread_self();
     if (tid != RT_NULL)
     {
-        return (int *) & (tid->error);
+        return (int *)&(tid->error);
     }
 
     return (int *)&__rt_errno;
