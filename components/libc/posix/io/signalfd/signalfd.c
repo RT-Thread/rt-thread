@@ -378,11 +378,14 @@ static int signalfd_find_slot(struct rt_signalfd_ctx *sfd, struct rt_lwp *lwp, i
  * @return  Upon successful completion, returns 0; otherwise, returns an error code.
  * @note    Lookup, slot assignment and listener insertion happen in one
  *          critical section under LWP_LOCK(self) -> sfd->lock, so another
- *          thread can only see the slot once the listener is installed.
+ *          thread can only see the slot once the listener is installed. An
+ *          existing registration is answered from that first lookup without
+ *          allocating; a node is only allocated when a new registration is
+ *          needed, and the lookup is repeated after the allocation.
  */
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 {
-    struct rt_lwp_notify *lwp_notify;
+    struct rt_lwp_notify *lwp_notify = RT_NULL;
     struct rt_lwp *curr_lwp;
     int registered;
     int empty_slot;
@@ -399,42 +402,51 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
         return -EINVAL;
     }
 
-    /* allocate before taking any lock; freed again if no slot is taken */
-    lwp_notify = (struct rt_lwp_notify *)rt_malloc(sizeof(struct rt_lwp_notify));
-    if (!lwp_notify)
+    for (;;)
     {
-        rt_set_errno(ENOMEM);
-        return -ENOMEM;
-    }
-    lwp_notify->notify = signalfd_callback;
-    lwp_notify->detach = signalfd_detach;
-    lwp_notify->signalfd_queue = &sfd->signalfd_queue;
+        LWP_LOCK(curr_lwp);
+        rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
 
-    LWP_LOCK(curr_lwp);
-    rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-
-    if (sfd->closing)
-    {
-        err = -EBADF;
-    }
-    else
-    {
-        registered = signalfd_find_slot(sfd, curr_lwp, &empty_slot);
-        if (!registered)
+        if (sfd->closing)
         {
-            if (empty_slot < 0)
-            {
-                err = -EMFILE;
-            }
-            else
-            {
-                /* the slot owns this reference until the release work or the exit hook clears it */
-                lwp_ref_inc(curr_lwp);
-                sfd->lwp[empty_slot] = curr_lwp;
-                lwp_signal_notify_add(curr_lwp, lwp_notify);
-                lwp_notify = RT_NULL;
-            }
+            err = -EBADF;
+            break;
         }
+
+        registered = signalfd_find_slot(sfd, curr_lwp, &empty_slot);
+        if (registered)
+        {
+            /* already registered: nothing to allocate or link */
+            break;
+        }
+        if (empty_slot < 0)
+        {
+            err = -EMFILE;
+            break;
+        }
+        if (lwp_notify)
+        {
+            /* the slot owns this reference until the release work or the exit hook clears it */
+            lwp_ref_inc(curr_lwp);
+            sfd->lwp[empty_slot] = curr_lwp;
+            lwp_signal_notify_add(curr_lwp, lwp_notify);
+            lwp_notify = RT_NULL;
+            break;
+        }
+
+        /* a new registration is needed: allocate outside the locks and look again */
+        rt_mutex_release(&sfd->lock);
+        LWP_UNLOCK(curr_lwp);
+
+        lwp_notify = (struct rt_lwp_notify *)rt_malloc(sizeof(struct rt_lwp_notify));
+        if (!lwp_notify)
+        {
+            rt_set_errno(ENOMEM);
+            return -ENOMEM;
+        }
+        lwp_notify->notify = signalfd_callback;
+        lwp_notify->detach = signalfd_detach;
+        lwp_notify->signalfd_queue = &sfd->signalfd_queue;
     }
 
     rt_mutex_release(&sfd->lock);
@@ -442,6 +454,7 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 
     if (lwp_notify)
     {
+        /* the process got registered meanwhile, or the context is closing */
         rt_free(lwp_notify);
     }
 
