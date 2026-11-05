@@ -41,70 +41,70 @@
 #error "RT_CAN_TC_USING_CANFD requires RT_CAN_USING_CANFD"
 #endif
 
-#define CAN_TC_FRAME_ID_BASE                 0x321
-#define CAN_TC_CLASSIC_DLC                   CAN_MSG_8BYTES
-#define CAN_TC_FD_FRAME_ID_BASE              (CAN_TC_FRAME_ID_BASE + 3)
-#define CAN_TC_REVERSE_FD_FRAME_ID_BASE      (CAN_TC_FRAME_ID_BASE + 5)
-#define CAN_TC_TX_SEED                       0x10
-#define CAN_TC_RX_SEED                       0x20
-#define CAN_TC_EXTERNAL_TX_DRAIN_MS          50
+#define CAN_TC_FRAME_ID_BASE            0x321
+#define CAN_TC_CLASSIC_DLC              CAN_MSG_8BYTES
+#define CAN_TC_FD_FRAME_ID_BASE         (CAN_TC_FRAME_ID_BASE + 3)
+#define CAN_TC_REVERSE_FD_FRAME_ID_BASE (CAN_TC_FRAME_ID_BASE + 5)
+#define CAN_TC_TX_SEED                  0x10
+#define CAN_TC_RX_SEED                  0x20
+#define CAN_TC_EXTERNAL_TX_DRAIN_MS     50
 
 #ifndef RT_CAN_TC_TIMEOUT_MS
-#define RT_CAN_TC_TIMEOUT_MS                 1000
+#define RT_CAN_TC_TIMEOUT_MS 1000
 #endif
 
 #ifndef RT_CAN_TC_BAUD_RATE
-#define RT_CAN_TC_BAUD_RATE                  CAN500kBaud
+#define RT_CAN_TC_BAUD_RATE CAN500kBaud
 #endif
 
 #ifndef RT_CAN_TC_TX_FRAME_ID
-#define RT_CAN_TC_TX_FRAME_ID                CAN_TC_FRAME_ID_BASE
+#define RT_CAN_TC_TX_FRAME_ID CAN_TC_FRAME_ID_BASE
 #endif
 
 #ifndef RT_CAN_TC_RX_FRAME_ID
-#define RT_CAN_TC_RX_FRAME_ID                (CAN_TC_FRAME_ID_BASE + 1)
+#define RT_CAN_TC_RX_FRAME_ID (CAN_TC_FRAME_ID_BASE + 1)
 #endif
 
 #ifndef RT_CAN_TC_NONBLOCKING_TX_FRAME_ID
-#define RT_CAN_TC_NONBLOCKING_TX_FRAME_ID    (CAN_TC_FRAME_ID_BASE + 2)
+#define RT_CAN_TC_NONBLOCKING_TX_FRAME_ID (CAN_TC_FRAME_ID_BASE + 2)
 #endif
 
 #ifndef RT_CAN_TC_EXTERNAL_READY_DELAY_MS
-#define RT_CAN_TC_EXTERNAL_READY_DELAY_MS    1000
+#define RT_CAN_TC_EXTERNAL_READY_DELAY_MS 1000
 #endif
 
 #ifdef RT_CAN_TC_USING_CANFD
 #ifndef RT_CAN_TC_CANFD_DATA_BAUD_RATE
-#define RT_CAN_TC_CANFD_DATA_BAUD_RATE       2000000
+#define RT_CAN_TC_CANFD_DATA_BAUD_RATE 2000000
 #endif
 #ifndef RT_CAN_TC_CANFD_DATA_LENGTH
-#define RT_CAN_TC_CANFD_DATA_LENGTH          16
+#define RT_CAN_TC_CANFD_DATA_LENGTH 16
 #endif
 #ifdef RT_CAN_TC_CANFD_BRS
-#define CAN_TC_SELECTED_FD_BRS               RT_TRUE
+#define CAN_TC_SELECTED_FD_BRS RT_TRUE
 #else
-#define CAN_TC_SELECTED_FD_BRS               RT_FALSE
+#define CAN_TC_SELECTED_FD_BRS RT_FALSE
 #endif
 #endif
 
 #if defined(RT_CAN_TC_USING_DUAL_DEVICE)
-#define CAN_TC_MAX_RECEIVE_WAITS             31
+#define CAN_TC_MAX_RECEIVE_WAITS 31
 #elif defined(RT_CAN_TC_USING_SELF_LOOPBACK)
-#define CAN_TC_MAX_RECEIVE_WAITS             20
+#define CAN_TC_MAX_RECEIVE_WAITS 20
 #elif defined(RT_CAN_TC_EXTERNAL_USING_RECEIVE_TEST)
-#define CAN_TC_MAX_RECEIVE_WAITS             3
+#define CAN_TC_MAX_RECEIVE_WAITS 3
 #else
-#define CAN_TC_MAX_RECEIVE_WAITS             1
+#define CAN_TC_MAX_RECEIVE_WAITS 1
 #endif
 
-#define CAN_TC_RX_TIMEOUT_SECONDS            ((RT_CAN_TC_TIMEOUT_MS + 999) / 1000)
+#define CAN_TC_RX_TIMEOUT_SECONDS ((RT_CAN_TC_TIMEOUT_MS + 999) / 1000)
 #ifdef RT_CAN_TC_USING_EXTERNAL_DEVICE
-#define CAN_TC_READY_DELAY_SECONDS           ((RT_CAN_TC_EXTERNAL_READY_DELAY_MS + 999) / 1000)
+#define CAN_TC_READY_DELAY_SECONDS ((RT_CAN_TC_EXTERNAL_READY_DELAY_MS + 999) / 1000)
 #else
-#define CAN_TC_READY_DELAY_SECONDS           0
+#define CAN_TC_READY_DELAY_SECONDS 0
 #endif
-#define CAN_TC_SUITE_TIMEOUT                 (10 + CAN_TC_READY_DELAY_SECONDS + \
-                                              CAN_TC_MAX_RECEIVE_WAITS * CAN_TC_RX_TIMEOUT_SECONDS)
+#define CAN_TC_SUITE_TIMEOUT (10 + CAN_TC_READY_DELAY_SECONDS + \
+                              CAN_TC_MAX_RECEIVE_WAITS * CAN_TC_RX_TIMEOUT_SECONDS)
 
 struct can_tc_context
 {
@@ -144,8 +144,7 @@ static void can_log_status(struct can_tc_context *context)
     }
 }
 
-static const rt_uint32_t can_tc_baud_rates[] =
-{
+static const rt_uint32_t can_tc_baud_rates[] = {
     CAN10kBaud,
     CAN20kBaud,
     CAN50kBaud,
@@ -157,10 +156,23 @@ static const rt_uint32_t can_tc_baud_rates[] =
     CAN1MBaud,
 };
 
-static const rt_uint8_t can_tc_dlc_to_length[] =
-{
-    0, 1, 2, 3, 4, 5, 6, 7,
-    8, 12, 16, 20, 24, 32, 48, 64,
+static const rt_uint8_t can_tc_dlc_to_length[] = {
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    48,
+    64,
 };
 
 static rt_bool_t can_is_standard_baud_rate(rt_uint32_t baud_rate)
@@ -336,7 +348,7 @@ static rt_err_t can_fill_message(struct rt_can_msg *msg,
 }
 
 #if defined(RT_CAN_TC_USING_SELF_LOOPBACK) || \
-    defined(RT_CAN_TC_USING_DUAL_DEVICE) || \
+    defined(RT_CAN_TC_USING_DUAL_DEVICE) ||   \
     defined(RT_CAN_TC_EXTERNAL_USING_RECEIVE_TEST)
 static rt_bool_t can_message_equal(const struct rt_can_msg *expected,
                                    const struct rt_can_msg *actual)
@@ -401,7 +413,7 @@ static void can_drain_receive(struct can_tc_context *context)
 }
 
 #if defined(RT_CAN_TC_USING_SELF_LOOPBACK) || \
-    defined(RT_CAN_TC_USING_DUAL_DEVICE) || \
+    defined(RT_CAN_TC_USING_DUAL_DEVICE) ||   \
     !defined(RT_CAN_TC_USING_CANFD)
 static rt_err_t can_receive_expected(struct can_tc_context *context,
                                      const struct rt_can_msg *expected)
@@ -487,8 +499,8 @@ static rt_err_t can_receive_expected(struct can_tc_context *context,
 #endif
 #endif
 
-#if defined(RT_CAN_TC_USING_SELF_LOOPBACK) || \
-    defined(RT_CAN_TC_USING_DUAL_DEVICE) || \
+#if defined(RT_CAN_TC_USING_SELF_LOOPBACK) ||      \
+    defined(RT_CAN_TC_USING_DUAL_DEVICE) ||        \
     defined(RT_CAN_TC_EXTERNAL_USING_SEND_TEST) || \
     defined(RT_CAN_TC_USING_NONBLOCKING_SEND_TEST)
 static rt_bool_t can_support_nonblocking_send(struct can_tc_context *context)
@@ -583,7 +595,7 @@ static rt_err_t can_transfer_pattern(struct can_tc_context *tx_context,
 }
 #endif
 
-#if defined(RT_CAN_TC_USING_EXTERNAL_DEVICE) && \
+#if defined(RT_CAN_TC_USING_EXTERNAL_DEVICE) &&     \
     (defined(RT_CAN_TC_EXTERNAL_USING_SEND_TEST) || \
      defined(RT_CAN_TC_USING_NONBLOCKING_SEND_TEST))
 static rt_err_t can_send_pattern(struct can_tc_context *context,
@@ -605,7 +617,7 @@ static rt_err_t can_send_pattern(struct can_tc_context *context,
 
 #endif
 
-#if defined(RT_CAN_TC_USING_EXTERNAL_DEVICE) && \
+#if defined(RT_CAN_TC_USING_EXTERNAL_DEVICE) &&       \
     defined(RT_CAN_TC_EXTERNAL_USING_RECEIVE_TEST) && \
     !defined(RT_CAN_TC_USING_CANFD)
 static rt_err_t can_receive_pattern(struct can_tc_context *context,
@@ -753,10 +765,10 @@ static void can_log_unmatched_frame(const struct rt_can_msg *message)
 }
 
 static rt_err_t can_receive_external_patterns(struct can_tc_context *context,
-                                               rt_uint32_t id,
-                                               rt_uint8_t seed)
+                                              rt_uint32_t id,
+                                              rt_uint8_t seed)
 {
-    rt_bool_t received[3] = {RT_FALSE, RT_FALSE, RT_FALSE};
+    rt_bool_t received[3] = { RT_FALSE, RT_FALSE, RT_FALSE };
     rt_err_t result;
     rt_size_t i;
     rt_size_t received_count;
@@ -819,7 +831,10 @@ static rt_err_t can_receive_external_patterns(struct can_tc_context *context,
                 can_log_unmatched_frame(&actual);
                 unmatched_log_count++;
             }
-            continue;
+            if (received_count == expected_count)
+            {
+                break;
+            }
         }
         if (read_size < 0)
         {
@@ -828,6 +843,7 @@ static rt_err_t can_receive_external_patterns(struct can_tc_context *context,
             return (rt_err_t)read_size;
         }
 
+        /* Repeated or unrelated frames must not bypass the no-progress timeout. */
         elapsed = (rt_tick_t)(rt_tick_get() - progress_tick);
         if (elapsed >= timeout)
         {
@@ -842,8 +858,11 @@ static rt_err_t can_receive_external_patterns(struct can_tc_context *context,
             return -RT_ETIMEOUT;
         }
 
-        remaining = timeout - elapsed;
-        rt_sem_take(&context->rx_sem, remaining);
+        if (read_size != sizeof(actual))
+        {
+            remaining = timeout - elapsed;
+            rt_sem_take(&context->rx_sem, remaining);
+        }
     }
 
     return RT_EOK;
@@ -1469,7 +1488,7 @@ static rt_err_t can_restore_context(struct can_tc_context *context)
 
     result = RT_EOK;
     operation_result = rt_device_set_rx_indicate(context->dev,
-                                                  context->original_rx_indicate);
+                                                 context->original_rx_indicate);
     can_record_cleanup_error(&result, operation_result);
 
     if (context->configuration_touched)
