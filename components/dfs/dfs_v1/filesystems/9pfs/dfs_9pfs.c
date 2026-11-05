@@ -39,35 +39,48 @@ static rt_list_t _protocol_nodes = RT_LIST_OBJECT_INIT(_protocol_nodes);
 static struct rt_spinlock _protocol_lock = { 0 };
 
 #ifndef rt_le8_to_cpu
-#define rt_le8_to_cpu
+#define rt_le8_to_cpu(x) (x)
 #endif
 #ifndef rt_cpu_to_le8
-#define rt_cpu_to_le8
+#define rt_cpu_to_le8(x) (x)
 #endif
 
-#define P9_OF_OPS_GET(width, dir)                                  \
-    rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(  \
-        struct p9_connection *conn, unsigned idx)                  \
-    {                                                              \
-        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
-        return rt_le##width##_to_cpu(*vp);                         \
+/*
+ * The 9P messages are not aligned inside `rx_buffer`/`tx_buffer`, a 64 bit
+ * field can start at any offset (e.g. the `length` field of an `Rstat` reply
+ * always starts at P9_MSG_STAT_LEN == 42).  Dereferencing a casted pointer
+ * makes GCC emit `LDRD`/`STRD` on ARMv7-A, which faults on any address that
+ * is not 8 byte aligned, so always go through an aligned local variable.
+ */
+#define P9_OF_OPS_GET(width, dir)                                   \
+    rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(   \
+        struct p9_connection *conn, unsigned idx)                   \
+    {                                                               \
+        rt_uint##width##_t value;                                   \
+                                                                    \
+        rt_memcpy(&value, &conn->dir##_buffer[idx], sizeof(value)); \
+                                                                    \
+        return rt_le##width##_to_cpu(value);                        \
     }
 
-#define P9_OF_OPS_PUT(width, dir)                                  \
-    rt_inline void put_##dir##_##value##width##_of(                \
-        struct p9_connection *conn, unsigned idx,                  \
-        rt_uint##width##_t value)                                  \
-    {                                                              \
-        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
-        *vp = rt_cpu_to_le##width(value);                          \
+#define P9_OF_OPS_PUT(width, dir)                                   \
+    rt_inline void put_##dir##_##value##width##_of(                 \
+        struct p9_connection *conn, unsigned idx,                   \
+        rt_uint##width##_t value)                                   \
+    {                                                               \
+        value = rt_cpu_to_le##width(value);                         \
+                                                                    \
+        rt_memcpy(&conn->dir##_buffer[idx], &value, sizeof(value)); \
     }
 
 #define P9_OPS_PUT(width)                                                       \
     rt_inline rt_off_t put_value##width(struct p9_connection *conn,             \
                                         rt_off_t off, rt_uint##width##_t value) \
     {                                                                           \
-        ((rt_uint##width##_t *)(conn->tx_buffer + off))[0] =                    \
-            rt_cpu_to_le##width(value);                                         \
+        value = rt_cpu_to_le##width(value);                                     \
+                                                                                \
+        rt_memcpy(conn->tx_buffer + off, &value, sizeof(value));                \
+                                                                                \
         return off + sizeof(value);                                             \
     }
 
