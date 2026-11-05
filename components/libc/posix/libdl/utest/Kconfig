@@ -1,0 +1,8 @@
+config RT_UTEST_DLMODULE
+    bool "dlmodule ELF loading and relocation tests (ARM GCC)"
+    depends on ARCH_ARM_CORTEX_A && !RT_USING_SMART
+    depends on RT_USING_MODULE && RT_USING_DFS && RT_USING_POSIX_FS
+    default n
+    help
+        Build real ARM ELF modules and test dlopen, dlsym and dlclose.
+        Requires GCC and a writable filesystem mounted at /.

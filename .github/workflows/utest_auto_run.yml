@@ -152,6 +152,8 @@ jobs:
             config_file: "components/dfs.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/libc.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/dlmodule.cfg"
 
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
@@ -300,6 +302,10 @@ jobs:
           fi
 
           scons --pyconfig-silent -C $TEST_BSP_ROOT
+          if [[ "$TEST_CONFIG_FILE" == "components/dlmodule.cfg" ]]; then
+            grep -q '^#define RT_UTEST_DLMODULE' $TEST_BSP_ROOT/rtconfig.h
+            python3 tools/ci/test_run_dlmodule_qemu.py
+          fi
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
       - name: QEMU Run Test
@@ -310,6 +316,12 @@ jobs:
           if [ "$TEST_SD_FILE" != "None" ]; then
             dd if=/dev/zero of=$TEST_BSP_ROOT/sd.bin bs=1024 count=65536
             mkfs.fat $TEST_BSP_ROOT/sd.bin
+          fi
+
+          if [[ "$TEST_CONFIG_FILE" == "components/dlmodule.cfg" ]]; then
+            python3 tools/ci/run_dlmodule_qemu.py --kernel $TEST_BSP_ROOT/rtthread.bin \
+              --disk $TEST_BSP_ROOT/sd.bin --log qemu_output_arm.log
+            exit 0
           fi
 
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
@@ -410,7 +422,7 @@ jobs:
           disown $QEMU_PID
       
       - name: Monitor qemu log
-        if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() && matrix.config_file != 'components/dlmodule.cfg' }}
         # Same known-flaky qemu-virt64-riscv standard kernel utest run as the previous step.
         continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && (matrix.config_file == 'kernel/ipc.cfg' || matrix.config_file == 'kernel/kernel_basic.cfg') }}
         timeout-minutes: 20

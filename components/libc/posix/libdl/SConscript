@@ -8,5 +8,7 @@ CPPPATH = [cwd]
 
 if rtconfig.PLATFORM in ['gcc']:
     group = DefineGroup('Libc', src, depend = ['RT_USING_MODULE'], CPPPATH = CPPPATH)
+    if GetDepend('RT_UTEST_DLMODULE'):
+        group += SConscript('utest/SConscript')
 
 Return('group')
