@@ -3,6 +3,7 @@ import os
 import json
 import requests
 import time
+import sys
 from datetime import datetime, timezone
 
 def trigger_workflow_directly(workflow_name, github_token, repo):
@@ -31,7 +32,7 @@ def trigger_workflow_directly(workflow_name, github_token, repo):
     
     try:
         print(f"Triggering workflow: {workflow_name} (ID: {workflow_id})")
-        response = requests.post(dispatch_url, headers=headers, json=dispatch_data)  # 🔧 修复：现在 dispatch_url 已定义
+        response = requests.post(dispatch_url, headers=headers, json=dispatch_data, timeout=30)
         
         if response.status_code == 204:
             print(f"✓ Successfully triggered workflow: {workflow_name}")
@@ -53,7 +54,7 @@ def get_workflow_id(github_token, repo, workflow_name):
     }
     
     url = f"https://api.github.com/repos/{repo}/actions/workflows"
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, params={"per_page": 100}, timeout=30)
     
     if response.status_code == 200:
         workflows = response.json()["workflows"]
@@ -83,7 +84,11 @@ def main():
     
     success_count = 0
     for i, workflow in enumerate(workflows):
-        success = trigger_workflow_directly(workflow, github_token, repo)
+        try:
+            success = trigger_workflow_directly(workflow, github_token, repo)
+        except requests.RequestException as error:
+            print(f"Failed to trigger {workflow}: {error}")
+            success = False
         if success:
             success_count += 1
         
@@ -93,6 +98,7 @@ def main():
             time.sleep(10)
     
     print(f"Triggering completed: {success_count}/{len(workflows)} successful")
+    return 0 if workflows and success_count == len(workflows) else 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
