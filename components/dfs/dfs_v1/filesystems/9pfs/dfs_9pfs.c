@@ -39,35 +39,48 @@ static rt_list_t _protocol_nodes = RT_LIST_OBJECT_INIT(_protocol_nodes);
 static struct rt_spinlock _protocol_lock = { 0 };
 
 #ifndef rt_le8_to_cpu
-#define rt_le8_to_cpu
+#define rt_le8_to_cpu(x) (x)
 #endif
 #ifndef rt_cpu_to_le8
-#define rt_cpu_to_le8
+#define rt_cpu_to_le8(x) (x)
 #endif
 
-#define P9_OF_OPS_GET(width, dir)                                  \
-    rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(  \
-        struct p9_connection *conn, unsigned idx)                  \
-    {                                                              \
-        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
-        return rt_le##width##_to_cpu(*vp);                         \
+/*
+ * The 9P messages are not aligned inside `rx_buffer`/`tx_buffer`, a 64 bit
+ * field can start at any offset (e.g. the `length` field of an `Rstat` reply
+ * always starts at P9_MSG_STAT_LEN == 42).  Dereferencing a casted pointer
+ * makes GCC emit `LDRD`/`STRD` on ARMv7-A, which faults on any address that
+ * is not 8 byte aligned, so always go through an aligned local variable.
+ */
+#define P9_OF_OPS_GET(width, dir)                                   \
+    rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(   \
+        struct p9_connection *conn, unsigned idx)                   \
+    {                                                               \
+        rt_uint##width##_t value;                                   \
+                                                                    \
+        rt_memcpy(&value, &conn->dir##_buffer[idx], sizeof(value)); \
+                                                                    \
+        return rt_le##width##_to_cpu(value);                        \
     }
 
-#define P9_OF_OPS_PUT(width, dir)                                  \
-    rt_inline void put_##dir##_##value##width##_of(                \
-        struct p9_connection *conn, unsigned idx,                  \
-        rt_uint##width##_t value)                                  \
-    {                                                              \
-        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
-        *vp = rt_cpu_to_le##width(value);                          \
+#define P9_OF_OPS_PUT(width, dir)                                   \
+    rt_inline void put_##dir##_##value##width##_of(                 \
+        struct p9_connection *conn, unsigned idx,                   \
+        rt_uint##width##_t value)                                   \
+    {                                                               \
+        value = rt_cpu_to_le##width(value);                         \
+                                                                    \
+        rt_memcpy(&conn->dir##_buffer[idx], &value, sizeof(value)); \
     }
 
 #define P9_OPS_PUT(width)                                                       \
     rt_inline rt_off_t put_value##width(struct p9_connection *conn,             \
                                         rt_off_t off, rt_uint##width##_t value) \
     {                                                                           \
-        ((rt_uint##width##_t *)(conn->tx_buffer + off))[0] =                    \
-            rt_cpu_to_le##width(value);                                         \
+        value = rt_cpu_to_le##width(value);                                     \
+                                                                                \
+        rt_memcpy(conn->tx_buffer + off, &value, sizeof(value));                \
+                                                                                \
         return off + sizeof(value);                                             \
     }
 
@@ -367,7 +380,7 @@ rt_err_t dfs_9pfs_del_tag(struct p9_protocol *p9p)
 
 static int p9_to_fs_err(int rc)
 {
-    const int p9_err[] = {
+    const int p9_err[1 - P9_MSG_SIZE_TOO_BIG] = {
         [0] = RT_EOK,
         [-P9_ERROR] = -EIO,
         [-P9_UNKNOWN_VERSION] = -ENOSYS,
@@ -383,6 +396,12 @@ static int p9_to_fs_err(int rc)
         [-P9_NO_BUFFER] = -ENOSPC,
         [-P9_MSG_SIZE_TOO_BIG] = -ENOSPC,
     };
+
+    /* Unknown or positive result codes cannot index the error table. */
+    if (rc > 0 || rc < P9_MSG_SIZE_TOO_BIG)
+    {
+        return -EIO;
+    }
 
     return p9_err[-rc];
 }
@@ -547,7 +566,7 @@ rt_inline int p9_walk_subpath(struct p9_connection *conn, const char *path)
 
 static int dfs_9pfs_open(struct dfs_file *fd)
 {
-    int rc;
+    int rc = 0;
     rt_uint32_t size;
     rt_bool_t is_root;
     struct p9_connection *conn;
@@ -682,7 +701,7 @@ static ssize_t dfs_9pfs_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int rc;
     size_t tcount = 0;
-    rt_uint32_t max_count, set, size, got;
+    rt_uint32_t max_count, set, size, got, rx_size = 0;
     struct p9_file *p9f = fd->vnode->data;
     struct p9_connection *conn = p9f->connection;
 
@@ -704,9 +723,25 @@ static ssize_t dfs_9pfs_read(struct dfs_file *fd, void *buf, size_t count)
         size = put_value32(conn, size, set);
         put_tx_value32_of(conn, P9_MSG_SIZE, size);
 
-        if (!(rc = p9_transaction(conn, size, RT_NULL)))
+        if (!(rc = p9_transaction(conn, size, &rx_size)))
         {
+            if (rx_size < P9_MSG_READ_DATA)
+            {
+                /* the reply does not even hold the count field */
+                tcount = p9_to_fs_err(P9_READ_UNEXPECTED_DATA);
+                break;
+            }
+
             got = get_rx_value32_of(conn, P9_MSG_READ_COUNT);
+
+            /*
+             * Never trust the wire: the file data must fit into the data
+             * that was actually received.
+             */
+            if (got > rx_size - P9_MSG_READ_DATA)
+            {
+                got = rx_size - P9_MSG_READ_DATA;
+            }
 
             if (got == 0)
             {
@@ -824,7 +859,7 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
 {
     int rc;
     rt_uint64_t off;
-    rt_uint32_t ret, end, stat_size, size;
+    rt_uint32_t ret, end, stat_size, size, rx_size = 0;
     struct p9_file *p9f = fd->vnode->data;
     struct p9_connection *conn = p9f->connection;
 
@@ -849,21 +884,54 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
     size = put_value32(conn, size, fd->vnode->size);
     put_tx_value32_of(conn, P9_MSG_SIZE, size);
 
-    if (!(rc = p9_transaction(conn, size, RT_NULL)))
+    if (!(rc = p9_transaction(conn, size, &rx_size)))
     {
+        if (rx_size < P9_MSG_READ_DATA)
+        {
+            /* the reply does not even hold the count field */
+            rt_mutex_release(&conn->lock);
+            return -EIO;
+        }
+
         ret = get_rx_value32_of(conn, P9_MSG_READ_COUNT);
+
+        /*
+         * Never trust the wire: the directory entries must fit into the
+         * data that was actually received.
+         */
+        if (ret > rx_size - P9_MSG_READ_DATA)
+        {
+            ret = rx_size - P9_MSG_READ_DATA;
+        }
         off = P9_MSG_READ_DATA - P9_MSG_STAT_SIZE;
 
         for (int i = 0; (rt_int32_t)ret > 0; off += stat_size, ret -= stat_size, ++i)
         {
+            if (ret < sizeof(rt_uint16_t))
+            {
+                /* not even the size field of the next record is left */
+                break;
+            }
+
             /*
              * size[2] type[2] dev[4] qid[1+4+8] mode[4] atime[4] mtime[4] length[8]
              */
             stat_size = get_rx_value16_of(conn, off + P9_MSG_STAT_SIZE) + sizeof(rt_uint16_t);
+            if (stat_size > ret)
+            {
+                /* the record overruns the received data */
+                break;
+            }
 
             if (i < fd->pos)
             {
                 continue;
+            }
+
+            if (stat_size < P9_MSG_STAT_NAME_LEN - P9_MSG_STAT_SIZE + sizeof(rt_uint16_t))
+            {
+                /* the record cannot hold the fields up to the name length */
+                break;
             }
 
             if (get_rx_value16_of(conn, off + P9_MSG_STAT_TYPE) & P9_STAT_MODE_DIR)
@@ -886,6 +954,11 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
              * n_muid[4]
              */
             dirp->d_namlen = get_rx_value16_of(conn, off + P9_MSG_STAT_NAME_LEN);
+            if (P9_MSG_STAT_NAME - P9_MSG_STAT_SIZE + dirp->d_namlen > stat_size)
+            {
+                /* the name overruns this record */
+                break;
+            }
             dirp->d_reclen = (rt_uint16_t)sizeof(struct dirent);
             rt_strncpy(dirp->d_name,
                        (void *)conn->rx_buffer + off + P9_MSG_STAT_NAME,

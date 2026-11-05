@@ -176,6 +176,11 @@ static rt_ssize_t _graphic_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_
     struct rt_graphic_device *gdev = raw_to_graphic(dev);
     struct rt_graphic_plane *plane = gdev->primary_plane;
 
+    if (pos < 0 || (rt_size_t)pos >= plane->framebuffer_len)
+    {
+        return 0;
+    }
+
     res = rt_min_t(rt_ssize_t, plane->framebuffer_len - pos, size);
 
     if (res > 0)
@@ -195,6 +200,11 @@ static rt_ssize_t _graphic_write(rt_device_t dev, rt_off_t pos, const void *buff
     rt_ssize_t res;
     struct rt_graphic_device *gdev = raw_to_graphic(dev);
     struct rt_graphic_plane *plane = gdev->primary_plane;
+
+    if (pos < 0 || (rt_size_t)pos >= plane->framebuffer_len)
+    {
+        return 0;
+    }
 
     res = rt_min_t(rt_ssize_t, plane->framebuffer_len - pos, size);
 

@@ -1,3 +1,15 @@
+menu "DAC Test"
+
+config RT_UTEST_DAC
+    bool "DAC framework Test"
+    default n
+    depends on RT_USING_DAC
+    help
+        Run the DAC framework test with simulated devices. No DAC hardware
+        is required.
+
+endmenu
+
 menu "PWM Test"
 
 config RT_UTEST_PWM
