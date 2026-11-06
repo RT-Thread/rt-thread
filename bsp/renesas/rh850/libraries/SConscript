@@ -1,0 +1,11 @@
+import os
+from building import *
+
+cwd  = GetCurrentDir()
+objs = []
+
+for d in ['common', 'drivers', 'u2c']:
+    if os.path.isfile(os.path.join(cwd, d, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')
