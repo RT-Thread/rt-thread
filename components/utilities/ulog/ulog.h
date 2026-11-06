@@ -67,10 +67,23 @@ void ulog_deinit(void);
 #define ULOG_LINE_INFO 0
 #endif
 
-#define LOG_E(...)                      ulog_output_ctx(LOG_LVL_ERROR, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
-#define LOG_W(...)                      ulog_output_ctx(LOG_LVL_WARNING, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
-#define LOG_I(...)                      ulog_output_ctx(LOG_LVL_INFO, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
-#define LOG_D(...)                      ulog_output_ctx(LOG_LVL_DBG, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
+/*
+ * When all three switches are disabled, LOG_X keeps using the original
+ * ulog_e/w/i/d path, so that the compile-time log level filtering
+ * (LOG_LVL / ULOG_OUTPUT_LVL) still works and the arguments are not
+ * evaluated for logs that would be filtered out.
+ */
+#if defined(ULOG_USING_OUTPUT_FILE) || defined(ULOG_USING_OUTPUT_FUNC) || defined(ULOG_USING_OUTPUT_LINE)
+#define LOG_E(...)                      ulog_e_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
+#define LOG_W(...)                      ulog_w_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
+#define LOG_I(...)                      ulog_i_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
+#define LOG_D(...)                      ulog_d_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
+#else
+#define LOG_E(...)                      ulog_e(LOG_TAG, __VA_ARGS__)
+#define LOG_W(...)                      ulog_w(LOG_TAG, __VA_ARGS__)
+#define LOG_I(...)                      ulog_i(LOG_TAG, __VA_ARGS__)
+#define LOG_D(...)                      ulog_d(LOG_TAG, __VA_ARGS__)
+#endif /* ULOG_USING_OUTPUT_FILE || ULOG_USING_OUTPUT_FUNC || ULOG_USING_OUTPUT_LINE */
 #define LOG_RAW(...)                    ulog_raw(__VA_ARGS__)
 #define LOG_HEX(name, width, buf, size) ulog_hex(name, width, buf, size)
 

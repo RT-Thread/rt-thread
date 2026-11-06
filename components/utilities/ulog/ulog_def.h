@@ -72,26 +72,38 @@ extern "C" {
 
 #if (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG)
     #define ulog_d(TAG, ...)           ulog_output(LOG_LVL_DBG, TAG, RT_TRUE, __VA_ARGS__)
+    #define ulog_d_ctx(TAG, FILE, FUNC, LINE, ...) \
+        ulog_output_ctx(LOG_LVL_DBG, TAG, FILE, FUNC, LINE, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_d(TAG, ...)
+    #define ulog_d_ctx(TAG, FILE, FUNC, LINE, ...)
 #endif /* (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG) */
 
 #if (LOG_LVL >= LOG_LVL_INFO) && (ULOG_OUTPUT_LVL >= LOG_LVL_INFO)
     #define ulog_i(TAG, ...)           ulog_output(LOG_LVL_INFO, TAG, RT_TRUE, __VA_ARGS__)
+    #define ulog_i_ctx(TAG, FILE, FUNC, LINE, ...) \
+        ulog_output_ctx(LOG_LVL_INFO, TAG, FILE, FUNC, LINE, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_i(TAG, ...)
+    #define ulog_i_ctx(TAG, FILE, FUNC, LINE, ...)
 #endif /* (LOG_LVL >= LOG_LVL_INFO) && (ULOG_OUTPUT_LVL >= LOG_LVL_INFO) */
 
 #if (LOG_LVL >= LOG_LVL_WARNING) && (ULOG_OUTPUT_LVL >= LOG_LVL_WARNING)
     #define ulog_w(TAG, ...)           ulog_output(LOG_LVL_WARNING, TAG, RT_TRUE, __VA_ARGS__)
+    #define ulog_w_ctx(TAG, FILE, FUNC, LINE, ...) \
+        ulog_output_ctx(LOG_LVL_WARNING, TAG, FILE, FUNC, LINE, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_w(TAG, ...)
+    #define ulog_w_ctx(TAG, FILE, FUNC, LINE, ...)
 #endif /* (LOG_LVL >= LOG_LVL_WARNING) && (ULOG_OUTPUT_LVL >= LOG_LVL_WARNING) */
 
 #if (LOG_LVL >= LOG_LVL_ERROR) && (ULOG_OUTPUT_LVL >= LOG_LVL_ERROR)
     #define ulog_e(TAG, ...)           ulog_output(LOG_LVL_ERROR, TAG, RT_TRUE, __VA_ARGS__)
+    #define ulog_e_ctx(TAG, FILE, FUNC, LINE, ...) \
+        ulog_output_ctx(LOG_LVL_ERROR, TAG, FILE, FUNC, LINE, RT_TRUE, __VA_ARGS__)
 #else
     #define ulog_e(TAG, ...)
+    #define ulog_e_ctx(TAG, FILE, FUNC, LINE, ...)
 #endif /* (LOG_LVL >= LOG_LVL_ERROR) && (ULOG_OUTPUT_LVL >= LOG_LVL_ERROR) */
 
 #if (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG)
