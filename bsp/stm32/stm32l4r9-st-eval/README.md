@@ -40,9 +40,11 @@
 | LCD            		|     支持     	| DSI mode round lcd                        |
 | TOUCH            		|     支持     	| touch for round lcd                       |
 | SRAM              	|     支持     	|                              				|
+| OSPI Flash          |     支持     	|                              				|
 | **片上外设**     		| **支持情况** 	| **备注**                              		|
 | GPIO              	|     支持     	| 											|
 | UART              	|     支持     	| USART3                             		|
+| OCTOSPI           	|     支持     	| OCTOSPI1                           		|
 
 
 

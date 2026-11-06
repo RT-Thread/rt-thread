@@ -68,7 +68,6 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         const uint8_t *data);
 static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data);
 static sfud_err wait_busy(const sfud_flash *flash);
-static sfud_err reset(const sfud_flash *flash);
 static sfud_err read_jedec_id(sfud_flash *flash);
 static sfud_err set_write_enabled(const sfud_flash *flash, bool enabled);
 static sfud_err set_4_byte_address_mode(sfud_flash *flash, bool enabled);
@@ -77,6 +76,20 @@ static void make_address_byte_array(const sfud_flash *flash, uint32_t addr, uint
 /* ../port/sfup_port.c */
 extern void sfud_log_debug(const char *file, const long line, const char *format, ...);
 extern void sfud_log_info(const char *format, ...);
+
+#ifdef SFUD_USING_OSPI
+/**
+ * Convert the 8-bit SPI command to a 16-bit OSPI command
+ *
+ * @param flash flash device
+ *
+ * @return result
+ */
+static inline uint16_t sfud_ospi_cmd_value(uint8_t ins)
+{
+    return (uint16_t)(((uint16_t)ins << 8) | (uint16_t)(ins ^ 0xFF));
+}
+#endif
 
 /**
  * SFUD initialize by flash device
@@ -161,6 +174,117 @@ size_t sfud_get_device_num(void) {
 const sfud_flash *sfud_get_device_table(void) {
     return flash_table;
 }
+
+#ifdef SFUD_USING_OSPI
+static void ospi_set_cmd_format(sfud_flash *flash, sfud_ospi_cmd_format *cmd, uint8_t ins, uint8_t dummy_cycles) {
+    cmd->instruction = sfud_ospi_cmd_value(ins);
+    cmd->instruction_size = 16;
+    cmd->instruction_lines = 8;
+    cmd->address_lines = 0;
+    cmd->address_size = 0;
+    cmd->data_lines = 0;
+    switch (ins) {
+    case SFUD_CMD_WRITE_ENABLE:
+    case SFUD_CMD_WRITE_DISABLE:
+    case SFUD_CMD_ENABLE_RESET:
+    case SFUD_CMD_RESET:
+        cmd->address_lines = 0;
+        cmd->address_size = 0;
+        cmd->data_lines = 0;
+        break;
+    case SFUD_CMD_READ_STATUS_REGISTER:
+    case SFUD_CMD_WRITE_STATUS_REGISTER:
+    case SFUD_CMD_READ_DATA_OSPI_STR:
+    case SFUD_CMD_READ_DATA_OSPI_DTR:
+    case SFUD_CMD_PAGE_PROGRAM_4B:
+        cmd->address_lines = 8;
+        cmd->address_size = 32;
+        cmd->data_lines = 8;
+        break;
+    case SFUD_CMD_ERASE_CHIP:
+        cmd->address_lines = 0;
+        cmd->address_size = 0;
+        cmd->data_lines = 0;
+        break;
+    case SFUD_CMD_ERASE_SECTOR_4B:
+        cmd->address_lines = 8;
+        cmd->address_size = 32;
+        cmd->data_lines = 0;
+        break;
+    }
+    if (ins == flash->chip.erase_gran_cmd) {
+        cmd->address_lines = 8;
+        cmd->address_size = 32;
+        cmd->data_lines = 0;
+    }
+
+    cmd->alternate_bytes_lines = 0;
+    cmd->dummy_cycles = dummy_cycles;
+}
+
+static sfud_err ospi_dtr_page_program(sfud_flash *flash, uint32_t addr, const uint8_t *data, size_t size) {
+    sfud_err result = SFUD_SUCCESS;
+    const sfud_spi *spi = &flash->spi;
+    uint32_t write_addr;
+    size_t head_len;
+    size_t write_len;
+    uint8_t *write_buf = NULL;
+    sfud_ospi_cmd_format ospi_cmd;
+
+    SFUD_ASSERT(flash);
+    SFUD_ASSERT(data);
+    SFUD_ASSERT(spi->ospi_write_read);
+
+    /* DTR write needs an even start address and even length, and must not cross a page. */
+    write_addr = addr & ~1u;
+    head_len = addr - write_addr;
+    write_len = size + head_len;
+    if (write_len & 1u) {
+        write_len++;
+    }
+
+    if (write_addr + write_len > flash->chip.capacity) {
+        SFUD_INFO("Error: DTR write exceeds flash boundary.");
+        return SFUD_ERR_ADDR_OUT_OF_BOUND;
+    }
+
+    if (write_len == size) {
+        /* even address and even length, write directly */
+        ospi_set_cmd_format(flash, &ospi_cmd, SFUD_CMD_PAGE_PROGRAM_4B, 0);
+        result = spi->ospi_write_read(spi, write_addr, &ospi_cmd, data, size, NULL, 0);
+        if (result != SFUD_SUCCESS) {
+            SFUD_INFO("Error: Flash DTR write OSPI communicate error.");
+        }
+        return result;
+    }
+
+    write_buf = (uint8_t *)rt_malloc(write_len);
+    if (write_buf == RT_NULL) {
+        SFUD_INFO("Error: Failed to allocate DTR program buffer.");
+        return SFUD_ERR_WRITE;
+    }
+
+    /* read then write to keep the head bytes unchanged */
+    ospi_set_cmd_format(flash, &ospi_cmd, SFUD_CMD_READ_DATA_OSPI_DTR, SFUD_OSPI_6_DUMMY_CYCLES);
+    result = spi->ospi_write_read(spi, write_addr, &ospi_cmd, NULL, 0, write_buf, write_len);
+    if (result != SFUD_SUCCESS) {
+        SFUD_INFO("Error: Flash DTR read OSPI communicate error.");
+        rt_free(write_buf);
+        return result;
+    }
+
+    rt_memcpy(write_buf + head_len, data, size);
+
+    ospi_set_cmd_format(flash, &ospi_cmd, SFUD_CMD_PAGE_PROGRAM_4B, 0);
+    result = spi->ospi_write_read(spi, write_addr, &ospi_cmd, write_buf, write_len, NULL, 0);
+    if (result != SFUD_SUCCESS) {
+        SFUD_INFO("Error: Flash DTR write OSPI communicate error.");
+    }
+    rt_free(write_buf);
+
+    return result;
+}
+#endif
 
 #ifdef SFUD_USING_QSPI
 static void qspi_set_read_cmd_format(sfud_flash *flash, uint8_t ins, uint8_t ins_lines, uint8_t addr_lines,
@@ -348,7 +472,7 @@ static sfud_err hardware_init(sfud_flash *flash) {
     }
 
     /* reset flash device */
-    result = reset(flash);
+    result = sfud_reset(flash);
     if (result != SFUD_SUCCESS) {
         return result;
     }
@@ -366,6 +490,12 @@ static sfud_err hardware_init(sfud_flash *flash) {
         return result;
     }
 
+#ifdef SFUD_USING_OSPI
+    SFUD_ASSERT(flash->spi.get_ospi_mode);
+    if (flash->spi.get_ospi_mode(&flash->spi) != SFUD_OSPI_MODE_OFF) {
+        flash->addr_in_4_byte = true;
+    } else
+#endif
     /* if the flash is large than 16MB (256Mb) then enter in 4-Byte addressing mode */
     if (flash->chip.capacity > (1L << 24)) {
         result = set_4_byte_address_mode(flash, true);
@@ -423,6 +553,46 @@ sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t 
     result = wait_busy(flash);
 
     if (result == SFUD_SUCCESS) {
+#ifdef SFUD_USING_OSPI
+        if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+            sfud_flash *f = (sfud_flash *)flash;
+            sfud_ospi_cmd_format ospi_cmd;
+            uint8_t cmd = (spi->get_ospi_mode(spi) == SFUD_OSPI_MODE_DTR) ? SFUD_CMD_READ_DATA_OSPI_DTR : SFUD_CMD_READ_DATA_OSPI_STR;
+            ospi_set_cmd_format(f, &ospi_cmd, cmd, SFUD_OSPI_6_DUMMY_CYCLES);
+
+            if (spi->get_ospi_mode(spi) == SFUD_OSPI_MODE_DTR) {
+                uint32_t read_addr = addr & ~1u;
+                size_t read_len = size + (addr & 1u);
+
+                if (read_len & 1u) {
+                    read_len++;
+                }
+
+                if (read_addr + read_len > flash->chip.capacity) {
+                    SFUD_INFO("Error: DTR read exceeds flash boundary.");
+                    result = SFUD_ERR_ADDR_OUT_OF_BOUND;
+                } else if (read_len == size) {
+                    /* even address and even length, read directly */
+                    result = spi->ospi_write_read(&flash->spi, addr, &ospi_cmd, NULL, 0, data, size);
+                } else {
+                    uint8_t *read_buf = (uint8_t *)rt_malloc(read_len);
+                    if (read_buf == RT_NULL) {
+                        SFUD_INFO("Error: Failed to allocate DTR read buffer.");
+                        result = SFUD_ERR_READ;
+                    } else {
+                        result = spi->ospi_write_read(&flash->spi, read_addr, &ospi_cmd, NULL, 0, read_buf, read_len);
+                        if (result == SFUD_SUCCESS) {
+                            rt_memcpy(data, read_buf + (addr & 1u), size);
+                        }
+                        rt_free(read_buf);
+                    }
+                }
+            } else {
+                result = spi->ospi_write_read(&flash->spi, addr, &ospi_cmd, NULL, 0, data, size);
+            }
+        }
+        else
+#endif
 #ifdef SFUD_USING_QSPI
         if (flash->read_cmd_format.instruction != SFUD_CMD_READ_DATA) {
             result = spi->qspi_read(spi, addr, (sfud_qspi_read_cmd_format *)&flash->read_cmd_format, data, size);
@@ -470,6 +640,15 @@ sfud_err sfud_chip_erase(const sfud_flash *flash) {
     }
 
     cmd_data[0] = SFUD_CMD_ERASE_CHIP;
+#ifdef SFUD_USING_OSPI
+    if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+        sfud_flash *f = (sfud_flash *)flash;
+        sfud_ospi_cmd_format ospi_cmd;
+        ospi_set_cmd_format(f, &ospi_cmd, SFUD_CMD_ERASE_CHIP, 0);
+        result = spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, NULL, 0, NULL, 0);
+    }
+    else
+#endif
     /* dual-buffer write, like AT45DB series flash chip erase operate is different for other flash */
     if (flash->chip.write_mode & SFUD_WM_DUAL_BUFFER) {
         cmd_data[1] = 0x94;
@@ -479,6 +658,13 @@ sfud_err sfud_chip_erase(const sfud_flash *flash) {
     } else {
         result = spi->wr(spi, cmd_data, 1, NULL, 0);
     }
+#ifdef SFUD_USING_OSPI
+    if (result != SFUD_SUCCESS) {
+        SFUD_INFO("Error: Flash chip erase OSPI communicate error.");
+        goto __exit;
+    }
+    else
+#endif
     if (result != SFUD_SUCCESS) {
         SFUD_INFO("Error: Flash chip erase SPI communicate error.");
         goto __exit;
@@ -556,13 +742,28 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
             goto __exit;
         }
 
-        cmd_data[0] = cur_erase_cmd;
-        make_address_byte_array(flash, addr, &cmd_data[1]);
-        cmd_size = flash->addr_in_4_byte ? 5 : 4;
-        result = spi->wr(spi, cmd_data, cmd_size, NULL, 0);
-        if (result != SFUD_SUCCESS) {
-            SFUD_INFO("Error: Flash erase SPI communicate error.");
-            goto __exit;
+#ifdef SFUD_USING_OSPI
+        if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+            sfud_flash *f = (sfud_flash *)flash;
+            sfud_ospi_cmd_format ospi_cmd;
+            ospi_set_cmd_format(f, &ospi_cmd, cur_erase_cmd, 0);
+            result = spi->ospi_write_read(&flash->spi, addr, &ospi_cmd, NULL, 0, NULL, 0);
+            if (result != SFUD_SUCCESS) {
+                SFUD_INFO("Error: Flash erase OSPI communicate error.");
+                goto __exit;
+            }
+        }
+        else
+#endif
+        {
+            cmd_data[0] = cur_erase_cmd;
+            make_address_byte_array(flash, addr, &cmd_data[1]);
+            cmd_size = flash->addr_in_4_byte ? 5 : 4;
+            result = spi->wr(spi, cmd_data, cmd_size, NULL, 0);
+            if (result != SFUD_SUCCESS) {
+                SFUD_INFO("Error: Flash erase SPI communicate error.");
+                goto __exit;
+            }
         }
         result = wait_busy(flash);
         if (result != SFUD_SUCCESS) {
@@ -659,12 +860,32 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         size -= data_size;
         addr += data_size;
 
-        rt_memcpy(&cmd_data[cmd_size], data, data_size);
+#ifdef SFUD_USING_OSPI
+        if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+            sfud_flash *f = (sfud_flash *)flash;
+            sfud_ospi_cmd_format ospi_cmd;
+            uint32_t write_start = (uint32_t)(addr - data_size);
 
-        result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
-        if (result != SFUD_SUCCESS) {
-            SFUD_INFO("Error: Flash write SPI communicate error.");
-            goto __exit;
+            if (spi->get_ospi_mode(spi) == SFUD_OSPI_MODE_DTR) {
+                result = ospi_dtr_page_program(f, write_start, data, data_size);
+            } else {
+                ospi_set_cmd_format(f, &ospi_cmd, SFUD_CMD_PAGE_PROGRAM_4B, 0);
+                result = spi->ospi_write_read(&flash->spi, write_start, &ospi_cmd, data, data_size, NULL, 0);
+            }
+            if (result != SFUD_SUCCESS) {
+                goto __exit;
+            }
+        }
+        else
+#endif
+        {
+            rt_memcpy(&cmd_data[cmd_size], data, data_size);
+
+            result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
+            if (result != SFUD_SUCCESS) {
+                SFUD_INFO("Error: Flash write SPI communicate error.");
+                goto __exit;
+            }
         }
         result = wait_busy(flash);
         if (result != SFUD_SUCCESS) {
@@ -822,33 +1043,58 @@ sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size, c
     return result;
 }
 
-static sfud_err reset(const sfud_flash *flash) {
+sfud_err sfud_reset(const sfud_flash *flash) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
     uint8_t cmd_data[2];
 
     SFUD_ASSERT(flash);
 
-    cmd_data[0] = SFUD_CMD_ENABLE_RESET;
-    result = spi->wr(spi, cmd_data, 1, NULL, 0);
-    if (result == SFUD_SUCCESS) {
-        result = wait_busy(flash);
-    } else {
-        SFUD_INFO("Error: Flash device reset failed.");
-        return result;
+#ifdef SFUD_USING_OSPI
+    if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+        sfud_flash *f = (sfud_flash *)flash;
+        sfud_ospi_cmd_format ospi_cmd;
+
+        ospi_set_cmd_format(f, &ospi_cmd, SFUD_CMD_ENABLE_RESET, 0);
+        result = spi->ospi_write_read(spi, 0, &ospi_cmd, NULL, 0, NULL, 0);
+
+        if (result == SFUD_SUCCESS) {
+            ospi_set_cmd_format(f, &ospi_cmd, SFUD_CMD_RESET, 0);
+            result = spi->ospi_write_read(spi, 0, &ospi_cmd, NULL, 0, NULL, 0);
+        }
+
+        if (result == SFUD_SUCCESS) {
+            if (spi->set_ospi_mode) {
+                spi->set_ospi_mode(spi, SFUD_OSPI_MODE_OFF);
+            }
+        } else {
+            SFUD_INFO("Error: Flash device reset failed.");
+        }
     }
+    else
+#endif
+    {
+        cmd_data[0] = SFUD_CMD_ENABLE_RESET;
+        result = spi->wr(spi, cmd_data, 1, NULL, 0);
+        if (result == SFUD_SUCCESS) {
+            result = wait_busy(flash);
+        } else {
+            SFUD_INFO("Error: Flash device reset failed.");
+            return result;
+        }
 
-    cmd_data[1] = SFUD_CMD_RESET;
-    result = spi->wr(spi, &cmd_data[1], 1, NULL, 0);
+        cmd_data[1] = SFUD_CMD_RESET;
+        result = spi->wr(spi, &cmd_data[1], 1, NULL, 0);
 
-    if (result == SFUD_SUCCESS) {
-        result = wait_busy(flash);
-    }
+        if (result == SFUD_SUCCESS) {
+            result = wait_busy(flash);
+        }
 
-    if (result == SFUD_SUCCESS) {
-        SFUD_DEBUG("Flash device reset success.");
-    } else {
-        SFUD_INFO("Error: Flash device reset failed.");
+        if (result == SFUD_SUCCESS) {
+            SFUD_DEBUG("Flash device reset success.");
+        } else {
+            SFUD_INFO("Error: Flash device reset failed.");
+        }
     }
 
     return result;
@@ -887,16 +1133,42 @@ static sfud_err read_jedec_id(sfud_flash *flash) {
 static sfud_err set_write_enabled(const sfud_flash *flash, bool enabled) {
     sfud_err result = SFUD_SUCCESS;
     uint8_t cmd, register_status;
+    const sfud_spi *spi = &flash->spi;
 
     SFUD_ASSERT(flash);
 
+#ifdef SFUD_USING_OSPI
+    if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+        cmd = enabled ? SFUD_CMD_WRITE_ENABLE : SFUD_CMD_WRITE_DISABLE;
+        sfud_flash *f = (sfud_flash *)flash;
+        sfud_ospi_cmd_format ospi_cmd;
+        ospi_set_cmd_format(f, &ospi_cmd, cmd, 0);
+        result = spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, NULL, 0, NULL, 0);
+        
+        if (result == SFUD_SUCCESS) {
+            result = sfud_read_status(flash, &register_status);
+        }
+
+        if (result == SFUD_SUCCESS) {
+            if (enabled && (register_status & SFUD_STATUS_REGISTER_WEL) == 0) {
+                SFUD_INFO("Error: Can't enable write status.");
+                return SFUD_ERR_WRITE;
+            } else if (!enabled && (register_status & SFUD_STATUS_REGISTER_WEL) != 0) {
+                SFUD_INFO("Error: Can't disable write status.");
+                return SFUD_ERR_WRITE;
+            }
+        }
+        
+        return result;
+    }
+#endif
     if (enabled) {
         cmd = SFUD_CMD_WRITE_ENABLE;
     } else {
         cmd = SFUD_CMD_WRITE_DISABLE;
     }
 
-    result = flash->spi.wr(&flash->spi, &cmd, 1, NULL, 0);
+    result = spi->wr(&flash->spi, &cmd, 1, NULL, 0);
 
     if (result == SFUD_SUCCESS) {
         result = sfud_read_status(flash, &register_status);
@@ -965,11 +1237,30 @@ static sfud_err set_4_byte_address_mode(sfud_flash *flash, bool enabled) {
  */
 sfud_err sfud_read_status(const sfud_flash *flash, uint8_t *status) {
     uint8_t cmd = SFUD_CMD_READ_STATUS_REGISTER;
+    const sfud_spi *spi = &flash->spi;
 
     SFUD_ASSERT(flash);
     SFUD_ASSERT(status);
 
-    return flash->spi.wr(&flash->spi, &cmd, 1, status, 1);
+#ifdef SFUD_USING_OSPI
+    if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+        sfud_flash *f = (sfud_flash *)flash;
+        sfud_ospi_cmd_format ospi_cmd;
+        ospi_set_cmd_format(f, &ospi_cmd, cmd, SFUD_OSPI_6_DUMMY_CYCLES);
+        if (spi->get_ospi_mode(spi) == SFUD_OSPI_MODE_STR) {
+                return spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, NULL, 0, status, 1);
+            } else {
+                sfud_err result = SFUD_SUCCESS;
+                uint8_t dtr_databuf[2] = {0};
+                result = spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, NULL, 0, dtr_databuf, sizeof(dtr_databuf));
+                /* when read status register in 8-8-8 DTR mode, 1-Byte data will be read twice */
+                *status = dtr_databuf[0];
+                return result;
+            }
+    }
+#endif
+
+    return spi->wr(&flash->spi, &cmd, 1, status, 1);
 }
 
 static sfud_err wait_busy(const sfud_flash *flash) {
@@ -1032,9 +1323,27 @@ sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t st
     }
 
     if (result == SFUD_SUCCESS) {
-        cmd_data[0] = SFUD_CMD_WRITE_STATUS_REGISTER;
-        cmd_data[1] = status;
-        result = spi->wr(spi, cmd_data, 2, NULL, 0);
+#ifdef SFUD_USING_OSPI
+        if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+            sfud_flash *f = (sfud_flash *)flash;
+            sfud_ospi_cmd_format ospi_cmd;
+            ospi_set_cmd_format(f, &ospi_cmd, SFUD_CMD_WRITE_STATUS_REGISTER, 0);
+            if (spi->get_ospi_mode(spi) == SFUD_OSPI_MODE_STR) {
+                result = spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, &status, 1, NULL, 0);
+            } else {
+                uint8_t dtr_databuf[2];
+                dtr_databuf[0] = status;
+                dtr_databuf[1] = status;
+                result = spi->ospi_write_read(&flash->spi, 0, &ospi_cmd, dtr_databuf, sizeof(dtr_databuf), NULL, 0);
+            }
+        }
+        else
+#endif
+        {
+            cmd_data[0] = SFUD_CMD_WRITE_STATUS_REGISTER;
+            cmd_data[1] = status;
+            result = spi->wr(spi, cmd_data, 2, NULL, 0);
+        }
     }
 
     if (result != SFUD_SUCCESS) {
