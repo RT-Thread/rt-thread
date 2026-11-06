@@ -849,6 +849,19 @@ static rt_err_t sdio_dw_submit_data_dma(struct sdio_dw *sd, struct rt_mmcsd_data
         return -RT_ENOSYS;
     }
 
+    if (sd->use_dma == TRANS_MODE_IDMAC && !sd->dma_64bit_address)
+    {
+        rt_uint64_t addr = (rt_ubase_t)rt_kmem_v2p(sd->last_buf);
+
+        /* Buffers can be above the controller's 32-bit DMA aperture. */
+        if (!sd->last_remain || addr > 0xffffffffULL ||
+                sd->last_remain - 1 > 0xffffffffULL - addr)
+        {
+            sd->dma_ops->stop(sd);
+            return -RT_ENOSYS;
+        }
+    }
+
     sd->using_dma = RT_TRUE;
 
     /*
@@ -1564,6 +1577,15 @@ static void sdio_dw_init_dma(struct sdio_dw *sd)
         {
             LOG_E("Could not alloc DMA memory witch cache");
 
+            goto _no_dma;
+        }
+
+        if (!sd->dma_64bit_address &&
+                ((rt_uint64_t)sd->dma_buf_phy > 0xffffffffULL ||
+                 DESC_RING_BUF_SZ - 1 > 0xffffffffULL - (rt_uint64_t)sd->dma_buf_phy))
+        {
+            rt_dma_free_coherent(sd->bus_dev, DESC_RING_BUF_SZ, sd->dma_buf, sd->dma_buf_phy);
+            sd->dma_buf = RT_NULL;
             goto _no_dma;
         }
 
@@ -3217,15 +3239,15 @@ _out_clk:
 
     rt_strncpy(&dev_name[len], "-cmd11", sizeof(dev_name) - len);
     rt_timer_init(&sd->cmd11_timer, dev_name, sdio_dw_cmd11_timer, sd,
-            0, RT_TIMER_FLAG_PERIODIC);
+            0, RT_TIMER_FLAG_ONE_SHOT);
 
     rt_strncpy(&dev_name[len], "-cto", sizeof(dev_name) - len);
     rt_timer_init(&sd->cto_timer, dev_name, sdio_dw_cto_timer, sd,
-            0, RT_TIMER_FLAG_PERIODIC);
+            0, RT_TIMER_FLAG_ONE_SHOT);
 
     rt_strncpy(&dev_name[len], "-dto", sizeof(dev_name) - len);
     rt_timer_init(&sd->dto_timer, dev_name, sdio_dw_dto_timer, sd,
-            0, RT_TIMER_FLAG_PERIODIC);
+            0, RT_TIMER_FLAG_ONE_SHOT);
 
     mmcsd_change(sd->slot->host);
 
