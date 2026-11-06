@@ -55,6 +55,7 @@ endif
 
 config RT_UTEST_SPI_VIRT_BUS
     bool "SPI virtual loopback bus (software)"
+    depends on !RT_USING_DM
     select RT_USING_SPI
     default n
     help
@@ -63,6 +64,13 @@ config RT_UTEST_SPI_VIRT_BUS
         such as QEMU targets, or for CI runs that have no wired loopback.
         Keep it disabled on boards with a hardware SPI controller: enabling
         it would add a second bus next to the real one.
+
+        This option is only available without the device model
+        (RT_USING_DM). spi_virt_bus.c registers the bus with
+        rt_spi_bus_register(), which needs no device tree node; on a DM
+        and OFW based BSP without a matching DT node that registration
+        fails with -RT_EINVAL. Do not enable this option on BSPs that
+        enable RT_USING_DM.
 
 if RT_UTEST_SPI_VIRT_BUS
 
