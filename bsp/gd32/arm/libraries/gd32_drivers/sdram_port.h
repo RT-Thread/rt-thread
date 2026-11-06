@@ -27,24 +27,56 @@
 #define SDRAM_ROW_BITS                  EXMC_SDRAM_ROW_ADDRESS_13
 /* cas latency clock number: 1, 2, 3 */
 #define SDRAM_CAS_LATENCY               EXMC_CAS_LATENCY_3_SDCLK
+
+#if defined(SOC_SERIES_GD32H77x_H78X) && defined(BSP_USING_OV7670)
+/* Keep the camera configuration validated with internal rendering and IPA. */
+#define SDRAM_BURST_READ                DISABLE
+#else
+#define SDRAM_BURST_READ                ENABLE
+#endif
+
 /* read pipe delay: 0, 1, 2 */
+#if defined(SOC_SERIES_GD32H77x_H78X)
+/* The Gino board port selects CK_AHB (300 MHz).
+ * Refresh is derived from the actual clock, not a nominal PLL target. */
+#define SDRAM_USE_PLL1R_EXMC            0
+#define SDRAM_REFRESH_PERIOD_MS         64U
+#define SDRAM_REFRESH_ROWS              8192U
+#if defined(BSP_USING_OV7670)
+#define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_2_CK_EXMC
+#else
+#define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_1_CK_EXMC
+#endif
+#if defined(BSP_USING_OV7670)
+/* CK_AHB / 3 = 100 MHz; non-camera projects retain their 150 MHz clock. */
+#define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_3_CK_EXMC
+#else
+#define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_2_CK_EXMC
+#endif
+#define SDRAM_GPIO_SPEED                GPIO_OSPEED_85MHZ
+
+/* Keep the 150 MHz timing-cycle counts; 100 MHz increases their duration. */
+#define LOADTOACTIVEDELAY               2
+#define EXITSELFREFRESHDELAY            15
+#define SELFREFRESHTIME                 14
+#define ROWCYCLEDELAY                   9
+#define WRITERECOVERYTIME               3
+#define RPDELAY                         4
+#define RCDDELAY                        4
+#else
 #define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_2_HCLK
-/* clock divid: 2, 3 */
 #define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_3_HCLK
-/* refresh rate counter */
+#define SDRAM_GPIO_SPEED                GPIO_OSPEED_50MHZ
 #define SDRAM_REFRESH_COUNT             ((uint32_t)0x02A5)
-#define SDRAM_SIZE                      ((uint32_t)0x2000000)
-#define SDRAM_TIMEOUT                   ((uint32_t)0x0000FFFF)
 
 /* Timing configuration for W9825G6KH-6 */
-/* 100 MHz of HCKL3 clock frequency (200MHz/2) */
 /* TMRD: 2 Clock cycles */
 #define LOADTOACTIVEDELAY               2
 /* TXSR: 8x10ns */
 #define EXITSELFREFRESHDELAY            8
-/* TRAS: 5x10ns */
+/* TRC: 7x10ns */
 #define SELFREFRESHTIME                 7
-/* TRC:  7x10ns */
+/* TRAS: 5x10ns */
 #define ROWCYCLEDELAY                   5
 /* TWR:  2 Clock cycles */
 #define WRITERECOVERYTIME               2
@@ -52,6 +84,10 @@
 #define RPDELAY                         3
 /* TRCD: 2x10ns */
 #define RCDDELAY                        3
+#endif
+
+#define SDRAM_SIZE                      ((uint32_t)0x2000000)
+#define SDRAM_TIMEOUT                   ((uint32_t)0x0000FFFF)
 
 /* memory mode register */
 #define SDRAM_MODEREG_BURST_LENGTH_1             ((uint16_t)0x0000)
@@ -65,5 +101,7 @@
 #define SDRAM_MODEREG_OPERATING_MODE_STANDARD    ((uint16_t)0x0000)
 #define SDRAM_MODEREG_WRITEBURST_MODE_PROGRAMMED ((uint16_t)0x0000)
 #define SDRAM_MODEREG_WRITEBURST_MODE_SINGLE     ((uint16_t)0x0200)
+
+void rt_hw_sdram_gpio_init(void);
 
 #endif

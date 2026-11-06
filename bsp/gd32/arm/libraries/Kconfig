@@ -31,6 +31,11 @@ config SOC_SERIES_GD32H7xx
     select ARCH_ARM_CORTEX_M7
     select SOC_FAMILY_GD32
 
+config SOC_SERIES_GD32H77x_H78X
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_GD32
+
 config SOC_SERIES_GD32F5xx
     bool
     select ARCH_ARM_CORTEX_M33
