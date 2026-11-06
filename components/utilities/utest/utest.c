@@ -222,6 +222,39 @@ static int utest_help(void)
     return 0;
 }
 
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+static void utest_loop_runtime_info(rt_uint32_t loop)
+{
+    if (tc_loop <= 1)
+    {
+        return;
+    }
+
+    LOG_I("[==========] [ utest    ] loop %d/%d runtime info", loop, tc_loop);
+
+#ifdef RT_USING_FINSH
+    {
+        extern int msh_exec(char *cmd, rt_size_t length);
+        static char free_cmd[] = "free";
+        static char ps_cmd[] = "ps";
+
+        msh_exec(free_cmd, sizeof(free_cmd) - 1);
+        msh_exec(ps_cmd, sizeof(ps_cmd) - 1);
+    }
+#else
+    {
+        rt_size_t total = 0;
+        rt_size_t used = 0;
+        rt_size_t max_used = 0;
+
+        rt_memory_info(&total, &used, &max_used);
+        LOG_I("[==========] [ utest    ] memory total:%d used:%d maximum:%d",
+              total, used, max_used);
+    }
+#endif /* RT_USING_FINSH */
+}
+#endif /* RT_UTEST_AUTO_RUN_LOOP */
+
 static void utest_do_run(const char *utest_name)
 {
     rt_size_t i;
@@ -352,7 +385,18 @@ static void utest_do_run(const char *utest_name)
         }
 
         LOG_I("[==========] [ utest    ] finished");
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+        utest_loop_runtime_info(index + 1);
+#endif
     }
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    /* Emitted once, after every loop and its runtime info. CI uses this line
+     * instead of the per-loop "finished" one, otherwise it would stop after the
+     * first loop and miss the remaining loops and their free/ps output. */
+    LOG_I("[==========] [ utest    ] all loops finished");
+#endif
 }
 
 static void utest_thr_entry(void *para)
@@ -378,7 +422,16 @@ static void utest_thread_create(const char *utest_name)
 #ifdef RT_UTEST_USING_AUTO_RUN
 static int utest_auto_run(void)
 {
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    tc_loop = RT_UTEST_AUTO_RUN_LOOP;
+#else
     tc_loop = 1;
+#endif
+    if (tc_loop == 0)
+    {
+        tc_loop = 1;
+    }
+
     utest_thread_create(RT_NULL);
     return RT_EOK;
 }
