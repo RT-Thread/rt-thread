@@ -12,6 +12,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 #ifndef SYSTEM_THREAD_STACK_SIZE
 #define SYSTEM_THREAD_STACK_SIZE IDLE_THREAD_STACK_SIZE
 #endif
