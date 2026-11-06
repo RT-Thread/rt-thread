@@ -263,6 +263,9 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     import rtconfig
     do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
+    # libcpu/Kconfig also sources libcpu/arm/Kconfig for shared ARM family symbols
+    # (ARCH_ARM, ARCH_ARMV8, ARCH_ARM_MMU), which aarch64 relies on as well.
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'arm', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'arm', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
 
     # copy src directory
