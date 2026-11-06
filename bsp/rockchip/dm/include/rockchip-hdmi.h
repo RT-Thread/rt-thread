@@ -17,6 +17,9 @@
 rt_err_t rk_hdmi_audio_configure(struct rt_ofw_node *np,
         rt_uint32_t samplerate, rt_uint8_t channels, rt_uint8_t samplebits);
 rt_err_t rk_hdmi_audio_enable(struct rt_ofw_node *np, rt_bool_t enable);
+rt_err_t rk3588_hdmi_qp_audio_configure(struct rt_ofw_node *np,
+        rt_uint32_t samplerate, rt_uint8_t channels, rt_uint8_t samplebits);
+rt_err_t rk3588_hdmi_qp_audio_enable(struct rt_ofw_node *np, rt_bool_t enable);
 #else
 rt_inline rt_err_t rk_hdmi_audio_configure(struct rt_ofw_node *np,
         rt_uint32_t samplerate, rt_uint8_t channels, rt_uint8_t samplebits)

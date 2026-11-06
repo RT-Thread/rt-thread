@@ -20,6 +20,9 @@
 #define RK3568_HDMI_SDAIN_MSK           ((1U << 15) | (1U << (15 + 16)))
 #define RK3568_HDMI_SCLIN_MSK           ((1U << 14) | (1U << (14 + 16)))
 #define RK_HDMI_PHY_I2C_TIMEOUT_US      20000
+#define RK3528_VO_GRF_HDMI_MASK         0x60014
+#define RK3528_HDMI_SNKDET_SEL          RT_BIT(6)
+#define RK3528_HDMI_SNKDET              RT_BIT(5)
 
 struct rk_hdmi_phy_config
 {
@@ -57,6 +60,14 @@ struct rk_hdmi
     rt_bool_t audio_configured;
     rt_bool_t audio_enabled;
     rt_uint32_t audio_n;
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    struct rt_phye *phy;
+    void *hpd_regs;
+    rt_ssize_t hpd_pin;
+    rt_uint8_t hpd_active;
+    rt_bool_t phy_initialized;
+    rt_bool_t phy_powered;
+#endif
 };
 
 #if DBG_LVL >= DBG_LOG
@@ -193,6 +204,12 @@ static void rk_hdmi_audio_set_n(struct rk_hdmi *hdmi, rt_uint32_t n)
 rt_err_t rk_hdmi_audio_enable(struct rt_ofw_node *np, rt_bool_t enable)
 {
     rt_uint8_t clkdis;
+
+    if (rt_ofw_node_is_compatible(np, "rockchip,rk3588-dw-hdmi"))
+    {
+        return rk3588_hdmi_qp_audio_enable(np, enable);
+    }
+
     struct rk_hdmi *hdmi = rk_hdmi_from_np(np);
 
     if (!hdmi)
@@ -229,6 +246,12 @@ rt_err_t rk_hdmi_audio_configure(struct rt_ofw_node *np,
         rt_uint32_t samplerate, rt_uint8_t channels, rt_uint8_t samplebits)
 {
     rt_uint8_t conf0, conf1;
+
+    if (rt_ofw_node_is_compatible(np, "rockchip,rk3588-dw-hdmi"))
+    {
+        return rk3588_hdmi_qp_audio_configure(np, samplerate, channels, samplebits);
+    }
+
     struct rk_hdmi *hdmi = rk_hdmi_from_np(np);
     rt_uint32_t n = rk_hdmi_audio_n(samplerate);
 
@@ -793,6 +816,33 @@ static void rk_hdmi_clks_disable(struct rk_hdmi *hdmi)
     hdmi->clks_enabled = RT_FALSE;
 }
 
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+static rt_err_t rk3528_hdmi_hpd(struct rk_hdmi *hdmi, rt_bool_t *connected)
+{
+    rt_uint32_t mask = RT_BIT(0) | RT_BIT(1) | RK3528_HDMI_SNKDET_SEL;
+    rt_uint32_t val = RT_BIT(0) | RT_BIT(1);
+
+    if (hdmi->hpd_pin >= 0)
+    {
+        /* RK3528 GPIO0_A2 input enable is gated by its output data bit. */
+        HWREG32(hdmi->hpd_regs) = (RT_BIT(2) << 16) | RT_BIT(2);
+        *connected = rt_pin_read(hdmi->hpd_pin) == hdmi->hpd_active;
+        mask |= RK3528_HDMI_SNKDET;
+        val |= RK3528_HDMI_SNKDET_SEL;
+        if (*connected)
+        {
+            val |= RK3528_HDMI_SNKDET;
+        }
+    }
+    else
+    {
+        *connected = !!(rk_hdmi_read(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD);
+    }
+    return rt_syscon_write(hdmi->grf, RK3528_VO_GRF_HDMI_MASK,
+            (mask << 16) | val);
+}
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+
 static rt_err_t rk_hdmi_detect(void *priv, rt_bool_t *connected)
 {
     struct rk_hdmi *hdmi = priv;
@@ -819,6 +869,17 @@ static rt_err_t rk_hdmi_detect(void *priv, rt_bool_t *connected)
     }
 
     *connected = RT_FALSE;
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->phy)
+    {
+        err = rk3528_hdmi_hpd(hdmi, connected);
+        if (enabled_for_detect && (err || !*connected))
+        {
+            rk_hdmi_clks_disable(hdmi);
+        }
+        return err;
+    }
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
     for (sample = 0; sample < 3; ++sample)
     {
         if (rk_hdmi_read(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD)
@@ -868,6 +929,35 @@ static rt_err_t rk_hdmi_prepare(void *priv, rt_uint32_t vp_id, const struct disp
         return err;
     }
 
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->phy)
+    {
+        rt_bool_t connected;
+        union rt_phye_configure_opts opts = { 0 };
+
+        opts.hdmi.pixel_clock = tim->pixelclock;
+        opts.hdmi.tmds_clock = tim->pixelclock;
+        err = rk3528_hdmi_hpd(hdmi, &connected);
+        if (!err)
+            err = rt_phye_init(hdmi->phy);
+        if (!err)
+        {
+            hdmi->phy_initialized = RT_TRUE;
+            err = rt_phye_set_mode(hdmi->phy, RT_PHYE_MODE_HDMI, 0);
+        }
+        if (!err)
+            err = rt_phye_configure(hdmi->phy, &opts);
+        if (err)
+        {
+            if (hdmi->phy_initialized)
+                rt_phye_exit(hdmi->phy);
+            hdmi->phy_initialized = RT_FALSE;
+            rk_hdmi_clks_disable(hdmi);
+            return err;
+        }
+    }
+    else
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
     if (hdmi->grf)
     {
         rt_syscon_write(hdmi->grf, RK3568_GRF_VO_CON1,
@@ -931,7 +1021,18 @@ static rt_err_t rk_hdmi_enable(void *priv, rt_bool_t enable)
         }
 
         rk_hdmi_write(hdmi, HDMI_MC_CLKDIS, 0x7f);
-        rk_hdmi_phy_power_off(hdmi);
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+        if (hdmi->phy)
+        {
+            if (hdmi->phy_powered)
+                rt_phye_power_off(hdmi->phy);
+            hdmi->phy_powered = RT_FALSE;
+        }
+        else
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+        {
+            rk_hdmi_phy_power_off(hdmi);
+        }
         hdmi->enabled = RT_FALSE;
         return RT_EOK;
     }
@@ -974,7 +1075,17 @@ static rt_err_t rk_hdmi_enable(void *priv, rt_bool_t enable)
     rk_hdmi_video_csc(hdmi);
     rk_hdmi_video_sample(hdmi);
 
-    err = rk_hdmi_phy_init(hdmi);
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->phy)
+    {
+        err = rt_phye_power_on(hdmi->phy);
+        hdmi->phy_powered = !err;
+    }
+    else
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+    {
+        err = rk_hdmi_phy_init(hdmi);
+    }
     if (err)
     {
         rk_hdmi_write(hdmi, HDMI_MC_CLKDIS, 0x7f);
@@ -1007,6 +1118,13 @@ static rt_err_t rk_hdmi_disable(void *priv)
     }
 
     rk_hdmi_enable(priv, RT_FALSE);
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->phy_initialized)
+    {
+        rt_phye_exit(hdmi->phy);
+        hdmi->phy_initialized = RT_FALSE;
+    }
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
     rk_hdmi_clks_disable(hdmi);
     hdmi->prepared = RT_FALSE;
 
@@ -1034,33 +1152,71 @@ static rt_err_t rk_hdmi_probe(struct rt_platform_device *pdev)
         return -RT_ENOMEM;
     }
 
+    if (rt_ofw_node_is_compatible(np, "rockchip,rk3528-dw-hdmi"))
+    {
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+        hdmi->phy = rt_phye_get_by_name(dev, "hdmi");
+        hdmi->hpd_pin = -1;
+        if (rt_is_err_or_null(hdmi->phy))
+        {
+            err = -RT_EEMPTY;
+            hdmi->phy = RT_NULL;
+            goto fail;
+        }
+        if (rt_ofw_get_prop(np, "hpd-gpios", RT_NULL))
+        {
+            hdmi->hpd_pin = rt_pin_get_named_pin(dev, "hpd", 0,
+                    RT_NULL, &hdmi->hpd_active);
+            if (hdmi->hpd_pin < 0)
+            {
+                err = hdmi->hpd_pin;
+                goto fail;
+            }
+            hdmi->hpd_regs = rt_ofw_iomap(np, 1);
+            if (!hdmi->hpd_regs)
+            {
+                err = -RT_EIO;
+                goto fail;
+            }
+            rt_pin_mode(hdmi->hpd_pin, PIN_MODE_INPUT);
+        }
+#else
+        LOG_E("RK3528 requires RT_PHYE_ROCKCHIP_INNO_HDMI");
+        err = -RT_ENOSYS;
+        goto fail;
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+    }
+
     hdmi->regs = rt_ofw_iomap(np, 0);
     if (!hdmi->regs)
     {
-        rt_free(hdmi);
-        return -RT_EIO;
+        err = -RT_EIO;
+        goto fail;
     }
 
     hdmi->clks = rt_clk_get_array(dev);
     if (rt_is_err(hdmi->clks))
     {
-        rt_iounmap(hdmi->regs);
-        rt_free(hdmi);
-        return rt_ptr_err(hdmi->clks);
+        err = rt_ptr_err(hdmi->clks);
+        goto fail;
     }
 
     hdmi->reg_io_width = 4;
     rt_dm_dev_prop_read_u32(dev, "reg-io-width", &hdmi->reg_io_width);
     hdmi->sink_is_hdmi = RT_TRUE;
     hdmi->grf = rt_syscon_find_by_ofw_phandle(np, "rockchip,grf");
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->phy && rt_is_err_or_null(hdmi->grf))
+    {
+        err = -RT_EIO;
+        goto fail;
+    }
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
 
     err = rockchip_display_register_connector(np, &rk_hdmi_connector_ops, hdmi);
     if (err)
     {
-        rt_clk_array_put(hdmi->clks);
-        rt_iounmap(hdmi->regs);
-        rt_free(hdmi);
-        return err;
+        goto fail;
     }
 
     pdev->parent.user_data = hdmi;
@@ -1069,6 +1225,33 @@ static rt_err_t rk_hdmi_probe(struct rt_platform_device *pdev)
     LOG_D("HDMI %s: reg-io-width=%u", rt_ofw_node_full_name(np), hdmi->reg_io_width);
 
     return RT_EOK;
+
+fail:
+    if (!rt_is_err_or_null(hdmi->clks))
+    {
+        rt_clk_array_put(hdmi->clks);
+    }
+
+    if (hdmi->regs)
+    {
+        rt_iounmap(hdmi->regs);
+    }
+
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    if (hdmi->hpd_regs)
+    {
+        rt_iounmap(hdmi->hpd_regs);
+    }
+
+    if (hdmi->phy)
+    {
+        rt_phye_put(hdmi->phy);
+    }
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+
+    rt_free(hdmi);
+
+    return err;
 }
 
 static const struct rt_ofw_node_id rk_hdmi_ids[] =

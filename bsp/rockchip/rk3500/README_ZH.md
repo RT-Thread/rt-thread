@@ -60,6 +60,39 @@ scons
 
 ## 3. 运行
 
+### 显存如何配置
+
+Framebuffer 和 RGA 使用 DMA 内存池。在 bootargs 中调整参数：
+
+```text
+cma=48M coherent_pool=4M
+```
+
+`cma` 已包含 `coherent_pool`，且必须大于后者。上例划分出约
+4 MiB coherent 池和 44 MiB 普通 CMA 池。参数过大会与设备树保留内存重叠，需按板卡内存布局调整。
+
+### 不同分辨率配置的显存
+
+以下按 32 位 RGB/RGBA 双缓冲估算，参数为显示用途的起步配置，RGA 和其他 DMA 设备需另留余量。
+
+| 分辨率 | 双缓冲显存 | 启动参数示例 |
+| ------ | ---------- | ------------ |
+| 1280 x 720 | 7.03 MiB | `cma=16M coherent_pool=4M` |
+| 1920 x 1080 | 15.82 MiB | `cma=32M coherent_pool=4M` |
+| 2560 x 1440 | 28.13 MiB | `cma=48M coherent_pool=4M` |
+
+### 内存池查看
+
+在 RT-Thread 命令行执行：
+
+```text
+list_dma_pool
+```
+
+若启动日志出现 `dma-pool ... overlap` 或 `Alloc DMA pool ... fail`，应先检查启动参数与保留内存是否冲突。
+
+### 启动系统
+
 RK3500 根据不同的板卡有不同的内核安装方法，建议安装到 SD 卡中，这里以Orange Pi Compute Module 4举例说明：
 连接开发板串口： 
 ![uart](./figures/uart.png)

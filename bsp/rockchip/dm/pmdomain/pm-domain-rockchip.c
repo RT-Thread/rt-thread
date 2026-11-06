@@ -976,7 +976,7 @@ static rt_err_t rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
     rk_domain = &pmu->rk_pmdomains[idx];
     domain_info = &pmu->info->domain_info[idx];
 
-    if (domain_info->pwr_mask)
+    if (!domain_info->pwr_mask)
     {
         rk_domain->is_ignore_pwr = RT_TRUE;
     }

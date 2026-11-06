@@ -93,7 +93,7 @@ static const struct vop2fb_win_desc rk3568_cluster1_route =
     .type = VOP2FB_LAYER_CLUSTER,
     .base_offset = VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE,
     .layer_sel_id = 1,
-    .win_sel_port_offset = 1,
+    .win_sel_port_offset = 4,
     .plane_id = -1,
 };
 
@@ -112,46 +112,44 @@ static const struct vop2fb_win_desc rk3528_primary =
     .name = "Esmart0",
     .type = VOP2FB_LAYER_ESMART,
     .base_offset = VOP2_ESMART0_BASE,
-    .z_order = 2,
+    .z_order = 0,
+    .plane_id = RK_PLANE_ESMART0,
+    .layer_sel_id = 1,
+    .win_sel_port_offset = 8,
+    .cfg_done_bit = 4,
     .axi_yrgb_id = 0x06,
     .axi_uv_id = 0x07,
 };
 
 static const struct vop2fb_win_desc rk3528_cursor =
 {
-    .name = "Esmart3",
+    .name = "Esmart2",
     .type = VOP2FB_LAYER_ESMART,
-    .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3,
-    .z_order = 5,
-    .axi_yrgb_id = 0x0c,
-    .axi_uv_id = 0x0d,
+    .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2,
+    .z_order = 2,
+    .plane_id = RK_PLANE_ESMART2,
+    .layer_sel_id = 3,
+    .win_sel_port_offset = 12,
+    .cfg_done_bit = 6,
+    .mix_alpha_reg = 0x638,
+    .axi_yrgb_id = 0x0a,
+    .axi_uv_id = 0x0b,
 };
 
 static const struct vop2fb_win_desc rk3528_overlays[] =
 {
     {
-        .name = "Cluster0",
-        .type = VOP2FB_LAYER_CLUSTER,
-        .base_offset = VOP2_CLUSTER0_BASE,
-        .z_order = 0,
-        .axi_yrgb_id = 0x02,
-        .axi_uv_id = 0x03,
-    },
-    {
         .name = "Esmart1",
         .type = VOP2FB_LAYER_ESMART,
         .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE,
-        .z_order = 3,
+        .z_order = 1,
+        .plane_id = RK_PLANE_ESMART1,
+        .layer_sel_id = 2,
+        .win_sel_port_offset = 10,
+        .cfg_done_bit = 5,
+        .mix_alpha_reg = 0x628,
         .axi_yrgb_id = 0x08,
         .axi_uv_id = 0x09,
-    },
-    {
-        .name = "Esmart2",
-        .type = VOP2FB_LAYER_ESMART,
-        .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2,
-        .z_order = 4,
-        .axi_yrgb_id = 0x0a,
-        .axi_uv_id = 0x0b,
     },
 };
 
@@ -200,9 +198,14 @@ static const struct vop2fb_win_desc rk3588_primary =
     .name = "Esmart0",
     .type = VOP2FB_LAYER_ESMART,
     .base_offset = VOP2_ESMART0_BASE,
-    .z_order = 4,
-    .axi_yrgb_id = 0x10,
-    .axi_uv_id = 0x11,
+    .layer_sel_id = 2,
+    .win_sel_port_offset = 4,
+    .z_order = 0,
+    .axi_id = 0,
+    .axi_yrgb_id = 0x0a,
+    .axi_uv_id = 0x0b,
+    .cfg_done_bit = 4,
+    .plane_id = RK_PLANE_ESMART0,
 };
 
 static const struct vop2fb_win_desc rk3588_cursor =
@@ -210,44 +213,56 @@ static const struct vop2fb_win_desc rk3588_cursor =
     .name = "Esmart3",
     .type = VOP2FB_LAYER_ESMART,
     .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3,
+    .layer_sel_id = 7,
+    .win_sel_port_offset = 7,
     .z_order = 7,
-    .axi_yrgb_id = 0x16,
-    .axi_uv_id = 0x17,
+    .axi_id = 1,
+    .axi_yrgb_id = 0x0c,
+    .axi_uv_id = 0x0d,
+    .cfg_done_bit = 7,
+    .plane_id = RK_PLANE_ESMART3,
 };
 
 static const struct vop2fb_win_desc rk3588_overlays[] =
 {
     {
-        .name = "Cluster0",
-        .type = VOP2FB_LAYER_CLUSTER,
-        .base_offset = VOP2_CLUSTER0_BASE,
-        .z_order = 0,
-        .axi_yrgb_id = 0x02,
-        .axi_uv_id = 0x03,
-    },
-    {
         .name = "Cluster1",
         .type = VOP2FB_LAYER_CLUSTER,
         .base_offset = VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE,
+        .layer_sel_id = 1,
+        .win_sel_port_offset = 1,
         .z_order = 1,
-        .axi_yrgb_id = 0x04,
-        .axi_uv_id = 0x05,
+        .axi_id = 0,
+        .axi_yrgb_id = 0x06,
+        .axi_uv_id = 0x07,
+        .cfg_done_bit = 1,
+        .plane_id = RK_PLANE_CLUSTER1,
     },
     {
         .name = "Esmart1",
         .type = VOP2FB_LAYER_ESMART,
         .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE,
+        .layer_sel_id = 3,
+        .win_sel_port_offset = 5,
         .z_order = 5,
-        .axi_yrgb_id = 0x12,
-        .axi_uv_id = 0x13,
+        .axi_id = 0,
+        .axi_yrgb_id = 0x0c,
+        .axi_uv_id = 0x0d,
+        .cfg_done_bit = 5,
+        .plane_id = RK_PLANE_ESMART1,
     },
     {
         .name = "Esmart2",
         .type = VOP2FB_LAYER_ESMART,
         .base_offset = VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2,
+        .layer_sel_id = 6,
+        .win_sel_port_offset = 6,
         .z_order = 6,
-        .axi_yrgb_id = 0x14,
-        .axi_uv_id = 0x15,
+        .axi_id = 1,
+        .axi_yrgb_id = 0x0a,
+        .axi_uv_id = 0x0b,
+        .cfg_done_bit = 6,
+        .plane_id = RK_PLANE_ESMART2,
     },
 };
 
@@ -461,10 +476,11 @@ static struct vop2fb_vp_state *vop2fb_output_from_graphic(
 static rt_uint32_t vop2fb_xvir(rt_uint32_t line_length)
 {
     /*
-     * Rockchip VOP2 VIR registers use a 32-bit word stride, not the older
-     * VOP-style 32-byte unit. Linux/U-Boot program this as pitch / 4.
+     * VOP2 VIR counts 32-bit fetch units, matching the Rockchip formula
+     * ALIGN(width * bits_per_pixel, 32) >> 5.  line_length is bytes, hence
+     * the equivalent conversion is a four-byte alignment then divide by 4.
      */
-    return line_length >> 2;
+    return RT_ALIGN(line_length, 4) >> 2;
 }
 
 static rt_bool_t vop2fb_mode_rb_swap(rt_uint32_t mode)
@@ -495,6 +511,101 @@ static void vop2fb_regsbak_sync(struct vop2fb *vfb)
         return;
     }
 
+    if (vfb->soc->soc == VOP2FB_SOC_RK3528)
+    {
+        /* Only snapshot control registers used by the RGB VP0 path. */
+        static const rt_uint16_t offsets[] =
+        {
+            0x24, 0x28, 0x30, 0x58, 0x500, 0x504, 0x600, 0x604,
+            0x670, 0xc00, 0xc2c, 0xc40, 0xcd0, 0x2010, 0x2040,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_WIN0_CTRL0,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_CTRL,
+        };
+        rt_size_t win;
+
+        for (i = 0; i < RT_ARRAY_SIZE(offsets); ++i)
+        {
+            vfb->regsbak[offsets[i] / 4] =
+                    HWREG32((rt_uint8_t *)vfb->regs + offsets[i]);
+        }
+        for (win = 0; win < 4; ++win)
+        {
+            rt_uint32_t base = VOP2_ESMART0_BASE + win * VOP2_ESMART_STRIDE;
+            static const rt_uint8_t win_offsets[] = { 0, 4, 8, 0x10, 0x50, 0x90, 0xd0 };
+
+            for (i = 0; i < RT_ARRAY_SIZE(win_offsets); ++i)
+            {
+                vfb->regsbak[(base + win_offsets[i]) / 4] =
+                        HWREG32((rt_uint8_t *)vfb->regs + base + win_offsets[i]);
+            }
+        }
+        return;
+    }
+
+    if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        /*
+         * RK3588 has inactive VOP2 aperture holes (notably at 0x3c8), so a
+         * linear read faults.  The RMW cache still must start from hardware
+         * reset values: mask writes otherwise clear untouched control bits.
+         * Snapshot only the powered, documented control registers used by
+         * this driver; each has been verified readable on RK3588.
+         */
+        static const rt_uint16_t offsets[] =
+        {
+            VOP2_SYS_AXI_LUT_CTRL,
+            RK3588_SYS_VAR_FREQ_CTRL,
+            RK3568_DSP_IF_EN,
+            RK3568_DSP_IF_CTRL,
+            RK3568_DSP_IF_POL,
+            VOP2_OVL_CTRL,
+            VOP2_OVL_LAYER_SEL,
+            VOP2_OVL_PORT_SEL,
+            RK3568_VP0_BG_MIX_CTRL,
+            VOP2_VP_DSP_CTRL,
+            VOP2_VP_CLK_CTRL,
+            VOP2_VP_DSP_BG,
+            VOP2_VP_BCSH_CTRL,
+            VOP2_VP_BCSH_BCS,
+
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_WIN0_CTRL0,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_WIN0_CTRL1,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_WIN0_CTRL2,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_CTRL,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE + VOP2_CLUSTER_WIN0_CTRL0,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE + VOP2_CLUSTER_WIN0_CTRL1,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE + VOP2_CLUSTER_WIN0_CTRL2,
+            VOP2_CLUSTER0_BASE + VOP2_CLUSTER_STRIDE + VOP2_CLUSTER_CTRL,
+
+            VOP2_ESMART0_BASE + VOP2_ESMART_CTRL0,
+            VOP2_ESMART0_BASE + VOP2_ESMART_CTRL1,
+            VOP2_ESMART0_BASE + VOP2_ESMART_AXI_CTRL,
+            VOP2_ESMART0_BASE + VOP2_REGION0_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE + VOP2_ESMART_CTRL0,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE + VOP2_ESMART_CTRL1,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE + VOP2_ESMART_AXI_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE + VOP2_REGION0_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2 + VOP2_ESMART_CTRL0,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2 + VOP2_ESMART_CTRL1,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2 + VOP2_ESMART_AXI_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 2 + VOP2_REGION0_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3 + VOP2_ESMART_CTRL0,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3 + VOP2_ESMART_CTRL1,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3 + VOP2_ESMART_AXI_CTRL,
+            VOP2_ESMART0_BASE + VOP2_ESMART_STRIDE * 3 + VOP2_REGION0_CTRL,
+        };
+
+        for (i = 0; i < RT_ARRAY_SIZE(offsets); ++i)
+        {
+            rt_uint32_t offset = offsets[i];
+
+            vfb->regsbak[offset >> 2] =
+                    HWREG32((rt_uint8_t *)vfb->regs + offset);
+        }
+
+        return;
+    }
+
     regs = (volatile rt_uint32_t *)vfb->regs;
 
     for (i = 0; i < vfb->soc->regbak_words; ++i)
@@ -503,12 +614,79 @@ static void vop2fb_regsbak_sync(struct vop2fb *vfb)
     }
 }
 
+static rt_err_t vop2fb_rk3588_cluster0_power_on(struct vop2fb *vfb)
+{
+    rt_uint32_t status;
+    rt_uint32_t i;
+
+    if (!vfb || !vfb->regs || !vfb->soc ||
+            vfb->soc->soc != VOP2FB_SOC_RK3588)
+    {
+        return RT_EOK;
+    }
+
+    status = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS_STATUS0);
+    if (!(status & RT_BIT(RK3588_VOP_PD_CLUSTER0_STATUS)))
+    {
+        return RT_EOK;
+    }
+
+    /* A zero in PD_CTRL powers the Cluster0 window block on immediately. */
+    HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS_PD_CTRL) &=
+            ~RT_BIT(RK3588_VOP_PD_CLUSTER0_SHIFT);
+
+    for (i = 0; i < 50; ++i)
+    {
+        rt_hw_us_delay(1);
+        status = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS_STATUS0);
+        if (!(status & RT_BIT(RK3588_VOP_PD_CLUSTER0_STATUS)))
+        {
+            return RT_EOK;
+        }
+    }
+
+    LOG_E("rk3588 Cluster0 power domain did not enable (status=%08x)", status);
+    return -RT_EIO;
+}
+
+static rt_err_t vop2fb_rk3588_esmart_power_on(struct vop2fb *vfb)
+{
+    rt_uint32_t status;
+    rt_uint32_t i;
+
+    if (!vfb || !vfb->regs || !vfb->soc ||
+            vfb->soc->soc != VOP2FB_SOC_RK3588)
+    {
+        return RT_EOK;
+    }
+
+    /* Linux keeps this shared domain on to avoid display timing faults. */
+    HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS_PD_CTRL) &=
+            ~RT_BIT(RK3588_VOP_PD_ESMART_SHIFT);
+
+    for (i = 0; i < 50; ++i)
+    {
+        status = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS_STATUS0);
+        if (!(status & RT_BIT(RK3588_VOP_PD_ESMART_STATUS)))
+        {
+            return RT_EOK;
+        }
+        rt_hw_us_delay(1);
+    }
+
+    LOG_E("rk3588 Esmart power domain did not enable (status=%08x)", status);
+    return -RT_EIO;
+}
+
 static void vop2fb_rk3568_smart_prepare(struct vop2fb *vfb,
         const struct vop2fb_win_desc *desc, rt_uint32_t hw_fmt, rt_uint32_t mode)
 {
     rt_uint32_t base;
 
-    if (!vfb || !vfb->soc || !desc || vfb->soc->soc != VOP2FB_SOC_RK3568)
+    if (!vfb || !vfb->soc || !desc ||
+            (vfb->soc->soc != VOP2FB_SOC_RK3528 &&
+             vfb->soc->soc != VOP2FB_SOC_RK3568 &&
+             vfb->soc->soc != VOP2FB_SOC_RK3588))
     {
         return;
     }
@@ -519,7 +697,11 @@ static void vop2fb_rk3568_smart_prepare(struct vop2fb *vfb,
     }
 
     base = desc->base_offset;
-
+    if (vfb->soc->soc == VOP2FB_SOC_RK3528)
+    {
+        vop2fb_mask_write(vfb, base + VOP2_ESMART_CTRL0, 3, 12,
+                (base - VOP2_ESMART0_BASE) / VOP2_ESMART_STRIDE);
+    }
     /*
      * Force Smart/Esmart into a known-good 1:1 RGB scanout state.
      * The RT bring-up path previously only touched format/addr/size, so any
@@ -527,9 +709,13 @@ static void vop2fb_rk3568_smart_prepare(struct vop2fb *vfb,
      * though timing and DMA were already alive.
      */
     vop2fb_mask_write(vfb, base + VOP2_ESMART_CTRL0,
+            1, VOP2_YUV2RGB_EN_SHIFT, 0);
+    /* The framebuffer and HDMI-QP transport both use RGB. */
+    vop2fb_mask_write(vfb, base + VOP2_ESMART_CTRL0,
             1, VOP2_RGB2YUV_EN_SHIFT, 0);
     vop2fb_mask_write(vfb, base + VOP2_ESMART_CTRL0,
-            VOP2_CSC_MODE_MASK, VOP2_CSC_MODE_SHIFT, 0);
+            VOP2_CSC_MODE_MASK, VOP2_CSC_MODE_SHIFT,
+            0);
     vop2fb_mask_write(vfb, base + VOP2_ESMART_CTRL1,
             1, VOP2_YMIRROR_EN_SHIFT, 0);
     vop2fb_mask_write(vfb, base + VOP2_REGION0_CTRL,
@@ -643,6 +829,22 @@ static void vop2fb_win_disable(struct vop2fb *vfb, const struct vop2fb_win_desc 
     }
 }
 
+static void vop2fb_win_cfg_done(struct vop2fb *vfb, rt_uint32_t vp_id,
+        const struct vop2fb_win_desc *desc)
+{
+    vop2fb_reg_write(vfb, VOP2_REG_CFG_DONE,
+            vop2fb_cfg_done_vp_val(vfb, vp_id));
+
+    if ((vfb->soc->soc == VOP2FB_SOC_RK3588 ||
+         vfb->soc->soc == VOP2FB_SOC_RK3528) && desc)
+    {
+        /* RK3588 keeps layer registers in a separate window shadow bank. */
+        vop2fb_reg_write(vfb, RK3588_WIN_REG_CFG_DONE,
+                RT_BIT(desc->cfg_done_bit) |
+                (RT_BIT(desc->cfg_done_bit) << 16));
+    }
+}
+
 static rt_uint32_t vop2fb_scale_mode(rt_uint32_t src, rt_uint32_t dst)
 {
     if (src == dst)
@@ -689,7 +891,9 @@ static void vop2fb_smart_scale_setup(struct vop2fb *vfb,
     rt_uint32_t base, hmode, vmode, hfilter, vfilter;
     rt_uint32_t hfactor, vfactor, scl_ctrl;
 
-    if (!vfb->soc || vfb->soc->soc != VOP2FB_SOC_RK3568 ||
+    if (!vfb->soc || (vfb->soc->soc != VOP2FB_SOC_RK3528 &&
+                       vfb->soc->soc != VOP2FB_SOC_RK3568 &&
+                       vfb->soc->soc != VOP2FB_SOC_RK3588) ||
             (desc->type != VOP2FB_LAYER_ESMART &&
              desc->type != VOP2FB_LAYER_SMART))
     {
@@ -731,9 +935,16 @@ static rt_err_t vop2fb_win_commit(struct vop2fb *vfb, rt_uint32_t vp_id,
     if (!enable)
     {
         vop2fb_win_disable(vfb, desc);
-        vop2fb_reg_write(vfb, VOP2_REG_CFG_DONE,
-                vop2fb_cfg_done_vp_val(vfb, vp_id));
+        vop2fb_win_cfg_done(vfb, vp_id, desc);
         return RT_EOK;
+    }
+
+    /* RK3528's VOP3 scaler needs different factors; expose 1:1 RGB first. */
+    if (vfb->soc->soc == VOP2FB_SOC_RK3528 &&
+            (vp_id != 0 || desc->type != VOP2FB_LAYER_ESMART ||
+             src_w != dst_w || src_h != dst_h || src_w > 1920 || src_h > 1080))
+    {
+        return -RT_ENOSYS;
     }
 
     act_info = ((src_h - 1) << 16) | ((src_w - 1) & 0xffff);
@@ -747,6 +958,73 @@ static rt_err_t vop2fb_win_commit(struct vop2fb *vfb, rt_uint32_t vp_id,
     switch (desc->type)
     {
     case VOP2FB_LAYER_CLUSTER:
+        /* Cluster0 is the RK3588 HDMI0 linear RGB fetcher. */
+        if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+        {
+            if (desc == vfb->soc->primary)
+            {
+                /*
+                 * VP0's fixed mixer has Cluster0 below Esmart0.  Firmware
+                 * can leave Esmart0 active from its previous framebuffer;
+                 * disable it before Cluster0 becomes the linear primary.
+                */
+                vop2fb_mask_write(vfb, VOP2_ESMART0_BASE + VOP2_REGION0_CTRL,
+                        VOP2_EN_MASK, VOP2_WIN_EN_SHIFT, 0);
+            }
+            /* Do not inherit firmware scaler/filter state on Cluster0. */
+            vop2fb_reg_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL0, 0);
+            vop2fb_reg_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1, 0);
+        }
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_CTRL,
+                VOP2_EN_MASK, VOP2_CLUSTER_AFBC_EN_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_CTRL,
+                VOP2_CLUSTER_LB_MODE_MASK, VOP2_CLUSTER_LB_MODE_SHIFT, 0);
+        if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+        {
+            /* A linear RGB framebuffer must not inherit AFBCD state. */
+            vop2fb_reg_write(vfb,
+                    base + VOP2_CLUSTER_WIN0_AFBCD_OUTPUT_CTRL, 0);
+            vop2fb_reg_write(vfb,
+                    base + VOP2_CLUSTER_WIN0_AFBCD_CTRL, 0);
+            /* bit31 is cluster_frm_resetn_en; Linux keeps it asserted. */
+            vop2fb_mask_write(vfb, base + VOP2_CLUSTER_CTRL,
+                    1, VOP2_CLUSTER_FRM_RESET_EN_SHIFT, 1);
+            /* Cluster0 reads the DMA pool directly through the VOP bypass. */
+            vop2fb_mask_write(vfb, VOP2_SYS_AXI_LUT_CTRL,
+                    1, VOP2_SYS_MMU_BYPASS_EN_SHIFT, 1);
+            vop2fb_mask_write(vfb, VOP2_SYS_AXI_LUT_CTRL,
+                    VOP2_SYS_MMU_BYPASS_ID_MASK,
+                    VOP2_SYS_MMU_BYPASS_ID_SHIFT, 0);
+            vop2fb_mask_write(vfb, base + VOP2_CLUSTER_CTRL,
+                    1, VOP2_CLUSTER_MMU_BYPASS_SHIFT, 1);
+        }
+        /*
+         * Cluster windows retain scaler state across a warm boot.  The
+         * framebuffer path is always 1:1, so program the same disabled
+         * scaler state Linux uses instead of inheriting firmware settings.
+         */
+        vop2fb_reg_write(vfb, base + VOP2_CLUSTER_WIN0_SCL_FACTOR_YRGB, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                0x3, VOP2_CLUSTER_YRGB_XSCL_MODE_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                0x3, VOP2_CLUSTER_YRGB_YSCL_MODE_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                1, VOP2_CLUSTER_AVG2_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                1, VOP2_CLUSTER_AVG4_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                1, VOP2_CLUSTER_YRGB_GT2_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL1,
+                1, VOP2_CLUSTER_YRGB_GT4_SHIFT, 0);
+        /* ARGB framebuffer scanout remains RGB through the HDMI QP link. */
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL0,
+                1, VOP2_CLUSTER_YUV2RGB_EN_SHIFT, 0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL0,
+                1, VOP2_CLUSTER_RGB2YUV_EN_SHIFT,
+                0);
+        vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL0,
+                VOP2_CLUSTER_CSC_MODE_MASK, VOP2_CLUSTER_CSC_MODE_SHIFT,
+                0);
         vop2fb_mask_write(vfb, base + VOP2_CLUSTER_WIN0_CTRL0,
                 VOP2_WIN_FORMAT_MASK, VOP2_WIN_FORMAT_SHIFT, hw_fmt);
         vop2fb_reg_write(vfb, base + VOP2_CLUSTER_WIN0_VIR, xvir);
@@ -762,6 +1040,36 @@ static rt_err_t vop2fb_win_commit(struct vop2fb *vfb, rt_uint32_t vp_id,
 
     case VOP2FB_LAYER_ESMART:
     case VOP2FB_LAYER_SMART:
+        if (vfb->soc->soc == VOP2FB_SOC_RK3588 &&
+                desc == vfb->soc->primary)
+        {
+            /*
+             * RK3588 firmware can leave Cluster0 enabled.  The normal
+             * one-display topology feeds all mixer stages into VP0, so an
+             * inherited Cluster0 source must not participate beside the
+             * Esmart0 primary framebuffer.
+             */
+            vop2fb_mask_write(vfb, VOP2_CLUSTER0_BASE +
+                    VOP2_CLUSTER_WIN0_CTRL0, VOP2_EN_MASK,
+                    VOP2_WIN_EN_SHIFT, 0);
+            vop2fb_mask_write(vfb, VOP2_CLUSTER0_BASE +
+                    VOP2_CLUSTER_CTRL, VOP2_EN_MASK,
+                    VOP2_CLUSTER_EN_SHIFT, 0);
+            vop2fb_reg_write(vfb, RK3588_WIN_REG_CFG_DONE,
+                    RT_BIT(0) | RT_BIT(16));
+        }
+        if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+        {
+            /* RT-Thread hands VOP physical scanout addresses directly. */
+            vop2fb_mask_write(vfb, VOP2_SYS_AXI_LUT_CTRL,
+                    1, VOP2_SYS_MMU_BYPASS_EN_SHIFT, 1);
+            vop2fb_mask_write(vfb, VOP2_SYS_AXI_LUT_CTRL,
+                    VOP2_SYS_MMU_BYPASS_ID_MASK,
+                    VOP2_SYS_MMU_BYPASS_ID_SHIFT, 0);
+            /* ESmart0 uses RID 0, which the global RID threshold excludes. */
+            vop2fb_mask_write(vfb, base + VOP2_ESMART_AXI_CTRL,
+                    1, VOP2_ESMART_MMU_BYPASS_SHIFT, 1);
+        }
         vop2fb_mask_write(vfb, base + VOP2_REGION0_CTRL,
                 VOP2_WIN_FORMAT_MASK, VOP2_WIN_FORMAT_SHIFT, hw_fmt);
         vop2fb_reg_write(vfb, base + VOP2_REGION0_VIR, xvir);
@@ -774,8 +1082,7 @@ static rt_err_t vop2fb_win_commit(struct vop2fb *vfb, rt_uint32_t vp_id,
         break;
     }
 
-    vop2fb_reg_write(vfb, VOP2_REG_CFG_DONE,
-            vop2fb_cfg_done_vp_val(vfb, vp_id));
+    vop2fb_win_cfg_done(vfb, vp_id, desc);
     vop2fb_rk3568_dump_win_regs(vfb, desc);
 
     return RT_EOK;
@@ -839,8 +1146,7 @@ static rt_err_t vop2fb_plane_commit(struct rt_graphic_plane *plane, rt_bool_t en
         priv->enabled = RT_FALSE;
         rt_spin_lock(&vfb->reg_lock);
         vop2fb_win_disable(vfb, priv->desc);
-        vop2fb_reg_write(vfb, VOP2_REG_CFG_DONE,
-                vop2fb_cfg_done_vp_val(vfb, priv->vp_id));
+        vop2fb_win_cfg_done(vfb, priv->vp_id, priv->desc);
         rt_spin_unlock(&vfb->reg_lock);
 
         return RT_EOK;
@@ -852,22 +1158,14 @@ static rt_err_t vop2fb_plane_commit(struct rt_graphic_plane *plane, rt_bool_t en
         return RT_EOK;
     }
 
-    if (priv->dma_flags & RT_DMA_F_NOCACHE)
+    /* Obtain the device-visible address, including any dma-ranges mapping. */
+    err = rt_dma_sync_out_data(vfb->dev,
+            plane->framebuffer + priv->pan_offset, plane->screen_len,
+            &dma, priv->dma_flags);
+    if (err)
     {
-        dma = priv->dma_handle + priv->pan_offset;
-    }
-    else
-    {
-        /*
-         * RK3568 VOP is non-coherent.  The generic DMA fallback currently
-         * treats a non-coherent device as if its allocation were uncached,
-         * so sync_out_data() can skip the writeback for this cached LINEAR
-         * framebuffer.  Flush it explicitly before the continuously running
-         * scanout engine reads it.
-         */
-        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH,
-                plane->framebuffer + priv->pan_offset, plane->screen_len);
-        dma = priv->dma_handle + priv->pan_offset;
+        LOG_E("%s DMA sync failed: %s", plane->name, rt_strerror(err));
+        return err;
     }
 
     xvir = vop2fb_xvir(plane->line_length);
@@ -878,6 +1176,7 @@ static rt_err_t vop2fb_plane_commit(struct rt_graphic_plane *plane, rt_bool_t en
         dst_y = 0;
         dst_w = plane->width;
         dst_h = plane->height;
+
     }
     else
     {
@@ -912,32 +1211,6 @@ static rt_err_t vop2fb_plane_commit(struct rt_graphic_plane *plane, rt_bool_t en
     return err;
 }
 
-static void vop2fb_fill_primary_background(struct rt_graphic_plane *plane)
-{
-    rt_uint8_t *fb;
-    rt_size_t pixels, i;
-
-    if (!plane || !plane->framebuffer || !plane->framebuffer_len)
-    {
-        return;
-    }
-
-    fb = plane->framebuffer;
-
-    if (plane->bits_per_pixel != 32)
-    {
-        rt_memset(fb, 0, plane->framebuffer_len);
-        return;
-    }
-
-    pixels = plane->framebuffer_len / sizeof(rt_uint32_t);
-
-    for (i = 0; i < pixels; ++i)
-    {
-        ((rt_uint32_t *)fb)[i] = 0xff000000;
-    }
-}
-
 static void vop2fb_plane_free_fb(struct rt_graphic_plane *plane)
 {
     struct vop2fb *vfb = vop2fb_from_plane(plane);
@@ -965,8 +1238,6 @@ static rt_err_t vop2fb_plane_update(struct rt_graphic_plane *plane,
         struct rt_device_rect_info *rect)
 {
     struct vop2fb_plane_priv *priv = vop2fb_plane_priv(plane);
-
-    RT_UNUSED(rect);
 
     if (priv)
     {
@@ -1002,7 +1273,11 @@ static rt_err_t vop2fb_plane_fb_remap(struct rt_graphic_plane *plane,
     if (plane->type == RT_GRAPHIC_PLANE_TYPE_PRIMARY)
     {
         fb_len = screen_len * 2;
-        dma_flags = RT_DMA_F_LINEAR;
+        /*
+         * VOP2 scanout uses the DMA pool's Device mapping.  The low coherent
+         * pool has no normal cached linear alias on this BSP.
+         */
+        dma_flags = RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR;
     }
     else
     {
@@ -1036,11 +1311,6 @@ static rt_err_t vop2fb_plane_fb_remap(struct rt_graphic_plane *plane,
     plane->mode = mode;
     priv->dma_flags = dma_flags;
     priv->pan_offset = 0;
-
-    if (plane->type == RT_GRAPHIC_PLANE_TYPE_PRIMARY)
-    {
-        vop2fb_fill_primary_background(plane);
-    }
 
     if (vfb->powered && plane->type == RT_GRAPHIC_PLANE_TYPE_PRIMARY)
     {
@@ -1247,6 +1517,31 @@ static rt_err_t vop2fb_clk_enable(struct vop2fb *vfb)
         return err;
     }
 
+    if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        struct rt_clk *root = rt_clk_get_by_name(vfb->dev, "aclk_vop_root");
+
+        /* aclk_vop has only a mux/gate; its root owns the divider. */
+        if (rt_is_err_or_null(root))
+        {
+            rt_clk_disable_unprepare(hclk);
+            return -RT_ENOENT;
+        }
+
+        err = rt_clk_set_rate(root, 396000000);
+        if (!err)
+        {
+            err = rt_clk_set_parent(aclk, root);
+        }
+        rt_clk_put(root);
+        if (err)
+        {
+            LOG_E("VOP ACLK setup failed: %s", rt_strerror(err));
+            rt_clk_disable_unprepare(hclk);
+            return err;
+        }
+    }
+
     if ((err = rt_clk_prepare_enable(aclk)))
     {
         rt_clk_disable_unprepare(hclk);
@@ -1292,6 +1587,25 @@ static void vop2fb_clk_disable(struct vop2fb *vfb)
     }
 
     vfb->clk_enabled = RT_FALSE;
+}
+
+static rt_err_t vop2fb_reset_controller(struct vop2fb *vfb)
+{
+    rt_err_t err;
+
+    if (!vfb || rt_is_err_or_null(vfb->rsts))
+    {
+        return RT_EOK;
+    }
+
+    if ((err = rt_reset_control_assert(vfb->rsts)))
+    {
+        return err;
+    }
+
+    rt_hw_us_delay(10);
+
+    return rt_reset_control_deassert(vfb->rsts);
 }
 
 static struct rt_clk *vop2fb_vp_clk_find(struct vop2fb *vfb,
@@ -1397,6 +1711,11 @@ static void vop2fb_output_wins_disable(struct vop2fb_vp_state *state)
 
     for (i = 0; i < vfb->overlay_count; ++i)
     {
+        if (&vfb->soc->overlays[i] == state->scanout)
+        {
+            continue;
+        }
+
         if (vfb->overlays[i])
         {
             vop2fb_plane_commit(vfb->overlays[i], RT_FALSE);
@@ -1564,14 +1883,16 @@ static const struct rt_graphic_device_ops vop2fb_ops =
     .wait_vsync = vop2fb_wait_vsync,
 };
 
-static void vop2fb_rk3568_irqs_quiesce(struct vop2fb *vfb)
+static void vop2fb_irqs_quiesce(struct vop2fb *vfb)
 {
     rt_uint32_t vp_id;
     const rt_uint32_t vp_irqs = 0xffff;
     const rt_uint32_t sys_irqs = 0xfe;
 
     if (!vfb || !vfb->regs || !vfb->soc ||
-            vfb->soc->soc != VOP2FB_SOC_RK3568 || !vfb->clk_enabled)
+            (vfb->soc->soc != VOP2FB_SOC_RK3528 &&
+             vfb->soc->soc != VOP2FB_SOC_RK3568 &&
+             vfb->soc->soc != VOP2FB_SOC_RK3588) || !vfb->clk_enabled)
     {
         return;
     }
@@ -1593,9 +1914,12 @@ static void vop2fb_rk3568_irqs_quiesce(struct vop2fb *vfb)
     HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS0_INT_EN) = sys_irqs << 16;
     HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS0_INT_CLR) =
             (sys_irqs << 16) | sys_irqs;
-    HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_EN) = sys_irqs << 16;
-    HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_CLR) =
-            (sys_irqs << 16) | sys_irqs;
+    if (vfb->soc->soc != VOP2FB_SOC_RK3528)
+    {
+        HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_EN) = sys_irqs << 16;
+        HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_CLR) =
+                (sys_irqs << 16) | sys_irqs;
+    }
 }
 
 static void vop2fb_isr(int irqno, void *param)
@@ -1614,8 +1938,12 @@ static void vop2fb_isr(int irqno, void *param)
 
     sys0_irqs = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS0_INT_STATUS) &
             RK3568_SYS_BUS_ERROR_INTR;
-    sys1_irqs = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_STATUS) &
-            RK3568_SYS_BUS_ERROR_INTR;
+    sys1_irqs = 0;
+    if (vfb->soc->soc != VOP2FB_SOC_RK3528)
+    {
+        sys1_irqs = HWREG32((rt_uint8_t *)vfb->regs + RK3568_SYS1_INT_STATUS) &
+                RK3568_SYS_BUS_ERROR_INTR;
+    }
     vp_mask = vfb->configured_vp_mask | vfb->active_vp_mask;
 
     for (vp_id = 0; vp_id < vfb->soc->vp_count &&
@@ -1690,6 +2018,8 @@ static void vop2fb_isr(int irqno, void *param)
         {
             continue;
         }
+
+        vfb->frame_start_count[vp_id]++;
 
         if (rt_atomic_exchange(&vfb->vp[vp_id].vsync, 1) == 0)
         {
@@ -1973,7 +2303,7 @@ static rt_err_t vop2fb_cursor_plane_create(struct vop2fb *vfb,
 
     vfb->cursor = plane;
 
-    return vop2fb_plane_init(vfb, state, plane, vfb->soc->cursor, width, height,
+    return vop2fb_plane_init(vfb, state, plane, vfb->cursor_desc, width, height,
             RT_GRAPHIC_PLANE_TYPE_CURSOR);
 }
 
@@ -2039,7 +2369,7 @@ static rt_err_t vop2fb_crtc_mode_set(void *priv,
 
     if (primary_output)
     {
-        state->scanout = vfb->soc->primary;
+        state->scanout = vfb->primary_desc;
         state->graphic = &vfb->parent;
     }
     else
@@ -2428,6 +2758,12 @@ static rt_err_t vop2fb_parse_display(struct vop2fb *vfb, struct rt_platform_devi
     vfb->display_h = 1080;
     vfb->vp_id = 0;
 
+    if (vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        vfb->display_w = 2560;
+        vfb->display_h = 1440;
+    }
+
     rt_dm_dev_prop_read_u32(dev, "rockchip,fb-width", &vfb->display_w);
     rt_dm_dev_prop_read_u32(dev, "rockchip,fb-height", &vfb->display_h);
     rt_dm_dev_prop_read_u32(dev, "rockchip,active-vp", &vfb->vp_id);
@@ -2445,7 +2781,7 @@ static rt_err_t vop2fb_parse_display(struct vop2fb *vfb, struct rt_platform_devi
     return RT_EOK;
 }
 
-static rt_bool_t vop2fb_route_is_legacy_hdmi(struct rt_ofw_node *connector_np)
+static rt_bool_t vop2fb_route_is_hdmi(struct rt_ofw_node *connector_np)
 {
     if (!connector_np)
     {
@@ -2453,7 +2789,8 @@ static rt_bool_t vop2fb_route_is_legacy_hdmi(struct rt_ofw_node *connector_np)
     }
 
     return rt_ofw_node_is_compatible(connector_np, "rockchip,rk3568-dw-hdmi") ||
-           rt_ofw_node_is_compatible(connector_np, "rockchip,rk3528-dw-hdmi");
+           rt_ofw_node_is_compatible(connector_np, "rockchip,rk3528-dw-hdmi") ||
+           rt_ofw_node_is_compatible(connector_np, "rockchip,rk3588-dw-hdmi");
 }
 
 #if DBG_LVL >= DBG_LOG
@@ -2488,7 +2825,7 @@ static enum vop2fb_output_if vop2fb_output_from_connector(struct rt_ofw_node *co
         return VOP2FB_OUTPUT_NONE;
     }
 
-    if (vop2fb_route_is_legacy_hdmi(connector_np))
+    if (vop2fb_route_is_hdmi(connector_np))
     {
         return VOP2FB_OUTPUT_HDMI;
     }
@@ -2545,6 +2882,9 @@ static rt_err_t vop2fb_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
+    vfb->primary_desc = vfb->soc->primary;
+    vfb->cursor_desc = vfb->soc->cursor;
+
     if ((err = vop2fb_parse_display(vfb, pdev)))
     {
         goto _fail;
@@ -2556,6 +2896,18 @@ static rt_err_t vop2fb_probe(struct rt_platform_device *pdev)
     {
         err = -RT_EIO;
         goto _fail;
+    }
+
+    if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        /* The gamma RAM is a distinct 4 KiB VOP resource on RK3588. */
+        vfb->gamma_lut = rt_ofw_iomap_by_name(dev->ofw_node, "gamma_lut");
+        if (!vfb->gamma_lut)
+        {
+            LOG_E("rk3588 gamma LUT resource is unavailable");
+            err = -RT_EIO;
+            goto _fail_unmap;
+        }
     }
 
     vfb->regsbak = rt_calloc(vfb->soc->regbak_words, sizeof(rt_uint32_t));
@@ -2574,6 +2926,26 @@ static rt_err_t vop2fb_probe(struct rt_platform_device *pdev)
         goto _fail_regsbak;
     }
 
+    vfb->rsts = rt_reset_control_get_array(dev);
+    if (rt_is_err(vfb->rsts))
+    {
+        LOG_W("vop2: resets unavailable: %s", rt_strerror(rt_ptr_err(vfb->rsts)));
+        vfb->rsts = RT_NULL;
+    }
+
+    if (vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        vfb->vop_grf = rt_syscon_find_by_ofw_phandle(dev->ofw_node,
+                "rockchip,vop-grf");
+        vfb->vo1_grf = rt_syscon_find_by_ofw_phandle(dev->ofw_node,
+                "rockchip,vo1-grf");
+
+        if (!vfb->vop_grf || !vfb->vo1_grf)
+        {
+            LOG_W("rk3588 HDMI output GRF is unavailable");
+        }
+    }
+
     vfb->irq = vop2fb_request_irq(vfb, dev);
     rt_spin_lock_init(&vfb->reg_lock);
 
@@ -2585,9 +2957,24 @@ static rt_err_t vop2fb_probe(struct rt_platform_device *pdev)
         goto _fail_clks;
     }
 
+    if ((err = vop2fb_reset_controller(vfb)))
+    {
+        LOG_E("vop2: reset controller failed: %s", rt_strerror(err));
+        goto _fail_clk;
+    }
+
     vfb->powered = RT_TRUE;
+    if ((err = vop2fb_rk3588_cluster0_power_on(vfb)))
+    {
+        goto _fail_clk;
+    }
+    if ((err = vop2fb_rk3588_esmart_power_on(vfb)))
+    {
+        goto _fail_clk;
+    }
+
     vop2fb_regsbak_sync(vfb);
-    vop2fb_rk3568_irqs_quiesce(vfb);
+    vop2fb_irqs_quiesce(vfb);
 
     vop2fb_axi_init_all(vfb);
     vop2fb_overlay_init(vfb);
@@ -2650,8 +3037,8 @@ static rt_err_t vop2fb_probe(struct rt_platform_device *pdev)
 
     LOG_I("VOP2 %s: max %ux%u, primary=%s, %u overlays, cursor=%s, per-VP fb on route complete",
             vfb->soc->version, vfb->display_w, vfb->display_h,
-            vfb->soc->primary->name, (unsigned)vfb->overlay_count,
-            vfb->soc->cursor->name);
+            vfb->primary_desc->name, (unsigned)vfb->overlay_count,
+            vfb->cursor_desc->name);
 
     return RT_EOK;
 
@@ -2671,9 +3058,13 @@ _fail_clk:
             vfb->vp[vp_id].ipc_ready = RT_FALSE;
         }
     }
-    vop2fb_rk3568_irqs_quiesce(vfb);
+    vop2fb_irqs_quiesce(vfb);
     vop2fb_clk_disable(vfb);
 _fail_clks:
+    if (!rt_is_err_or_null(vfb->rsts))
+    {
+        rt_reset_control_put(vfb->rsts);
+    }
     if (!rt_is_err_or_null(vfb->clks))
     {
         rt_clk_array_put(vfb->clks);
@@ -2681,6 +3072,10 @@ _fail_clks:
 _fail_regsbak:
     rt_free(vfb->regsbak);
 _fail_unmap:
+    if (vfb->gamma_lut)
+    {
+        rt_iounmap(vfb->gamma_lut);
+    }
     if (vfb->regs)
     {
         rt_iounmap(vfb->regs);
@@ -2725,8 +3120,7 @@ static rt_err_t vop2fb_remove(struct rt_platform_device *pdev)
         }
     }
 
-    vop2fb_rk3568_irqs_quiesce(vfb);
-
+    vop2fb_irqs_quiesce(vfb);
     for (vp_id = 0; vp_id < vfb->soc->vp_count &&
             vp_id < VOP2FB_VP_MAX; ++vp_id)
     {
@@ -2734,9 +3128,19 @@ static rt_err_t vop2fb_remove(struct rt_platform_device *pdev)
     }
     vop2fb_clk_disable(vfb);
 
+    if (!rt_is_err_or_null(vfb->rsts))
+    {
+        rt_reset_control_put(vfb->rsts);
+    }
+
     if (!rt_is_err_or_null(vfb->clks))
     {
         rt_clk_array_put(vfb->clks);
+    }
+
+    if (vfb->gamma_lut)
+    {
+        rt_iounmap(vfb->gamma_lut);
     }
 
     rt_iounmap(vfb->regs);

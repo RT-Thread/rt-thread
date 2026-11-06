@@ -19,6 +19,12 @@ if GetDepend(['RT_PHYE_ROCKCHIP_MIPI_DCPHY']):
 if GetDepend(['RT_PHYE_ROCKCHIP_INNO_DSIDPHY']):
     src += ['phye-rockchip-inno-dsidphy.c']
 
+if GetDepend(['RT_PHYE_ROCKCHIP_HDPTX_HDMI']):
+    src += ['phye-rockchip-hdptx-hdmi.c']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_INNO_HDMI']):
+    src += ['phye-rockchip-inno-hdmi.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
