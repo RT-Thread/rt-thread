@@ -109,19 +109,28 @@ static rt_err_t blk_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t err;
     struct rt_blk_disk *disk = to_blk_disk(dev);
+    struct rt_device_blk_geometry disk_geometry;
 
     switch (cmd)
     {
     case RT_DEVICE_CTRL_BLK_GETGEOME:
-        if (args)
-        {
-            err = disk->ops->getgeome(disk, args);
-        }
-        else
+        if (!args)
         {
             err = -RT_EINVAL;
+            break;
         }
 
+        err = disk->ops->getgeome(disk, &disk_geometry);
+        if (err != RT_EOK)
+        {
+            break;
+        }
+#ifdef RT_USING_LWP
+        err = blk_copy_to_user(args, &disk_geometry, sizeof(disk_geometry));
+#else
+        rt_memcpy(args, &disk_geometry, sizeof(disk_geometry));
+        err = RT_EOK;
+#endif
         break;
 
     case RT_DEVICE_CTRL_BLK_SYNC:
@@ -187,13 +196,51 @@ static rt_err_t blk_control(rt_device_t dev, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_BLK_SSIZEGET:
-        device_get_blk_ssize(dev, args);
-        err = RT_EOK;
+        if (!args)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
+        err = disk->ops->getgeome(disk, &disk_geometry);
+        if (err != RT_EOK)
+        {
+            break;
+        }
+
+        {
+            rt_uint32_t ksize = disk_geometry.bytes_per_sector;
+#ifdef RT_USING_LWP
+            err = blk_copy_to_user(args, &ksize, sizeof(ksize));
+#else
+            rt_memcpy(args, &ksize, sizeof(ksize));
+            err = RT_EOK;
+#endif
+        }
         break;
 
     case RT_DEVICE_CTRL_ALL_BLK_SSIZEGET:
-        device_get_all_blk_ssize(dev, args);
-        err = RT_EOK;
+        if (!args)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
+        err = disk->ops->getgeome(disk, &disk_geometry);
+        if (err != RT_EOK)
+        {
+            break;
+        }
+
+        {
+            rt_uint64_t ktotal = (rt_uint64_t)disk_geometry.bytes_per_sector * disk_geometry.sector_count;
+#ifdef RT_USING_LWP
+            err = blk_copy_to_user(args, &ktotal, sizeof(ktotal));
+#else
+            rt_memcpy(args, &ktotal, sizeof(ktotal));
+            err = RT_EOK;
+#endif
+        }
         break;
 
     default:
