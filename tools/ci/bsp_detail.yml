@@ -1628,6 +1628,12 @@ renesas/ra8m1-ek:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
+renesas/rh850/qemu-rh850-u2c:
+  .config: true
+  README.md: true
+  gcc: v850-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
 renesas/rzt2m_rsk:
   .config: true
   README.md: true
