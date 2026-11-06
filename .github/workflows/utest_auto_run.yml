@@ -320,11 +320,8 @@ jobs:
 
           if [[ "$TEST_CONFIG_FILE" == "components/dlmodule.cfg" ]]; then
             python3 tools/ci/run_dlmodule_qemu.py --kernel $TEST_BSP_ROOT/rtthread.bin \
-              --disk $TEST_BSP_ROOT/sd.bin --log qemu_output_arm.log
-            exit 0
-          fi
-
-          if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
+              --disk $TEST_BSP_ROOT/sd.bin --log qemu_output_$TEST_QEMU_ARCH.log
+          elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then
             sudo apt-get -yqq install device-tree-compiler
             if [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "virt" ]]; then
               qemu-system-$TEST_QEMU_ARCH -M virt -cpu max -smp 4 -m 128M -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
@@ -418,11 +415,13 @@ jobs:
                 > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
           fi 
 
-          QEMU_PID=$!
-          disown $QEMU_PID
-      
+          if [[ "$TEST_CONFIG_FILE" != "components/dlmodule.cfg" ]]; then
+            QEMU_PID=$!
+            disown $QEMU_PID
+          fi
+
       - name: Monitor qemu log
-        if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() && matrix.config_file != 'components/dlmodule.cfg' }}
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
         # Same known-flaky qemu-virt64-riscv standard kernel utest run as the previous step.
         continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && (matrix.config_file == 'kernel/ipc.cfg' || matrix.config_file == 'kernel/kernel_basic.cfg') }}
         timeout-minutes: 20

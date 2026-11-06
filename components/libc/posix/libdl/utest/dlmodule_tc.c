@@ -287,6 +287,12 @@ static void zero_exports(void)
 
 static rt_err_t test_init(void)
 {
+    struct stat st;
+
+    if (stat(TEST_DIR, &st) == 0)
+    {
+        return S_ISDIR(st.st_mode) ? RT_EOK : -RT_ERROR;
+    }
     return mkdir(TEST_DIR, 0700) == 0 ? RT_EOK : -RT_ERROR;
 }
 
