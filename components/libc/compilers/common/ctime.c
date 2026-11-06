@@ -1337,9 +1337,17 @@ int timer_getoverrun(timer_t timerid)
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
     struct timer_obj *timer;
+    rt_ubase_t ktimerid;
     rt_uint32_t seconds, nanoseconds;
 
-    timer = _g_timerid[(rt_ubase_t)timerid];
+    ktimerid = (rt_ubase_t)timerid;
+    if (ktimerid >= TIMER_ID_MAX)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    timer = _g_timerid[ktimerid];
 
     if (timer == NULL)
     {
@@ -1388,7 +1396,16 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     rt_err_t        err = RT_EOK;
 
     struct timer_obj *timer;
-    timer = _g_timerid[(rt_ubase_t)timerid];
+    rt_ubase_t ktimerid;
+
+    ktimerid = (rt_ubase_t)timerid;
+    if (ktimerid >= TIMER_ID_MAX)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    timer = _g_timerid[ktimerid];
     if (timer == NULL ||
         value->it_interval.tv_nsec < 0 ||
         value->it_interval.tv_nsec >= NANOSECOND_PER_SECOND ||
