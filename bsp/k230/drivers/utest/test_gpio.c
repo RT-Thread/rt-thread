@@ -10,12 +10,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
- /*
-  * 本测试用例演示基于 01Studio Canmv-K230 开发板测试 gpio 的基本输入和输出功能。其中
+/*
+ * 本测试用例演示基于 01Studio Canmv-K230 开发板测试 gpio 的基本输入和输出功能。其中
   * gpio_led_flashing 演示 LED 的跑马灯功能。LED 采用开发板上的 LED2（连接 LED_GPIO52）。
   * gpio_io 演示用杜邦线将 40Pin GPIO 中的 GPIO33 和 GPIO32 连接起来，GPIO33 配
   * 置为输出，GPIO32 配置为输入。分别用 GPIO33 产生输出给 GPIO32 读取并检查是否
   * 和预期的输出一致。
+  * gpio_pin_api 使用标准 pin 接口演示同样的连接，并验证开漏输出、上拉和下拉
+  * 模式的电气行为：GPIO33 输出低时 GPIO32 读到低，开漏输出高（释放）时由上拉
+  * 电阻把线路拉高。
   */
 #include <unistd.h>
 #include <stdio.h>
@@ -87,10 +90,47 @@ static void gpio_io(void)
     }
 }
 
+static void gpio_pin_api(void)
+{
+    int cnt = 3;
+
+    /* GPIO33 drives the line, GPIO32 senses it. */
+    rt_pin_mode(OUT_PIN_NUM, PIN_MODE_OUTPUT_OD);
+    rt_pin_mode(IN_PIN_NUM, PIN_MODE_INPUT_PULLUP);
+
+    while (cnt--)
+    {
+        rt_pin_write(OUT_PIN_NUM, PIN_LOW);
+        rt_thread_mdelay(10);
+        uassert_int_equal(rt_pin_read(IN_PIN_NUM), PIN_LOW);
+
+        rt_pin_write(OUT_PIN_NUM, PIN_HIGH);
+        rt_thread_mdelay(10);
+        uassert_int_equal(rt_pin_read(IN_PIN_NUM), PIN_HIGH);
+    }
+
+    /* The released line must follow the pull-down of the input pin. */
+    rt_pin_mode(IN_PIN_NUM, PIN_MODE_INPUT_PULLDOWN);
+    rt_thread_mdelay(10);
+    uassert_int_equal(rt_pin_read(IN_PIN_NUM), PIN_LOW);
+
+    /* Push-pull output drives both levels through the standard API. */
+    rt_pin_mode(OUT_PIN_NUM, PIN_MODE_OUTPUT);
+    rt_pin_mode(IN_PIN_NUM, PIN_MODE_INPUT);
+    rt_pin_write(OUT_PIN_NUM, PIN_HIGH);
+    rt_thread_mdelay(10);
+    uassert_int_equal(rt_pin_read(IN_PIN_NUM), PIN_HIGH);
+
+    rt_pin_write(OUT_PIN_NUM, PIN_LOW);
+    rt_thread_mdelay(10);
+    uassert_int_equal(rt_pin_read(IN_PIN_NUM), PIN_LOW);
+}
+
 static void testcase(void)
 {
     UTEST_UNIT_RUN(gpio_led_flashing);
     UTEST_UNIT_RUN(gpio_io);
+    UTEST_UNIT_RUN(gpio_pin_api);
 }
 
 static rt_err_t utest_tc_init(void)

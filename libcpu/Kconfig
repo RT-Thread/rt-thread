@@ -24,7 +24,7 @@ config ARCH_USING_HW_ATOMIC_16
 config ARCH_CPU_BIG_ENDIAN
     bool
 
-rsource "arm/Kconfig"
+orsource "arm/Kconfig"
 
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
