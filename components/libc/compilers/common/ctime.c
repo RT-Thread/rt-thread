@@ -167,6 +167,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     int i;
     int work;
+    time_t days;
+    time_t seconds_of_day;
 
     if(timep == RT_NULL || r == RT_NULL)
     {
@@ -176,20 +178,44 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
-    work = *timep % (24*60*60);
+    /*
+     * C division truncates toward zero, so a negative timestamp yields a
+     * negative day count and a negative remainder. Normalise to floor division
+     * first, otherwise tm_sec / tm_min / tm_hour come out negative (for
+     * example time_t -1 used to produce 1970-01-01 00:00:-1).
+     */
+    days           = *timep / (24 * 60 * 60);
+    seconds_of_day = *timep % (24 * 60 * 60);
+    if (seconds_of_day < 0)
+    {
+        seconds_of_day += 24 * 60 * 60;
+        days -= 1;
+    }
+
+    work = (int)seconds_of_day;
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
     r->tm_hour = work / 60;
-    work = (int)(*timep / (24*60*60));
-    r->tm_wday = (4 + work) % 7;
-    for (i = 1970;; ++i)
+
+    work = (int)days;
+    /* 1970-01-01 was a Thursday; keep the result positive for days < 0 too */
+    r->tm_wday = (int)(((4 + days % 7) % 7 + 7) % 7);
+
+    /*
+     * Walk to the year. The day count can be negative (timestamps before the
+     * epoch), so the loop has to be able to go backwards as well.
+     */
+    i = 1970;
+    while (work < 0)
     {
-        int k = __isleap(i) ? 366 : 365;
-        if (work >= k)
-            work -= k;
-        else
-            break;
+        --i;
+        work += __isleap(i) ? 366 : 365;
+    }
+    while (work >= (__isleap(i) ? 366 : 365))
+    {
+        work -= __isleap(i) ? 366 : 365;
+        ++i;
     }
     r->tm_year = i - 1900;
     r->tm_yday = work;
