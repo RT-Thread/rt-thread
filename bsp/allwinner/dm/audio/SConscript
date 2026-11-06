@@ -1,0 +1,30 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_AUDIO_SUNXI_CODEC']):
+    src += ['audio-sunxi-codec.c']
+
+if GetDepend(['RT_AUDIO_SUN50I_H616_CODEC']):
+    src += ['audio-sun50i-h616-codec.c']
+
+if GetDepend(['RT_AUDIO_SUN50I_H616_AHUB']):
+    src += ['audio-sun50i-h616-ahub.c']
+
+if (GetDepend('RT_AUDIO_SUNXI_I2S0') or
+        GetDepend('RT_AUDIO_SUNXI_OWA') or
+        GetDepend('RT_AUDIO_SUN50I_H616_CODEC') or
+        GetDepend('RT_AUDIO_SUN50I_H616_AHUB')):
+    src += ['audio-sunxi.c']
+
+if GetDepend(['RT_AUDIO_SUNXI_I2S0']):
+    src += ['audio-sunxi-i2s.c']
+
+if GetDepend(['RT_AUDIO_SUNXI_OWA']):
+    src += ['audio-sunxi-owa.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

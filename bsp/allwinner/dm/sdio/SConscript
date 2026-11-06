@@ -1,0 +1,13 @@
+from building import *
+Import('RTT_ROOT')
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend('RT_SDIO_SUNXI'):
+    src += ['sdio-sunxi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''],
+        CPPPATH = [RTT_ROOT + '/components/drivers/sdio'])
+
+Return('group')

@@ -16,6 +16,9 @@ if GetDepend(['RT_INPUT_TOUCHSCREEN_ADS7846']):
 if GetDepend(['RT_INPUT_TOUCHSCREEN_GOODIX']):
     src += ['ts-goodix.c']
 
+if GetDepend(['RT_INPUT_TOUCHSCREEN_CST3530']):
+    src += ['ts-cst3530.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
