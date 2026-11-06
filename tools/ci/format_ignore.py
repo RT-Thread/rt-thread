@@ -11,7 +11,11 @@
 import yaml
 import logging
 import os
-import subprocess
+
+try:
+    from git_utils import get_changed_files
+except ImportError:
+    from tools.ci.git_utils import get_changed_files
 
 def init_logger():
     log_format = "[%(filename)s %(lineno)d %(levelname)s] %(message)s "
@@ -72,13 +76,23 @@ class CheckOut:
         return 1
     
     def get_new_file(self):
-        result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
-        file_list = result.stdout.decode().strip().split('\n')
+        try:
+            file_list = get_changed_files(
+                "HEAD",
+                "origin/master",
+                diff_filter="ACMR",
+                no_renames=True,
+                full_index=True,
+            )
+        except RuntimeError as e:
+            logging.error(e)
+            return []
+
         new_files = []
         for line in file_list:
             logging.info("modified file -> {}".format(line))
             result = self.__exclude_file(line)
             if result != 0:
                 new_files.append(line)
-        
+
         return new_files

@@ -38,10 +38,8 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 options = LocalOptions("rtconfig.h")
 soft_fpu = GetLocalDepend(options, 'BSP_RISCV_FPU_SOFT')
 if soft_fpu:
-    rtconfig.DEVICE = rtconfig.DEVICE.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
-    rtconfig.CFLAGS = rtconfig.CFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
-    rtconfig.LFLAGS = rtconfig.LFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
-    rtconfig.AFLAGS = rtconfig.AFLAGS.replace('-march=rv64imafdcv -mabi=lp64d', '-march=rv64imafdc -mabi=lp64')
+    for name in ('DEVICE', 'CFLAGS', 'LFLAGS', 'AFLAGS'):
+        setattr(rtconfig, name, getattr(rtconfig, name).replace('-march=rv64imafdcv', '-march=rv64imafdc'))
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],

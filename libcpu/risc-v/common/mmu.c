@@ -136,6 +136,7 @@ static int mmu_map_early(rt_ubase_t *tbl, rt_uint8_t max_level,
         rt_ubase_t va, rt_ubase_t pa, rt_ubase_t attr, rt_bool_t flush)
 {
     rt_ubase_t page, *table, off, level_shift;
+    rt_ubase_t pv_off = flush ? rt_kmem_pvoff() : 0;
 
     attr = mmu_attr_fixup(attr);
 
@@ -168,7 +169,7 @@ static int mmu_map_early(rt_ubase_t *tbl, rt_uint8_t max_level,
                 return MMU_MAP_ERROR_NOPAGE;
             }
 
-            rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
+            rt_memset((void *)(page - pv_off), 0, ARCH_PAGE_SIZE);
             table[off] = ((page >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
 
             if (flush)
@@ -185,7 +186,7 @@ static int mmu_map_early(rt_ubase_t *tbl, rt_uint8_t max_level,
 
         /* Step into the next level page table */
         page = (table[off] >> PTE_BITS) << ARCH_PAGE_SHIFT;
-        table = (rt_ubase_t *)page;
+        table = (rt_ubase_t *)(page - pv_off);
 
         level_shift -= VPN_BITS;
     }
@@ -934,6 +935,12 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_ubase_t size,
 #if __riscv_xlen == 32 && !defined(RT_USING_SMART)
     /* The RV32 ioremap and MPR regions are placed below the kernel image. */
     aspace_start = (rt_ubase_t)v_address - rt_mpr_size;
+#elif defined(RT_USING_SMART)
+    /* The runtime-sized MPR can extend below the linked kernel base. */
+    if ((rt_ubase_t)v_address - rt_mpr_size < aspace_start)
+    {
+        aspace_start = (rt_ubase_t)v_address - rt_mpr_size;
+    }
 #endif
 
     rt_aspace_init(aspace, (void *)aspace_start, 0UL - aspace_start, vtable);
@@ -1395,10 +1402,28 @@ void *rt_hw_mmu_pgtbl_create(void)
                   (void *)rt_kernel_space.page_table + i * ARCH_PAGE_SIZE,
                   ARCH_PAGE_SIZE);
     }
+#else
+    rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
+#endif
+
+#ifdef RT_USING_SMART
+    /* Do not share early identity mappings with the user address space. */
+    rt_size_t user_start = get_top_vpn(USER_VADDR_START, satp_level_4k);
+    rt_size_t user_end = get_top_vpn(USER_VADDR_TOP - 1, satp_level_4k);
+
+    for (int i = 0; i < (1UL << alloc_bits); ++i)
+    {
+        rt_ubase_t *table = (void *)mmu_table + i * ARCH_PAGE_SIZE;
+
+        rt_memset(table + user_start, 0,
+                  (user_end - user_start + 1) * sizeof(*table));
+    }
+#endif
+
+#ifdef MMU_PERCPU
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table,
                          RT_CPUS_NR * ARCH_PAGE_SIZE);
 #else
-    rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
 #endif
 
