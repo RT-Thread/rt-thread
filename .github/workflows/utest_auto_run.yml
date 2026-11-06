@@ -152,6 +152,10 @@ jobs:
             config_file: "components/dfs.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/libc.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/dac.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/i2c.cfg"
 
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
@@ -483,6 +487,24 @@ jobs:
           fi
 
           exit $monitor_status
+
+      - name: Verify DAC test execution
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && matrix.config_file == 'components/dac.cfg' }}
+        run: |
+          testcase=components.drivers.dac.framework
+          if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" qemu_output_${TEST_QEMU_ARCH}.log; then
+            echo "Error: $testcase did not report a passing result."
+            exit 1
+          fi
+
+      - name: Verify I2C test execution
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && matrix.config_file == 'components/i2c.cfg' }}
+        run: |
+          testcase=components.drivers.i2c.framework
+          if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" qemu_output_${TEST_QEMU_ARCH}.log; then
+            echo "Error: $testcase did not report a passing result."
+            exit 1
+          fi
   # # Post CI status to PR comment
   # post-ci-status:
   #   needs: test
