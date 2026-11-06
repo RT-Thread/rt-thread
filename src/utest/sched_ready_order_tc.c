@@ -67,18 +67,44 @@
 #include "rthw.h"
 #include "utest.h"
 
-/* worker threads must be lower priority than the utest thread, but above idle */
-#define TEST_THREAD_PRIORITY (UTEST_THR_PRIORITY + 2)
+/*
+ * The worker priority is derived from the thread that actually runs the testcase,
+ * not from UTEST_THR_PRIORITY. utest can be started either on its own thread or
+ * directly from the caller's context (`utest_run -thread` versus plain
+ * `utest_run`), and UTEST_THR_PRIORITY may be reconfigured per BSP; reading the
+ * running thread keeps the "lower priority than the test body" precondition true
+ * in both cases.
+ */
+#define TEST_THREAD_PRIORITY_OFFSET 2
 
-#if TEST_THREAD_PRIORITY >= RT_THREAD_PRIORITY_MAX - 1
-#error "rtconfig: not enough priority levels between utest thread and idle thread"
-#endif
+static rt_uint8_t _test_thread_priority(void)
+{
+    rt_uint8_t priority = (rt_uint8_t)(RT_SCHED_PRIV(rt_thread_self()).current_priority +
+                                       TEST_THREAD_PRIORITY_OFFSET);
+
+    /* stay above idle, and leave room for the ready list ordering to matter */
+    if (priority >= RT_THREAD_PRIORITY_MAX - 1)
+    {
+        priority = RT_THREAD_PRIORITY_MAX - 2;
+    }
+
+    return priority;
+}
 
 #define TEST_ORDER_MAX 8
 
 static rt_sem_t _order_sem;
 static char _run_order[TEST_ORDER_MAX];
 static rt_size_t _run_count;
+
+/*
+ * utest_unit_run() resets local_utest.failed_num at the start of every unit and
+ * the testcase is reported as PASSED based on the value left by the last one, so
+ * a failure in an earlier unit would be masked by a later passing unit. Collect
+ * the per-unit verdicts here and assert them together at the very end.
+ */
+static rt_bool_t _sem_order_ok;
+static rt_bool_t _startup_order_ok;
 
 static void _order_reset(void)
 {
@@ -140,9 +166,9 @@ static void _sem_wakeup_order(void)
     uassert_not_null(_order_sem);
 
     worker_a = rt_thread_create("owA", _worker_wait_sem, (void *)'A',
-                                UTEST_THR_STACK_SIZE, TEST_THREAD_PRIORITY, 5);
+                                UTEST_THR_STACK_SIZE, _test_thread_priority(), 5);
     worker_b = rt_thread_create("owB", _worker_wait_sem, (void *)'B',
-                                UTEST_THR_STACK_SIZE, TEST_THREAD_PRIORITY, 5);
+                                UTEST_THR_STACK_SIZE, _test_thread_priority(), 5);
     uassert_not_null(worker_a);
     uassert_not_null(worker_b);
 
@@ -160,7 +186,8 @@ static void _sem_wakeup_order(void)
     rt_thread_mdelay(100);
 
     LOG_I("semaphore wakeup order: \"%s\", expect \"AB\"", _run_order);
-    uassert_str_equal(_run_order, "AB");
+    _sem_order_ok = (rt_strcmp(_run_order, "AB") == 0);
+    uassert_true(_sem_order_ok);
 
     rt_sem_delete(_order_sem);
     _order_sem = RT_NULL;
@@ -174,9 +201,9 @@ static void _startup_order(void)
     _order_reset();
 
     worker_c = rt_thread_create("owC", _worker_run, (void *)'C',
-                                UTEST_THR_STACK_SIZE, TEST_THREAD_PRIORITY, 5);
+                                UTEST_THR_STACK_SIZE, _test_thread_priority(), 5);
     worker_d = rt_thread_create("owD", _worker_run, (void *)'D',
-                                UTEST_THR_STACK_SIZE, TEST_THREAD_PRIORITY, 5);
+                                UTEST_THR_STACK_SIZE, _test_thread_priority(), 5);
     uassert_not_null(worker_c);
     uassert_not_null(worker_d);
 
@@ -187,13 +214,44 @@ static void _startup_order(void)
     rt_thread_mdelay(100);
 
     LOG_I("startup order: \"%s\", expect \"CD\"", _run_order);
-    uassert_str_equal(_run_order, "CD");
+    _startup_order_ok = (rt_strcmp(_run_order, "CD") == 0);
+    uassert_true(_startup_order_ok);
+}
+
+/*
+ * Final verdict, asserted from the last unit so that the value
+ * utest_unit_run() leaves in local_utest.failed_num is the one that reflects the
+ * whole testcase. Without this a failing _sem_wakeup_order() followed by a
+ * passing _startup_order() would be reported as PASSED.
+ */
+static void _order_summary(void)
+{
+    LOG_I("semaphore order: %s, startup order: %s",
+          _sem_order_ok ? "ok" : "FAILED",
+          _startup_order_ok ? "ok" : "FAILED");
+
+    uassert_true(_sem_order_ok);
+    uassert_true(_startup_order_ok);
 }
 
 static rt_err_t utest_tc_init(void)
 {
     _order_sem = RT_NULL;
     _order_reset();
+    _sem_order_ok = RT_TRUE;
+    _startup_order_ok = RT_TRUE;
+
+#ifdef RT_USING_SMP
+    /*
+     * Pin the thread that runs the testcase as well. The workers are bound to
+     * rt_hw_cpu_id() when they are started, so the test body has to stay on the
+     * same core throughout; otherwise it can migrate between prepare and check
+     * and the workers would be pinned to a core the test body no longer runs on.
+     */
+    rt_thread_control(rt_thread_self(), RT_THREAD_CTRL_BIND_CPU,
+                      (void *)(rt_ubase_t)rt_hw_cpu_id());
+#endif /* RT_USING_SMP */
+
     return RT_EOK;
 }
 
@@ -206,5 +264,6 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(_sem_wakeup_order);
     UTEST_UNIT_RUN(_startup_order);
+    UTEST_UNIT_RUN(_order_summary);
 }
 UTEST_TC_EXPORT(testcase, "core.scheduler_ready_order", utest_tc_init, utest_tc_cleanup, 10);
