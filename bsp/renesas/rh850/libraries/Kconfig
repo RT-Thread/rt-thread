@@ -1,0 +1,11 @@
+config SOC_FAMILY_RENESAS_RH850
+    bool
+
+config SOC_SERIES_RH850_U2C
+    bool
+    select SOC_FAMILY_RENESAS_RH850
+
+config BSP_USING_UART
+    bool "Enable the RLIN3 serial driver"
+    depends on RT_USING_SERIAL_V1
+    default y
