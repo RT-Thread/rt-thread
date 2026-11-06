@@ -1,0 +1,3 @@
+cpu.soft-float:
+    kconfig:
+    - CONFIG_RT_USING_FPU=n
