@@ -24,7 +24,7 @@
 
 static struct bflb_dma_channel_lli_pool_s lli[1];
 #define BL_ADC_DMA_CHANNEL_OFFSET (10U)
-#define BL_ADC_DMA_CHANNEL_COUNT (16U)
+#define BL_ADC_DMA_CHANNEL_COUNT  (16U)
 static volatile uint32_t raw_data[BL_ADC_DMA_CHANNEL_COUNT + BL_ADC_DMA_CHANNEL_OFFSET];
 static struct bflb_adc_result_s adc_value[10];
 
@@ -114,8 +114,6 @@ static struct _adc_channel_cfg chan[] = {
 
 static rt_bool_t bl_adc_channel_is_valid(rt_int8_t channel)
 {
-    rt_size_t i;
-
     if (channel < 0)
     {
         return RT_FALSE;
@@ -132,6 +130,8 @@ static rt_bool_t bl_adc_channel_is_valid(rt_int8_t channel)
     defined(BSP_USING_ADC_CH6) || defined(BSP_USING_ADC_CH7) || \
     defined(BSP_USING_ADC_CH8) || defined(BSP_USING_ADC_CH9) || \
     defined(BSP_USING_ADC_CH10)
+    rt_size_t i;
+
     for (i = 0; i < sizeof(chan) / sizeof(chan[0]); i++)
     {
         if (chan[i].chan.pos_chan == (rt_uint8_t)channel)
