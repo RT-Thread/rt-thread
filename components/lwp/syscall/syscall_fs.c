@@ -697,6 +697,17 @@ sysret_t sys_epoll_pwait(int fd,
     struct epoll_event *kev = RT_NULL;
     sigset_t *ksigs = RT_NULL;
 
+    /*
+     * Same problem as sys_poll(): cnt comes from the user process, and the
+     * multiplication below wraps in a 32-bit size_t while the event loop still
+     * walks the original count. cnt is a signed int here, so a negative value
+     * has to be rejected as well.
+     */
+    if (cnt < 0 || (size_t)cnt > SIZE_MAX / sizeof(struct epoll_event))
+    {
+        return -EINVAL;
+    }
+
     if (!lwp_user_accessable((void *)ev, cnt * sizeof(struct epoll_event)))
     {
         return -EFAULT;
