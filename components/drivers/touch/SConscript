@@ -1,4 +1,5 @@
 # SConscript for touch framework
+import os
 
 from building import *
 
@@ -7,5 +8,9 @@ src = ['dev_touch.c']
 CPPPATH = [cwd + '/../include']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_TOUCH', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
+
+for item in os.listdir(cwd):
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
