@@ -105,12 +105,14 @@ static void _update_process_times(rt_tick_t tick)
     struct rt_thread *thread = rt_thread_self();
     struct rt_cpu *pcpu = rt_cpu_self();
 
+#ifdef RT_USING_SMART
     if (!LWP_IS_USER_MODE(thread))
     {
         thread->user_time += tick;
         pcpu->cpu_stat.user += tick;
     }
     else
+#endif /* RT_USING_SMART */
     {
         thread->system_time += tick;
         if (thread == pcpu->idle_thread)
