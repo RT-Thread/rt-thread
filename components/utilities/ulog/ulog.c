@@ -818,6 +818,91 @@ void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const ch
 }
 
 /**
+ * output the log with calling context (file name / function name / line number)
+ *
+ * @param level level
+ * @param tag tag
+ * @param file file name, can be RT_NULL
+ * @param func function name, can be RT_NULL
+ * @param line line number, 0 means not enabled
+ * @param newline has newline
+ * @param format output format
+ * @param ... args
+ */
+void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const char *func, rt_int32_t line,
+                     rt_bool_t newline, const char *format, ...)
+{
+    va_list args;
+    char ctx_buf[ULOG_LINE_BUF_SIZE];
+    char body_buf[ULOG_LINE_BUF_SIZE];
+    char out_buf[2 * ULOG_LINE_BUF_SIZE + 8];
+    rt_size_t pos = 0;
+    rt_size_t body_len;
+    int n;
+
+    RT_ASSERT(tag);
+    RT_ASSERT(format);
+
+    /* build the context prefix as plain text, e.g. "main.c:42 app_entry()" */
+    if (file)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, "%s", file);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+    if (line > 0)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, ":%d", line);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+    if (func)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, " %s()", func);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+
+    /* args point to the first variable parameter */
+    va_start(args, format);
+
+    if (pos == 0)
+    {
+        /* no context enabled, keep the original path with zero overhead */
+        ulog_voutput(level, tag, newline, RT_NULL, 0, 0, 0, format, args);
+    }
+    else
+    {
+        /* format the message first, so that the result (not the format
+         * string) is truncated when the output is longer than the buffer */
+        n = rt_vsnprintf(body_buf, sizeof(body_buf), format, args);
+        if (n < 0)
+        {
+            body_len = 0;
+        }
+        else if (n >= (int)sizeof(body_buf))
+        {
+            body_len = sizeof(body_buf) - 1;
+        }
+        else
+        {
+            body_len = (rt_size_t)n;
+        }
+
+        /* assemble "[context] message" as plain text, then hand it to the
+         * formatter as a "%s" argument, so that '%' characters inside the
+         * file name or the message are never parsed as format specifiers */
+        out_buf[0] = '[';
+        rt_memcpy(out_buf + 1, ctx_buf, pos);
+        out_buf[pos + 1] = ']';
+        out_buf[pos + 2] = ' ';
+        rt_memcpy(out_buf + pos + 3, body_buf, body_len);
+        out_buf[pos + 3 + body_len] = '\0';
+
+        ulog_output(level, tag, newline, "%s", out_buf);
+    }
+
+    va_end(args);
+}
+
+/**
  * output RAW string format log
  *
  * @param format output format
