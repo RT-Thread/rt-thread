@@ -9,6 +9,7 @@
  */
 
 #include "board.h"
+#include "drv_common.h"
 #include "drv_usbh.h"
 
 #ifdef BSP_USING_USBH
@@ -224,8 +225,8 @@ static struct uhcd_ops uhcd_ops =
     .close_pipe = usbh_close_pipe,
 };
 
-void OTG_HS_IRQHandler() __attribute__((interrupt("WCH-Interrupt-fast")));
-void OTG_HS_IRQHandler()
+void OTG_HS_IRQHandler(void) WCH_IRQ_ATTR;
+void OTG_HS_IRQHandler(void)
 {
     rt_interrupt_enter();
 

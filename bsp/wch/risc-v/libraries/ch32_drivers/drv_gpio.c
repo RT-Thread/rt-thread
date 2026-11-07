@@ -9,6 +9,7 @@
  */
 
 #include <board.h>
+#include "drv_common.h"
 #include "drv_gpio.h"
 
 #ifdef BSP_USING_GPIO
@@ -435,21 +436,12 @@ void HAL_GPIO_EXTI_Callback(rt_uint16_t GPIO_Pin)
     pin_irq_hdr(bit2bitno(GPIO_Pin));
 }
 
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void EXTI0_IRQHandler(void) __attribute__((interrupt()));
-void EXTI1_IRQHandler(void) __attribute__((interrupt()));
-void EXTI2_IRQHandler(void) __attribute__((interrupt()));
-void EXTI3_IRQHandler(void) __attribute__((interrupt()));
-void EXTI4_IRQHandler(void) __attribute__((interrupt()));
-void EXTI9_5_IRQHandler(void) __attribute__((interrupt()));
-#else
-void EXTI0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void EXTI9_5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void EXTI0_IRQHandler(void) WCH_IRQ_ATTR;
+void EXTI1_IRQHandler(void) WCH_IRQ_ATTR;
+void EXTI2_IRQHandler(void) WCH_IRQ_ATTR;
+void EXTI3_IRQHandler(void) WCH_IRQ_ATTR;
+void EXTI4_IRQHandler(void) WCH_IRQ_ATTR;
+void EXTI9_5_IRQHandler(void) WCH_IRQ_ATTR;
 
 void EXTI0_IRQHandler(void)
 {

@@ -297,7 +297,7 @@
 /* WCH HAL & SDK Drivers */
 
 #define PKG_USING_CH32V20x_SDK
-#define PKG_USING_CH32V20x_SDK_LATEST_VERSION
+#define PKG_USING_CH32V20x_SDK_V205
 /* end of WCH HAL & SDK Drivers */
 
 /* AT32 HAL & SDK Drivers */
@@ -409,6 +409,7 @@
 #define SOC_RISCV_FAMILY_CH32
 #define SOC_RISCV_SERIES_CH32V2
 #define SOC_RISCV_SERIES_CH32V20x_D8W
+#define WCH_QINGKE_V4C
 
 /* Hardware Drivers Config */
 

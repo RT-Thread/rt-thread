@@ -9,6 +9,7 @@
  */
 #include <stdint.h>
 #include <board.h>
+#include "drv_common.h"
 #include <rtdevice.h>
 #include "drv_can.h"
 #ifdef BSP_USING_CAN
@@ -808,7 +809,7 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
 /**
  * @brief This function handles CAN1 TX interrupts. transmit fifo0/1/2 is empty can trigger this interrupt
  */
-void USB_HP_CAN1_TX_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USB_HP_CAN1_TX_IRQHandler(void) WCH_IRQ_ATTR;
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
     GET_INT_SP();
@@ -876,7 +877,7 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 /**
  * @brief This function handles CAN1 RX0 interrupts.
  */
-void USB_LP_CAN1_RX0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USB_LP_CAN1_RX0_IRQHandler(void) WCH_IRQ_ATTR;
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     GET_INT_SP();
@@ -889,7 +890,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 /**
  * @brief This function handles CAN1 RX1 interrupts.
  */
-void CAN1_RX1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN1_RX1_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN1_RX1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -902,7 +903,7 @@ void CAN1_RX1_IRQHandler(void)
 /**
  * @brief This function handles CAN1 SCE interrupts.
  */
-void CAN1_SCE_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN1_SCE_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN1_SCE_IRQHandler(void)
 {
     GET_INT_SP();
@@ -959,7 +960,7 @@ void CAN1_SCE_IRQHandler(void)
 /**
  * @brief This function handles CAN2 TX interrupts.
  */
-void CAN2_TX_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_TX_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_TX_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1027,7 +1028,7 @@ void CAN2_TX_IRQHandler(void)
 /**
  * @brief This function handles CAN2 RX0 interrupts.
  */
-void CAN2_RX0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_RX0_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_RX0_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1040,7 +1041,7 @@ void CAN2_RX0_IRQHandler(void)
 /**
  * @brief This function handles CAN2 RX1 interrupts.
  */
-void CAN2_RX1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_RX1_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_RX1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1053,7 +1054,7 @@ void CAN2_RX1_IRQHandler(void)
 /**
  * @brief This function handles CAN2 SCE interrupts.
  */
-void CAN2_SCE_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_SCE_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_SCE_IRQHandler(void)
 {
     GET_INT_SP();
