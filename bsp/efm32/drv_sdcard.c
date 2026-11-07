@@ -990,10 +990,10 @@ static rt_ssize_t rt_spiSd_write (
 * @return
 *   Error code
 ******************************************************************************/
-static rt_err_t rt_spiSd_control (
-    rt_device_t     dev,
-    rt_uint8_t      ctrl,
-    void            *buffer)
+static rt_err_t rt_spiSd_control(
+    rt_device_t dev,
+    int ctrl,
+    void *buffer)
 {
     rt_err_t ret;
     rt_uint32_t c_size;
