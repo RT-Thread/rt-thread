@@ -158,24 +158,28 @@ rt_err_t rt_can_rx_pause(struct rt_can_device *can)
     }
 
     was_enabled = (can->parent.open_flag & RT_DEVICE_FLAG_INT_RX) != 0;
-    can->parent.open_flag &= ~RT_DEVICE_FLAG_INT_RX;
-    wait_idle = can->rx_active_isr != 0 ? RT_TRUE : RT_FALSE;
-    if (wait_idle)
-    {
-        /*
-         * Initialize while rx_lock still excludes the final unpin. This avoids
-         * losing the one transition from active pins to zero between the state
-         * snapshot and the management thread starting to wait.
-         */
-        rt_completion_init(&rx_fifo->idle_completion);
-    }
     rt_spin_unlock_irqrestore(&can->rx_lock, level);
 
+    /* Disable hardware delivery before closing the software RX admission gate. */
     if (was_enabled && can->ops != RT_NULL && can->ops->control != RT_NULL)
     {
         result = can->ops->control(can, RT_DEVICE_CTRL_CLR_INT,
                                    (void *)RT_DEVICE_FLAG_INT_RX);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
     }
+
+    level = rt_spin_lock_irqsave(&can->rx_lock);
+    can->parent.open_flag &= ~RT_DEVICE_FLAG_INT_RX;
+    wait_idle = can->rx_active_isr != 0 ? RT_TRUE : RT_FALSE;
+    if (wait_idle)
+    {
+        /* Keep the final-unpin transition atomic with completion initialization. */
+        rt_completion_init(&rx_fifo->idle_completion);
+    }
+    rt_spin_unlock_irqrestore(&can->rx_lock, level);
 
     if (wait_idle)
     {
