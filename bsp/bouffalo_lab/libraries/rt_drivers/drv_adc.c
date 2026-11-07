@@ -126,6 +126,12 @@ static rt_bool_t bl_adc_channel_is_valid(rt_int8_t channel)
         return RT_FALSE;
     }
 
+#if defined(BSP_USING_ADC_CH0) || defined(BSP_USING_ADC_CH1) || \
+    defined(BSP_USING_ADC_CH2) || defined(BSP_USING_ADC_CH3) || \
+    defined(BSP_USING_ADC_CH4) || defined(BSP_USING_ADC_CH5) || \
+    defined(BSP_USING_ADC_CH6) || defined(BSP_USING_ADC_CH7) || \
+    defined(BSP_USING_ADC_CH8) || defined(BSP_USING_ADC_CH9) || \
+    defined(BSP_USING_ADC_CH10)
     for (i = 0; i < sizeof(chan) / sizeof(chan[0]); i++)
     {
         if (chan[i].chan.pos_chan == (rt_uint8_t)channel)
@@ -133,6 +139,7 @@ static rt_bool_t bl_adc_channel_is_valid(rt_int8_t channel)
             return RT_TRUE;
         }
     }
+#endif
 
     return RT_FALSE;
 }
