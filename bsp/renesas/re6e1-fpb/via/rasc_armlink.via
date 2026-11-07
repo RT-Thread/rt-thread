@@ -1,0 +1,6 @@
+# generated via file - do not edit
+--diag_suppress=6319,6314
+--entry=Reset_Handler
+--library_type=microlib
+--no_startup
+--via=script/ac6/fsp_keep.via
