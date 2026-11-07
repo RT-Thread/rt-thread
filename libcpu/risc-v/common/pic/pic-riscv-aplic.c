@@ -273,7 +273,7 @@ static void aplic_msi_irq_eoi(struct rt_pic_irq *pirq)
          * setipnum_le writes, causing an endless stream of spurious MSIs.
          */
         input = HWREG32(aplic->regs + APLIC_CLRIP_BASE +
-                (pirq->hwirq / APLIC_IRQBITS_PER_REG) * sizeof(rt_uint32_t));
+                        (pirq->hwirq / APLIC_IRQBITS_PER_REG) * sizeof(rt_uint32_t));
         if (observe)
         {
             aplic_eoi_debug.last_input = !!(input & RT_BIT(pirq->hwirq % APLIC_IRQBITS_PER_REG));
