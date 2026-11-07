@@ -20,6 +20,7 @@
 #include <csr.h>
 #include <stack.h>
 
+/* clang-format off */
 #ifdef __GNUC__
 .macro LOAD_GLOBAL_POINTER
 .option push

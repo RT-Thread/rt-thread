@@ -46,8 +46,8 @@
     #define CTX_GENERAL_REG_NR          34
     #define FRAME_OFF_SP                (33 * SZREG)
 #endif
-#define CTX_ALL_REG_NR                  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + \
-                                         CTX_FCSR_REG_NR + CTX_VECTOR_REG_NR)
+#define CTX_ALL_REG_NR (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + \
+                        CTX_FCSR_REG_NR + CTX_VECTOR_REG_NR)
 
 #define FRAME_OFF_XSTATUS               (2 * SZREG)
 #define FRAME_OFF_XCAUSE                (3 * SZREG)
@@ -62,7 +62,7 @@
 #define RT_HW_SWITCH_CONTEXT_RA         3
 #define RT_HW_SWITCH_CONTEXT_TP         4
 #ifdef ARCH_RISCV_32E
-#define RT_HW_SWITCH_CONTEXT_BASE_SIZE  8   /* Padding for alignment */
+#define RT_HW_SWITCH_CONTEXT_BASE_SIZE 8 /* Padding for alignment */
 #else
 #define RT_HW_SWITCH_CONTEXT_S2         5
 #define RT_HW_SWITCH_CONTEXT_S3         6
@@ -74,21 +74,21 @@
 #define RT_HW_SWITCH_CONTEXT_S9         12
 #define RT_HW_SWITCH_CONTEXT_S10        13
 #define RT_HW_SWITCH_CONTEXT_S11        14
-#define RT_HW_SWITCH_CONTEXT_BASE_SIZE  16  /* Padding for alignment */
+#define RT_HW_SWITCH_CONTEXT_BASE_SIZE  16 /* Padding for alignment */
 #endif
 
 /* Callee-saved FP registers and fcsr are appended to the switch frame. */
-#define RT_HW_SWITCH_CONTEXT_FPU_BASE   RT_HW_SWITCH_CONTEXT_BASE_SIZE
-#define RT_HW_SWITCH_CONTEXT_FCSR       (RT_HW_SWITCH_CONTEXT_FPU_BASE + \
-                                         CTX_FPU_SWITCH_REG_NR)
-#define RT_HW_SWITCH_CONTEXT_SIZE_RAW   (RT_HW_SWITCH_CONTEXT_FCSR + \
-                                         CTX_FCSR_REG_NR)
+#define RT_HW_SWITCH_CONTEXT_FPU_BASE RT_HW_SWITCH_CONTEXT_BASE_SIZE
+#define RT_HW_SWITCH_CONTEXT_FCSR     (RT_HW_SWITCH_CONTEXT_FPU_BASE + \
+                                       CTX_FPU_SWITCH_REG_NR)
+#define RT_HW_SWITCH_CONTEXT_SIZE_RAW (RT_HW_SWITCH_CONTEXT_FCSR + \
+                                       CTX_FCSR_REG_NR)
 /* Keep the stack pointer 16-byte aligned. */
-#define RT_HW_SWITCH_CONTEXT_ALIGN      (16 / (__riscv_xlen / 8))
-#define RT_HW_SWITCH_CONTEXT_SIZE       (((RT_HW_SWITCH_CONTEXT_SIZE_RAW + \
-                                         RT_HW_SWITCH_CONTEXT_ALIGN - 1) / \
-                                         RT_HW_SWITCH_CONTEXT_ALIGN) * \
-                                         RT_HW_SWITCH_CONTEXT_ALIGN)
+#define RT_HW_SWITCH_CONTEXT_ALIGN (16 / (__riscv_xlen / 8))
+#define RT_HW_SWITCH_CONTEXT_SIZE  (((RT_HW_SWITCH_CONTEXT_SIZE_RAW +   \
+                                      RT_HW_SWITCH_CONTEXT_ALIGN - 1) / \
+                                     RT_HW_SWITCH_CONTEXT_ALIGN) *      \
+                                    RT_HW_SWITCH_CONTEXT_ALIGN)
 
 #ifndef __ASSEMBLY__
 typedef struct rt_hw_switch_frame
