@@ -396,9 +396,12 @@ jobs:
                 -append "console=ttyS0 earlycon=sbi" \
                 > qemu_output_$TEST_QEMU_ARCH.log 2>&1 &
           elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "arm" ]]; then 
+            cpus=$(awk '/^#define[[:space:]]+RT_CPUS_NR[[:space:]]/ { print $3 }' "$TEST_BSP_ROOT/rtconfig.h")
+            cpus=${cpus:-1}
             qemu-system-$TEST_QEMU_ARCH \
                 -nographic \
                 -M $TEST_QEMU_MACHINE \
+                -smp "$cpus" \
                 -kernel $TEST_BSP_ROOT/rtthread.bin  \
                 -sd $TEST_BSP_ROOT/sd.bin  \
                 > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
@@ -436,9 +439,9 @@ jobs:
           echo "=========================================================================================="
           set +e
           timeout 20m bash -c '
-            tail -n +1 -f "$1" | while IFS= read -r line; do
+            while IFS= read -r line; do
               echo "$line"
-              if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
+              if [[ "$line" == *"[  FAILED  ] [ result   ]"* || "$line" == *"[  ASSERT  ] [ unit     ]"* ]]; then
                 ERROR_LOGS="${ERROR_LOGS}${line}"$'\''\n'\''
                 FAILURE_DETECTED=true
               fi
@@ -467,7 +470,7 @@ jobs:
                 echo "=========================================================================================="
                 exit 0
               fi
-            done
+            done < <(tail --pid=$$ -n +1 -f "$1")
           ' bash "$LOG_FILE"
           monitor_status=$?
           set -e
