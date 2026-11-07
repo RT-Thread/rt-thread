@@ -16,6 +16,7 @@ on:
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
       - 'bsp/xuantie/virt64/c906/**'
+      - 'bsp/renesas/rh850/**'
       - 'components/**'
       - 'examples/utest/**'
       - 'include/**'
@@ -36,6 +37,7 @@ on:
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
       - 'bsp/xuantie/virt64/c906/**'
+      - 'bsp/renesas/rh850/**'
       - 'components/**'
       - 'examples/utest/**'
       - 'include/**'
@@ -85,6 +87,8 @@ jobs:
           - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/zynqmp-a53-dfzu2eg", QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "rtsmart",  "SMP_RUN":"" }
           - { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/zynqmp-a53-dfzu2eg",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "standard",  "SMP_RUN":"smp" }
 
+          - { UTEST: "RH850",         RTT_BSP: "bsp/renesas/rh850/qemu-rh850-u2c", QEMU_ARCH: "rh850", QEMU_MACHINE: "rh850-u2c", SD_FILE: "None", KERNEL: "standard", "SMP_RUN":"" }
+
         config_file:
           - "default.cfg"
 
@@ -133,6 +137,10 @@ jobs:
           - platform: { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
             config_file: "kernel/mem.cfg"
           - platform: { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "RH850",         RTT_BSP: "bsp/renesas/rh850/qemu-rh850-u2c", QEMU_ARCH: "rh850", QEMU_MACHINE: "rh850-u2c", SD_FILE: "None", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "RH850",         RTT_BSP: "bsp/renesas/rh850/qemu-rh850-u2c", QEMU_ARCH: "rh850", QEMU_MACHINE: "rh850-u2c", SD_FILE: "None", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/mem.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/atomic_c11.cfg"
@@ -255,6 +263,20 @@ jobs:
             echo "TOOLCHAIN_INSTALLED=aarch64-musl" >> $GITHUB_ENV
           fi
 
+          if [[ "${{ matrix.platform.QEMU_ARCH }}" == "rh850" ]]; then
+            echo "Starting install RH850 ToolChains"
+            wget -q https://github.com/linumiz/rh850-gcc-toolchain/releases/download/v1.1.0/v850-elf-toolchain-linux-x86_64.tar.gz
+            sudo mkdir -p /opt/v850-elf /opt/qemu-rh850
+            sudo tar -xzf v850-elf-toolchain-linux-x86_64.tar.gz -C /opt/v850-elf
+            /opt/v850-elf/bin/v850-elf-gcc --version
+            wget -q https://github.com/linumiz/qemu-rh850/releases/download/v1.0.0/qemu-rh850-linux-x86_64.tar.gz
+            sudo tar -xzf qemu-rh850-linux-x86_64.tar.gz -C /opt/qemu-rh850
+            /opt/qemu-rh850/bin/qemu-system-rh850 --version
+            echo "/opt/qemu-rh850/bin" >> $GITHUB_PATH
+            echo "RTT_EXEC_PATH=/opt/v850-elf/bin" >> $GITHUB_ENV
+            echo "RTT_CC_PREFIX=v850-elf-" >> $GITHUB_ENV
+            echo "TOOLCHAIN_INSTALLED=rh850" >> $GITHUB_ENV
+          fi
           # Install CPP11 Preprocessing Toolchain
           if [[ "${{ matrix.platform.QEMU_ARCH }}" == "arm" && "${{ matrix.config_file }}" == "cpp11/cpp11.cfg" && "${{ matrix.platform.KERNEL }}" == "standard" ]]; then
             sudo rm -f /opt/gcc-arm-none-eabi-10-2020-q4-major/arm-none-eabi/include/c++/10.2.1/thread
@@ -394,6 +416,13 @@ jobs:
                 -kernel "$TEST_BSP_ROOT/rtthread.bin" \
                 "${dtb_args[@]}" \
                 -append "console=ttyS0 earlycon=sbi" \
+                > qemu_output_$TEST_QEMU_ARCH.log 2>&1 &
+          elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "rh850" ]]; then
+            qemu-system-$TEST_QEMU_ARCH \
+                -nographic \
+                -M $TEST_QEMU_MACHINE \
+                -icount shift=4,sleep=on \
+                -kernel $TEST_BSP_ROOT/rtthread.elf \
                 > qemu_output_$TEST_QEMU_ARCH.log 2>&1 &
           elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "arm" ]]; then 
             qemu-system-$TEST_QEMU_ARCH \

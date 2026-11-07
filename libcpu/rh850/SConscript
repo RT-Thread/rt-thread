@@ -1,0 +1,14 @@
+# RT-Thread building script for bridge
+
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd   = GetCurrentDir()
+group = SConscript(os.path.join('common', 'SConscript'))
+
+if os.path.isfile(os.path.join(cwd, rtconfig.CPU, 'SConscript')):
+    group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
+
+Return('group')

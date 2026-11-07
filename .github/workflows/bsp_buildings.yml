@@ -318,6 +318,15 @@ jobs:
           /opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin/i386-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
 
+      - name: Install v850-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-v850-elf' && success() }}
+        run: |
+          wget -q https://github.com/linumiz/rh850-gcc-toolchain/releases/download/v1.1.0/v850-elf-toolchain-linux-x86_64.tar.gz
+          sudo mkdir -p /opt/v850-elf
+          sudo tar -xzf v850-elf-toolchain-linux-x86_64.tar.gz -C /opt/v850-elf
+          /opt/v850-elf/bin/v850-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/v850-elf/bin" >> $GITHUB_ENV
+
       - name: Bsp Scons Compile
         if: ${{ success() }}
         shell: bash

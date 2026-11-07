@@ -939,6 +939,16 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 ---
 
+### RH850 Architecture Series
+
+#### ⚪ Renesas RH850
+
+| BSP Name | UART |
+|----------|------|
+| [qemu-rh850-u2c](renesas/rh850/qemu-rh850-u2c) | ✅ |
+
+---
+
 ### x86 Architecture Series
 
 #### ⚪ x86

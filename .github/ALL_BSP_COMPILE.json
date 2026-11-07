@@ -518,6 +518,13 @@
       ]
     },
     {
+      "RTT_BSP": "rh850",
+      "RTT_TOOL_CHAIN": "sourcery-v850-elf",
+      "SUB_RTT_BSP": [
+        "renesas/rh850/qemu-rh850-u2c"
+      ]
+    },
+    {
       "RTT_BSP": "nordic(yml)",
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "SUB_RTT_BSP": [

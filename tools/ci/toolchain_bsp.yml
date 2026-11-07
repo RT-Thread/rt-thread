@@ -432,3 +432,7 @@ unicore32-linux-gcc:
   bsp:
   - sep6200
   count: 1
+v850-elf-gcc:
+  bsp:
+  - renesas/rh850/qemu-rh850-u2c
+  count: 1
