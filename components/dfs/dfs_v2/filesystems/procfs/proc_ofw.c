@@ -44,12 +44,13 @@ static ssize_t proc_ofw_read(struct dfs_file *file, void *buf, size_t count, off
         return -EINVAL;
     }
 
-    if ((rt_size_t)*pos >= (rt_size_t)prop->length)
+    /* compare in off_t before narrowing: *pos may not fit into rt_size_t */
+    if (*pos >= (off_t)prop->length)
     {
         return 0;
     }
 
-    remaining = (rt_size_t)prop->length - (rt_size_t)*pos;
+    remaining = (rt_size_t)((off_t)prop->length - *pos);
     if (count > remaining)
     {
         count = remaining;
@@ -70,6 +71,21 @@ static const struct dfs_file_ops proc_ofw_file_ops = {
     .read = proc_ofw_read,
     .lseek = generic_dfs_lseek,
 };
+
+static rt_bool_t proc_ofw_has_entry(struct proc_dentry *parent, const char *name)
+{
+    struct proc_dentry *iter, *tmp;
+
+    dfs_vfs_for_each_subnode(iter, tmp, parent, node)
+    {
+        if (iter && !rt_strcmp(iter->name, name))
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
 
 static int proc_ofw_populate_node(const struct rt_ofw_node *node, struct proc_dentry *parent)
 {
@@ -109,8 +125,17 @@ static int proc_ofw_populate_node(const struct rt_ofw_node *node, struct proc_de
         dentry = proc_mkdir(name, parent);
         if (!dentry)
         {
+            if (proc_ofw_has_entry(parent, name))
+            {
+                /* a property and a child node may share the same name, the
+                 * property has been exported already, so skip this subtree */
+                LOG_W("%s: a property with the same name exists, skip the node", name);
+                child = rt_ofw_get_next_child(node, child);
+                continue;
+            }
+
             rt_ofw_node_put(child);
-            return -RT_ERROR;
+            return -RT_ENOMEM;
         }
 
         ret = proc_ofw_populate_node(child, dentry);
@@ -149,13 +174,15 @@ static int proc_ofw_init(void)
     }
 
     ret = proc_ofw_populate_node(root, dentry);
-    proc_release(dentry);
-    rt_ofw_node_put(root);
-
     if (ret != RT_EOK)
     {
+        /* remove the partially created subtree before dropping our reference */
         LOG_E("failed to export the OFW tree through procfs");
+        proc_remove(dentry);
     }
+
+    proc_release(dentry);
+    rt_ofw_node_put(root);
 
     return ret;
 }
