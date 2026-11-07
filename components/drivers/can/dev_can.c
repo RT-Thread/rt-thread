@@ -527,8 +527,8 @@ static rt_err_t _can_validate_filter(struct rt_can_device *can,
  * @brief Execute a controller-management command from a TX-idle/RX-paused boundary.
  *
  * can->lock serializes management operations. TX admission is closed atomically
- * with the idle check; RX admission is then paused and pinned ISR/callback work is
- * drained before hardware state changes. A failed BSP operation or RX resume keeps
+ * with the normal idle check (except explicit forced STOP); RX admission is then
+ * paused and pinned ISR/callback work is drained before hardware changes. A failed BSP operation or RX resume keeps
  * data paths fail-closed instead of resuming on uncertain hardware state. Generic
  * CAN does not retain or replay hardware filter programming across reconfiguration.
  *
@@ -536,10 +536,11 @@ static rt_err_t _can_validate_filter(struct rt_can_device *can,
  * @param cmd CAN control command when use_configure is RT_FALSE.
  * @param args Command/configuration arguments.
  * @param use_configure Select ops->configure() instead of ops->control().
+ * @param force Permit explicit hardware deinitialization while TX ownership is pending.
  * @return RT_EOK on success or a validation/quiesce/BSP/resume error.
  */
 static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
-                                 rt_bool_t use_configure)
+                                 rt_bool_t use_configure, rt_bool_t force)
 {
     rt_bool_t was_accepting = RT_FALSE;
     rt_bool_t rx_was_enabled;
@@ -558,6 +559,10 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
         return -RT_EINVAL;
     }
     if (use_configure && args == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+    if (force && (use_configure || cmd != RT_CAN_CMD_FORCE_STOP))
     {
         return -RT_EINVAL;
     }
@@ -593,8 +598,8 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
         }
     }
 
-    /* Stage 1: close TX admission and verify no frame is hardware-owned. */
-    result = rt_can_tx_begin_management(can, &was_accepting);
+    /* Stage 1: close TX admission; force STOP bypasses the hardware-idle check. */
+    result = rt_can_tx_begin_management(can, &was_accepting, force);
     if (result != RT_EOK)
     {
         goto out_unlock;
@@ -624,14 +629,29 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
         }
     }
 
-    if (!use_configure && cmd == RT_CAN_CMD_START)
+    if (!use_configure && (cmd == RT_CAN_CMD_START || cmd == RT_CAN_CMD_FORCE_STOP))
     {
-        start_enable = (rt_uint32_t)(rt_ubase_t)args != 0 ? RT_TRUE : RT_FALSE;
+        start_enable = (cmd == RT_CAN_CMD_START && (rt_uint32_t)(rt_ubase_t)args != 0) ? RT_TRUE : RT_FALSE;
         keep_rx_paused = start_enable ? RT_FALSE : RT_TRUE;
     }
 
     /* Stage 3: hardware mutation is allowed only inside the quiet window. */
-    if (use_configure)
+    if (force)
+    {
+        /* Disable TX/error IRQs before STOP; only a confirmed STOP can retire TX ownership. */
+        result = can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
+        if (result != RT_EOK)
+        {
+            goto out_unlock;
+        }
+        result = can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_CAN_INT_ERR);
+        if (result != RT_EOK)
+        {
+            goto out_unlock;
+        }
+        result = can->ops->control(can, RT_CAN_CMD_START, (void *)(rt_ubase_t)0);
+    }
+    else if (use_configure)
     {
         result = can->ops->configure(can, (struct can_configure *)args);
     }
@@ -649,11 +669,25 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
         goto out_unlock;
     }
 
+    if (force)
+    {
+        /* Only BSP-confirmed STOP/deinit may retire unreported hardware requests. */
+        rt_can_tx_retire_after_stop(can);
+    }
+
     if (use_configure)
     {
         rt_memcpy(&can->config, args, sizeof(can->config));
 #if defined(RT_CAN_USING_STATUS_POLLING) || defined(RT_CAN_USING_BUS_HOOK)
-        (void)rt_timer_control(&can->timer, RT_TIMER_CTRL_SET_TIME, &can->config.ticks);
+        {
+            rt_bool_t timer_was_active = _can_maintenance_timer_active(can);
+
+            (void)rt_timer_control(&can->timer, RT_TIMER_CTRL_SET_TIME, &can->config.ticks);
+            if (timer_was_active)
+            {
+                (void)rt_timer_start(&can->timer);
+            }
+        }
 #endif
     }
 #ifdef RT_CAN_USING_HDR
@@ -686,8 +720,28 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
         }
     }
 
+    /* START(0) may have reset the TX/error notification enables in the BSP. */
+    if (!use_configure && cmd == RT_CAN_CMD_START && start_enable)
+    {
+        if (can->can_tx != RT_NULL && (can->parent.open_flag & RT_DEVICE_FLAG_INT_TX))
+        {
+            result = can->ops->control(can, RT_DEVICE_CTRL_SET_INT,
+                                       (void *)RT_DEVICE_FLAG_INT_TX);
+            if (result != RT_EOK)
+            {
+                goto out_unlock;
+            }
+        }
+        result = can->ops->control(can, RT_DEVICE_CTRL_SET_INT,
+                                   (void *)RT_DEVICE_CAN_INT_ERR);
+        if (result != RT_EOK)
+        {
+            goto out_unlock;
+        }
+    }
+
     /* Stage 5: TX admission is the last data path reopened. */
-    if (!use_configure && cmd == RT_CAN_CMD_START)
+    if (!use_configure && (cmd == RT_CAN_CMD_START || cmd == RT_CAN_CMD_FORCE_STOP))
     {
         (void)rt_can_tx_set_accepting(can, start_enable ? RT_TRUE : RT_FALSE);
     }
@@ -731,7 +785,7 @@ static rt_err_t rt_can_control(struct rt_device *dev, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_CONFIG:
-        result = _can_reconfigure(can, cmd, args, RT_TRUE);
+        result = _can_reconfigure(can, cmd, args, RT_TRUE, RT_FALSE);
         break;
 
     case RT_CAN_CMD_SET_FILTER:
@@ -741,14 +795,18 @@ static rt_err_t rt_can_control(struct rt_device *dev, int cmd, void *args)
     case RT_CAN_CMD_SET_BITTIMING:
     case RT_CAN_CMD_SET_CANFD:
     case RT_CAN_CMD_START:
-        result = _can_reconfigure(can, cmd, args, RT_FALSE);
+        result = _can_reconfigure(can, cmd, args, RT_FALSE, RT_FALSE);
         break;
 
     case RT_CAN_CMD_SET_PRIV:
         if ((rt_uint32_t)(rt_ubase_t)args != can->config.privmode)
         {
-            result = _can_reconfigure(can, cmd, args, RT_FALSE);
+            result = _can_reconfigure(can, cmd, args, RT_FALSE, RT_FALSE);
         }
+        break;
+
+    case RT_CAN_CMD_FORCE_STOP:
+        result = _can_reconfigure(can, cmd, args, RT_FALSE, RT_TRUE);
         break;
 
     case RT_CAN_CMD_ABORT_TX:

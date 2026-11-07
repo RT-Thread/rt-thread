@@ -745,22 +745,30 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
  *
  * @param[in] can   A pointer to the CAN device structure.
  * @param[in] buf   A pointer to the `rt_can_msg` to be sent.
+ * @param[out] mailbox_out Hardware mailbox index on RT_EOK.
  *
  * @return
  * - `RT_EOK` if the message was accepted by a hardware mailbox.
- * - `-RT_EBUSY` if all reusable hardware mailboxes are busy.
+ * - `-RT_EBUSY` if no hardware mailbox is available.
  * - Other negative errors from the selected-mailbox submit path.
  */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox_out)
 {
     rt_uint32_t mailbox;
 
     for (mailbox = 0; mailbox < can->config.sndboxnumber && mailbox < 3U; mailbox++)
     {
+        /* A blocking waiter may still own a completed hardware mailbox. */
+        if (can->status.sndchange & (1UL << mailbox))
+        {
+            continue;
+        }
+
         rt_ssize_t result = _can_sendmsg(can, buf, mailbox);
 
         if (result == RT_EOK)
         {
+            *mailbox_out = mailbox;
             return RT_EOK;
         }
         if (result != -RT_EBUSY)

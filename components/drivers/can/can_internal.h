@@ -30,9 +30,9 @@
  *     -> TX_DONE/TX_FAIL retires the hardware ownership
  *
  *   non-blocking TX
- *     -> one immediate BSP sendmsg_nonblocking() attempt
- *     -> no Generic retry or software enqueue
- *     -> TX_DONE/TX_FAIL decrements the shared hardware-pending count
+ *     -> one immediate BSP sendmsg_nonblocking() attempt, reporting mailbox
+ *     -> mark that mailbox slot pending; no Generic retry or software enqueue
+ *     -> TX_DONE/TX_FAIL clears ownership in that mailbox slot
  *
  *   RX IRQ
  *     -> acquire an RX lifetime pin under rx_lock
@@ -50,7 +50,7 @@
  *
  * Synchronization:
  * - can->lock serializes thread-side open/close/control operations that may sleep.
- * - can->tx_lock protects TX runtime publication, mailbox slots, pending and
+ * - can->tx_lock protects TX runtime publication, mailbox slots and
  *   accepting. TX terminal ISR handling stays inside this lock domain.
  * - can->rx_lock protects RX runtime/FIFO/filter publication and rx_active_isr.
  *   RX hardware reads and user callbacks deliberately execute outside the lock
@@ -62,28 +62,30 @@
 
 #include <drivers/dev_can.h>
 
-/** Blocking ownership state for one framework-visible hardware mailbox. */
+/** Framework-visible hardware TX mailbox ownership and blocking wait state. */
 enum rt_can_tx_slot_state
 {
-    RT_CAN_TX_SLOT_FREE = 0, /**< No blocking caller owns this mailbox slot. */
+    RT_CAN_TX_SLOT_FREE = 0, /**< No pending request or blocking waiter owns this mailbox. */
     RT_CAN_TX_SLOT_ACTIVE,  /**< Hardware accepted the blocking frame; terminal is pending. */
+    RT_CAN_TX_SLOT_NONBLOCKING, /**< Non-blocking frame is pending in this mailbox. */
+    RT_CAN_TX_SLOT_TIMED_OUT,   /**< Caller timed out; hardware still owns the frame. */
     RT_CAN_TX_SLOT_DONE,    /**< TX_DONE arrived; the blocking waiter still owns cleanup. */
     RT_CAN_TX_SLOT_FAILED,  /**< TX_FAIL arrived; the blocking waiter still owns cleanup. */
 };
 
-/** Per-mailbox blocking TX waiter state. */
+/** Per-mailbox TX ownership; completion is used only for blocking submissions. */
 struct rt_can_tx_slot
 {
     struct rt_completion completion;       /**< Wakes the owner on this mailbox terminal. */
-    enum rt_can_tx_slot_state state;       /**< Blocking ownership/terminal state. */
+    enum rt_can_tx_slot_state state;       /**< Blocking/NB ownership and terminal result. */
+    rt_bool_t pending;                    /**< Hardware terminal still required for this mailbox. */
 };
 
-/** Simplified Generic CAN TX runtime. All fields are protected by can->tx_lock. */
+/** Generic CAN TX runtime. Per-mailbox ownership is protected by can->tx_lock. */
 struct rt_can_tx
 {
     struct rt_can_tx_slot *slots;           /**< Fixed slot array, one per visible mailbox. */
     struct rt_semaphore wait_sem;           /**< Bounded TX-state-change notification. */
-    rt_uint16_t pending;                    /**< Hardware-accepted frames not yet retired. */
     rt_bool_t accepting;                    /**< Whether normal TX admission is open. */
 };
 
@@ -136,8 +138,8 @@ rt_ssize_t rt_can_tx_write_core(struct rt_can_device *can,
  * @brief Retire one hardware TX terminal reported by the BSP ISR.
  *
  * The mailbox index is encoded in event bits [15:8]. An ACTIVE blocking slot is
- * completed for its owner; otherwise the terminal retires one accepted one-shot
- * non-blocking submission. pending/statistics are updated under can->tx_lock.
+ * completed for its owner; a non-blocking or timed-out slot is retired by its own
+ * terminal. Per-mailbox pending and statistics are updated under can->tx_lock.
  *
  * @param can CAN device reporting the terminal.
  * @param event RT_CAN_EVENT_TX_DONE or RT_CAN_EVENT_TX_FAIL plus mailbox index.
@@ -160,22 +162,24 @@ rt_err_t rt_can_tx_set_accepting(struct rt_can_device *can, rt_bool_t accepting)
 /**
  * @brief Establish the TX side of a controller-management quiet window.
  *
- * Atomically closes new TX admission and checks the complete TX-idle invariant.
+ * Atomically closes new TX admission and normally checks the TX-idle invariant.
  * If hardware ownership is still active, the previous admission state is restored
- * before -RT_EBUSY is returned. The application is responsible for stopping TX
- * producers before entering management; Generic CAN does not abort them implicitly.
+ * before -RT_EBUSY is returned. Only an explicitly forced hardware stop bypasses
+ * this check; the caller must confirm hardware deinitialization before clearing
+ * software ownership. The application must stop TX producers before management.
  *
  * @param can CAN device entering a management operation.
  * @param was_accepting Receives the previous admission state for later restoration.
- * @return RT_EOK when TX is idle, -RT_EBUSY when work is still active, or an error.
+ * @param force Permit an explicitly requested hardware STOP while TX is not idle.
+ * @return RT_EOK when TX may be quiesced, -RT_EBUSY when work is active, or an error.
  * @note Thread-side management helper; caller serializes management with can->lock.
  */
-rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_accepting);
+rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_accepting, rt_bool_t force);
 
 /**
  * @brief Query the complete Generic TX-idle invariant.
  *
- * Idle means pending is zero and every blocking mailbox slot is FREE.
+ * Idle means every mailbox slot has no pending terminal and is FREE.
  *
  * @param can CAN device to inspect.
  * @return RT_TRUE when no Generic TX is hardware-owned, otherwise RT_FALSE.

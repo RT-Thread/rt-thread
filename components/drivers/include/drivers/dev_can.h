@@ -34,9 +34,9 @@
  *   Generic does not auto-extend, abort, or recover a terminal that arrives later.
  *   A successful in-contract submit must generate exactly one TX_DONE or TX_FAIL
  *   terminal for that mailbox.
- * - Non-blocking TX calls sendmsg_nonblocking() once. The BSP chooses a free
- *   hardware mailbox immediately or returns -RT_EBUSY. Generic never queues or
- *   retries a non-blocking frame in software.
+ * - Non-blocking TX calls sendmsg_nonblocking() once. The BSP returns the selected
+ *   mailbox on successful submission; Generic records ownership in that mailbox's
+ *   slot. Generic never queues or retries non-blocking frames.
  * - A hardware mailbox is not reusable until the previous terminal has been
  *   published through rt_hw_can_isr(). This prevents an old terminal from being
  *   mis-associated with a newer blocking owner.
@@ -56,7 +56,7 @@
  *
  * Lock/lifetime boundary:
  * - can->lock: sleeping thread-side management serialization.
- * - tx_lock: TX runtime publication, slots, pending and admission.
+ * - tx_lock: TX runtime publication, per-mailbox ownership and admission.
  * - rx_lock: RX FIFO/HDR publication and rx_active_isr lifetime pins.
  * - can_rx/can_tx are typed dynamic-runtime pointers; the locks live in the
  *   statically registered rt_can_device so detach/free remains race-safe.
@@ -449,7 +449,7 @@ struct can_configure
 {
     rt_uint32_t baud_rate;      /**< The baud rate for the arbitration phase (e.g., CAN500kBaud). */
     rt_uint32_t msgboxsz;       /**< The size of the software receive buffer (in number of messages). */
-    rt_uint32_t sndboxnumber;   /**< The number of hardware mailboxes used for blocking send operations. */
+    rt_uint32_t sndboxnumber;   /**< The number of framework-visible hardware TX mailboxes. */
     rt_uint32_t mode     : 8;  /**< The CAN operation mode (e.g., RT_CAN_MODE_NORMAL, RT_CAN_MODE_LOOPBACK). */
     rt_uint32_t privmode : 8;  /**< Private mode flag. If set, the `priv` field of `rt_can_msg` specifies the hardware mailbox. */
     rt_uint32_t reserved : 16; /**< Reserved for future use. */
@@ -519,6 +519,23 @@ struct rt_can_ops;
  * command was removed, so an old caller cannot silently become ABORT_ALL.
  */
 #define RT_CAN_CMD_ABORT_ALL 0x21
+
+/**
+ * @brief Explicitly force the controller to stop and discard outstanding TX ownership.
+ *
+ * Generic disables TX/error interrupts, then calls the BSP's control(START, 0).
+ * This requires the BSP to guarantee that a successful STOP/deinit suppresses all
+ * old TX terminals; a BSP without this contract must return an error. The application
+ * Before FORCE_STOP, the application must stop all TX producers, including
+ * ISR sources, and ensure all in-flight TX API calls have returned.
+ * No thread may remain waiting for a mailbox or TX completion.
+ * The driver does not guarantee draining concurrent TX writers during FORCE_STOP.
+ * On STOP success, Generic retires orphaned requests and wakes active blocking
+ * waiters with failure, preserving their slots until they return. On failure,
+ * ownership remains intact and TX admission stays closed. Reconfigure and restart
+ * explicitly afterward; no automatic retry or recovery is attempted.
+ */
+#define RT_CAN_CMD_FORCE_STOP 0x22
 
 #define RT_DEVICE_CAN_INT_ERR 0x1000
 
@@ -664,7 +681,7 @@ struct rt_can_device
     struct rt_can_rx_fifo *can_rx;      /**< Dynamically allocated software RX runtime. */
     struct rt_can_tx *can_tx;           /**< Dynamically allocated TX mailbox runtime. */
 
-    struct rt_spinlock tx_lock;         /**< TX runtime publication, pending count and blocking slot ownership. */
+    struct rt_spinlock tx_lock;         /**< TX runtime publication, per-mailbox ownership and admission. */
     struct rt_spinlock rx_lock;         /**< RX FIFO/filter publication plus rx_active_isr lifetime pins. */
     rt_uint32_t rx_active_isr;          /**< RX ISR/callback lifetime pins, protected by rx_lock. */
 };
@@ -756,20 +773,21 @@ struct rt_can_ops
      */
     rt_ssize_t (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t fifo);
     /**
-     * @brief Low-level, hardware-specific function to send a CAN message non-blockingly.
+     * @brief Submit a frame immediately and report its hardware TX mailbox.
      *
-     * This function attempts to place a message into a hardware transmission mailbox
-     * and returns immediately without waiting for the transmission to complete.
+     * The BSP selects an available hardware mailbox, reports its index on RT_EOK,
+     * and returns without sleeping or waiting for TX_DONE/TX_FAIL. It must not
+     * publish a terminal synchronously. Each accepted frame must later generate
+     * exactly one terminal carrying that mailbox index. Callers serialize TX
+     * writes so a completed blocking slot is reclaimed before another submit.
      *
-     * @param[in] can A pointer to the CAN device structure.
-     * @param[in] buf A pointer to the `rt_can_msg` to be sent.
-     *
-     * @return
-     * - `RT_EOK` if the message was successfully accepted by the hardware.
-     * - `-RT_EBUSY` if all hardware mailboxes are currently full.
-     * - Other negative error codes for different failures.
+     * @param[in] can CAN device.
+     * @param[in] buf Frame to submit.
+     * @param[out] mailbox Hardware mailbox index on successful submission.
+     * @return RT_EOK on hardware acceptance, -RT_EBUSY if no hardware mailbox is
+     *         available, or another negative error code.
      */
-    rt_ssize_t (*sendmsg_nonblocking)(struct rt_can_device *can, const void *buf);
+    rt_ssize_t (*sendmsg_nonblocking)(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
 };
 
 /**

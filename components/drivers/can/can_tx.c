@@ -18,14 +18,13 @@
  *
  * Blocking frame:
  *   write -> scan fixed mailbox slots -> BSP sendmsg(mailbox)
- *         -> slot ACTIVE + pending++
- *         -> wait that slot completion
- *         -> TX ISR marks DONE/FAILED + pending--
- *         -> waiter releases the slot to FREE
+ *         -> slot ACTIVE + slot.pending=true -> wait completion
+ *         -> TX terminal clears slot.pending and reports DONE/FAILED
+ *         -> waiter releases the slot; a timeout leaves ownership until terminal
  *
  * Non-blocking frame:
- *   write/ISR -> BSP sendmsg_nonblocking() once -> pending++ on RT_EOK
- *             -> no retry/no software enqueue -> TX terminal -> pending--
+ *   BSP submits once and reports the selected mailbox -> slot.pending=true
+ *   -> terminal retires that mailbox only, with no retry or software queue.
  *
  * wait_sem is a bounded counting "TX state changed" notification, not a
  * mailbox-count semaphore. Its token capacity matches the number of visible
@@ -35,8 +34,8 @@
  * Each blocking slot has its own completion for the terminal of that specific
  * hardware mailbox.
  *
- * can->tx_lock protects runtime publication, accepting, pending and every slot.
- * BSP sendmsg()/sendmsg_nonblocking() are required to be immediate hardware-submit
+ * can->tx_lock protects runtime publication, accepting and per-mailbox slots.
+ * BSP send callbacks are required to be immediate hardware-submit
  * operations: they must not sleep or wait for bus transmission completion. Holding
  * tx_lock across the submit therefore closes the race where a very fast TX IRQ
  * could arrive before Generic ownership is published.
@@ -46,9 +45,8 @@
  * contract: it must cover the worst-case mailbox wait, CAN arbitration/transmission
  * latency and terminal-ISR scheduling latency for the target system. Generic CAN
  * does not auto-extend the deadline or auto-abort/recover a frame whose terminal
- * arrives after it. A value shorter than the real worst case is outside the
- * supported contract: late-terminal correlation and continued TX bookkeeping are
- * not guaranteed until the caller performs its recovery policy.
+ * arrives after it. On timeout the slot retains hardware ownership until the BSP
+ * publishes TX_DONE/TX_FAIL; external recovery remains caller/BSP policy.
  */
 
 #include "can_internal.h"
@@ -86,20 +84,15 @@ static rt_tick_t _tx_remaining(rt_tick_t start, rt_tick_t timeout)
  *
  * @param can CAN device that owns the TX runtime.
  * @param tx Published TX runtime.
- * @return RT_TRUE only when pending is zero and every blocking mailbox slot is FREE.
+ * @return RT_TRUE only when every mailbox slot has no pending terminal and is FREE.
  */
 static rt_bool_t _tx_idle_locked(struct rt_can_device *can, struct rt_can_tx *tx)
 {
     rt_uint32_t i;
 
-    if (tx->pending != 0)
-    {
-        return RT_FALSE;
-    }
-
     for (i = 0; i < can->config.sndboxnumber; i++)
     {
-        if (tx->slots[i].state != RT_CAN_TX_SLOT_FREE)
+        if (tx->slots[i].pending || tx->slots[i].state != RT_CAN_TX_SLOT_FREE)
         {
             return RT_FALSE;
         }
@@ -242,12 +235,14 @@ rt_err_t rt_can_tx_set_accepting(struct rt_can_device *can, rt_bool_t accepting)
  *
  * A sender that acquired tx_lock first either submits and makes TX non-idle, or
  * finishes before this check. A sender arriving later observes accepting=false.
+ * Only an explicit forced controller stop may bypass the normal idle gate.
  *
  * @param can CAN device entering a management operation.
  * @param was_accepting Receives the prior admission state for a later restore.
- * @return RT_EOK when TX is idle, -RT_EBUSY when hardware ownership remains.
+ * @param force Permit explicit controller deinitialization without waiting for TX idle.
+ * @return RT_EOK when management may proceed, -RT_EBUSY when TX is not idle.
  */
-rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_accepting)
+rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_accepting, rt_bool_t force)
 {
     struct rt_can_tx *tx;
     rt_base_t level;
@@ -268,7 +263,7 @@ rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_ac
 
     *was_accepting = tx->accepting;
     tx->accepting = RT_FALSE;
-    if (!_tx_idle_locked(can, tx))
+    if (!force && !_tx_idle_locked(can, tx))
     {
         tx->accepting = *was_accepting;
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
@@ -299,6 +294,65 @@ rt_bool_t rt_can_tx_is_idle(struct rt_can_device *can)
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
     return idle;
+}
+
+/**
+ * @brief Release abandoned TX ownership after a confirmed forced controller stop.
+ *
+ * A successful hardware stop must suppress old TX terminals before this call.
+ * ACTIVE blocking waiters become FAILED and retain their slot until the waiter
+ * returns; nonblocking/timed-out slots may be released immediately.
+ */
+void rt_can_tx_retire_after_stop(struct rt_can_device *can)
+{
+    /* Published TX runtime, IRQ-save lock state and affected mailbox index. */
+    struct rt_can_tx *tx;
+    rt_base_t level;
+    rt_uint32_t mailbox;
+
+    RT_ASSERT(can != RT_NULL);
+
+    level = rt_spin_lock_irqsave(&can->tx_lock);
+    tx = can->can_tx;
+    if (tx != RT_NULL)
+    {
+        for (mailbox = 0; mailbox < can->config.sndboxnumber; mailbox++)
+        {
+            /* Current hardware-mailbox owner, invalidated by controller deinit. */
+            struct rt_can_tx_slot *slot = &tx->slots[mailbox];
+
+            slot->pending = RT_FALSE;
+            if (slot->state == RT_CAN_TX_SLOT_ACTIVE)
+            {
+                /* Wake the owner, but do not reuse its slot before it consumes FAILED. */
+                slot->state = RT_CAN_TX_SLOT_FAILED;
+                rt_completion_done(&slot->completion);
+            }
+            else if (slot->state != RT_CAN_TX_SLOT_DONE && slot->state != RT_CAN_TX_SLOT_FAILED)
+            {
+                slot->state = RT_CAN_TX_SLOT_FREE;
+                can->status.sndchange &= ~(1UL << mailbox);
+            }
+        }
+        tx->accepting = RT_FALSE;
+    }
+    rt_spin_unlock_irqrestore(&can->tx_lock, level);
+
+    if (tx != RT_NULL)
+    {
+        /*
+        * FORCE_STOP requires the application to quiesce all TX writers first.
+        * RESET wakes already suspended waiters, while the bounded wake credits
+        * do not guarantee coverage of threads racing into rt_sem_take().
+        */
+        (void)rt_sem_control(&tx->wait_sem, RT_IPC_CMD_RESET, RT_NULL);
+
+        /* Retain wake credits for senders still between mailbox scan and sem_take. */
+        for (mailbox = 0; mailbox < can->config.sndboxnumber; mailbox++)
+        {
+            (void)rt_sem_release(&tx->wait_sem);
+        }
+    }
 }
 
 /**
@@ -368,8 +422,8 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
             }
 
             /*
-             * Completion reset, hardware submit, ownership publication and pending++
-             * stay in one TX critical section. The TX ISR takes the same lock, so a
+             * Completion reset, hardware submit and ownership publication stay in
+             * one TX critical section. The TX ISR takes the same lock, so a
              * very fast terminal cannot retire an unpublished blocking owner.
              */
             rt_completion_init(&slot->completion);
@@ -377,7 +431,7 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
             if (result == RT_EOK)
             {
                 slot->state = RT_CAN_TX_SLOT_ACTIVE;
-                tx->pending++;
+                slot->pending = RT_TRUE;
                 can->status.sndchange |= (1UL << mailbox);
                 selected = mailbox;
                 submitted = RT_TRUE;
@@ -453,20 +507,11 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
     }
     else if (slot->state == RT_CAN_TX_SLOT_ACTIVE)
     {
-        /*
-         * The configured hard deadline expired before a terminal was published.
-         * Generic CAN returns that timeout and retires its bookkeeping; it does not
-         * extend the deadline, abort hardware, or recover a late terminal. The user
-         * must configure RT_CANSND_MSG_TIMEOUT above the target system's real
-         * worst-case mailbox/arbitration/transmission/ISR latency. Continued TX after
-         * violating that contract requires caller-defined recovery before bookkeeping
-         * can be relied upon again.
-         */
-        if (tx->pending > 0)
-        {
-            tx->pending--;
-        }
+        /* Waiting expired, but the BSP still owns this mailbox until its terminal. */
+        slot->state = RT_CAN_TX_SLOT_TIMED_OUT;
         result = wait_result == RT_EOK ? -RT_ERROR : wait_result;
+        rt_spin_unlock_irqrestore(&can->tx_lock, level);
+        return result;
     }
     else
     {
@@ -484,11 +529,11 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
 }
 
 /**
- * @brief Perform one immediate mailbox-less hardware submission.
+ * @brief Perform one immediate hardware submission without software queueing.
  *
- * Non-blocking TX never enters a software queue and never retries in Generic CAN.
- * pending is incremented only after the BSP accepts the frame while tx_lock keeps
- * a very fast terminal event from being accounted before publication.
+ * The BSP reports its chosen mailbox so Generic can track its slot independently.
+ * TX submissions are serialized by callers; Generic does not reserve a mailbox
+ * on behalf of BSP before this callback returns.
  *
  * @param can CAN device used for the submission.
  * @param message Frame to submit.
@@ -500,6 +545,7 @@ static rt_ssize_t _tx_nonblocking_one(struct rt_can_device *can,
     struct rt_can_tx *tx;
     rt_ssize_t result;
     rt_base_t level;
+    rt_uint32_t mailbox;
 
     if (can->config.privmode == RT_CAN_MODE_PRIV)
     {
@@ -518,11 +564,19 @@ static rt_ssize_t _tx_nonblocking_one(struct rt_can_device *can,
         return -RT_EBUSY;
     }
 
-    /* The same lock keeps terminal publication behind successful pending++. */
-    result = can->ops->sendmsg_nonblocking(can, message);
+    result = can->ops->sendmsg_nonblocking(can, message, &mailbox);
     if (result == RT_EOK)
     {
-        tx->pending++;
+        if (mailbox >= can->config.sndboxnumber ||
+            tx->slots[mailbox].state != RT_CAN_TX_SLOT_FREE || tx->slots[mailbox].pending)
+        {
+            result = -RT_ERROR; /* The BSP returned a mailbox that Generic still owns. */
+        }
+        else
+        {
+            tx->slots[mailbox].state = RT_CAN_TX_SLOT_NONBLOCKING;
+            tx->slots[mailbox].pending = RT_TRUE;
+        }
     }
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
@@ -581,9 +635,9 @@ rt_ssize_t rt_can_tx_write_core(struct rt_can_device *can,
 /**
  * @brief Retire one hardware TX terminal event.
  *
- * An ACTIVE blocking slot receives DONE/FAILED and its private completion. If no
- * blocking slot owns the mailbox, the terminal retires one previously accepted
- * non-blocking submission. pending and terminal statistics stay in the tx_lock domain.
+ * The terminal updates only its mailbox slot (blocking or non-blocking).
+ * An unowned terminal does not consume another mailbox's pending request.
+ * Ownership and terminal statistics stay inside the tx_lock domain.
  *
  * @param can CAN device reporting the terminal.
  * @param event TX_DONE/TX_FAIL with mailbox index encoded in the upper bits.
@@ -613,21 +667,29 @@ void rt_can_tx_isr_core(struct rt_can_device *can, int event)
     if (mailbox < can->config.sndboxnumber)
     {
         slot = &tx->slots[mailbox];
-        if (slot->state == RT_CAN_TX_SLOT_ACTIVE)
+        if (slot->pending)
         {
-            slot->state = terminal == RT_CAN_EVENT_TX_DONE ? RT_CAN_TX_SLOT_DONE : RT_CAN_TX_SLOT_FAILED;
-            rt_completion_done(&slot->completion);
+            slot->pending = RT_FALSE;
+            if (slot->state == RT_CAN_TX_SLOT_ACTIVE)
+            {
+                slot->state = terminal == RT_CAN_EVENT_TX_DONE ? RT_CAN_TX_SLOT_DONE : RT_CAN_TX_SLOT_FAILED;
+                rt_completion_done(&slot->completion);
+            }
+            else if (slot->state == RT_CAN_TX_SLOT_TIMED_OUT)
+            {
+                can->status.sndchange &= ~(1UL << mailbox);
+                slot->state = RT_CAN_TX_SLOT_FREE;
+            }
+            else if (slot->state == RT_CAN_TX_SLOT_NONBLOCKING)
+            {
+                slot->state = RT_CAN_TX_SLOT_FREE;
+            }
             accounted = RT_TRUE;
         }
     }
 
-    /* A terminal with no active blocking slot belongs to a one-shot NB submit. */
-    if (accounted || tx->pending > 0)
+    if (accounted)
     {
-        if (tx->pending > 0)
-        {
-            tx->pending--;
-        }
         if (terminal == RT_CAN_EVENT_TX_DONE)
         {
             can->status.sndpkg++;
@@ -647,7 +709,7 @@ void rt_can_tx_isr_core(struct rt_can_device *can, int event)
  *
  * The caller must stop TX producers first. wait_sem is intentionally reused as a
  * state-change notification; one wake does not imply idle, so the loop must recheck
- * pending and all slot states until the deadline expires.
+ * every mailbox slot until the deadline expires.
  */
 rt_err_t rt_can_tx_drain_core(struct rt_can_device *can, rt_tick_t timeout)
 {
