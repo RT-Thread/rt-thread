@@ -11,13 +11,6 @@
 #include <rthw.h>
 #include <string.h>
 
-// int main(void)
-// {
-//     rt_kprintf("Hello RISC-V\n");
-
-//     return 0;
-// }
-
 int main(void)
 {
     int count;
