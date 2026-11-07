@@ -66,8 +66,7 @@ static ssize_t proc_ofw_read(struct dfs_file *file, void *buf, size_t count, off
     return (ssize_t)count;
 }
 
-static const struct dfs_file_ops proc_ofw_file_ops =
-{
+static const struct dfs_file_ops proc_ofw_file_ops = {
     .read = proc_ofw_read,
     .lseek = generic_dfs_lseek,
 };
