@@ -23,7 +23,9 @@
 #endif
 
 static struct bflb_dma_channel_lli_pool_s lli[1];
-static volatile uint32_t raw_data[16 + 10];
+#define BL_ADC_DMA_CHANNEL_OFFSET (10U)
+#define BL_ADC_DMA_CHANNEL_COUNT (16U)
+static volatile uint32_t raw_data[BL_ADC_DMA_CHANNEL_COUNT + BL_ADC_DMA_CHANNEL_OFFSET];
 static struct bflb_adc_result_s adc_value[10];
 
 static struct bflb_adc_config_s adc_config =
@@ -110,6 +112,31 @@ static struct _adc_channel_cfg chan[] = {
 #endif
 };
 
+static rt_bool_t bl_adc_channel_is_valid(rt_int8_t channel)
+{
+    rt_size_t i;
+
+    if (channel < 0)
+    {
+        return RT_FALSE;
+    }
+
+    if ((rt_size_t)channel >= BL_ADC_DMA_CHANNEL_COUNT)
+    {
+        return RT_FALSE;
+    }
+
+    for (i = 0; i < sizeof(chan) / sizeof(chan[0]); i++)
+    {
+        if (chan[i].chan.pos_chan == (rt_uint8_t)channel)
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
 static void bl_adc_pin_init(void)
 {
     struct bflb_device_s *gpio;
@@ -127,6 +154,11 @@ static rt_err_t bl_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, 
     struct bl_adc *_adc;
     struct bflb_dma_channel_lli_transfer_s transfers[1];
     _adc = (struct bl_adc *)device->parent.user_data;
+    if (!bl_adc_channel_is_valid(channel))
+    {
+        return -RT_EINVAL;
+    }
+
     struct bflb_adc_channel_s chan;
     chan.pos_chan = channel;
     chan.neg_chan = ADC_CHANNEL_GND;
@@ -155,15 +187,22 @@ static rt_err_t bl_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, 
 static rt_err_t bl_adc_get_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     struct bl_adc *_adc;
+    rt_size_t sample_index;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
 
+    if (!bl_adc_channel_is_valid(channel))
+    {
+        return -RT_EINVAL;
+    }
+
     _adc = device->parent.user_data;
+    sample_index = BL_ADC_DMA_CHANNEL_OFFSET + (rt_size_t)channel;
 
     rt_sem_take(_adc->sem, RT_WAITING_FOREVER);
     /* get ADC value */
-    *value = (rt_uint32_t)raw_data[10 + channel];
+    *value = (rt_uint32_t)raw_data[sample_index];
 
     return RT_EOK;
 }
