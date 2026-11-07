@@ -56,7 +56,7 @@ void ulog_deinit(void);
 #endif
 
 #ifdef ULOG_USING_OUTPUT_FUNC
-#define ULOG_FUNC_INFO __FUNCTION__
+#define ULOG_FUNC_INFO __func__
 #else
 #define ULOG_FUNC_INFO RT_NULL
 #endif

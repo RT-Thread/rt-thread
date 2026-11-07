@@ -843,21 +843,32 @@ void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const
     RT_ASSERT(tag);
     RT_ASSERT(format);
 
+    ctx_buf[0] = '\0';
+
     /* build the context prefix as plain text, e.g. "main.c:42 app_entry()" */
     if (file)
     {
         n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, "%s", file);
-        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+        if (n > 0)
+        {
+            pos += (n < (int)(sizeof(ctx_buf) - pos)) ? (rt_size_t)n : (sizeof(ctx_buf) - pos - 1);
+        }
     }
     if (line > 0)
     {
         n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, ":%d", line);
-        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+        if (n > 0)
+        {
+            pos += (n < (int)(sizeof(ctx_buf) - pos)) ? (rt_size_t)n : (sizeof(ctx_buf) - pos - 1);
+        }
     }
     if (func)
     {
         n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, " %s()", func);
-        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+        if (n > 0)
+        {
+            pos += (n < (int)(sizeof(ctx_buf) - pos)) ? (rt_size_t)n : (sizeof(ctx_buf) - pos - 1);
+        }
     }
 
     /* args point to the first variable parameter */
