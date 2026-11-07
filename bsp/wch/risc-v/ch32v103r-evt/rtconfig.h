@@ -401,6 +401,7 @@
 /* end of RT-Thread online packages */
 #define SOC_RISCV_FAMILY_CH32
 #define SOC_RISCV_SERIES_CH32V1
+#define WCH_QINGKE_V3A
 
 /* Hardware Drivers Config */
 

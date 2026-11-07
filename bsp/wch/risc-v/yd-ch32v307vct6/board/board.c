@@ -9,6 +9,7 @@
  */
 
 #include "board.h"
+#include <drv_common.h>
 #include <stdint.h>
 #include "drv_usart.h"
 #include <rthw.h>
@@ -59,7 +60,7 @@ void rt_hw_board_init()
 #endif
 }
 
-void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void SysTick_Handler(void) WCH_IRQ_ATTR;
 void SysTick_Handler(void)
 {
     GET_INT_SP();

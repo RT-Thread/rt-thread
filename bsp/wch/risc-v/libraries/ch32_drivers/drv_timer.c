@@ -18,6 +18,7 @@
 
 #include "drv_timer.h"
 #include "board.h"
+#include "drv_common.h"
 
 #ifdef RT_USING_CLOCK_TIME
 
@@ -359,7 +360,7 @@ static void ch32_clock_timer_isr(struct rt_clock_timer_device *device)
 }
 
 #ifdef BSP_USING_TIM1
-void TIM1_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM1_UP_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM1_UP_IRQHandler(void)
 {
     GET_INT_SP();
@@ -371,7 +372,7 @@ void TIM1_UP_IRQHandler(void)
 #endif /* BSP_USING_TIM1 */
 
 #ifdef BSP_USING_TIM2
-void TIM2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM2_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM2_IRQHandler(void)
 {
     GET_INT_SP();
@@ -383,7 +384,7 @@ void TIM2_IRQHandler(void)
 #endif /* BSP_USING_TIM2 */
 
 #ifdef BSP_USING_TIM3
-void TIM3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM3_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM3_IRQHandler(void)
 {
     GET_INT_SP();
@@ -395,7 +396,7 @@ void TIM3_IRQHandler(void)
 #endif /* BSP_USING_TIM3 */
 
 #ifdef BSP_USING_TIM4
-void TIM4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM4_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM4_IRQHandler(void)
 {
     GET_INT_SP();
@@ -407,7 +408,7 @@ void TIM4_IRQHandler(void)
 #endif /* BSP_USING_TIM4 */
 
 #ifdef BSP_USING_TIM5
-void TIM5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM5_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM5_IRQHandler(void)
 {
     GET_INT_SP();
@@ -419,7 +420,7 @@ void TIM5_IRQHandler(void)
 #endif /* BSP_USING_TIM5 */
 
 #ifdef BSP_USING_TIM6
-void TIM6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM6_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM6_IRQHandler(void)
 {
     GET_INT_SP();
@@ -431,7 +432,7 @@ void TIM6_IRQHandler(void)
 #endif /* BSP_USING_TIM6 */
 
 #ifdef BSP_USING_TIM7
-void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM7_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM7_IRQHandler(void)
 {
     GET_INT_SP();
@@ -443,7 +444,7 @@ void TIM7_IRQHandler(void)
 #endif /* BSP_USING_TIM7 */
 
 #ifdef BSP_USING_TIM8
-void TIM8_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM8_UP_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM8_UP_IRQHandler(void)
 {
     GET_INT_SP();
@@ -455,7 +456,7 @@ void TIM8_UP_IRQHandler(void)
 #endif /* BSP_USING_TIM8 */
 
 #ifdef BSP_USING_TIM9
-void TIM9_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM9_UP_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM9_UP_IRQHandler(void)
 {
     GET_INT_SP();
@@ -467,7 +468,7 @@ void TIM9_UP_IRQHandler(void)
 #endif /* BSP_USING_TIM9 */
 
 #ifdef BSP_USING_TIM10
-void TIM10_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM10_UP_IRQHandler(void) WCH_IRQ_ATTR;
 void TIM10_UP_IRQHandler(void)
 {
     GET_INT_SP();

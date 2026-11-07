@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
+#include "drv_common.h"
 #include "drv_usart_v2.h"
 #ifdef RT_USING_SERIAL_V2
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8) && !defined(BSP_USING_LPUART1)
@@ -565,11 +566,7 @@ static void uart_isr(struct rt_serial_device *serial)
 
 
 #if defined(BSP_USING_UART1)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void USART1_IRQHandler(void) __attribute__((interrupt()));
-#else
-void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void USART1_IRQHandler(void) WCH_IRQ_ATTR;
 void USART1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -583,11 +580,7 @@ void USART1_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel5_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel5_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel5_IRQHandler(void)
 {
     GET_INT_SP();
@@ -603,11 +596,7 @@ void DMA1_Channel5_IRQHandler(void)
 
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel4_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel4_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel4_IRQHandler(void)
 {
     GET_INT_SP();
@@ -624,11 +613,7 @@ void DMA1_Channel4_IRQHandler(void)
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void USART2_IRQHandler(void) __attribute__((interrupt()));
-#else
-void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void USART2_IRQHandler(void) WCH_IRQ_ATTR;
 void USART2_IRQHandler(void)
 {
     GET_INT_SP();
@@ -642,11 +627,7 @@ void USART2_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel6_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel6_IRQHandler(void)
 {
     GET_INT_SP();
@@ -661,11 +642,7 @@ void DMA1_Channel6_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel7_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel7_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel7_IRQHandler(void)
 {
     GET_INT_SP();
@@ -682,11 +659,7 @@ void DMA1_Channel7_IRQHandler(void)
 #endif /* BSP_USING_UART2 */
 
 #if defined(BSP_USING_UART3)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void USART3_IRQHandler(void) __attribute__((interrupt()));
-#else
-void USART3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void USART3_IRQHandler(void) WCH_IRQ_ATTR;
 void USART3_IRQHandler(void)
 {
     GET_INT_SP();
@@ -700,11 +673,7 @@ void USART3_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel3_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel3_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel3_IRQHandler(void)
 {
     GET_INT_SP();
@@ -719,11 +688,7 @@ void DMA1_Channel3_IRQHandler(void)
 }
 #endif /* defined(BSP_UART_USING_DMA_RX) && defined(BSP_UART3_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA1_Channel2_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA1_Channel2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA1_Channel2_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA1_Channel2_IRQHandler(void)
 {
     GET_INT_SP();
@@ -740,11 +705,7 @@ void DMA1_Channel2_IRQHandler(void)
 #endif /* BSP_USING_UART3*/
 
 #if defined(BSP_USING_UART4)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void UART4_IRQHandler(void) __attribute__((interrupt()));
-#else
-void UART4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void UART4_IRQHandler(void) WCH_IRQ_ATTR;
 void UART4_IRQHandler(void)
 {
     GET_INT_SP();
@@ -758,11 +719,7 @@ void UART4_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART4_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel3_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel3_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel3_IRQHandler(void)
 {
     GET_INT_SP();
@@ -778,11 +735,7 @@ void DMA2_Channel3_IRQHandler(void)
 #endif /* defined(BSP_UART_USING_DMA_RX) && defined(BSP_UART4_RX_USING_DMA) */
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART4_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel5_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel5_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel5_IRQHandler(void)
 {
     GET_INT_SP();
@@ -799,11 +752,7 @@ void DMA2_Channel5_IRQHandler(void)
 #endif /* BSP_USING_UART4*/
 
 #if defined(BSP_USING_UART5)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void UART5_IRQHandler(void) __attribute__((interrupt()));
-#else
-void UART5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void UART5_IRQHandler(void) WCH_IRQ_ATTR;
 void UART5_IRQHandler(void)
 {
     GET_INT_SP();
@@ -817,11 +766,7 @@ void UART5_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel2_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel2_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel2_IRQHandler(void)
 {
     GET_INT_SP();
@@ -836,11 +781,7 @@ void DMA2_Channel2_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART5_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel4_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel4_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel4_IRQHandler(void)
 {
     GET_INT_SP();
@@ -857,11 +798,7 @@ void DMA2_Channel4_IRQHandler(void)
 #endif /* BSP_USING_UART5*/
 
 #if defined(BSP_USING_UART6)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void UART6_IRQHandler(void) __attribute__((interrupt()));
-#else
-void UART6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void UART6_IRQHandler(void) WCH_IRQ_ATTR;
 void UART6_IRQHandler(void)
 {
     GET_INT_SP();
@@ -875,11 +812,7 @@ void UART6_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel7_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel7_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel7_IRQHandler(void)
 {
     GET_INT_SP();
@@ -894,11 +827,7 @@ void DMA2_Channel7_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel6_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel6_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel6_IRQHandler(void)
 {
     GET_INT_SP();
@@ -915,11 +844,7 @@ void DMA2_Channel6_IRQHandler(void)
 #endif /* BSP_USING_UART6*/
 
 #if defined(BSP_USING_UART7)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void UART7_IRQHandler(void) __attribute__((interrupt()));
-#else
-void UART7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void UART7_IRQHandler(void) WCH_IRQ_ATTR;
 void UART7_IRQHandler(void)
 {
     GET_INT_SP();
@@ -933,11 +858,7 @@ void UART7_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel9_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel9_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel9_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel9_IRQHandler(void)
 {
     GET_INT_SP();
@@ -952,11 +873,7 @@ void DMA2_Channel9_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel8_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel8_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel8_IRQHandler(void)
 {
     GET_INT_SP();
@@ -973,11 +890,7 @@ void DMA2_Channel8_IRQHandler(void)
 #endif /* BSP_USING_UART7*/
 
 #if defined(BSP_USING_UART8)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void UART8_IRQHandler(void) __attribute__((interrupt()));
-#else
-void UART8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void UART8_IRQHandler(void) WCH_IRQ_ATTR;
 void UART8_IRQHandler(void)
 {
     GET_INT_SP();
@@ -991,11 +904,7 @@ void UART8_IRQHandler(void)
     FREE_INT_SP();
 }
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_RX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel11_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel11_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel11_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel11_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1010,11 +919,7 @@ void DMA2_Channel11_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_RX_USING_DMA) */
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_TX_USING_DMA)
-#if defined (SOC_RISCV_SERIES_CH32V2)
-void DMA2_Channel10_IRQHandler(void) __attribute__((interrupt()));
-#else
-void DMA2_Channel10_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-#endif
+void DMA2_Channel10_IRQHandler(void) WCH_IRQ_ATTR;
 void DMA2_Channel10_IRQHandler(void)
 {
     GET_INT_SP();

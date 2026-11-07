@@ -400,6 +400,7 @@
 /* end of RT-Thread online packages */
 #define SOC_FAMILY_CH56X
 #define SOC_SERIES_CH569
+#define WCH_QINGKE_V3A
 
 /* Hardware Drivers Config */
 

@@ -293,7 +293,7 @@
 /* WCH HAL & SDK Drivers */
 
 #define PKG_USING_CH32V307_SDK
-#define PKG_USING_CH32V307_SDK_V207
+#define PKG_USING_CH32V307_SDK_V302
 /* end of WCH HAL & SDK Drivers */
 
 /* AT32 HAL & SDK Drivers */
@@ -404,6 +404,9 @@
 /* end of RT-Thread online packages */
 #define SOC_RISCV_FAMILY_CH32
 #define SOC_RISCV_SERIES_CH32V3
+#define WCH_QINGKE_V4F
+#define WCH_HAS_FAST_IRQ
+#define WCH_USING_FAST_IRQ
 
 /* Hardware Drivers Config */
 
