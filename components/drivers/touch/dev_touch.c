@@ -70,28 +70,32 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 }
 
 /* touch interrupt enable */
-static void rt_touch_irq_enable(rt_touch_t touch)
+static rt_err_t rt_touch_irq_enable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
     if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
-        rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
+        return rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
     }
+
+    return RT_EOK;
 #else
-    touch->ops->touch_control(touch, RT_TOUCH_CTRL_ENABLE_INT, RT_NULL);
+    return touch->ops->touch_control(touch, RT_TOUCH_CTRL_ENABLE_INT, RT_NULL);
 #endif
 }
 
 /* touch interrupt disable */
-static void rt_touch_irq_disable(rt_touch_t touch)
+static rt_err_t rt_touch_irq_disable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
     if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
-        rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
+        return rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
     }
+
+    return RT_EOK;
 #else
-    touch->ops->touch_control(touch, RT_TOUCH_CTRL_DISABLE_INT, RT_NULL);
+    return touch->ops->touch_control(touch, RT_TOUCH_CTRL_DISABLE_INT, RT_NULL);
 #endif
 }
 
@@ -154,10 +158,10 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
         if (result == RT_EOK)
         {
             rt_uint16_t mode;
-            mode  = *(rt_uint16_t*)args;
+            mode = *(rt_uint16_t *)args;
             if (mode == RT_DEVICE_FLAG_INT_RX)
             {
-                rt_touch_irq_enable(touch);  /* enable interrupt */
+                result = rt_touch_irq_enable(touch); /* enable interrupt */
             }
         }
 
@@ -183,10 +187,10 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
 
         break;
     case RT_TOUCH_CTRL_DISABLE_INT:
-        rt_touch_irq_disable(touch);
+        result = rt_touch_irq_disable(touch);
         break;
     case RT_TOUCH_CTRL_ENABLE_INT:
-        rt_touch_irq_enable(touch);
+        result = rt_touch_irq_enable(touch);
         break;
 
     case RT_TOUCH_CTRL_GET_ID:
