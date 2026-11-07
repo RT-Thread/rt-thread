@@ -368,9 +368,9 @@ void efm32_adc_on_dma(
  *  Error code
  ******************************************************************************/
 static rt_err_t rt_adc_control(
-    rt_device_t     dev,
-    rt_uint8_t      cmd,
-    void            *args)
+    rt_device_t dev,
+    int cmd,
+    void *args)
 {
     RT_ASSERT(dev != RT_NULL);
 
