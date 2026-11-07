@@ -521,6 +521,7 @@ void rt_smem_free(void *rmem)
 {
     struct rt_small_mem_item *mem;
     struct rt_small_mem *small_mem;
+    rt_size_t heap_end_offset;
 
     if (rmem == RT_NULL)
     {
@@ -539,7 +540,12 @@ void rt_smem_free(void *rmem)
     RT_ASSERT(rt_object_is_systemobject(&small_mem->parent.parent));
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)small_mem->heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)small_mem->heap_end);
-    RT_ASSERT(MEM_POOL(&small_mem->heap_ptr[mem->next]) == small_mem);
+    heap_end_offset = (rt_size_t)((rt_uint8_t *)small_mem->heap_end - small_mem->heap_ptr);
+    /* The last block's next is the heap_end sentinel. It is a valid next
+     * item even when its pool_ptr only carries the used bit (as in older
+     * or vendor small-mem pools), so identify it by offset. */
+    RT_ASSERT((mem->next == heap_end_offset) ||
+              (MEM_POOL(&small_mem->heap_ptr[mem->next]) == small_mem));
 
     LOG_D("release memory 0x%x, size: %d",
           (rt_uintptr_t)rmem,

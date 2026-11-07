@@ -10,7 +10,6 @@ cwd = GetCurrentDir()
 src = Split('''
 board.c
 software_irq.c
-startup_ch32v20x_D6.S
 ''')
 
 path =  [cwd]

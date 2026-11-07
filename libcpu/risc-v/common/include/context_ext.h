@@ -19,8 +19,14 @@
 #endif
 /* Number of XLEN-sized stack slots occupied by 32 floating-point registers. */
 #define CTX_FPU_REG_NR  (32 * __riscv_flen / __riscv_xlen)
+/* Slots needed for the callee-saved fs0-fs11 in the switch frame. */
+#define CTX_FPU_SWITCH_REG_NR (CTX_FPU_REG_NR * 12 / 32)
+/* The fcsr is always one XLEN-sized slot. */
+#define CTX_FCSR_REG_NR 1
 #else
 #define CTX_FPU_REG_NR  0
+#define CTX_FPU_SWITCH_REG_NR 0
+#define CTX_FCSR_REG_NR       0
 #endif
 
 #ifdef __ASSEMBLY__
@@ -65,6 +71,23 @@
 #define FPU_CTX_F29_OFF    FPU_CTX_REG_OFF(29)
 #define FPU_CTX_F30_OFF    FPU_CTX_REG_OFF(30)
 #define FPU_CTX_F31_OFF    FPU_CTX_REG_OFF(31)
+
+/* Compact slots for the callee-saved fs0-fs11 in the switch frame. */
+#define FPU_CTX_SW_FS0_OFF  FPU_CTX_REG_OFF(0)
+#define FPU_CTX_SW_FS1_OFF  FPU_CTX_REG_OFF(1)
+#define FPU_CTX_SW_FS2_OFF  FPU_CTX_REG_OFF(2)
+#define FPU_CTX_SW_FS3_OFF  FPU_CTX_REG_OFF(3)
+#define FPU_CTX_SW_FS4_OFF  FPU_CTX_REG_OFF(4)
+#define FPU_CTX_SW_FS5_OFF  FPU_CTX_REG_OFF(5)
+#define FPU_CTX_SW_FS6_OFF  FPU_CTX_REG_OFF(6)
+#define FPU_CTX_SW_FS7_OFF  FPU_CTX_REG_OFF(7)
+#define FPU_CTX_SW_FS8_OFF  FPU_CTX_REG_OFF(8)
+#define FPU_CTX_SW_FS9_OFF  FPU_CTX_REG_OFF(9)
+#define FPU_CTX_SW_FS10_OFF FPU_CTX_REG_OFF(10)
+#define FPU_CTX_SW_FS11_OFF FPU_CTX_REG_OFF(11)
+
+/* The fcsr follows the saved floating-point register area. */
+#define FPU_CTX_FCSR_OFF FPU_CTX_REG_OFF(32)
 
 #if __riscv_flen == 64
 #define CTX_FREG_L fld

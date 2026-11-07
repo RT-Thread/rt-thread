@@ -170,7 +170,7 @@ SECTIONS
     *esp_hw_support?rtc_sleep.*(.literal .literal.* .text .text.*)
     *esp_hw_support?rtc_time.*(.literal .literal.* .text .text.*)
     *esp_hw_support?systimer.*(.literal .literal.* .text .text.*)
-    *esp_ringbuf?(.literal .literal.* .text .text.*)
+    *esp_ringbuf?*(.literal .literal.* .text .text.*)
     *esp_rom?esp_rom_regi2c.*(.literal .literal.* .text .text.*)
     *esp_rom?esp_rom_spiflash.*(.literal .literal.* .text .text.*)
     *esp_rom?esp_rom_systimer.*(.literal .literal.* .text .text.*)

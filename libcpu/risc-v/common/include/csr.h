@@ -13,6 +13,9 @@
 
 #include <asm-generic.h>
 
+/* Floating-point control and status register */
+#define CSR_FCSR 0x003
+
 /* Status register flags */
 #define SR_SIE                      _UL(0x00000002) /* Supervisor Interrupt Enable */
 #define SR_MIE                      _UL(0x00000008) /* Machine Interrupt Enable */

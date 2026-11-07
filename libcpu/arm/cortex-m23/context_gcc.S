@@ -174,9 +174,12 @@ rt_hw_context_switch_to:
     /* restore MSP */
     LDR     R0, =SCB_VTOR
     LDR     R0, [R0]
+    CMP     R0, #0
+    BEQ     _restore_msp_done
     LDR     R0, [R0]
     NOP
     MSR     MSP, R0
+_restore_msp_done:
 
     /* enable interrupts at processor level */
     CPSIE   I
@@ -198,7 +201,13 @@ rt_hw_interrupt_thread_switch:
     .type HardFault_Handler, %function
 HardFault_Handler:
     /* get current context */
-    MRS     R0, PSP                 /* get fault thread stack pointer */
+    MRS     R0, MSP                 /* get fault context from handler. */
+    MOV     R1, LR                  /* Cortex-M23 baseline has no Thumb-2 TST immediate */
+    MOVS    R2, #0x04
+    TST     R1, R2                  /* if(!EXC_RETURN[2]) */
+    BEQ     _get_sp_done
+    MRS     R0, PSP                 /* get fault context from thread. */
+_get_sp_done:
     PUSH    {LR}
     BL      rt_hw_hard_fault_exception
     POP     {PC}
