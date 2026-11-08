@@ -977,9 +977,10 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
 }
 
 /**
- * @brief Dispatch a low-level CAN RX or TX terminal event into Generic CAN.
+ * @brief Dispatch low-level RX, TX terminal or controller error events to Generic CAN.
  * @param can CAN device reporting the event.
- * @param event Event type with optional FIFO/mailbox index in the upper bits.
+ * @param event Low-byte event type; upper byte is mailbox/FIFO index or
+ *              RT_CAN_BUS_ERR type for a controller error.
  */
 void rt_hw_can_isr(struct rt_can_device *can, int event)
 {
@@ -1002,6 +1003,40 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
     case RT_CAN_EVENT_TX_FAIL:
         rt_can_tx_isr_core(can, event);
         break;
+
+    case RT_CAN_EVENT_ERR:
+    {
+        /* Error type 0 is a controller-state notification, not a protocol error. */
+        rt_uint32_t error_type = ((rt_uint32_t)event >> 8) & 0xffU;
+
+        switch (error_type)
+        {
+        case RT_CAN_BUS_BIT_PAD_ERR:
+            can->status.bitpaderrcnt++;
+            break;
+        case RT_CAN_BUS_FORMAT_ERR:
+            can->status.formaterrcnt++;
+            break;
+        case RT_CAN_BUS_ACK_ERR:
+            can->status.ackerrcnt++;
+            break;
+        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
+        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
+            can->status.biterrcnt++;
+            break;
+        case RT_CAN_BUS_CRC_ERR:
+            can->status.crcerrcnt++;
+            break;
+        default:
+            break;
+        }
+
+        if (error_type >= RT_CAN_BUS_BIT_PAD_ERR && error_type <= RT_CAN_BUS_CRC_ERR)
+        {
+            can->status.lasterrtype = error_type;
+        }
+        break;
+    }
 
     default:
         break;

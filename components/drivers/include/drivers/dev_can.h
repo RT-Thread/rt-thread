@@ -723,6 +723,15 @@ struct rt_can_rx_fifo
 #define RT_CAN_EVENT_RX_IND     0x01    /* Rx indication */
 #define RT_CAN_EVENT_TX_DONE    0x02    /* Tx complete   */
 #define RT_CAN_EVENT_TX_FAIL    0x03    /* Tx fail   */
+/**
+ * @brief Report a controller error without completing any TX mailbox.
+ *
+ * The low byte is RT_CAN_EVENT_ERR. The next byte contains a fresh protocol
+ * error type from enum RT_CAN_BUS_ERR (1..6), or zero for a status-only event.
+ * Generic CAN increments the corresponding error counter for each typed event.
+ * The BSP provides hardware REC/TEC and controller state independently.
+ */
+#define RT_CAN_EVENT_ERR        0x04
 #define RT_CAN_EVENT_RX_TIMEOUT 0x05    /* Rx timeout    */
 #define RT_CAN_EVENT_RXOF_IND   0x06    /* Rx overflow */
 
@@ -810,8 +819,8 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
  * @brief The framework-level ISR handler for CAN devices.
  *
  * This function is called by the low-level BSP ISR and acts as the central
- * dispatcher for all CAN-related interrupt events. It handles both receive
- * events and transmission-complete events.
+ * dispatcher for RX, TX terminal and controller error events. Typed error
+ * events update software counters without querying the BSP or retiring TX slots.
  *
  * @param[in] can    A pointer to the CAN device structure.
  * @param[in] event  The interrupt event mask, indicating the cause of the interrupt.
