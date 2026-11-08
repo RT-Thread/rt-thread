@@ -13,13 +13,8 @@
 
 int main(void)
 {
-    int count;
-
-    for (count = 0; count < 10; count++)
-    {
-        rt_kprintf("RISC-V test: %d\n", count);
-        rt_thread_mdelay(1000);
-    }
+    rt_kprintf("Hello RISC-V\n");
 
     return 0;
 }
+
