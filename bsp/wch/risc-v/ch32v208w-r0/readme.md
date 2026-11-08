@@ -272,3 +272,36 @@ void loop(void)
 
 至此ch32v208w-r0的基础环境便搭建测试完毕！
 
+
+
+## 6 PM 低功耗测试
+
+### 6.1 测试方法
+
+PM 默认关闭，需要在测试时手动启用。功耗测试使用仓库已有的 `examples/pm/timer_app.c`：该例程创建一个 2 秒周期的软件定时器，系统空闲时进入 STOP，由 RTC 唤醒后打印当前 RT-Thread tick。定时器线程栈需要设置为 1024 字节，避免回调中的串口打印导致栈溢出。
+
+1. 在 BSP 目录执行 `cp ../../../../examples/pm/timer_app.c applications/timer_app.c`，将测试例程临时加入应用构建。
+2. 在 menuconfig 的 `Hardware Drivers Config -> On-chip Peripheral Drivers` 中启用 `Enable CH32V208 power management`，时钟源选择 `LSI`，并启用 `Park unused GPIO as analog inputs and disable SWJ`，同时将定时器线程栈设置为 1024 字节。
+3. 编译并烧录包含 `timer_app` 的固件，以 115200-8-1-N 打开串口。复位后有 10 秒烧录保护窗口，之后系统空闲时进入 STOP。
+4. 串口约每 2 秒输出一次 `current tick`，相邻输出的 tick 增量约为 2000，可用于检查 RTC 周期唤醒和系统 tick 补偿是否正常。
+5. 使用功耗仪记录包含周期唤醒的平均电流，并读取 STOP 阶段的底电流。测量时应拔除 WCH-Link，避免调试器连接影响低功耗状态和测量结果。
+
+测试完成后可删除 `applications/timer_app.c` 并关闭 PM，恢复默认配置。
+
+### 6.2 测试结果
+
+本次测试环境使用 ME6230，运行上述 `timer_app` 测试程序，结果如下：
+
+| 测试项目 | 实测结果 |
+| --- | ---: |
+| 平均电流（包含周期唤醒及串口活动） | 约 82 µA |
+| STOP 阶段底电流 | 约 18 µA |
+
+平均电流是包含唤醒、程序运行和串口活动的统计结果；STOP 底电流是休眠阶段的最低电流，两者含义不同。
+
+![timer_app PM 低功耗测试](./figures/pm_timer_app_power.png)
+
+### 6.3 测试配置与使用限制
+
+- 当前 PM 测试配置会将除 LED、串口和晶振等保留引脚外的 GPIO 统一初始化为模拟输入，以降低浮空输入带来的功耗。该配置仅用于本次低功耗测试；实际使用时必须根据外部电路逐脚配置，需要数字输入的引脚应配置为输入上拉或输入下拉，使用中的外设及唤醒引脚应保留对应功能，不能直接沿用统一的模拟输入配置。
+- 使用开发板复现该功耗测试时，需要拆除板载 LED，并将原 LDO 更换为 ME6230，避免 LED 和原供电通路引入额外功耗。本次测试环境使用 ME6230。
