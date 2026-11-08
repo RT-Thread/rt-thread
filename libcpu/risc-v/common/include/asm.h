@@ -56,6 +56,10 @@
 .endm
 
 .macro SAVE_ALL
+#if CTX_FRAME_PAD_NR > 0
+    /* Keep the trap frame 16-byte aligned */
+    addi    sp, sp, -CTX_FRAME_PAD_NR * SZREG
+#endif
 #ifdef ARCH_RISCV_FPU
     /* Reserve float registers and fcsr */
     addi    sp, sp, -(CTX_FPU_REG_NR + CTX_FCSR_REG_NR) * SZREG
@@ -152,8 +156,8 @@
     CTX_FREG_S  f30, FPU_CTX_F30_OFF(t1)
     CTX_FREG_S  f31, FPU_CTX_F31_OFF(t1)
 
-    csrr    t3, CSR_FCSR
-    REG_S   t3, FPU_CTX_FCSR_OFF(t1)
+    csrr    t2, CSR_FCSR
+    REG_S   t2, FPU_CTX_FCSR_OFF(t1)
 
     /* Clean FS domain */
     csrc    CSR_STATUS, t0
@@ -170,7 +174,7 @@
     beqz    t0, 0f
 
     /* push vector frame */
-    addi    t1, sp, (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR) * SZREG
+    addi    t1, sp, (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_FCSR_REG_NR) * SZREG
 
     SAVE_VECTOR t1
 0:
@@ -199,7 +203,7 @@
     beqz    t0, 0f
 
     /* Restore vector frame */
-    addi    t1, sp, (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR) * SZREG
+    addi    t1, sp, (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR + CTX_FCSR_REG_NR) * SZREG
 
     RESTORE_VECTOR t1
 0:
@@ -244,8 +248,8 @@
     CTX_FREG_L  f30, FPU_CTX_F30_OFF(t2)
     CTX_FREG_L  f31, FPU_CTX_F31_OFF(t2)
 
-    REG_L   t3, FPU_CTX_FCSR_OFF(t2)
-    csrw    CSR_FCSR, t3
+    REG_L   t1, FPU_CTX_FCSR_OFF(t2)
+    csrw    CSR_FCSR, t1
 
     /* Clean FS domain */
     csrc    CSR_STATUS, t0
