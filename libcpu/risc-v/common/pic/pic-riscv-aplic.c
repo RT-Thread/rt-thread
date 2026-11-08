@@ -10,7 +10,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <rtatomic.h>
 #include <rtdevice.h>
 
 #define DBG_TAG "pic.aplic"
@@ -234,33 +233,10 @@ static void aplic_irq_mask(struct rt_pic_irq *pirq)
     HWREG32(aplic->regs + APLIC_CLRIENUM) = pirq->hwirq;
 }
 
-/* Temporary GDB observation: select one logical IRQ while all CPUs are stopped.
- * irq == -1 disables counting. Read/reset counters with all CPUs stopped too.
- */
-static volatile struct
-{
-    int irq;
-    int hwirq;
-    rt_uint32_t mode;
-    rt_uint32_t last_input;
-    rt_atomic_t eoi_count;
-    rt_atomic_t active_count;
-    rt_atomic_t inactive_count;
-    rt_atomic_t retrigger_count;
-} aplic_eoi_debug = { .irq = -1 };
-
 static void aplic_msi_irq_eoi(struct rt_pic_irq *pirq)
 {
     struct riscv_aplic *aplic = pirq->pic->priv_data;
     rt_uint32_t input;
-    rt_bool_t observe = (pirq->irq == aplic_eoi_debug.irq);
-
-    if (observe)
-    {
-        aplic_eoi_debug.hwirq = pirq->hwirq;
-        aplic_eoi_debug.mode = pirq->mode;
-        rt_atomic_add(&aplic_eoi_debug.eoi_count, 1);
-    }
 
     switch (pirq->mode)
     {
@@ -280,19 +256,7 @@ static void aplic_msi_irq_eoi(struct rt_pic_irq *pirq)
         }
         if (input & RT_BIT(pirq->hwirq % APLIC_IRQBITS_PER_REG))
         {
-            if (observe)
-            {
-                rt_atomic_add(&aplic_eoi_debug.active_count, 1);
-            }
             HWREG32(aplic->regs + APLIC_SETIPNUM_LE) = pirq->hwirq;
-            if (observe)
-            {
-                rt_atomic_add(&aplic_eoi_debug.retrigger_count, 1);
-            }
-        }
-        else if (observe)
-        {
-            rt_atomic_add(&aplic_eoi_debug.inactive_count, 1);
         }
         break;
 

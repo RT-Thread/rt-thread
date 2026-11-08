@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-#include <rtatomic.h>
 
 #define DBG_TAG "virtio.mmio"
 #define DBG_LVL DBG_INFO
@@ -117,48 +116,16 @@ rt_inline void virtio_mmio_write8(struct virtio_mmio *vio, int offset, rt_uint8_
     HWREG8(vio->base + offset) = value;
 }
 
-/* Temporary GDB observation, selected by logical IRQ. Change the selector and
- * read/reset counters only while all CPUs are stopped; -1 disables counting.
- */
-static volatile struct
-{
-    int irq;
-    rt_uint32_t last_status;
-    rt_atomic_t isr_count;
-    rt_atomic_t status_nonzero_count;
-    rt_atomic_t status_zero_count;
-    rt_atomic_t ack_count;
-    rt_atomic_t handled_count;
-} virtio_mmio_irq_debug = { .irq = -1 };
-
 static void virtio_mmio_isr(int irqno, void *param)
 {
     rt_uint32_t status;
     struct virtio_mmio *vio = param;
-    rt_bool_t observe = (irqno == virtio_mmio_irq_debug.irq);
 
     /* Read interrupts */
     status = virtio_mmio_read32(vio, VIRTIO_MMIO_INTERRUPT_STATUS);
-    if (observe)
-    {
-        virtio_mmio_irq_debug.last_status = status;
-        rt_atomic_add(&virtio_mmio_irq_debug.isr_count, 1);
-        if (status)
-        {
-            rt_atomic_add(&virtio_mmio_irq_debug.status_nonzero_count, 1);
-        }
-        else
-        {
-            rt_atomic_add(&virtio_mmio_irq_debug.status_zero_count, 1);
-        }
-    }
 
     /* Acknowledge interrupts */
     virtio_mmio_write32(vio, VIRTIO_MMIO_INTERRUPT_ACK, status);
-    if (observe)
-    {
-        rt_atomic_add(&virtio_mmio_irq_debug.ack_count, 1);
-    }
 
     if (status & VIRTIO_MMIO_INT_CONFIG)
     {
@@ -176,12 +143,6 @@ static void virtio_mmio_isr(int irqno, void *param)
         }
 
         rt_spin_unlock_irqrestore(&vio->spinlock, level);
-    }
-
-    /* Counts completed ISR bodies, not completed virtqueue requests. */
-    if (observe)
-    {
-        rt_atomic_add(&virtio_mmio_irq_debug.handled_count, 1);
     }
 }
 
