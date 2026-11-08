@@ -1,7 +1,7 @@
 /*
  * File      : drv_can.c
  * This file is part of RT-Thread RTOS
- * Copyright (c) 2006-2025, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * Date           Author               Notes
  * 2025-18-03     Dmitriy Chernov      first implementation for GD32F4xx
  * 2025-09-24     CYFS                 add support for GD32F5xx
+ * 2026-11-08     wdfk-prog            adapt classic CAN to per-mailbox TX management
  */
 
 #include "drv_can.h"
@@ -236,6 +237,20 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     return RT_EOK;
 }
 
+/**
+ * @brief Apply GD32 CAN control commands, including hardware TX abort and reset.
+ *
+ * ABORT_TX only requests cancellation; TX ownership is retired by the TX IRQ.
+ * START(0) resets the selected controller, including on its final close.
+ * Resetting CAN0 can also invalidate CAN1's shared filter state. The caller
+ * coordinates CAN0/CAN1 before stopping or reconfiguring CAN0. START(1)
+ * reapplies the stored configuration and its default filter.
+ *
+ * @param[in] can Generic CAN device.
+ * @param[in] cmd Control command.
+ * @param[in] arg Pointer-sized command value or command-specific data pointer.
+ * @return RT_EOK on success, or a negative RT-Thread error code.
+ */
 static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 {
     rt_uint32_t argval;
@@ -504,23 +519,63 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             return _can_config(&can_dev->device, &can_dev->device.config);
         }
         break;
+    case RT_CAN_CMD_ABORT_TX:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval >= can->config.sndboxnumber || argval >= 3U)
+        {
+            return -RT_EINVAL;
+        }
+        /* Write only MSTx: a read-modify-write could clear another mailbox's W1C MTFx. */
+        CAN_TSTAT(can_dev->can_x) = CAN_TSTAT_MST0 << (argval * 8U);
+        break;
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            /* Peripheral reset retires all hardware TX requests; software ownership is Generic's. */
+            can_deinit(can_dev->can_x);
+            argval = CAN_TSTAT(can_dev->can_x);
+            if ((argval & (CAN_TSTAT_TME0 | CAN_TSTAT_TME1 | CAN_TSTAT_TME2)) !=
+                (CAN_TSTAT_TME0 | CAN_TSTAT_TME1 | CAN_TSTAT_TME2) ||
+                (argval & (CAN_TSTAT_MTF0 | CAN_TSTAT_MTF1 | CAN_TSTAT_MTF2)) != 0U)
+            {
+                return -RT_ERROR;
+            }
+        }
+        else
+        {
+            return _can_config(can, &can->config);
+        }
+        break;
     case RT_CAN_CMD_GET_STATUS:
     {
         rt_uint32_t errtype;
-        errtype = CAN_STAT(can_dev->can_x);
+        errtype = CAN_ERR(can_dev->can_x);
         can_dev->device.status.rcverrcnt = errtype >> 24;
         can_dev->device.status.snderrcnt = (errtype >> 16 & 0xFF);
-        can_dev->device.status.lasterrtype = errtype & 0x70;
+        can_dev->device.status.lasterrtype = (errtype & CAN_ERR_ERRN) >> 4;
         can_dev->device.status.errcode = errtype & 0x07;
 
         rt_memcpy(arg, &can_dev->device.status, sizeof(can_dev->device.status));
         break;
     }
+    default:
+        return -RT_ENOSYS;
     }
 
     return RT_EOK;
 }
 
+/**
+ * @brief Submit immediately to a caller-selected GD32 CAN hardware mailbox.
+ *
+ * The mailbox must be empty and have no unreported MTFx terminal flag. This
+ * prevents replacing a completed frame before Generic processes its terminal.
+ *
+ * @param[in] can Generic CAN device.
+ * @param[in] buf Message to submit.
+ * @param[in] box_num Physical mailbox index 0, 1 or 2.
+ * @return RT_EOK on submit, -RT_EBUSY if busy, or -RT_EINVAL if invalid.
+ */
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     RT_ASSERT(can);
@@ -529,33 +584,31 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
     struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    /* Snapshot per-mailbox empty and pending-terminal bits before submission. */
+    rt_uint32_t tx_status = CAN_TSTAT(can_x);
 
     switch (box_num)
     {
     case CAN_MAILBOX0:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME0)
+        if ((tx_status & CAN_TSTAT_TME0) == 0U || (tx_status & CAN_TSTAT_MTF0) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX1:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME1)
+        if ((tx_status & CAN_TSTAT_TME1) == 0U || (tx_status & CAN_TSTAT_MTF1) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX2:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME2)
+        if ((tx_status & CAN_TSTAT_TME2) == 0U || (tx_status & CAN_TSTAT_MTF2) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     default:
-        RT_ASSERT(0);
-        break;
+        return -RT_EINVAL;
     }
 
     if (RT_CAN_STDID == pmsg->ide)
@@ -680,47 +733,47 @@ rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
     return freebox;
 }
 
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Submit without waiting and return the selected hardware mailbox.
+ *
+ * Generic serializes the selection with its TX lock. The blocking ownership
+ * bitmap excludes mailboxes whose completion has not yet been retired.
+ *
+ * @param[in] can Generic CAN device with three hardware TX slots.
+ * @param[in] buf Message to transmit.
+ * @param[out] mailbox Selected mailbox index on success only.
+ * @return RT_EOK if submitted, -RT_EBUSY if no slot is available, or an error.
+ */
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can,
+                                    const void *buf, rt_uint32_t *mailbox)
 {
-    RT_ASSERT(can);
+    /* Candidate hardware mailbox and its immediate submission result. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
 
-    can_trasnmit_message_struct transmit_message;
-    can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
-    rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
 
-    if(_can_get_freebox(can_x) == 0)
+    for (box_num = 0; box_num < can->config.sndboxnumber; box_num++)
     {
-        return -RT_EBUSY;
+        /* Generic's blocking owner must retire before BSP can reuse that mailbox. */
+        if ((can->status.sndchange & (1UL << box_num)) != 0U)
+        {
+            continue;
+        }
+        result = _can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
     }
-    if (RT_CAN_STDID == pmsg->ide)
-    {
-        transmit_message.tx_ff = CAN_FF_STANDARD;
-        transmit_message.tx_sfid = pmsg->id;
-    }
-    else
-    {
-        transmit_message.tx_ff = CAN_FF_EXTENDED;
-        transmit_message.tx_efid = pmsg->id;
-    }
-
-    if (RT_CAN_DTR == pmsg->rtr)
-    {
-        transmit_message.tx_ft = CAN_FT_DATA;
-        memcpy(transmit_message.tx_data, pmsg->data, pmsg->len);
-    }
-    else
-    {
-        transmit_message.tx_ft = CAN_FT_REMOTE;
-    }
-
-    transmit_message.tx_dlen = pmsg->len;
-    if(can_message_transmit(can_x, &transmit_message) == CAN_NOMAILBOX)
-    {
-        return -RT_ERROR;
-    }
-
-    return RT_EOK;
+    return -RT_EBUSY;
 }
 
 static const struct rt_can_ops _can_ops =
@@ -784,6 +837,13 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
     }
 }
 
+/**
+ * @brief Update hardware error statistics without retiring TX mailboxes.
+ *
+ * A protocol error does not identify a completed mailbox; only the TX IRQ
+ * consumes MTFx flags and publishes TX_DONE or TX_FAIL.
+ * @param[in] can Reporting CAN device.
+ */
 static void _can_ewmc_isr(struct rt_can_device *can)
 {
     RT_ASSERT(can);
@@ -798,48 +858,34 @@ static void _can_ewmc_isr(struct rt_can_device *can)
         case RT_CAN_BUS_FORMAT_ERR:
             can->status.formaterrcnt++;
             break;
-        case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
+        case RT_CAN_BUS_ACK_ERR:
+        {
+            /* MTE identifies the failed mailbox; MTF/TME/TEN distinguish pending from completed requests. */
+            rt_uint32_t tx_status = CAN_TSTAT(can_x);
             can->status.ackerrcnt++;
-            if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
+            /* Preserve ACK-error cancellation even with auto retransmission enabled.
+             * Completed requests belong to the TX ISR; direct MSTx writes preserve other W1C MTFx flags.
+             */
+            if ((tx_status & CAN_TSTAT_MTE0) != 0U &&
+                (tx_status & (CAN_TSTAT_MTF0 | CAN_TSTAT_TME0)) == 0U &&
+                (CAN_TMI(can_x, CAN_MAILBOX0) & CAN_TMI_TEN) != 0U)
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR0))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
+                CAN_TSTAT(can_x) = CAN_TSTAT_MST0;
             }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
+            else if ((tx_status & CAN_TSTAT_MTE1) != 0U &&
+                     (tx_status & (CAN_TSTAT_MTF1 | CAN_TSTAT_TME1)) == 0U &&
+                     (CAN_TMI(can_x, CAN_MAILBOX1) & CAN_TMI_TEN) != 0U)
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR1))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
+                CAN_TSTAT(can_x) = CAN_TSTAT_MST1;
             }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+            else if ((tx_status & CAN_TSTAT_MTE2) != 0U &&
+                     (tx_status & (CAN_TSTAT_MTF2 | CAN_TSTAT_TME2)) == 0U &&
+                     (CAN_TMI(can_x, CAN_MAILBOX2) & CAN_TMI_TEN) != 0U)
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR2))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
-            }
-            else
-            {
-                if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;/*Abort the send request, trigger the TX interrupt,release completion quantity*/
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST1;
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE2))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST2;
-                }
+                CAN_TSTAT(can_x) = CAN_TSTAT_MST2;
             }
             break;
+        }
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
         case RT_CAN_BUS_EXPLICIT_BIT_ERR:
             can->status.biterrcnt++;
@@ -849,13 +895,17 @@ static void _can_ewmc_isr(struct rt_can_device *can)
             break;
     }
 
-    can->status.lasterrtype = errtype & 0x70;
+    can->status.lasterrtype = (errtype & CAN_ERR_ERRN) >> 4;
     can->status.rcverrcnt = errtype >> 24;
     can->status.snderrcnt = (errtype >> 16 & 0xFF);
     can->status.errcode = errtype & 0x07;
     CAN_STAT(can_x) |= CAN_STAT_ERRIF;
 }
 
+/**
+ * @brief Report each finished mailbox and then clear its own W1C MTFx flag.
+ * @param[in] can Reporting CAN device.
+ */
 static void _can_tx_isr(struct rt_can_device *can)
 {
     RT_ASSERT(can);
@@ -871,10 +921,10 @@ static void _can_tx_isr(struct rt_can_device *can)
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
         }
-        /* Write 0 to Clear transmission status flag RQCPx */
+        /* MTFx is W1C; the library writes only this mailbox's flag. */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
+    if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
     {
         if (can_flag_get(can_x, CAN_FLAG_MTFNERR1))
         {
@@ -884,10 +934,10 @@ static void _can_tx_isr(struct rt_can_device *can)
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
         }
-        /* Write 0 to Clear transmission status flag RQCPx */
+        /* MTFx is W1C; the library writes only this mailbox's flag. */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+    if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
     {
         if (can_flag_get(can_x, CAN_FLAG_MTFNERR2))
         {
@@ -897,7 +947,7 @@ static void _can_tx_isr(struct rt_can_device *can)
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         }
-        /* Write 0 to Clear transmission status flag RQCPx */
+        /* MTFx is W1C; the library writes only this mailbox's flag. */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
     }
 }
@@ -1005,6 +1055,8 @@ void CAN1_EWMC_IRQHandler(void)
 int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
+    /* Each of the three physical GD32 transmit mailboxes owns one Generic slot. */
+    config.sndboxnumber = 3;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
