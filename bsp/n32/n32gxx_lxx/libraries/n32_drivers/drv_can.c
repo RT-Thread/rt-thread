@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-10-19     Nations      first version
+ * 2026-11-09     wdfk-prog    adapt Generic CAN TX mailboxes and error reporting
  */
 
 #include <drv_can.h>
@@ -198,6 +199,12 @@ static rt_err_t setfilter(struct n32_can *drv_can)
     return RT_EOK;
 }
 
+/**
+ * @brief Initialize the selected N32 controller with the requested CAN settings.
+ * @param can Registered CAN device.
+ * @param cfg Configuration to apply before Generic CAN commits it.
+ * @return RT_EOK after hardware and default-filter setup, or a negative error.
+ */
 static rt_err_t bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
 {
     struct n32_can *drv_can;
@@ -257,46 +264,55 @@ static rt_err_t bxcan_init(struct rt_can_device *can, struct can_configure *cfg)
     }
 
     /* default filter config */
-    setfilter(drv_can);
-
-    return RT_EOK;
+    return setfilter(drv_can);
 }
 
+/**
+ * @brief Configure the selected CAN instance and propagate hardware errors.
+ * @param can CAN device whose BSP instance is configured.
+ * @param cfg Candidate CAN configuration, which is not modified here.
+ * @return RT_EOK on success, otherwise a negative error code.
+ */
 static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 {
     struct n32_can *drv_can;
     CAN_Module *pbxcan;
 
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
     drv_can = (struct n32_can *)can->parent.user_data;
-    pbxcan  = drv_can->CANx;
+    RT_ASSERT(drv_can != RT_NULL);
+    pbxcan = drv_can->CANx;
 
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     if (pbxcan == CAN1)
     {
 #ifdef BSP_USING_CAN1
         bxcan1_hw_init();
-        bxcan_init(&drv_can->device, &drv_can->device.config);
-#endif
+        return bxcan_init(can, cfg);
+#endif /* BSP_USING_CAN1 */
     }
-    else  if (pbxcan == CAN2)
+#ifdef CAN2
+    else if (pbxcan == CAN2)
     {
 #ifdef BSP_USING_CAN2
         bxcan2_hw_init();
-        bxcan_init(&drv_can->device, &drv_can->device.config);
-#endif
+        return bxcan_init(can, cfg);
+#endif /* BSP_USING_CAN2 */
     }
-#endif
+#endif /* CAN2 */
+#endif /* defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR) */
 
 #if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     if (pbxcan == CAN)
     {
 #ifdef BSP_USING_CAN
-    bxcan_hw_init();
-    bxcan_init(&drv_can->device, &drv_can->device.config);
-#endif
+        bxcan_hw_init();
+        return bxcan_init(can, cfg);
+#endif /* BSP_USING_CAN */
     }
-#endif
-    return RT_EOK;
+#endif /* defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X) */
+    return -RT_EINVAL;
 }
 
 /**
@@ -318,11 +334,22 @@ void CAN_NVIC_Config(IRQn_Type IRQn, uint8_t PreemptionPriority, uint8_t SubPrio
     NVIC_Init(&NVIC_InitStructure);
 }
 
+/**
+ * @brief Control CAN interrupts, filtering, configuration and TX lifetime.
+ * @param can Registered CAN device.
+ * @param cmd RT-Thread CAN control command.
+ * @param arg Command-specific value or configuration pointer.
+ * @return RT_EOK if the requested operation succeeded, otherwise an error.
+ */
 static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
 {
     rt_uint32_t argval;
     struct n32_can *drv_can;
     struct rt_can_filter_config *filter_cfg;
+    /* Candidate hardware configuration, published only after successful setup. */
+    struct can_configure next_config;
+    /* Result of filter, initialization or interrupt-control operations. */
+    rt_err_t result;
 
     RT_ASSERT(can != RT_NULL);
     drv_can = (struct n32_can *)can->parent.user_data;
@@ -331,7 +358,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
         case RT_DEVICE_CTRL_CLR_INT:
-            argval = (rt_uint32_t) arg;
+            argval = (rt_uint32_t)(rt_ubase_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
@@ -363,7 +390,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
             if (CAN1 == drv_can->CANx)
             {
                 NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn);
@@ -407,10 +434,14 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             CAN_INTConfig(drv_can->CANx, CAN_INT_LEC, DISABLE); /* Last error code Interrupt */
             CAN_INTConfig(drv_can->CANx, CAN_INT_ERR, DISABLE); /* Error Interrupt */
         }
+        else
+        {
+            return -RT_EINVAL;
+        }
         break;
 
         case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             CAN_INTConfig(drv_can->CANx, CAN_INT_FMP0, ENABLE); /* DATFIFO 0 message pending Interrupt */
@@ -489,6 +520,10 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             }
 #endif
         }
+        else
+        {
+            return -RT_EINVAL;
+        }
         break;
 
         case RT_CAN_CMD_SET_FILTER:
@@ -502,7 +537,11 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             if (RT_NULL == arg)
             {
                 /* Default filter config */
-                setfilter(drv_can);
+                result = setfilter(drv_can);
+                if (result != RT_EOK)
+                {
+                    return result;
+                }
             }
             else
             {
@@ -563,14 +602,18 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
                     drv_can->FilterConfig.Filter_Act            = ENABLE;
 
                     /* Filter conf */
-                    setfilter(drv_can);
+                    result = setfilter(drv_can);
+                    if (result != RT_EOK)
+                    {
+                        return result;
+                    }
                 }
             }
             break;
         }
 
         case RT_CAN_CMD_SET_MODE:
-            argval = (rt_uint32_t) arg;
+            argval = (rt_uint32_t)(rt_ubase_t)arg;
             if (argval != RT_CAN_MODE_NORMAL &&
                 argval != RT_CAN_MODE_LISTEN &&
                 argval != RT_CAN_MODE_LOOPBACK &&
@@ -580,13 +623,19 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             }
             if (argval != drv_can->device.config.mode)
             {
-                drv_can->device.config.mode = argval;
-                return configure(&drv_can->device, &drv_can->device.config);
+                next_config = can->config;
+                next_config.mode = argval;
+                result = configure(can, &next_config);
+                if (result == RT_EOK)
+                {
+                    can->config.mode = argval;
+                }
+                return result;
             }
         break;
 
         case RT_CAN_CMD_SET_BAUD:
-            argval = (rt_uint32_t) arg;
+            argval = (rt_uint32_t)(rt_ubase_t)arg;
             if (argval != CAN1MBaud &&
                 argval != CAN800kBaud &&
                 argval != CAN500kBaud &&
@@ -601,13 +650,19 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             }
             if (argval != drv_can->device.config.baud_rate)
             {
-                drv_can->device.config.baud_rate = argval;
-                return configure(&drv_can->device, &drv_can->device.config);
+                next_config = can->config;
+                next_config.baud_rate = argval;
+                result = configure(can, &next_config);
+                if (result == RT_EOK)
+                {
+                    can->config.baud_rate = argval;
+                }
+                return result;
             }
             break;
 
         case RT_CAN_CMD_SET_PRIV:
-            argval = (rt_uint32_t) arg;
+            argval = (rt_uint32_t)(rt_ubase_t)arg;
             if (argval != RT_CAN_MODE_PRIV &&
                 argval != RT_CAN_MODE_NOPRIV)
             {
@@ -615,10 +670,84 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             }
             if (argval != drv_can->device.config.privmode)
             {
-                drv_can->device.config.privmode = argval;
-                return configure(&drv_can->device, &drv_can->device.config);
+                next_config = can->config;
+                next_config.privmode = argval;
+                result = configure(can, &next_config);
+                if (result == RT_EOK)
+                {
+                    can->config.privmode = argval;
+                }
+                return result;
             }
             break;
+
+        case RT_CAN_CMD_START:
+            if ((rt_uint32_t)(rt_ubase_t)arg != 0U)
+            {
+                return configure(can, &can->config);
+            }
+
+            /* No old TX terminal may be reported after a successful hardware reset. */
+            result = control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+            result = control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+            result = control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_CAN_INT_ERR);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+            CAN_DeInit(drv_can->CANx);
+            drv_can->inflight_mask = 0U;
+            return RT_EOK;
+
+        case RT_CAN_CMD_ABORT_TX:
+        {
+            /* Excludes TX ISR retirement and subsequent hardware mailbox reuse. */
+            rt_base_t level;
+
+            argval = (rt_uint32_t)(rt_ubase_t)arg;
+            if (argval >= 3U || argval >= can->config.sndboxnumber)
+            {
+                return -RT_EINVAL;
+            }
+
+            /* Serialize against mailbox retirement and reuse in the TX ISR. */
+            level = rt_spin_lock_irqsave(&can->tx_lock);
+            if (drv_can->inflight_mask & (1UL << argval))
+            {
+                /* TSTS has write-one-to-clear RQCP bits: do not use HAL's |= ABRQM. */
+                switch (argval)
+                {
+                    case 0:
+                        if (!(drv_can->CANx->TSTS & CAN_TSTS_RQCPM0))
+                        {
+                            drv_can->CANx->TSTS = CAN_TSTS_ABRQM0;
+                        }
+                        break;
+                    case 1:
+                        if (!(drv_can->CANx->TSTS & CAN_TSTS_RQCPM1))
+                        {
+                            drv_can->CANx->TSTS = CAN_TSTS_ABRQM1;
+                        }
+                        break;
+                    case 2:
+                        if (!(drv_can->CANx->TSTS & CAN_TSTS_RQCPM2))
+                        {
+                            drv_can->CANx->TSTS = CAN_TSTS_ABRQM2;
+                        }
+                        break;
+                }
+            }
+            rt_spin_unlock_irqrestore(&can->tx_lock, level);
+            return RT_EOK;
+        }
 
         case RT_CAN_CMD_GET_STATUS:
         {
@@ -626,14 +755,16 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
             errtype = drv_can->CANx->ESTS;
             drv_can->device.status.rcverrcnt   = errtype >> 24;
             drv_can->device.status.snderrcnt   = (errtype >> 16 & 0xFF);
-            drv_can->device.status.lasterrtype = errtype & 0x70;
             drv_can->device.status.errcode     = errtype & 0x07;
 
             rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
         }
         break;
+
+        default:
+            return -RT_ENOSYS;
     }
-  return RT_EOK;
+    return RT_EOK;
 }
 
 /* CAN Mailbox Transmit Request */
@@ -706,46 +837,106 @@ static int can_sendmsg_rtmsg(CAN_Module *CANx, struct rt_can_msg *pmsg, uint32_t
     return -RT_ERROR;
 }
 
-static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+/**
+ * @brief Submit one CAN frame to the Generic-selected hardware mailbox immediately.
+ * @param can Registered CAN device.
+ * @param buf Frame to submit.
+ * @param box_num Hardware TX mailbox index (0, 1 or 2).
+ * @return RT_EOK on acceptance, -RT_EBUSY while unavailable, or another error.
+ */
+static rt_ssize_t sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     struct n32_can *drv_can;
+    /* Low-level result before recording the hardware terminal obligation. */
+    rt_ssize_t result;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
     drv_can = (struct n32_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
 
-    /* Select one empty transmit mailbox */
+    if (box_num >= 3U || box_num >= can->config.sndboxnumber)
+    {
+        return -RT_EINVAL;
+    }
+    /* Hardware may be empty before its previous terminal reaches Generic CAN. */
+    if (drv_can->inflight_mask & (1UL << box_num))
+    {
+        return -RT_EBUSY;
+    }
+
     switch (box_num)
     {
         case 0:
             if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM0) != CAN_TSTS_TMEM0)
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case 1:
             if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM1) != CAN_TSTS_TMEM1)
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case 2:
             if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM2) != CAN_TSTS_TMEM2)
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
-            break;
-        default:
-            RT_ASSERT(0);
             break;
     }
 
-    // Start send msg
-    return can_sendmsg_rtmsg(drv_can->CANx, ((struct rt_can_msg *)buf), box_num);
+    result = can_sendmsg_rtmsg(drv_can->CANx, (struct rt_can_msg *)buf, box_num);
+    if (result == RT_EOK)
+    {
+        drv_can->inflight_mask |= 1UL << box_num;
+    }
+    return result;
+}
+
+/**
+ * @brief Submit once to a free hardware mailbox selected by the BSP.
+ * @param can Registered CAN device.
+ * @param buf Frame to submit.
+ * @param mailbox_out Receives the selected mailbox index on RT_EOK.
+ * @return RT_EOK on acceptance, -RT_EBUSY if all mailboxes are owned, or an error.
+ */
+static rt_ssize_t sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                      rt_uint32_t *mailbox_out)
+{
+    /* Candidate hardware mailbox index within this device's three TX buffers. */
+    rt_uint32_t mailbox;
+    /* Result of one immediate hardware submission. */
+    rt_ssize_t result;
+
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    if (mailbox_out == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    for (mailbox = 0; mailbox < can->config.sndboxnumber && mailbox < 3U; mailbox++)
+    {
+        /* A completed blocking owner still retains its slot until its waiter runs. */
+        if (can->status.sndchange & (1UL << mailbox))
+        {
+            continue;
+        }
+
+        result = sendmsg(can, buf, mailbox);
+        if (result == RT_EOK)
+        {
+            *mailbox_out = mailbox;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
 }
 
 static int can_recvmsg_rtmsg(CAN_Module *CANx, struct rt_can_msg *pmsg, uint32_t FIFONum)
@@ -859,7 +1050,14 @@ static int can_recvmsg_rtmsg(CAN_Module *CANx, struct rt_can_msg *pmsg, uint32_t
     return RT_EOK;
 }
 
-static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+/**
+ * @brief Fetch one received CAN frame from the requested hardware FIFO.
+ * @param can Registered CAN device.
+ * @param buf Destination for the received CAN frame.
+ * @param fifo Hardware receive FIFO index.
+ * @return RT_EOK on successful retrieval, or a negative error.
+ */
+static rt_ssize_t recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct n32_can *drv_can;
 
@@ -878,6 +1076,7 @@ static const struct rt_can_ops canops =
     control,
     sendmsg,
     recvmsg,
+    sendmsg_nonblocking,
 };
 
 static void can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -933,26 +1132,57 @@ static void can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
     }
 }
 
+/**
+ * @brief Retire each genuinely completed mailbox once after sampling RQCP/TXOK.
+ * @param drv_can CAN instance that owns the hardware and Generic TX slots.
+ */
+static void can_tx_isr(struct n32_can *drv_can)
+{
+    /* Hardware request-complete bits for mailboxes 0, 1 and 2. */
+    static const rt_uint32_t rqcp_masks[3] =
+    {
+        CAN_TSTS_RQCPM0, CAN_TSTS_RQCPM1, CAN_TSTS_RQCPM2
+    };
+    /* Latched successful-transmission bits corresponding to RQCP. */
+    static const rt_uint32_t txok_masks[3] =
+    {
+        CAN_TSTS_TXOKM0, CAN_TSTS_TXOKM1, CAN_TSTS_TXOKM2
+    };
+    /* Vendor HAL flag encodings used to acknowledge each completed mailbox. */
+    static const rt_uint32_t clear_flags[3] =
+    {
+        CAN_FLAG_RQCPM0, CAN_FLAG_RQCPM1, CAN_FLAG_RQCPM2
+    };
+    /* Capture TXOK before any RQCP write-one-to-clear operation. */
+    rt_uint32_t status = drv_can->CANx->TSTS;
+    /* Hardware mailbox being retired in this interrupt invocation. */
+    rt_uint32_t mailbox;
+
+    for (mailbox = 0; mailbox < 3U; mailbox++)
+    {
+        if (!(status & rqcp_masks[mailbox]))
+        {
+            continue;
+        }
+
+        /* TXOK is meaningful only for a completed request, before RQCP is cleared. */
+        CAN_ClearFlag(drv_can->CANx, clear_flags[mailbox]);
+        if (drv_can->inflight_mask & (1UL << mailbox))
+        {
+            rt_hw_can_isr(&drv_can->device,
+                          (status & txok_masks[mailbox] ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL)
+                          | (mailbox << 8));
+            /* Deliver the terminal before permitting another submit on this mailbox. */
+            drv_can->inflight_mask &= ~(1UL << mailbox);
+        }
+    }
+}
+
 #ifdef BSP_USING_CAN1
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
     rt_interrupt_enter();
-
-    if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM0))
-    {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
-        CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM0);
-    }
-    if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM1))
-    {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
-        CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM1);
-    }
-    if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM2))
-    {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
-        CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM2);
-    }
+    can_tx_isr(&drv_can1);
     rt_interrupt_leave();
 }
 
@@ -986,43 +1216,9 @@ void CAN1_SCE_IRQHandler(void)
     if (CAN_GetIntStatus(drv_can1.CANx, CAN_INT_ERR))
     {
         errtype = drv_can1.CANx->ESTS;
-        /* ESTS -> LEC */
-        switch ((errtype & 0x70) >> 4)
-        {
-        case RT_CAN_BUS_BIT_PAD_ERR:
-            break;
-
-        case RT_CAN_BUS_FORMAT_ERR:
-            drv_can1.device.status.formaterrcnt++;
-            break;
-
-        case RT_CAN_BUS_ACK_ERR:
-            drv_can1.device.status.ackerrcnt++;
-            if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM0))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-            }
-            else if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM1))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-            }
-            else if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM2))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-            }
-            break;
-
-        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-            drv_can1.device.status.biterrcnt++;
-            break;
-
-        case RT_CAN_BUS_CRC_ERR:
-            drv_can1.device.status.crcerrcnt++;
-            break;
-        }
-
-        drv_can1.device.status.lasterrtype = errtype & 0x70;
+        /* Generic CAN classifies the LEC and updates lasterrtype. */
+        rt_hw_can_isr(&drv_can1.device,
+                      RT_CAN_EVENT_ERR | (((errtype & 0x70U) >> 4) << 8));
         drv_can1.device.status.rcverrcnt   = errtype >> 24;
         drv_can1.device.status.snderrcnt   = (errtype >> 16 & 0xFF);
         drv_can1.device.status.errcode     = errtype & 0x07;
@@ -1037,21 +1233,7 @@ void CAN1_SCE_IRQHandler(void)
 void CAN2_TX_IRQHandler(void)
 {
     rt_interrupt_enter();
-    if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM0))
-    {
-        CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM0);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
-    }
-    if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM1))
-    {
-        CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM1);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
-    }
-    if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM2))
-    {
-        CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM2);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
-    }
+    can_tx_isr(&drv_can2);
     rt_interrupt_leave();
 }
 
@@ -1085,43 +1267,9 @@ void CAN2_SCE_IRQHandler(void)
     if (CAN_GetIntStatus(drv_can2.CANx, CAN_INT_ERR))
     {
         errtype = drv_can2.CANx->ESTS;
-        /* ESTS -> LEC */
-        switch ((errtype & 0x70) >> 4)
-        {
-            case RT_CAN_BUS_BIT_PAD_ERR:
-                break;
-
-            case RT_CAN_BUS_FORMAT_ERR:
-                drv_can2.device.status.formaterrcnt++;
-                break;
-
-            case RT_CAN_BUS_ACK_ERR:
-                drv_can2.device.status.ackerrcnt++;
-                if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM0))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                else if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM1))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                else if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM2))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
-                break;
-
-            case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-            case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-                drv_can2.device.status.biterrcnt++;
-                break;
-
-            case RT_CAN_BUS_CRC_ERR:
-                drv_can2.device.status.crcerrcnt++;
-                break;
-        }
-
-        drv_can2.device.status.lasterrtype = errtype & 0x70;
+        /* Generic CAN classifies the LEC and updates lasterrtype. */
+        rt_hw_can_isr(&drv_can2.device,
+                      RT_CAN_EVENT_ERR | (((errtype & 0x70U) >> 4) << 8));
         drv_can2.device.status.rcverrcnt   = errtype >> 24;
         drv_can2.device.status.snderrcnt   = (errtype >> 16 & 0xFF);
         drv_can2.device.status.errcode     = errtype & 0x07;
@@ -1137,21 +1285,7 @@ void CAN2_SCE_IRQHandler(void)
 void CAN_TX_IRQHandler(void)
 {
     rt_interrupt_enter();
-    if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM0))
-    {
-        CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM0);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
-    }
-    if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM1))
-    {
-        CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM1);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
-    }
-    if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM2))
-    {
-        CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM2);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
-    }
+    can_tx_isr(&drv_can);
     rt_interrupt_leave();
 }
 
@@ -1185,43 +1319,9 @@ void CAN_SCE_IRQHandler(void)
     if (CAN_GetIntStatus(drv_can.CANx, CAN_INT_ERR))
     {
         errtype = drv_can.CANx->ESTS;
-        /* ESTS -> LEC */
-        switch ((errtype & 0x70) >> 4)
-        {
-            case RT_CAN_BUS_BIT_PAD_ERR:
-                break;
-
-            case RT_CAN_BUS_FORMAT_ERR:
-                drv_can.device.status.formaterrcnt++;
-                break;
-
-            case RT_CAN_BUS_ACK_ERR:
-                drv_can.device.status.ackerrcnt++;
-                if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM0))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                else if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM1))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                else if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM2))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
-                break;
-
-            case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-            case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-                drv_can.device.status.biterrcnt++;
-                break;
-
-            case RT_CAN_BUS_CRC_ERR:
-                drv_can.device.status.crcerrcnt++;
-                break;
-        }
-
-        drv_can.device.status.lasterrtype = errtype & 0x70;
+        /* Generic CAN classifies the LEC and updates lasterrtype. */
+        rt_hw_can_isr(&drv_can.device,
+                      RT_CAN_EVENT_ERR | (((errtype & 0x70U) >> 4) << 8));
         drv_can.device.status.rcverrcnt   = errtype >> 24;
         drv_can.device.status.snderrcnt   = (errtype >> 16 & 0xFF);
         drv_can.device.status.errcode     = errtype & 0x07;
@@ -1237,6 +1337,8 @@ int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
     config.privmode = RT_CAN_MODE_NOPRIV;
+    /* One framework-visible slot for each of the controller's three TX mailboxes. */
+    config.sndboxnumber = 3U;
     config.ticks = 50;
 
 #ifdef RT_CAN_USING_HDR
