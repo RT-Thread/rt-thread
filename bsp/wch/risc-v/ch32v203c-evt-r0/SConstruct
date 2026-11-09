@@ -46,41 +46,6 @@ else:
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
 
-def _allow_ch32v20x_d6_in_sdk_package():
-    """Official CH32V20x-SDK-for-RTT ships a D8W startup file and Exit()s on D6.
-    CH32V203C8T6 is D6. Keep the SDK peripherals and use board/startup_ch32v20x_D6.S.
-    Only that package is edited, and only while Exit() is still present, so a
-    D8W tree or an already patched file is left untouched.
-    """
-    import re
-    candidates = [
-        os.path.join(SDK_ROOT, 'packages', 'CH32V20x-SDK-for-RTT', 'SConscript'),
-        os.path.join(libraries_path_prefix, 'ch32v20x_sdk-latest', 'SConscript'),
-    ]
-    for sc in candidates:
-        if not os.path.isfile(sc):
-            continue
-        with open(sc, 'r', encoding='utf-8') as f:
-            text = f.read()
-        if 'Exit()' not in text or 'SOC_RISCV_SERIES_CH32V20x_D6' not in text:
-            continue
-        if not re.search(r'^import os\b', text, re.M):
-            text = 'import os\n' + text
-        patched, n = re.subn(
-            r"if GetDepend\(\['SOC_RISCV_SERIES_CH32V20x_D6'\]\):.*?\n    Exit\(\)\n",
-            "if GetDepend(['SOC_RISCV_SERIES_CH32V20x_D6']):\n"
-            "    CPPDEFINES.append(\"CH32V20x_D6\")\n",
-            text,
-            count=1,
-            flags=re.S,
-        )
-        if n == 0 or patched == text:
-            continue
-        with open(sc, 'w', encoding='utf-8', newline='\n') as f:
-            f.write(patched)
-
-_allow_ch32v20x_d6_in_sdk_package()
-
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
