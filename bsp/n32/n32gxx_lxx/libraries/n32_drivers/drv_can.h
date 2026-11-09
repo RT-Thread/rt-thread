@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-10-19     Nations      first version
+ * 2026-11-09     wdfk-prog    adapt Generic CAN TX mailboxes and error reporting
  */
 
 #ifndef __DRV_CAN_H__
@@ -45,6 +46,7 @@ struct n32_can
     CAN_Module *CANx;
     CAN_InitType can_init;
     CAN_FilterInitType FilterConfig;
+    rt_uint32_t inflight_mask;    /**< TX mailboxes awaiting delivery of a real terminal to Generic CAN, bits [2:0]. */
     struct rt_can_device device;     /* inherit from can device */
 };
 
