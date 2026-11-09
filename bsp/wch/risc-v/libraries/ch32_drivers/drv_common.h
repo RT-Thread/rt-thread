@@ -11,9 +11,17 @@
 #ifndef __DRV_COMMON_H__
 #define __DRV_COMMON_H__
 
+#include <rtthread.h>
+
+#ifdef WCH_USING_FAST_IRQ
+#define WCH_IRQ_ATTR __attribute__((interrupt("WCH-Interrupt-fast")))
+#else
+#define WCH_IRQ_ATTR __attribute__((interrupt()))
+#endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 void rt_hw_us_delay(rt_uint32_t us);
