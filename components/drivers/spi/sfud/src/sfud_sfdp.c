@@ -65,6 +65,9 @@ static sfud_err read_sfdp_data(const sfud_flash *flash, uint32_t addr, uint8_t *
 static bool read_sfdp_header(sfud_flash *flash);
 static bool read_basic_header(const sfud_flash *flash, sfdp_para_header *basic_header);
 static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header);
+#ifdef SFUD_USING_OSPI
+static void read_ospi_erase_cmd(sfud_flash *flash);
+#endif
 
 /* ../port/sfup_port.c */
 extern void sfud_log_debug(const char *file, const long line, const char *format, ...);
@@ -83,7 +86,13 @@ bool sfud_read_sfdp(sfud_flash *flash) {
     /* JEDEC basic flash parameter header */
     sfdp_para_header basic_header;
     if (read_sfdp_header(flash) && read_basic_header(flash, &basic_header)) {
-        return read_basic_table(flash, &basic_header);
+        bool result = read_basic_table(flash, &basic_header);
+#ifdef SFUD_USING_OSPI
+        if (result) {
+            read_ospi_erase_cmd(flash);
+        }
+#endif
+        return result;
     } else {
         SFUD_INFO("Warning: Read SFDP parameter header information failed. The %s does not support JEDEC SFDP.", flash->name);
         return false;
@@ -308,6 +317,9 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
         if (table[28 + 2 * i] != 0x00) {
             sfdp->eraser[j].size = 1L << table[28 + 2 * i];
             sfdp->eraser[j].cmd = table[28 + 2 * i + 1];
+#ifdef SFUD_USING_OSPI
+            sfdp->eraser[j].ospi_cmd = sfdp->eraser[j].cmd;
+#endif
             SFUD_DEBUG("Flash device supports %ldKB block erase. Command is 0x%02X.", sfdp->eraser[j].size / 1024,
                     sfdp->eraser[j].cmd);
             j++;
@@ -325,6 +337,11 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
                     sfdp->eraser[i].cmd = sfdp->eraser[j].cmd;
                     sfdp->eraser[j].size = temp_size;
                     sfdp->eraser[j].cmd = temp_cmd;
+#ifdef SFUD_USING_OSPI
+                    uint8_t temp_ospi_cmd = sfdp->eraser[i].ospi_cmd;
+                    sfdp->eraser[i].ospi_cmd = sfdp->eraser[j].ospi_cmd;
+                    sfdp->eraser[j].ospi_cmd = temp_ospi_cmd;
+#endif
                 }
             }
         }
@@ -333,6 +350,42 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
     sfdp->available = true;
     return true;
 }
+
+#ifdef SFUD_USING_OSPI
+static void read_ospi_erase_cmd(sfud_flash *flash) {
+    sfud_sfdp *sfdp = &flash->sfdp;
+    uint8_t header[8] = {0};
+    uint8_t map[8] = {0};
+    int h;
+
+    /* Find the sector map table (0x84) and read the OPI erase commands. */
+    for (h = 0; h < 8; h++) {
+        uint32_t header_addr = 8 + (uint32_t)h * 8;
+        if (read_sfdp_data(flash, header_addr, header, sizeof(header)) != SFUD_SUCCESS) {
+            return;
+        }
+        if (header[0] == 0xFF) {
+            return;
+        }
+        if (header[0] == 0x84) {
+            uint32_t ptr = (uint32_t)header[4] | ((uint32_t)header[5] << 8) | ((uint32_t)header[6] << 16);
+            uint32_t map_len = (uint32_t)header[3] * 4;
+            if (map_len > sizeof(map)) {
+                map_len = sizeof(map);
+            }
+            if (read_sfdp_data(flash, ptr, map, map_len) != SFUD_SUCCESS) {
+                return;
+            }
+            if (sfdp->eraser[0].size != 0) {
+                sfdp->eraser[0].ospi_cmd = map[4];
+            }
+            if (sfdp->eraser[1].size != 0) {
+                sfdp->eraser[1].ospi_cmd = map[5];
+            }
+        }
+    }
+}
+#endif
 
 static sfud_err read_sfdp_data(const sfud_flash *flash, uint32_t addr, uint8_t *read_buf, size_t size) {
     uint8_t cmd[] = {

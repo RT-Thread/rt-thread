@@ -177,6 +177,8 @@ const sfud_flash *sfud_get_device_table(void) {
 
 #ifdef SFUD_USING_OSPI
 static void ospi_set_cmd_format(sfud_flash *flash, sfud_ospi_cmd_format *cmd, uint8_t ins, uint8_t dummy_cycles) {
+    (void)flash;
+
     cmd->instruction = sfud_ospi_cmd_value(ins);
     cmd->instruction_size = 16;
     cmd->instruction_lines = 8;
@@ -207,15 +209,11 @@ static void ospi_set_cmd_format(sfud_flash *flash, sfud_ospi_cmd_format *cmd, ui
         cmd->data_lines = 0;
         break;
     case SFUD_CMD_ERASE_SECTOR_4B:
+    case SFUD_CMD_ERASE_BLOCK_4B:
         cmd->address_lines = 8;
         cmd->address_size = 32;
         cmd->data_lines = 0;
         break;
-    }
-    if (ins == flash->chip.erase_gran_cmd) {
-        cmd->address_lines = 8;
-        cmd->address_size = 32;
-        cmd->data_lines = 0;
     }
 
     cmd->alternate_bytes_lines = 0;
@@ -728,6 +726,11 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size) {
             /* get the suitable eraser for erase process from SFDP parameter */
             eraser_index = sfud_sfdp_get_suitable_eraser(flash, addr, size);
             cur_erase_cmd = flash->sfdp.eraser[eraser_index].cmd;
+#ifdef SFUD_USING_OSPI
+            if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF)) {
+                cur_erase_cmd = flash->sfdp.eraser[eraser_index].ospi_cmd;
+            }
+#endif
             cur_erase_size = flash->sfdp.eraser[eraser_index].size;
         } else {
 #else
@@ -1316,8 +1319,15 @@ sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t st
     SFUD_ASSERT(flash);
 
     if (is_volatile) {
-        cmd_data[0] = SFUD_VOLATILE_SR_WRITE_ENABLE;
-        result = spi->wr(spi, cmd_data, 1, NULL, 0);
+#ifdef SFUD_USING_OSPI
+        if (spi->ospi_write_read && spi->get_ospi_mode) {
+            result = set_write_enabled(flash, true);
+        } else
+#endif
+        {
+            cmd_data[0] = SFUD_VOLATILE_SR_WRITE_ENABLE;
+            result = spi->wr(spi, cmd_data, 1, NULL, 0);
+        }
     } else {
         result = set_write_enabled(flash, true);
     }

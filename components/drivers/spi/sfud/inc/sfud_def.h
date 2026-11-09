@@ -133,6 +133,10 @@ extern "C" {
 #define SFUD_CMD_ERASE_SECTOR_4B 0x21
 #endif
 
+#ifndef SFUD_CMD_ERASE_BLOCK_4B
+#define SFUD_CMD_ERASE_BLOCK_4B 0xDC
+#endif
+
 #ifndef SFUD_CMD_READ_DATA
 #define SFUD_CMD_READ_DATA 0x03
 #endif
@@ -302,6 +306,9 @@ typedef struct
     {
         uint32_t size;                           /**< erase sector size (bytes). 0x00: not available */
         uint8_t cmd;                             /**< erase command */
+#ifdef SFUD_USING_OSPI
+        uint8_t ospi_cmd;                        /**< OPI erase command base opcode */
+#endif
     } eraser[SFUD_SFDP_ERASE_TYPE_MAX_NUM];      /**< supported eraser types table */
     //TODO lots of fast read-related stuff (like modes supported and number of wait states/dummy cycles needed in each)
 } sfud_sfdp, *sfud_sfdp_t;
