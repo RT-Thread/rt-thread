@@ -79,9 +79,7 @@
 
 #define SFUD_FLASH_DEVICE_TABLE \
     {                           \
-        {                       \
-            0                   \
-        }                       \
+        { 0 }                   \
     }
 
 #endif /* _SFUD_CFG_H_ */
