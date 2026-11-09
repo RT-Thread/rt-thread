@@ -19,6 +19,7 @@
  * Date           Author        Notes
  * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
+ * 2026-11-09     wdfk-prog     adapt to the Generic CAN framework
  */
 
 #include "drv_can.h"
@@ -34,18 +35,18 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud,can_init_t * init)
     double target,temp,min;
     uint32_t i,j,j_max,near = 0;
     target = (double)(ald_cmu_get_pclk1_clock());
-    target/= baud;                               /*计算误差1*/
+    target/= baud;                               /* Calculate error term 1. */
 
     min = 0xFFFFFFFF;
 
     for(i = 1 + 16 + 8 ;i > 2;i--)     /*SYNC_SEG + SEG1 + SEG2*/
     {
-        j_max = target/i/(0.98) + 1;                          /*缩小范围*/
+        j_max = target/i/(0.98) + 1;                          /* Narrow the search range. */
         j_max = (j_max > 1024) ? (1024) : (j_max);
 
         for(j = target/i/1.02 ;j < j_max;j++)
         {
-            temp = target/i/j;                      /*计算误差2*/
+            temp = target/i/j;                      /* Calculate error term 2. */
             temp = (temp > 1) ? (temp - 1) : (1 - temp);
             temp+= ((1.0 * i * j) / 0xFFFFFFFF) ;
 
@@ -117,7 +118,7 @@ static rt_err_t _can_config(struct rt_can_device *can_device, struct can_configu
         drv_can->CanHandle.init.mode = CAN_MODE_SILENT_LOOPBACK;
         break;
     }
-    /*配置参数*/
+    /* Configure parameters. */
     if(get_can_baud_index(cfg->baud_rate,&(drv_can->CanHandle.init)))
     {
         return -RT_ERROR;
@@ -161,6 +162,8 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP1, DISABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF1, DISABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FOV1, DISABLE);
+            NVIC_DisableIRQ(CAN0_RX0_IRQn);
+            NVIC_DisableIRQ(CAN0_RX1_IRQn);
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
@@ -181,6 +184,8 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
         {
             NVIC_SetPriority(CAN0_RX0_IRQn, 1);
             NVIC_EnableIRQ(CAN0_RX0_IRQn);
+            NVIC_SetPriority(CAN0_RX1_IRQn, 1);
+            NVIC_EnableIRQ(CAN0_RX1_IRQn);
 
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP0, ENABLE);
 //            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF0, ENABLE);
@@ -220,67 +225,69 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
         else
         {
             filter_cfg = (struct rt_can_filter_config *)arg;
-            /* get default filter */
+            /* Preserve the default filter for RT_CAN_CMD_SET_FILTER(NULL). */
+            can_filter_t filter = drv_can->FilterConfig;
+
+            /* Configure the caller-selected filter banks. */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-
-                /*默认过滤表判断*/
-                if(filter_cfg->items[i].hdr_bank < drv_can->device.config.maxhdr)
-                    drv_can->FilterConfig.number = filter_cfg->items[i].hdr_bank;
-                else
-                    drv_can->FilterConfig.number = ES_C_CAN_DEFAULT_FILTER_NUMBER;
+                /* Use local copies so the caller's filter ID and mask are not modified. */
+                rt_uint32_t id = filter_cfg->items[i].id;
+                rt_uint32_t mask = filter_cfg->items[i].mask;
+                filter.number = filter_cfg->items[i].hdr_bank;
+                filter.fifo = (can_filter_fifo_t)filter_cfg->items[i].rxfifo;
+                filter.active = filter_cfg->actived ? ENABLE : DISABLE;
 
                if(filter_cfg->items[i].mode)
                {
-                    /*标识符列表模式： 类型匹配 ，id匹配为：接收的id = 配置的id
-                                                                或者 = 配置的mask ，通过*/
-                    /*扩展帧*/
+                    /* Identifier list mode: match the frame type and either configured identifier. */
+                    /* Extended frame. */
                     if(filter_cfg->items[i].ide)
                     {
-//                         filter_cfg->items[i].id =  filter_cfg->items[i].id ;    /*id 29 位*/
-                         filter_cfg->items[i].mask = ((filter_cfg->items[i].mask << 3) |
+//                         filter_cfg->items[i].id =  filter_cfg->items[i].id ;    /* 29-bit ID */
+                         mask = ((mask << 3) |
                                                     (filter_cfg->items[i].ide << 2) |
                                                     (filter_cfg->items[i].rtr << 1));
                     }
-                    else  /*标准帧*/
+                    else  /* Standard frame. */
                     {
-                         filter_cfg->items[i].id = (filter_cfg->items[i].id << 18);
-                         filter_cfg->items[i].mask = ((filter_cfg->items[i].mask << 21) |
+                         id = (id << 18);
+                         mask = ((mask << 21) |
                                                     (filter_cfg->items[i].ide << 2) |
                                                     (filter_cfg->items[i].rtr << 1));
                     }
                 }
                 else
                 {
-                    /*标识符掩码模式*/
-                    /*扩展帧*/
+                    /* Identifier mask mode. */
+                    /* Extended frame. */
                     if(filter_cfg->items[i].ide)
                     {
-                         filter_cfg->items[i].mask = (filter_cfg->items[i].mask)<<3;
+                         mask = (mask)<<3;
                     }
-                    else  /*标准帧*/
+                    else  /* Standard frame. */
                     {
-                         filter_cfg->items[i].id = (filter_cfg->items[i].id)<<18;
-                         filter_cfg->items[i].mask = (filter_cfg->items[i].mask)<<21;
+                         id = (id)<<18;
+                         mask = (mask)<<21;
                     }
 
 #if   ES_C_CAN_FILTER_FRAME_TYPE
-                    /*匹配类型*/
-                    filter_cfg->items[i].mask |= 0x6;
+                    /* Match the frame type. */
+                    mask |= 0x6;
 #endif
 
                 }
 
-                drv_can->FilterConfig.id_high = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                drv_can->FilterConfig.id_low = ((filter_cfg->items[i].id << 3) |
+                filter.id_high = (id >> 13) & 0xFFFF;
+                filter.id_low = ((id << 3) |
                                                 (filter_cfg->items[i].ide << 2) |
                                                 (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
-                drv_can->FilterConfig.mask_id_high = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
-                drv_can->FilterConfig.mask_id_low = filter_cfg->items[i].mask & 0xFFFF;
+                filter.mask_id_high = (mask >> 16) & 0xFFFF;
+                filter.mask_id_low = mask & 0xFFFF;
 
-                drv_can->FilterConfig.mode = (can_filter_mode_t)filter_cfg->items[i].mode;
+                filter.mode = (can_filter_mode_t)filter_cfg->items[i].mode;
                 /* Filter conf */
-                ald_can_filter_config(&drv_can->CanHandle, &drv_can->FilterConfig);
+                ald_can_filter_config(&drv_can->CanHandle, &filter);
             }
         }
         break;
@@ -323,13 +330,57 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             return _can_config(&drv_can->device, &drv_can->device.config);
         }
         break;
+    case RT_CAN_CMD_ABORT_TX:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval >= 3U || argval >= can_device->config.sndboxnumber)
+            return -RT_EINVAL;
+        /* TXSTAT contains W1C terminal flags; write only the abort bit, avoiding read-modify-write. */
+        WRITE_REG(drv_can->CanHandle.perh->TXSTAT, CAN_TXSTAT_M0STPREQ_MSK << (argval * 8U));
+        break;
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg != 0U)
+            return _can_config(can_device, &can_device->config);
+        else
+        {
+            /* Abort all three TX requests and wait for empty mailboxes before entering INIT. */
+            /* h_can is the hardware handle; empty_mask covers the three mailbox-empty bits. */
+            can_handle_t *h_can = &drv_can->CanHandle;
+            rt_uint32_t empty_mask = CAN_TXSTAT_TXM0EF_MSK |
+                                     CAN_TXSTAT_TXM1EF_MSK | CAN_TXSTAT_TXM2EF_MSK;
+            /* Use one 200-ms timeout budget for the entire stop sequence. */
+            rt_tick_t start_tick = rt_tick_get();
+            rt_tick_t timeout_ticks = rt_tick_from_millisecond(200);
+
+            WRITE_REG(h_can->perh->TXSTAT, CAN_TXSTAT_M0STPREQ_MSK |
+                                         CAN_TXSTAT_M1STPREQ_MSK | CAN_TXSTAT_M2STPREQ_MSK);
+            while ((h_can->perh->TXSTAT & empty_mask) != empty_mask)
+            {
+                if ((rt_tick_t)(rt_tick_get() - start_tick) >= timeout_ticks)
+                    return -RT_ERROR;
+                rt_thread_mdelay(1);
+            }
+            CLEAR_BIT(h_can->perh->CON, CAN_CON_SLPREQ_MSK);
+            SET_BIT(h_can->perh->CON, CAN_CON_INIREQ_MSK);
+            while ((h_can->perh->STAT & CAN_STAT_INISTAT_MSK) == 0U)
+            {
+                if ((rt_tick_t)(rt_tick_get() - start_tick) >= timeout_ticks)
+                    return -RT_ERROR;
+                rt_thread_mdelay(1);
+            }
+            /* Discard stale TX terminal flags once hardware stop has been confirmed. */
+            WRITE_REG(h_can->perh->TXSTATC, CAN_TXSTATC_M0REQC_MSK |
+                                           CAN_TXSTATC_M1REQC_MSK | CAN_TXSTATC_M2REQC_MSK);
+            NVIC_ClearPendingIRQ(CAN0_TX_IRQn);
+            ald_can_reset(h_can);
+        }
+        break;
     case RT_CAN_CMD_GET_STATUS:
     {
         rt_uint32_t errtype;
         errtype = drv_can->CanHandle.perh->ERRSTAT;
         drv_can->device.status.rcverrcnt = errtype >> 24;
         drv_can->device.status.snderrcnt = (errtype >> 16 & 0xFF);
-        drv_can->device.status.lasterrtype = errtype & 0x70;
+        drv_can->device.status.lasterrtype = (errtype & 0x70U) >> 4;
         drv_can->device.status.errcode = errtype & 0x07;
 
         rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
@@ -340,7 +391,7 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     can_handle_t *h_can;
     h_can = &((struct es32f3_can *) can->parent.user_data)->CanHandle;
@@ -350,43 +401,34 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
 
     /* Check the parameters */
     RT_ASSERT(IS_CAN_DATA_LEN(pmsg->len));
+    if (box_num >= 3U || box_num >= can->config.sndboxnumber)
+        return -RT_EINVAL;
 
     if ((state == CAN_STATE_READY) ||
-            (state == CAN_STATE_BUSY_RX0))
+            (state == CAN_STATE_BUSY_RX0) ||
+            (state == CAN_STATE_BUSY_RX1) ||
+            (state == CAN_STATE_BUSY_RX0_RX1))
     {
         /*check select mailbox  is empty */
-        switch (1 << box_num)
+        switch (box_num)
         {
         case CAN_TX_MAILBOX_0:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM0) != SET)
-            {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM0) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M0REQC) == SET)
+                return -RT_EBUSY;
             break;
         case CAN_TX_MAILBOX_1:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM1) != SET)
-            {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM1) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC) == SET)
+                return -RT_EBUSY;
             break;
         case CAN_TX_MAILBOX_2:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM2) != SET)
-            {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM2) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC) == SET)
+                return -RT_EBUSY;
             break;
         default:
-            RT_ASSERT(0);
-            break;
+            return -RT_EINVAL;
         }
 
         if (RT_CAN_STDID == pmsg->ide)
@@ -411,7 +453,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
             txheader.rtr = CAN_RTR_REMOTE;
         }
         /* clear TIR */
-        h_can->perh->TxMailBox[box_num].TXID &= CAN_TXID0_TXMREQ_MSK;
+        WRITE_REG(h_can->perh->TxMailBox[box_num].TXID, 0U);
 
         /* Set up the Id */
         if (RT_CAN_STDID == pmsg->ide)
@@ -420,7 +462,10 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         }
         else
         {
-            h_can->perh->TxMailBox[box_num].TXID |= (txheader.ext << CAN_TXID0_EXID_POSS) | (txheader.type << CAN_TXID0_IDE_POS) | (txheader.rtr << CAN_TXID0_RTR_POS);
+            h_can->perh->TxMailBox[box_num].TXID |=
+                (((txheader.ext >> 18) & 0x7FFU) << CAN_TXID0_STDID_POSS) |
+                ((txheader.ext & 0x3FFFFU) << CAN_TXID0_EXID_POSS) |
+                (txheader.type << CAN_TXID0_IDE_POS) | (txheader.rtr << CAN_TXID0_RTR_POS);
         }
         /* Set up the DLC */
         h_can->perh->TxMailBox[box_num].TXFCON = pmsg->len & 0x0FU;
@@ -451,7 +496,37 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
 
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+/**
+ * @brief Submit a CAN frame immediately using an available hardware mailbox.
+ * @param can Registered CAN device.
+ * @param buf CAN frame to submit.
+ * @param mailbox Selected mailbox index on successful submission.
+ * @return RT_EOK on submission, -RT_EBUSY if all mailboxes are busy, or another send error.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can,
+                                          const void *buf, rt_uint32_t *mailbox)
+{
+    /* box_num selects a candidate mailbox; result records the submit outcome. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num < 3U; box_num++)
+    {
+        if (can->status.sndchange & (1UL << box_num))
+            continue;
+        result = _can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+            return result;
+    }
+    return -RT_EBUSY;
+}
+
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     can_handle_t *h_can;
     struct rt_can_msg *pmsg;
@@ -463,7 +538,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     pmsg = (struct rt_can_msg *) buf;
 
     /* get data */
-    if (ald_can_recv(h_can, (can_rx_fifo_t)fifo, &rxheader, 0xFFFF) != OK)
+    if (ald_can_recv(h_can, (can_rx_fifo_t)fifo, &rxheader, 0) != OK)
         return -RT_ERROR;
     pmsg->data[0] = rxheader.data[0];
     pmsg->data[1] = rxheader.data[1];
@@ -509,6 +584,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -536,8 +612,7 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
             }
 
-            /* Clear FIFO0 rx Flag */
-            SET_BIT(h_can->perh->RXF0, CAN_RXF0_FREE_MSK);
+            /* ald_can_recv() already releases FIFO0; do not release it twice. */
         }
         break;
     case CAN_RX_FIFO1:
@@ -557,8 +632,7 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
             }
 
-            /* Clear FIFO0 rx Flag */
-            SET_BIT(h_can->perh->RXF1, CAN_RXF1_FREE_MSK);
+            /* ald_can_recv() already releases FIFO1; do not release it twice. */
         }
         break;
     }
@@ -587,7 +661,7 @@ void CAN0_TX_Handler(void)
         /* Clear transmission status flag M0REQC */
         ald_can_clear_flag_status(h_can, CAN_FLAG_M0REQC);
     }
-    else if (ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
+    if (ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
     {
         if (ald_can_get_flag_status(h_can, CAN_FLAG_M1TXC))
         {
@@ -599,9 +673,9 @@ void CAN0_TX_Handler(void)
         }
         ald_can_clear_flag_status(h_can, CAN_FLAG_M1REQC);
     }
-    else if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
+    if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
     {
-        if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC))
+        if (ald_can_get_flag_status(h_can, CAN_FLAG_M2TXC))
         {
             rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_DONE | 2 << 8);
         }
@@ -648,37 +722,15 @@ void CAN0_EXCEPTION_Handler(void)
     h_can = &can.CanHandle;
     errtype = h_can->perh->ERRSTAT;
 
-    switch ((errtype & 0x70) >> 4)
-    {
-    case RT_CAN_BUS_BIT_PAD_ERR:
-        can.device.status.bitpaderrcnt++;
-        break;
-    case RT_CAN_BUS_FORMAT_ERR:
-        can.device.status.formaterrcnt++;
-        break;
-    case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
-        can.device.status.ackerrcnt++;
-        if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-            rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-            rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-            rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-        break;
-    case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-    case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-        can.device.status.biterrcnt++;
-        break;
-    case RT_CAN_BUS_CRC_ERR:
-        can.device.status.crcerrcnt++;
-        break;
-    }
+    /* Report the protocol error without retiring any TX mailbox. */
+    rt_hw_can_isr(&can.device, RT_CAN_EVENT_ERR | ((errtype & 0x70U) << 4));
 
-    can.device.status.lasterrtype = errtype & 0x70;
+    can.device.status.lasterrtype = (errtype & 0x70U) >> 4;
     can.device.status.rcverrcnt = errtype >> 24;
     can.device.status.snderrcnt = (errtype >> 16 & 0xFF);
     can.device.status.errcode = errtype & 0x07;
-    h_can->perh->IFC |= CAN_IFC_ERRIFC_MSK;
+    CLEAR_BIT(h_can->perh->ERRSTAT, CAN_ERRSTAT_PRERRF_MSK);
+    WRITE_REG(h_can->perh->IFC, CAN_IFC_ERRIFC_MSK);
 
     rt_interrupt_leave();
 }
@@ -725,6 +777,7 @@ int rt_hw_can_init(void)
 
     can.FilterConfig = filter;
     can.device.config = (struct can_configure)ES_CAN0_CONFIG;
+    can.device.config.sndboxnumber = 3;
 #ifdef RT_CAN_USING_HDR
     can.device.config.maxhdr = 14;
 #endif
