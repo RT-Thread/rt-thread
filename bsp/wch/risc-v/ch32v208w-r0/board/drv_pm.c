@@ -98,6 +98,7 @@ static void lsi_measure_poll(void)
             OSC->LSI32K_CAL_CTRL &= ~RB_OSC_CAL_EN;
             OSC->LSI32K_CAL_CTRL |= RB_OSC_CAL_EN;
             OSC->LSI32K_CAL_STATR |= RB_OSC_CAL_IF_END | RB_OSC_CAL_CNT_OV;
+            lsi_measure_started = now;
         }
         else
         {
@@ -448,16 +449,28 @@ static void pm_sleep(struct rt_pm *pm, rt_uint8_t mode)
 
 void rt_pm_exit_critical(rt_uint32_t ctx, rt_uint8_t sleep_mode)
 {
+    rt_uint64_t cycles_per_tick = SystemCoreClock / RT_TICK_PER_SECOND;
+    rt_uint64_t total;
+    rt_tick_t recovery_ticks;
+
     RT_UNUSED(sleep_mode);
 
     if (pm_state.runtime.systick_suspended)
     {
         SysTick->CTLR = 0;
+        total = pm_state.runtime.resume_phase + SysTick->CNT;
+        recovery_ticks = total / cycles_per_tick;
         SysTick->CMP = pm_state.runtime.tick_cmp;
-        SysTick->CNT = pm_state.runtime.resume_phase;
+        SysTick->CNT = total % cycles_per_tick;
         SysTick->SR = 0;
         SysTick->CTLR = pm_state.runtime.tick_ctl;
         pm_state.runtime.systick_suspended = 0;
+        if (recovery_ticks)
+        {
+            rt_interrupt_enter();
+            rt_tick_increase_tick(recovery_ticks);
+            rt_interrupt_leave();
+        }
     }
     rt_hw_interrupt_enable(ctx);
 }
