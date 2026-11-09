@@ -20,7 +20,8 @@
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 void rt_hw_us_delay(rt_uint32_t us);

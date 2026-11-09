@@ -12,8 +12,8 @@
 #include <rtdevice.h>
 
 #ifdef BSP_USING_CLOCK_TIMER
-#define DBG_TAG               "TIM"
-#define DBG_LVL               DBG_LOG
+#define DBG_TAG "TIM"
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 #include "drv_timer.h"
@@ -56,8 +56,7 @@ enum
 #endif
 };
 
-static struct ch32_clock_timer ch32_clock_timer_obj[] =
-{
+static struct ch32_clock_timer ch32_clock_timer_obj[] = {
 #ifdef BSP_USING_TIM1
     TIM1_CONFIG,
 #endif
@@ -108,7 +107,7 @@ void ch32_get_pclk_doubler(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_double
     *pclk1_doubler = 1;
     *pclk2_doubler = 1;
 
-    if((RCC->CFGR0 & RCC_PPRE1) == RCC_PPRE1_DIV1)
+    if ((RCC->CFGR0 & RCC_PPRE1) == RCC_PPRE1_DIV1)
     {
         *pclk1_doubler = 1;
     }
@@ -117,7 +116,7 @@ void ch32_get_pclk_doubler(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_double
         *pclk1_doubler = 2;
     }
 
-    if((RCC->CFGR0 & RCC_PPRE2) == RCC_PPRE2_DIV1)
+    if ((RCC->CFGR0 & RCC_PPRE2) == RCC_PPRE2_DIV1)
     {
         *pclk2_doubler = 1;
     }
@@ -140,19 +139,19 @@ static void ch32_clock_timer_init(struct rt_clock_timer_device *timer, rt_uint32
     RCC_GetClocksFreq(&RCC_ClockStruct);
     ch32_get_pclk_doubler(&pclk1_doubler, &pclk2_doubler);
 
-    if(state)
+    if (state)
     {
         tim = (TIM_HandleTypeDef *)timer->parent.user_data;
         tim_device = (struct ch32_clock_timer *)timer;
 
-#if defined (SOC_RISCV_SERIES_CH32V2)
-        if(tim->instance == TIM1)
+#if defined(SOC_RISCV_SERIES_CH32V2)
+        if (tim->instance == TIM1)
 #elif defined(SOC_RISCV_SERIES_CH32V3)
-        if(tim->instance == TIM1 || tim->instance == TIM8 ||
-                tim->instance == TIM9 || tim->instance == TIM10)
+        if (tim->instance == TIM1 || tim->instance == TIM8 ||
+            tim->instance == TIM9 || tim->instance == TIM10)
 #else
 #error " unsupported CH32 series! "
-        if(RT_NULL)
+        if (RT_NULL)
 #endif
         {
             RCC_APB2PeriphClockCmd(tim->rcc, ENABLE);
@@ -168,17 +167,17 @@ static void ch32_clock_timer_init(struct rt_clock_timer_device *timer, rt_uint32
         tim->init.TIM_Period = 10000 - 1;
         tim->init.TIM_RepetitionCounter = 0;
 
-        if(timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
+        if (timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
         {
             tim->init.TIM_CounterMode = TIM_CounterMode_Up;
         }
         else
         {
-            tim->init.TIM_CounterMode   = TIM_CounterMode_Down;
+            tim->init.TIM_CounterMode = TIM_CounterMode_Down;
         }
-#if defined (SOC_RISCV_SERIES_CH32V3)
+#if defined(SOC_RISCV_SERIES_CH32V3)
         /* TIM6 and TIM7 only support counter up mode */
-        if(tim->instance == TIM6 || tim->instance == TIM7)
+        if (tim->instance == TIM6 || tim->instance == TIM7)
         {
             tim->init.TIM_CounterMode = TIM_CounterMode_Up;
         }
@@ -274,14 +273,14 @@ static rt_err_t ch32_clock_timer_control(struct rt_clock_timer_device *timer, rt
         ch32_get_pclk_doubler(&pclk1_doubler, &pclk2_doubler);
         RCC_GetClocksFreq(&RCC_ClockStruct);
 
-#if defined (SOC_RISCV_SERIES_CH32V2)
-        if(tim->instance == TIM1)
+#if defined(SOC_RISCV_SERIES_CH32V2)
+        if (tim->instance == TIM1)
 #elif defined(SOC_RISCV_SERIES_CH32V3)
-        if(tim->instance == TIM1 || tim->instance == TIM8 ||
-                tim->instance == TIM9 || tim->instance == TIM10)
+        if (tim->instance == TIM1 || tim->instance == TIM8 ||
+            tim->instance == TIM9 || tim->instance == TIM10)
 #else
 #error " unsupported CH32 series! "
-        if(RT_NULL)
+        if (RT_NULL)
 #endif
         {
             val = RCC_ClockStruct.PCLK2_Frequency * pclk2_doubler / freq;
@@ -337,8 +336,7 @@ static rt_err_t ch32_clock_timer_control(struct rt_clock_timer_device *timer, rt
 }
 
 static const struct rt_clock_timer_info ch32_clock_timer_info = TIM_DEV_INFO_CONFIG;
-static const struct rt_clock_timer_ops ch32_clock_timer_ops =
-{
+static const struct rt_clock_timer_ops ch32_clock_timer_ops = {
     ch32_clock_timer_init,
     ch32_clock_timer_start,
     ch32_clock_timer_stop,
@@ -352,7 +350,7 @@ static void ch32_clock_timer_isr(struct rt_clock_timer_device *device)
     struct ch32_clock_timer *clock_timer = RT_NULL;
     clock_timer = rt_container_of(device, struct ch32_clock_timer, device);
 
-    if(TIM_GetITStatus(clock_timer->handle.instance, TIM_IT_Update) != RESET)
+    if (TIM_GetITStatus(clock_timer->handle.instance, TIM_IT_Update) != RESET)
     {
         rt_clock_timer_isr(device);
         TIM_ClearITPendingBit(clock_timer->handle.instance, TIM_IT_Update);
@@ -487,9 +485,9 @@ static int rt_hw_timer_init(void)
     for (i = 0; i < sizeof(ch32_clock_timer_obj) / sizeof(ch32_clock_timer_obj[0]); i++)
     {
         ch32_clock_timer_obj[i].device.info = &ch32_clock_timer_info;
-        ch32_clock_timer_obj[i].device.ops  = &ch32_clock_timer_ops;
+        ch32_clock_timer_obj[i].device.ops = &ch32_clock_timer_ops;
         result = rt_clock_timer_register(&ch32_clock_timer_obj[i].device,
-                    ch32_clock_timer_obj[i].name, (void *)&ch32_clock_timer_obj[i].handle);
+                                         ch32_clock_timer_obj[i].name, (void *)&ch32_clock_timer_obj[i].handle);
         RT_ASSERT(result == RT_EOK);
     }
 
