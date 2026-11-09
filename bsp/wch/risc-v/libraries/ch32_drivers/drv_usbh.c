@@ -21,8 +21,8 @@ static struct uhcd uhcd;
 
 static struct rt_completion urb_completion;
 
-__attribute__((aligned(4))) int8_t usb_rx_buf[ MAX_PACKET_SIZE ];
-__attribute__((aligned(4))) int8_t usb_tx_buf[ MAX_PACKET_SIZE ];
+__attribute__((aligned(4))) int8_t usb_rx_buf[MAX_PACKET_SIZE];
+__attribute__((aligned(4))) int8_t usb_tx_buf[MAX_PACKET_SIZE];
 
 USBOTGH_FS_TypeDef *USBFSH = USBOTG_H_FS;
 
@@ -45,15 +45,16 @@ rt_err_t usbh_reset_port(rt_uint8_t port)
     rt_thread_mdelay(20);
 
     //Set speed
-    if ((USBFSH->HOST_CTRL & USBFS_UH_PORT_EN) == 0) { //Set speed only when port is closed
-        if(USBFSH->MIS_ST & USBFS_UMS_DM_LEVEL)        //RB_UMS_DM_LEVEL: 1/Low 0/Full
-        {   //Low speed
+    if ((USBFSH->HOST_CTRL & USBFS_UH_PORT_EN) == 0)
+    {                                            //Set speed only when port is closed
+        if (USBFSH->MIS_ST & USBFS_UMS_DM_LEVEL) //RB_UMS_DM_LEVEL: 1/Low 0/Full
+        {                                        //Low speed
             USBFSH->BASE_CTRL |= USBFS_UC_LOW_SPEED;
             USBFSH->HOST_CTRL |= USBFS_UH_LOW_SPEED;
             USBFSH->HOST_SETUP |= USBFS_UH_PRE_PID_EN;
         }
         else
-        {   //Full speed
+        { //Full speed
             USBFSH->BASE_CTRL &= ~USBFS_UC_LOW_SPEED;
             USBFSH->HOST_CTRL &= ~USBFS_UH_LOW_SPEED;
             USBFSH->HOST_SETUP &= ~USBFS_UH_PRE_PID_EN;
@@ -67,9 +68,13 @@ rt_err_t usbh_reset_port(rt_uint8_t port)
     //Enable interrupt
     USBFSH->INT_EN |= USBFS_UIE_DETECT;
 
-    if(USBFSH->INT_FG & USBFS_UIF_DETECT)
-        if(USBFSH->MIS_ST & USBFS_UMS_DEV_ATTACH)
+    if (USBFSH->INT_FG & USBFS_UIF_DETECT)
+    {
+        if (USBFSH->MIS_ST & USBFS_UMS_DEV_ATTACH)
+        {
             USBFSH->INT_FG = USBFS_UIF_DETECT;
+        }
+    }
 
     return RT_EOK;
 }
@@ -81,7 +86,7 @@ int usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int
 
     USBFSH->DEV_ADDR = (USBFS_UDA_GP_BIT & USBFSH->DEV_ADDR) | (pipe->pipe_index & USBFS_USB_ADDR_MASK);
 
-    if(pipe->ep.bEndpointAddress & USB_DIR_IN)
+    if (pipe->ep.bEndpointAddress & USB_DIR_IN)
     {
         usb_pid = USB_PID_IN;
         USBFSH->HOST_TX_LEN = 0x00;
@@ -93,14 +98,20 @@ int usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int
         USBFSH->HOST_TX_LEN = nbytes;
     }
 
-    switch(usb_pid)
+    switch (usb_pid)
     {
     case USB_PID_IN:
-        if (nbytes == 0) *tog = USB_PID_DATA1;
+        if (nbytes == 0)
+        {
+            *tog = USB_PID_DATA1;
+        }
         USBFSH->HOST_RX_CTRL = (*tog == USB_PID_DATA1) ? USBFS_UH_R_TOG : 0x00;
         break;
     case USB_PID_OUT:
-        if (nbytes == 0) *tog = USB_PID_DATA1;
+        if (nbytes == 0)
+        {
+            *tog = USB_PID_DATA1;
+        }
         USBFSH->HOST_TX_CTRL = (*tog == USB_PID_DATA1) ? USBFS_UH_T_TOG : 0x00;
         break;
     case USB_PID_SETUP:
@@ -112,24 +123,32 @@ int usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int
 
     rt_uint16_t try = 3;
     if ((pipe->ep.bmAttributes & USB_EP_ATTR_TYPE_MASK) == USB_EP_ATTR_CONTROL)
+    {
         try = 1000;
+    }
 
-    while(try--)
+    while (try--)
     {
         USBFSH->HOST_EP_PID = (usb_pid << 4) | (pipe->ep.bEndpointAddress & 0x0F);
         if (rt_completion_wait(&urb_completion, timeouts) != RT_EOK)
+        {
             continue;
+        }
 
         if (USBFSH->INT_ST & USBHS_UIS_TOG_OK)
+        {
             *tog = (*tog == USB_PID_DATA0) ? USB_PID_DATA1 : USB_PID_DATA0;
+        }
 
-        switch(USBFSH->INT_ST & USBHS_UIS_H_RES_MASK)
+        switch (USBFSH->INT_ST & USBHS_UIS_H_RES_MASK)
         {
         case USB_PID_DATA0:
         case USB_PID_DATA1:
             pipe->status = UPIPE_STATUS_OK;
             if (pipe->callback != RT_NULL)
+            {
                 pipe->callback(pipe);
+            }
             if (usb_pid == USB_PID_IN)
             {
                 rt_memcpy(buffer, usb_rx_buf, USBFSH->RX_LEN);
@@ -140,18 +159,24 @@ int usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int
         case USB_PID_ACK:
             pipe->status = UPIPE_STATUS_OK;
             if (pipe->callback != RT_NULL)
+            {
                 pipe->callback(pipe);
+            }
             return nbytes;
         case USB_PID_NAK:
             if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
+            {
                 rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
+            }
             rt_thread_mdelay(1);
             continue;
 
         case USB_PID_STALL:
             pipe->status = UPIPE_STATUS_STALL;
             if (pipe->callback != RT_NULL)
+            {
                 pipe->callback(pipe);
+            }
             return 0;
 
         default:
@@ -161,7 +186,9 @@ int usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int
 
     pipe->status = UPIPE_STATUS_ERROR;
     if (pipe->callback != RT_NULL)
+    {
         pipe->callback(pipe);
+    }
 
     return -RT_ERROR;
 }
@@ -185,7 +212,7 @@ rt_err_t hcd_init(rt_device_t dev)
     //Force                  reset handler        clear FIFO & interrupt flags
     USBFSH->BASE_CTRL = USBFS_UC_RESET_SIE | USBFS_UC_CLR_ALL;
     rt_thread_mdelay(20);
-    USBFSH->BASE_CTRL = 0;     //Set SIE to 0 manually
+    USBFSH->BASE_CTRL = 0; //Set SIE to 0 manually
 
     USBFSH->BASE_CTRL = USBFS_UC_HOST_MODE;
     USBFSH->HOST_CTRL = 0;
@@ -202,13 +229,19 @@ rt_err_t hcd_init(rt_device_t dev)
     USBFSH->INT_FG = 0xFF;
     USBFSH->INT_EN = USBFS_UIE_TRANSFER | USBFS_UIE_DETECT;
 
-    if( SystemCoreClock == 144000000 )
-        RCC_OTGFSCLKConfig( RCC_OTGFSCLKSource_PLLCLK_Div3 );
-    else if( SystemCoreClock == 96000000 )
-        RCC_OTGFSCLKConfig( RCC_OTGFSCLKSource_PLLCLK_Div2 );
-    else if( SystemCoreClock == 48000000 )
-        RCC_OTGFSCLKConfig( RCC_OTGFSCLKSource_PLLCLK_Div1 );
-    RCC_AHBPeriphClockCmd( RCC_AHBPeriph_OTG_FS, ENABLE );
+    if (SystemCoreClock == 144000000)
+    {
+        RCC_OTGFSCLKConfig(RCC_OTGFSCLKSource_PLLCLK_Div3);
+    }
+    else if (SystemCoreClock == 96000000)
+    {
+        RCC_OTGFSCLKConfig(RCC_OTGFSCLKSource_PLLCLK_Div2);
+    }
+    else if (SystemCoreClock == 48000000)
+    {
+        RCC_OTGFSCLKConfig(RCC_OTGFSCLKSource_PLLCLK_Div1);
+    }
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_OTG_FS, ENABLE);
 
     NVIC_EnableIRQ(OTG_FS_IRQn);
 
@@ -217,8 +250,7 @@ rt_err_t hcd_init(rt_device_t dev)
     return RT_EOK;
 }
 
-static struct uhcd_ops uhcd_ops =
-{
+static struct uhcd_ops uhcd_ops = {
     .reset_port = usbh_reset_port,
     .pipe_xfer = usbh_pipe_xfer,
     .open_pipe = usbh_open_pipe,
@@ -234,7 +266,7 @@ void OTG_HS_IRQHandler(void)
     {
         USBFSH->HOST_EP_PID = 0x00;
         USBFSH->INT_FG = USBFS_UIF_TRANSFER;
-        rt_completion_done(&urb_completion);                            //本应在此处理的中断在传输函数里进行枚举
+        rt_completion_done(&urb_completion); //本应在此处理的中断在传输函数里进行枚举
         rt_kprintf("USB: Transfer finished\n");
     }
     else if (USBFSH->INT_FG & USBFS_UIF_DETECT)

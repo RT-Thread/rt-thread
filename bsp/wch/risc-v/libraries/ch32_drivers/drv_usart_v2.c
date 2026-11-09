@@ -48,62 +48,60 @@ enum
 #endif
 };
 
-
-
 struct DMA_HandleTypeDef
 {
-    DMA_Channel_TypeDef           *Instance; /* DMA registers base address */
+    DMA_Channel_TypeDef *Instance; /* DMA registers base address */
     struct UART_HandleTypeDef *Parent;
-    DMA_InitTypeDef               Init;     /* DMA initialization parameters */
-    rt_uint32_t                dma_rcc;
-    IRQn_Type                  dma_irq;
-    void (*DMA_ITC_Callback)(struct UART_HandleTypeDef *huart) ;/* DMA transfer complete callback */
-    void (*DMA_IE_Callback)(void);  /* DMA error complete callback */
+    DMA_InitTypeDef Init; /* DMA initialization parameters */
+    rt_uint32_t dma_rcc;
+    IRQn_Type dma_irq;
+    void (*DMA_ITC_Callback)(struct UART_HandleTypeDef *huart); /* DMA transfer complete callback */
+    void (*DMA_IE_Callback)(void);                              /* DMA error complete callback */
 };
 
 struct UART_HandleTypeDef
 {
-    USART_TypeDef             *Instance; /*!< UART registers base address        */
-    USART_InitTypeDef            Init;     /*!< UART communication parameters      */
-    struct DMA_HandleTypeDef *HDMA_Tx;  /*!< UART Tx DMA handle parameters */
-    struct DMA_HandleTypeDef *HDMA_Rx;  /*!< UART Rx DMA handle parameters */
+    USART_TypeDef *Instance;           /*!< UART registers base address        */
+    USART_InitTypeDef Init;            /*!< UART communication parameters      */
+    struct DMA_HandleTypeDef *HDMA_Tx; /*!< UART Tx DMA handle parameters */
+    struct DMA_HandleTypeDef *HDMA_Rx; /*!< UART Rx DMA handle parameters */
 };
 
 struct ch32_uart_config
 {
-    const char   *name;
+    const char *name;
     USART_TypeDef *Instance;
-    rt_uint32_t   rcc;
-    IRQn_Type     irq_type;
-    GPIO_TypeDef  *tx_port;
-    uint16_t      tx_pin;
-    GPIO_TypeDef  *rx_port;
-    uint16_t      rx_pin;
+    rt_uint32_t rcc;
+    IRQn_Type irq_type;
+    GPIO_TypeDef *tx_port;
+    uint16_t tx_pin;
+    GPIO_TypeDef *rx_port;
+    uint16_t rx_pin;
 };
 
 struct ch32_uart
 {
     struct UART_HandleTypeDef handle;
-    struct ch32_uart_config   *config;
+    struct ch32_uart_config *config;
 #ifdef RT_SERIAL_USING_DMA
     struct
     {
         struct DMA_HandleTypeDef handle;
-        rt_size_t                remaining_cnt;
+        rt_size_t remaining_cnt;
     } dma_rx;
     struct
     {
         struct DMA_HandleTypeDef handle;
     } dma_tx;
 #endif
-    rt_uint16_t             uart_dma_flag;
+    rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };
 /********************************************************************************************************************************** */
 /******************************* funtion ****************************************************************************************** */
-static void     ch32_uart_get_config(void);
+static void ch32_uart_get_config(void);
 static rt_err_t ch32_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
-static void     NVIC_Set(IRQn_Type irq, FunctionalState state);
+static void NVIC_Set(IRQn_Type irq, FunctionalState state);
 #ifdef RT_SERIAL_USING_DMA
 static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag);
 static void ch32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
@@ -111,34 +109,29 @@ void HAL_UART_TxCpltCallback(struct UART_HandleTypeDef *huart);
 void HAL_UART_RxCpltCallback(struct UART_HandleTypeDef *huart);
 static void HAL_DMA_IRQHandler(struct DMA_HandleTypeDef *hdma);
 #endif
-static void GPIOInit(GPIO_TypeDef* GPIOx, GPIOMode_TypeDef mode, GPIOSpeed_TypeDef speed, uint16_t Pin);
+static void GPIOInit(GPIO_TypeDef *GPIOx, GPIOMode_TypeDef mode, GPIOSpeed_TypeDef speed, uint16_t Pin);
 /********************************************************************************************************************************** */
 /******************************** value ******************************************************************************************* */
-static struct ch32_uart_config uart_config[] =
-{
+static struct ch32_uart_config uart_config[] = {
 #ifdef BSP_USING_UART1
-    {
-        .name = "uart1",
-        .Instance = USART1,
-        .rcc = RCC_APB2Periph_USART1,
-        .irq_type = USART1_IRQn,
-        .tx_port  = GPIOA,
-        .tx_pin   = GPIO_Pin_9,
-        .rx_port  = GPIOA,
-        .rx_pin   = GPIO_Pin_10
-    },
+    { .name = "uart1",
+      .Instance = USART1,
+      .rcc = RCC_APB2Periph_USART1,
+      .irq_type = USART1_IRQn,
+      .tx_port = GPIOA,
+      .tx_pin = GPIO_Pin_9,
+      .rx_port = GPIOA,
+      .rx_pin = GPIO_Pin_10 },
 #endif
 #ifdef BSP_USING_UART2
-    {
-        .name = "uart2",
-        .Instance = USART2,
-        .rcc = RCC_APB1Periph_USART2,
-        .irq_type = USART2_IRQn,
-        .tx_port  = GPIOA,
-        .tx_pin   = GPIO_Pin_2,
-        .rx_port  = GPIOA,
-        .rx_pin   = GPIO_Pin_3
-    },
+    { .name = "uart2",
+      .Instance = USART2,
+      .rcc = RCC_APB1Periph_USART2,
+      .irq_type = USART2_IRQn,
+      .tx_port = GPIOA,
+      .tx_pin = GPIO_Pin_2,
+      .rx_port = GPIOA,
+      .rx_pin = GPIO_Pin_3 },
 #endif
 #ifdef BSP_USING_UART3
     {
@@ -146,10 +139,10 @@ static struct ch32_uart_config uart_config[] =
         .Instance = USART3,
         .rcc = RCC_APB1Periph_USART3,
         .irq_type = USART3_IRQn,
-        .tx_port  = GPIOB,
-        .tx_pin   = GPIO_Pin_10,
-        .rx_port  = GPIOB,
-        .rx_pin   = GPIO_Pin_11,
+        .tx_port = GPIOB,
+        .tx_pin = GPIO_Pin_10,
+        .rx_port = GPIOB,
+        .rx_pin = GPIO_Pin_11,
     },
 #endif
 #ifdef BSP_USING_UART4
@@ -158,10 +151,10 @@ static struct ch32_uart_config uart_config[] =
         .Instance = UART4,
         .rcc = RCC_APB1Periph_UART4,
         .irq_type = UART4_IRQn,
-        .tx_port  = GPIOC,
-        .tx_pin   = GPIO_Pin_10,
-        .rx_port  = GPIOC,
-        .rx_pin   = GPIO_Pin_11,
+        .tx_port = GPIOC,
+        .tx_pin = GPIO_Pin_10,
+        .rx_port = GPIOC,
+        .rx_pin = GPIO_Pin_11,
     },
 #endif
 #ifdef BSP_USING_UART5
@@ -170,10 +163,10 @@ static struct ch32_uart_config uart_config[] =
         .Instance = UART5,
         .rcc = RCC_APB1Periph_UART5,
         .irq_type = UART5_IRQn,
-        .tx_port  = GPIOC,
-        .tx_pin   = GPIO_Pin_12,
-        .rx_port  = GPIOD,
-        .rx_pin   = GPIO_Pin_2,
+        .tx_port = GPIOC,
+        .tx_pin = GPIO_Pin_12,
+        .rx_port = GPIOD,
+        .rx_pin = GPIO_Pin_2,
     },
 #endif
 #ifdef BSP_USING_UART6
@@ -182,10 +175,10 @@ static struct ch32_uart_config uart_config[] =
         .Instance = UART6,
         .rcc = RCC_APB1Periph_UART6,
         .irq_type = UART6_IRQn,
-        .tx_port  = GPIOC,
-        .tx_pin   = GPIO_Pin_0,
-        .rx_port  = GPIOC,
-        .rx_pin   = GPIO_Pin_1,
+        .tx_port = GPIOC,
+        .tx_pin = GPIO_Pin_0,
+        .rx_port = GPIOC,
+        .rx_pin = GPIO_Pin_1,
 
     },
 #endif
@@ -195,10 +188,10 @@ static struct ch32_uart_config uart_config[] =
         .Instance = UART7,
         .rcc = RCC_APB1Periph_UART7,
         .irq_type = UART7_IRQn,
-        .tx_port  = GPIOC,
-        .tx_pin   = GPIO_Pin_2,
-        .rx_port  = GPIOC,
-        .rx_pin   = GPIO_Pin_3,
+        .tx_port = GPIOC,
+        .tx_pin = GPIO_Pin_2,
+        .rx_port = GPIOC,
+        .rx_pin = GPIO_Pin_3,
     },
 #endif
 #ifdef BSP_USING_UART8
@@ -207,17 +200,17 @@ static struct ch32_uart_config uart_config[] =
         .Instance = UART8,
         .rcc = RCC_APB1Periph_UART8,
         .irq_type = UART8_IRQn,
-        .tx_port  = GPIOC,
-        .tx_pin   = GPIO_Pin_4,
-        .rx_port  = GPIOC,
-        .rx_pin   = GPIO_Pin_5,
+        .tx_port = GPIOC,
+        .tx_pin = GPIO_Pin_4,
+        .rx_port = GPIOC,
+        .rx_pin = GPIO_Pin_5,
     },
 #endif
 };
 static struct ch32_uart uart_obj[sizeof(uart_config) / sizeof(struct ch32_uart_config)];
 /********************************************************************************************************************************** */
 
-static void GPIOInit(GPIO_TypeDef* GPIOx, GPIOMode_TypeDef mode, GPIOSpeed_TypeDef speed, uint16_t Pin)
+static void GPIOInit(GPIO_TypeDef *GPIOx, GPIOMode_TypeDef mode, GPIOSpeed_TypeDef speed, uint16_t Pin)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     /* Enable the GPIO Clock */
@@ -242,15 +235,15 @@ static void GPIOInit(GPIO_TypeDef* GPIOx, GPIOMode_TypeDef mode, GPIOSpeed_TypeD
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
     }
     /* Configure the GPIO pin */
-    GPIO_InitStructure.GPIO_Pin   = Pin;
-    GPIO_InitStructure.GPIO_Mode  = mode;
+    GPIO_InitStructure.GPIO_Pin = Pin;
+    GPIO_InitStructure.GPIO_Mode = mode;
     GPIO_InitStructure.GPIO_Speed = speed;
     GPIO_Init(GPIOx, &GPIO_InitStructure);
 }
 
 static void ch32_uart_init(struct ch32_uart_config *uart)
 {
-    if (uart->Instance==USART1)
+    if (uart->Instance == USART1)
     {
         RCC_APB2PeriphClockCmd(uart->rcc, ENABLE);
     }
@@ -362,23 +355,31 @@ static void NVIC_Set(IRQn_Type irq, FunctionalState state)
 static rt_err_t ch32_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct ch32_uart *uart;
-    rt_ubase_t       ctrl_arg = (rt_ubase_t)arg;
+    rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ch32_uart, serial);
     if (ctrl_arg & (RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING))
     {
         if (uart->uart_dma_flag & RT_DEVICE_FLAG_DMA_RX)
+        {
             ctrl_arg = RT_DEVICE_FLAG_DMA_RX;
+        }
         else
+        {
             ctrl_arg = RT_DEVICE_FLAG_INT_RX;
+        }
     }
     else if (ctrl_arg & (RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING))
     {
         if (uart->uart_dma_flag & RT_DEVICE_FLAG_DMA_TX)
+        {
             ctrl_arg = RT_DEVICE_FLAG_DMA_TX;
+        }
         else
+        {
             ctrl_arg = RT_DEVICE_FLAG_INT_TX;
+        }
     }
 
     switch (cmd)
@@ -394,7 +395,6 @@ static rt_err_t ch32_control(struct rt_serial_device *serial, int cmd, void *arg
         if (ctrl_arg & RT_DEVICE_FLAG_INT_TX)
         {
             USART_ITConfig(uart->handle.Instance, USART_IT_TC, DISABLE);
-
         }
 #ifdef RT_SERIAL_USING_DMA
         if (ctrl_arg & RT_DEVICE_FLAG_DMA_RX)
@@ -402,7 +402,6 @@ static rt_err_t ch32_control(struct rt_serial_device *serial, int cmd, void *arg
             NVIC_Set(uart->dma_rx.handle.dma_irq, DISABLE);
             USART_ITConfig(uart->handle.Instance, USART_IT_IDLE, DISABLE);
             DMA_DeInit(uart->dma_rx.handle.Instance);
-
         }
         else if (ctrl_arg & RT_DEVICE_FLAG_DMA_TX)
         {
@@ -419,17 +418,17 @@ static rt_err_t ch32_control(struct rt_serial_device *serial, int cmd, void *arg
         if (ctrl_arg & (RT_DEVICE_FLAG_DMA_RX | RT_DEVICE_FLAG_DMA_TX))
         {
             ch32_uart_dma_config(serial, ctrl_arg);
-
         }
         else
+        {
             ch32_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)ctrl_arg);
+        }
         break;
 #endif
     case RT_DEVICE_CTRL_SET_INT:
         NVIC_Set(uart->config->irq_type, ENABLE);
         if (ctrl_arg & RT_DEVICE_FLAG_INT_RX)
         {
-
             USART_ITConfig(uart->handle.Instance, USART_IT_RXNE, ENABLE);
             USART_ClearITPendingBit(uart->config->Instance, USART_IT_RXNE);
             USART_ClearFlag(uart->handle.Instance, USART_FLAG_RXNE);
@@ -444,9 +443,13 @@ static rt_err_t ch32_control(struct rt_serial_device *serial, int cmd, void *arg
 
     case RT_DEVICE_CHECK_OPTMODE:
         if (ctrl_arg & RT_DEVICE_FLAG_DMA_TX)
+        {
             return RT_SERIAL_TX_BLOCKING_NO_BUFFER;
+        }
         else
+        {
             return RT_SERIAL_TX_BLOCKING_BUFFER;
+        }
     case RT_DEVICE_CTRL_CLOSE:
 #ifdef RT_SERIAL_USING_DMA
         DMA_Cmd(uart->dma_tx.handle.Instance, DISABLE);
@@ -471,9 +474,9 @@ static int ch32_putc(struct rt_serial_device *serial, char c)
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ch32_uart, serial);
-     while (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) == RESET);
+    while (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) == RESET);
     uart->config->Instance->DATAR = c;
-/* Transmit Data */
+    /* Transmit Data */
 
     return 1;
 }
@@ -489,9 +492,9 @@ static int ch32_getc(struct rt_serial_device *serial)
 }
 
 static rt_ssize_t ch32_transmit(struct rt_serial_device *serial,
-                              rt_uint8_t              *buf,
-                              rt_size_t                size,
-                              rt_uint32_t              tx_flag)
+                                rt_uint8_t *buf,
+                                rt_size_t size,
+                                rt_uint32_t tx_flag)
 {
     struct ch32_uart *uart;
 
@@ -513,7 +516,6 @@ static rt_ssize_t ch32_transmit(struct rt_serial_device *serial,
 
     return size;
 }
-
 
 /**
  * Uart common interrupt process. This need add to uart ISR.
@@ -542,7 +544,7 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             USART_SendData(uart->handle.Instance, put_char);
         }
-         USART_ClearITPendingBit(uart->config->Instance, USART_IT_TXE);
+        USART_ClearITPendingBit(uart->config->Instance, USART_IT_TXE);
     }
     else if (USART_GetITStatus(uart->handle.Instance, USART_IT_TC) != RESET && USART_GetFlagStatus(uart->handle.Instance, USART_FLAG_TC))
     {
@@ -552,18 +554,14 @@ static void uart_isr(struct rt_serial_device *serial)
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    else if ((uart->uart_dma_flag) && (USART_GetFlagStatus(uart->handle.Instance, USART_FLAG_IDLE) != RESET)
-             && (USART_GetITStatus(uart->handle.Instance, USART_IT_IDLE) != RESET))
+    else if ((uart->uart_dma_flag) && (USART_GetFlagStatus(uart->handle.Instance, USART_FLAG_IDLE) != RESET) && (USART_GetITStatus(uart->handle.Instance, USART_IT_IDLE) != RESET))
     {
         /* clean IDLEF flag */
         dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
         USART_ReceiveData(uart->handle.Instance);
     }
 #endif
-
 }
-
-
 
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void) WCH_IRQ_ATTR;
@@ -939,216 +937,216 @@ static void ch32_uart_get_config(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef BSP_USING_UART1
-    uart_obj[UART1_INDEX].serial.config          = config;
+    uart_obj[UART1_INDEX].serial.config = config;
     uart_obj[UART1_INDEX].serial.config.rx_bufsz = BSP_UART1_RX_BUFSIZE;
     uart_obj[UART1_INDEX].serial.config.tx_bufsz = BSP_UART1_TX_BUFSIZE;
-    uart_obj[UART1_INDEX].handle.Instance        = USART1;
-    uart_obj[UART1_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART1_INDEX].handle.Instance = USART1;
+    uart_obj[UART1_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART1_RX_USING_DMA
-    uart_obj[UART1_INDEX].handle.HDMA_Rx          = &uart_obj[UART1_INDEX].dma_rx.handle;
+    uart_obj[UART1_INDEX].handle.HDMA_Rx = &uart_obj[UART1_INDEX].dma_rx.handle;
     uart_obj[UART1_INDEX].serial.config.dma_ping_bufsz = BSP_UART1_DMA_PING_BUFSIZE;
-    uart_obj[UART1_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART1_INDEX].dma_rx.handle.Parent    = &uart_obj[UART1_INDEX].handle;
-    uart_obj[UART1_INDEX].dma_rx.handle.Instance  = DMA1_Channel5;
-    uart_obj[UART1_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART1_INDEX].dma_rx.handle.dma_irq   = DMA1_Channel5_IRQn;
+    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART1_INDEX].dma_rx.handle.Parent = &uart_obj[UART1_INDEX].handle;
+    uart_obj[UART1_INDEX].dma_rx.handle.Instance = DMA1_Channel5;
+    uart_obj[UART1_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART1_INDEX].dma_rx.handle.dma_irq = DMA1_Channel5_IRQn;
 #endif
 #ifdef BSP_UART1_TX_USING_DMA
-    uart_obj[UART1_INDEX].handle.HDMA_Tx          = &uart_obj[UART1_INDEX].dma_tx.handle;
-    uart_obj[UART1_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART1_INDEX].dma_tx.handle.Parent    = &uart_obj[UART1_INDEX].handle;
-    uart_obj[UART1_INDEX].dma_tx.handle.Instance  = DMA1_Channel4;
-    uart_obj[UART1_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART1_INDEX].dma_tx.handle.dma_irq   = DMA1_Channel4_IRQn;
+    uart_obj[UART1_INDEX].handle.HDMA_Tx = &uart_obj[UART1_INDEX].dma_tx.handle;
+    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART1_INDEX].dma_tx.handle.Parent = &uart_obj[UART1_INDEX].handle;
+    uart_obj[UART1_INDEX].dma_tx.handle.Instance = DMA1_Channel4;
+    uart_obj[UART1_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART1_INDEX].dma_tx.handle.dma_irq = DMA1_Channel4_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART2
-    uart_obj[UART2_INDEX].serial.config          = config;
+    uart_obj[UART2_INDEX].serial.config = config;
     uart_obj[UART2_INDEX].serial.config.rx_bufsz = BSP_UART2_RX_BUFSIZE;
     uart_obj[UART2_INDEX].serial.config.tx_bufsz = BSP_UART2_TX_BUFSIZE;
-    uart_obj[UART2_INDEX].handle.Instance        = USART2;
-    uart_obj[UART2_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART2_INDEX].handle.Instance = USART2;
+    uart_obj[UART2_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART2_RX_USING_DMA
-    uart_obj[UART2_INDEX].handle.HDMA_Rx          = &uart_obj[UART2_INDEX].dma_rx.handle;
+    uart_obj[UART2_INDEX].handle.HDMA_Rx = &uart_obj[UART2_INDEX].dma_rx.handle;
     uart_obj[UART2_INDEX].serial.config.dma_ping_bufsz = BSP_UART2_DMA_PING_BUFSIZE;
-    uart_obj[UART2_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART2_INDEX].dma_rx.handle.Parent    = &uart_obj[UART2_INDEX].handle;
+    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART2_INDEX].dma_rx.handle.Parent = &uart_obj[UART2_INDEX].handle;
     uart_obj[UART2_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART2_INDEX].dma_rx.handle.Instance  = DMA1_Channel6;
-    uart_obj[UART2_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART2_INDEX].dma_rx.handle.dma_irq   = DMA1_Channel6_IRQn;
+    uart_obj[UART2_INDEX].dma_rx.handle.Instance = DMA1_Channel6;
+    uart_obj[UART2_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART2_INDEX].dma_rx.handle.dma_irq = DMA1_Channel6_IRQn;
 #endif
 #ifdef BSP_UART2_TX_USING_DMA
-    uart_obj[UART2_INDEX].handle.HDMA_Tx          = &uart_obj[UART2_INDEX].dma_tx.handle;
-    uart_obj[UART2_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART2_INDEX].dma_tx.handle.Parent    = &uart_obj[UART2_INDEX].handle;
+    uart_obj[UART2_INDEX].handle.HDMA_Tx = &uart_obj[UART2_INDEX].dma_tx.handle;
+    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART2_INDEX].dma_tx.handle.Parent = &uart_obj[UART2_INDEX].handle;
     uart_obj[UART2_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART2_INDEX].dma_tx.handle.Instance  = DMA1_Channel7;
-    uart_obj[UART2_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART2_INDEX].dma_tx.handle.dma_irq   = DMA1_Channel7_IRQn;
+    uart_obj[UART2_INDEX].dma_tx.handle.Instance = DMA1_Channel7;
+    uart_obj[UART2_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART2_INDEX].dma_tx.handle.dma_irq = DMA1_Channel7_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART3
-    uart_obj[UART3_INDEX].serial.config          = config;
+    uart_obj[UART3_INDEX].serial.config = config;
     uart_obj[UART3_INDEX].serial.config.rx_bufsz = BSP_UART3_RX_BUFSIZE;
     uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
-    uart_obj[UART3_INDEX].handle.Instance        = USART3;
-    uart_obj[UART3_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART3_INDEX].handle.Instance = USART3;
+    uart_obj[UART3_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART3_RX_USING_DMA
-    uart_obj[UART3_INDEX].handle.HDMA_Rx          = &uart_obj[UART3_INDEX].dma_rx.handle;
+    uart_obj[UART3_INDEX].handle.HDMA_Rx = &uart_obj[UART3_INDEX].dma_rx.handle;
     uart_obj[UART3_INDEX].serial.config.dma_ping_bufsz = BSP_UART3_DMA_PING_BUFSIZE;
-    uart_obj[UART3_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART3_INDEX].dma_rx.handle.Parent    = &uart_obj[UART3_INDEX].handle;
+    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART3_INDEX].dma_rx.handle.Parent = &uart_obj[UART3_INDEX].handle;
     uart_obj[UART3_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART3_INDEX].dma_rx.handle.Instance  = DMA1_Channel3;
-    uart_obj[UART3_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART3_INDEX].dma_rx.handle.dma_irq   = DMA1_Channel3_IRQn;
+    uart_obj[UART3_INDEX].dma_rx.handle.Instance = DMA1_Channel3;
+    uart_obj[UART3_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART3_INDEX].dma_rx.handle.dma_irq = DMA1_Channel3_IRQn;
 #endif
 #ifdef BSP_UART3_TX_USING_DMA
-    uart_obj[UART3_INDEX].handle.HDMA_Tx          = &uart_obj[UART3_INDEX].dma_tx.handle;
-    uart_obj[UART3_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART3_INDEX].dma_tx.handle.Parent    = &uart_obj[UART3_INDEX].handle;
-    uart_obj[UART3_INDEX].dma_tx.handle.Instance  = DMA1_Channel2;
+    uart_obj[UART3_INDEX].handle.HDMA_Tx = &uart_obj[UART3_INDEX].dma_tx.handle;
+    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART3_INDEX].dma_tx.handle.Parent = &uart_obj[UART3_INDEX].handle;
+    uart_obj[UART3_INDEX].dma_tx.handle.Instance = DMA1_Channel2;
     uart_obj[UART3_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART3_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA1;
-    uart_obj[UART3_INDEX].dma_tx.handle.dma_irq   = DMA1_Channel2_IRQn;
+    uart_obj[UART3_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA1;
+    uart_obj[UART3_INDEX].dma_tx.handle.dma_irq = DMA1_Channel2_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART4
-    uart_obj[UART4_INDEX].serial.config          = config;
+    uart_obj[UART4_INDEX].serial.config = config;
     uart_obj[UART4_INDEX].serial.config.rx_bufsz = BSP_UART4_RX_BUFSIZE;
     uart_obj[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
-    uart_obj[UART4_INDEX].handle.Instance        = UART4;
-    uart_obj[UART4_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART4_INDEX].handle.Instance = UART4;
+    uart_obj[UART4_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART4_RX_USING_DMA
-    uart_obj[UART4_INDEX].handle.HDMA_Rx          = &uart_obj[UART4_INDEX].dma_rx.handle;
+    uart_obj[UART4_INDEX].handle.HDMA_Rx = &uart_obj[UART4_INDEX].dma_rx.handle;
     uart_obj[UART4_INDEX].serial.config.dma_ping_bufsz = BSP_UART4_DMA_PING_BUFSIZE;
-    uart_obj[UART4_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART4_INDEX].dma_rx.handle.Parent    = &uart_obj[UART4_INDEX].handle;
+    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART4_INDEX].dma_rx.handle.Parent = &uart_obj[UART4_INDEX].handle;
     uart_obj[UART4_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART4_INDEX].dma_rx.handle.Instance  = DMA2_Channel3;
-    uart_obj[UART4_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART4_INDEX].dma_rx.handle.dma_irq   = DMA2_Channel3_IRQn;
+    uart_obj[UART4_INDEX].dma_rx.handle.Instance = DMA2_Channel3;
+    uart_obj[UART4_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART4_INDEX].dma_rx.handle.dma_irq = DMA2_Channel3_IRQn;
 #endif
 #ifdef BSP_UART4_TX_USING_DMA
-    uart_obj[UART4_INDEX].handle.HDMA_Tx          = &uart_obj[UART4_INDEX].dma_tx.handle;
-    uart_obj[UART4_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART4_INDEX].dma_tx.handle.Parent    = &uart_obj[UART4_INDEX].handle;
+    uart_obj[UART4_INDEX].handle.HDMA_Tx = &uart_obj[UART4_INDEX].dma_tx.handle;
+    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART4_INDEX].dma_tx.handle.Parent = &uart_obj[UART4_INDEX].handle;
     uart_obj[UART4_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART4_INDEX].dma_tx.handle.Instance  = DMA2_Channel5;
-    uart_obj[UART4_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART4_INDEX].dma_tx.handle.dma_irq   = DMA2_Channel5_IRQn;
+    uart_obj[UART4_INDEX].dma_tx.handle.Instance = DMA2_Channel5;
+    uart_obj[UART4_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART4_INDEX].dma_tx.handle.dma_irq = DMA2_Channel5_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART5
-    uart_obj[UART5_INDEX].serial.config          = config;
+    uart_obj[UART5_INDEX].serial.config = config;
     uart_obj[UART5_INDEX].serial.config.rx_bufsz = BSP_UART5_RX_BUFSIZE;
     uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
-    uart_obj[UART5_INDEX].handle.Instance        = UART5;
-    uart_obj[UART5_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART5_INDEX].handle.Instance = UART5;
+    uart_obj[UART5_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART5_RX_USING_DMA
-    uart_obj[UART5_INDEX].handle.HDMA_Rx          = &uart_obj[UART5_INDEX].dma_rx.handle;
+    uart_obj[UART5_INDEX].handle.HDMA_Rx = &uart_obj[UART5_INDEX].dma_rx.handle;
     uart_obj[UART5_INDEX].serial.config.dma_ping_bufsz = BSP_UART5_DMA_PING_BUFSIZE;
-    uart_obj[UART5_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART5_INDEX].dma_rx.handle.Parent    = &uart_obj[UART5_INDEX].handle;
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART5_INDEX].dma_rx.handle.Parent = &uart_obj[UART5_INDEX].handle;
     uart_obj[UART5_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART5_INDEX].dma_rx.handle.Instance  = DMA2_Channel2;
-    uart_obj[UART5_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART5_INDEX].dma_rx.handle.dma_irq   = DMA2_Channel2_IRQn;
+    uart_obj[UART5_INDEX].dma_rx.handle.Instance = DMA2_Channel2;
+    uart_obj[UART5_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART5_INDEX].dma_rx.handle.dma_irq = DMA2_Channel2_IRQn;
 #endif
 #ifdef BSP_UART5_TX_USING_DMA
-    uart_obj[UART5_INDEX].handle.HDMA_Tx          = &uart_obj[UART5_INDEX].dma_tx.handle;
-    uart_obj[UART5_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART5_INDEX].dma_tx.handle.Parent    = &uart_obj[UART5_INDEX].handle;
+    uart_obj[UART5_INDEX].handle.HDMA_Tx = &uart_obj[UART5_INDEX].dma_tx.handle;
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART5_INDEX].dma_tx.handle.Parent = &uart_obj[UART5_INDEX].handle;
     uart_obj[UART5_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART5_INDEX].dma_tx.handle.Instance  = DMA2_Channel4;
-    uart_obj[UART5_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART5_INDEX].dma_tx.handle.dma_irq   = DMA2_Channel4_IRQn;
+    uart_obj[UART5_INDEX].dma_tx.handle.Instance = DMA2_Channel4;
+    uart_obj[UART5_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART5_INDEX].dma_tx.handle.dma_irq = DMA2_Channel4_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART6
-    uart_obj[UART6_INDEX].serial.config          = config;
+    uart_obj[UART6_INDEX].serial.config = config;
     uart_obj[UART6_INDEX].serial.config.rx_bufsz = BSP_UART6_RX_BUFSIZE;
     uart_obj[UART6_INDEX].serial.config.tx_bufsz = BSP_UART6_TX_BUFSIZE;
-    uart_obj[UART6_INDEX].handle.Instance        = UART6;
-    uart_obj[UART6_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART6_INDEX].handle.Instance = UART6;
+    uart_obj[UART6_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART6_RX_USING_DMA
-    uart_obj[UART6_INDEX].handle.HDMA_Rx          = &uart_obj[UART6_INDEX].dma_rx.handle;
+    uart_obj[UART6_INDEX].handle.HDMA_Rx = &uart_obj[UART6_INDEX].dma_rx.handle;
     uart_obj[UART6_INDEX].serial.config.dma_ping_bufsz = BSP_UART6_DMA_PING_BUFSIZE;
-    uart_obj[UART6_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART6_INDEX].dma_rx.handle.Parent    = &uart_obj[UART6_INDEX].handle;
+    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART6_INDEX].dma_rx.handle.Parent = &uart_obj[UART6_INDEX].handle;
     uart_obj[UART6_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART6_INDEX].dma_rx.handle.Instance  = DMA2_Channel7;
-    uart_obj[UART6_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART6_INDEX].dma_rx.handle.dma_irq   = DMA2_Channel7_IRQn;
+    uart_obj[UART6_INDEX].dma_rx.handle.Instance = DMA2_Channel7;
+    uart_obj[UART6_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART6_INDEX].dma_rx.handle.dma_irq = DMA2_Channel7_IRQn;
 #endif
 #ifdef BSP_UART6_TX_USING_DMA
-    uart_obj[UART6_INDEX].handle.HDMA_Tx          = &uart_obj[UART6_INDEX].dma_tx.handle;
-    uart_obj[UART6_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART6_INDEX].dma_tx.handle.Parent    = &uart_obj[UART6_INDEX].handle;
+    uart_obj[UART6_INDEX].handle.HDMA_Tx = &uart_obj[UART6_INDEX].dma_tx.handle;
+    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART6_INDEX].dma_tx.handle.Parent = &uart_obj[UART6_INDEX].handle;
     uart_obj[UART6_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART6_INDEX].dma_tx.handle.Instance  = DMA2_Channel6;
-    uart_obj[UART6_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART6_INDEX].dma_tx.handle.dma_irq   = DMA2_Channel6_IRQn;
+    uart_obj[UART6_INDEX].dma_tx.handle.Instance = DMA2_Channel6;
+    uart_obj[UART6_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART6_INDEX].dma_tx.handle.dma_irq = DMA2_Channel6_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART7
-    uart_obj[UART7_INDEX].serial.config          = config;
+    uart_obj[UART7_INDEX].serial.config = config;
     uart_obj[UART7_INDEX].serial.config.rx_bufsz = BSP_UART7_RX_BUFSIZE;
     uart_obj[UART7_INDEX].serial.config.tx_bufsz = BSP_UART7_TX_BUFSIZE;
-    uart_obj[UART7_INDEX].handle.Instance        = UART7;
-    uart_obj[UART7_INDEX].uart_dma_flag          = 0;
+    uart_obj[UART7_INDEX].handle.Instance = UART7;
+    uart_obj[UART7_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART7_RX_USING_DMA
-    uart_obj[UART7_INDEX].handle.HDMA_Rx          = &uart_obj[UART7_INDEX].dma_rx.handle;
+    uart_obj[UART7_INDEX].handle.HDMA_Rx = &uart_obj[UART7_INDEX].dma_rx.handle;
     uart_obj[UART7_INDEX].serial.config.dma_ping_bufsz = BSP_UART7_DMA_PING_BUFSIZE;
-    uart_obj[UART7_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART7_INDEX].dma_rx.handle.Parent    = &uart_obj[UART7_INDEX].handle;
+    uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART7_INDEX].dma_rx.handle.Parent = &uart_obj[UART7_INDEX].handle;
     uart_obj[UART7_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART7_INDEX].dma_rx.handle.Instance  = DMA2_Channel9;
-    uart_obj[UART7_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART7_INDEX].dma_rx.handle.dma_irq   = DMA2_Channel9_IRQn;
+    uart_obj[UART7_INDEX].dma_rx.handle.Instance = DMA2_Channel9;
+    uart_obj[UART7_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART7_INDEX].dma_rx.handle.dma_irq = DMA2_Channel9_IRQn;
 #endif
 #ifdef BSP_UART7_TX_USING_DMA
-    uart_obj[UART7_INDEX].handle.HDMA_Tx          = &uart_obj[UART7_INDEX].dma_tx.handle;
-    uart_obj[UART7_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART7_INDEX].dma_tx.handle.Parent    = &uart_obj[UART7_INDEX].handle;
+    uart_obj[UART7_INDEX].handle.HDMA_Tx = &uart_obj[UART7_INDEX].dma_tx.handle;
+    uart_obj[UART7_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART7_INDEX].dma_tx.handle.Parent = &uart_obj[UART7_INDEX].handle;
     uart_obj[UART7_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART7_INDEX].dma_tx.handle.Instance  = DMA2_Channel8;
-    uart_obj[UART7_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART7_INDEX].dma_tx.handle.dma_irq   = DMA2_Channel8_IRQn;
+    uart_obj[UART7_INDEX].dma_tx.handle.Instance = DMA2_Channel8;
+    uart_obj[UART7_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART7_INDEX].dma_tx.handle.dma_irq = DMA2_Channel8_IRQn;
 #endif
 #endif
 
 #ifdef BSP_USING_UART8
-    uart_obj[UART8_INDEX].serial.config            = config;
-    uart_obj[UART8_INDEX].serial.config.rx_bufsz   = BSP_UART8_RX_BUFSIZE;
-    uart_obj[UART8_INDEX].serial.config.tx_bufsz   = BSP_UART8_TX_BUFSIZE;
-    uart_obj[UART8_INDEX].handle.Instance          = UART8;
-    uart_obj[UART8_INDEX].uart_dma_flag            = 0;
+    uart_obj[UART8_INDEX].serial.config = config;
+    uart_obj[UART8_INDEX].serial.config.rx_bufsz = BSP_UART8_RX_BUFSIZE;
+    uart_obj[UART8_INDEX].serial.config.tx_bufsz = BSP_UART8_TX_BUFSIZE;
+    uart_obj[UART8_INDEX].handle.Instance = UART8;
+    uart_obj[UART8_INDEX].uart_dma_flag = 0;
 #ifdef BSP_UART8_RX_USING_DMA
-    uart_obj[UART8_INDEX].handle.HDMA_Rx          = &uart_obj[UART8_INDEX].dma_rx.handle;
+    uart_obj[UART8_INDEX].handle.HDMA_Rx = &uart_obj[UART8_INDEX].dma_rx.handle;
     uart_obj[UART8_INDEX].serial.config.dma_ping_bufsz = BSP_UART8_DMA_PING_BUFSIZE;
-    uart_obj[UART8_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_RX;
-    uart_obj[UART8_INDEX].dma_rx.handle.Parent    = &uart_obj[UART8_INDEX].handle;
+    uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    uart_obj[UART8_INDEX].dma_rx.handle.Parent = &uart_obj[UART8_INDEX].handle;
     uart_obj[UART8_INDEX].dma_rx.handle.DMA_ITC_Callback = HAL_UART_RxCpltCallback;
-    uart_obj[UART8_INDEX].dma_rx.handle.Instance  = DMA2_Channel10;
-    uart_obj[UART8_INDEX].dma_rx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART8_INDEX].dma_rx.handle.dma_irq   = DMA2_Channel10_IRQn;
+    uart_obj[UART8_INDEX].dma_rx.handle.Instance = DMA2_Channel10;
+    uart_obj[UART8_INDEX].dma_rx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART8_INDEX].dma_rx.handle.dma_irq = DMA2_Channel10_IRQn;
 #endif
 #ifdef BSP_UART8_TX_USING_DMA
-    uart_obj[UART8_INDEX].handle.HDMA_Tx          = &uart_obj[UART8_INDEX].dma_tx.handle;
-    uart_obj[UART8_INDEX].uart_dma_flag          |= RT_DEVICE_FLAG_DMA_TX;
-    uart_obj[UART8_INDEX].dma_tx.handle.Parent    = &uart_obj[UART8_INDEX].handle;
+    uart_obj[UART8_INDEX].handle.HDMA_Tx = &uart_obj[UART8_INDEX].dma_tx.handle;
+    uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    uart_obj[UART8_INDEX].dma_tx.handle.Parent = &uart_obj[UART8_INDEX].handle;
     uart_obj[UART8_INDEX].dma_tx.handle.DMA_ITC_Callback = HAL_UART_TxCpltCallback;
-    uart_obj[UART8_INDEX].dma_tx.handle.Instance  = DMA2_Channel11;
-    uart_obj[UART8_INDEX].dma_tx.handle.dma_rcc   = RCC_AHBPeriph_DMA2;
-    uart_obj[UART8_INDEX].dma_tx.handle.dma_irq   = DMA2_Channel11_IRQn;
+    uart_obj[UART8_INDEX].dma_tx.handle.Instance = DMA2_Channel11;
+    uart_obj[UART8_INDEX].dma_tx.handle.dma_rcc = RCC_AHBPeriph_DMA2;
+    uart_obj[UART8_INDEX].dma_tx.handle.dma_irq = DMA2_Channel11_IRQn;
 #endif
 #endif
 }
@@ -1157,7 +1155,7 @@ static void ch32_uart_get_config(void)
 static void ch32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
     struct DMA_HandleTypeDef *DMA_Handle;
-    struct ch32_uart          *uart;
+    struct ch32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(flag == RT_DEVICE_FLAG_DMA_TX || flag == RT_DEVICE_FLAG_DMA_RX);
@@ -1173,29 +1171,29 @@ static void ch32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_t fla
 
     RCC_AHBPeriphClockCmd(DMA_Handle->dma_rcc, ENABLE);
     DMA_DeInit(DMA_Handle->Instance);
-    DMA_Handle->Init.DMA_PeripheralBaseAddr     = (unsigned int)uart->config->Instance + 0x4;
-    DMA_Handle->Init.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
-    DMA_Handle->Init.DMA_MemoryInc  = DMA_MemoryInc_Enable;
+    DMA_Handle->Init.DMA_PeripheralBaseAddr = (unsigned int)uart->config->Instance + 0x4;
+    DMA_Handle->Init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_Handle->Init.DMA_MemoryInc = DMA_MemoryInc_Enable;
     DMA_Handle->Init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-    DMA_Handle->Init.DMA_MemoryDataSize    = DMA_MemoryDataSize_Byte;
-    DMA_Handle->Init.DMA_M2M        = DMA_M2M_Disable;
+    DMA_Handle->Init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+    DMA_Handle->Init.DMA_M2M = DMA_M2M_Disable;
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
         rt_uint8_t *ptr = NULL;
         rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
-        DMA_Handle->Init.DMA_DIR    = DMA_DIR_PeripheralSRC;
-        DMA_Handle->Init.DMA_MemoryBaseAddr      = (unsigned int)ptr;
-        DMA_Handle->Init.DMA_BufferSize      = serial->config.dma_ping_bufsz;
+        DMA_Handle->Init.DMA_DIR = DMA_DIR_PeripheralSRC;
+        DMA_Handle->Init.DMA_MemoryBaseAddr = (unsigned int)ptr;
+        DMA_Handle->Init.DMA_BufferSize = serial->config.dma_ping_bufsz;
         DMA_Handle->Init.DMA_Mode = DMA_Mode_Circular;
-        DMA_Handle->Init.DMA_Priority     = DMA_Priority_VeryHigh;
+        DMA_Handle->Init.DMA_Priority = DMA_Priority_VeryHigh;
     }
     else if (RT_DEVICE_FLAG_DMA_TX == flag)
     {
-        DMA_Handle->Init.DMA_DIR    = DMA_DIR_PeripheralDST;
-        DMA_Handle->Init.DMA_MemoryBaseAddr      = (unsigned int)1;
-        DMA_Handle->Init.DMA_BufferSize      = 1;
+        DMA_Handle->Init.DMA_DIR = DMA_DIR_PeripheralDST;
+        DMA_Handle->Init.DMA_MemoryBaseAddr = (unsigned int)1;
+        DMA_Handle->Init.DMA_BufferSize = 1;
         DMA_Handle->Init.DMA_Mode = DMA_Mode_Normal;
-        DMA_Handle->Init.DMA_Priority     = DMA_Priority_High;
+        DMA_Handle->Init.DMA_Priority = DMA_Priority_High;
     }
     DMA_Init(DMA_Handle->Instance, &DMA_Handle->Init);
     NVIC_Set(DMA_Handle->dma_irq, ENABLE);
@@ -1234,7 +1232,7 @@ static void HAL_DMA_IRQHandler(struct DMA_HandleTypeDef *hdma)
     {
         dmax = DMA2;
     }
-    unsigned int flag_it        = dmax->INTFR;
+    unsigned int flag_it = dmax->INTFR;
     unsigned int channel_offset = ((unsigned int)hdma->Instance - (unsigned int)dmax - 8) / 20;
     /* Transfer Complete Interrupt management ***********************************/
     if ((flag_it & 2u << (4 * channel_offset)))
@@ -1247,27 +1245,23 @@ static void HAL_DMA_IRQHandler(struct DMA_HandleTypeDef *hdma)
         {
             hdma->DMA_ITC_Callback(&uart->handle);
         }
-
     }
 
-    if(flag_it & (8u << (4 * channel_offset)))
+    if (flag_it & (8u << (4 * channel_offset)))
     {
         rt_kprintf("DMA error: %d\n", flag_it & (8u << (4 * channel_offset)));
         dmax->INTFCR |= 8u << (4 * channel_offset);
     }
-
-
-
 }
 
 static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 {
     struct ch32_uart *uart;
-    rt_base_t        level;
-    rt_size_t        recv_len, counter;
+    rt_base_t level;
+    rt_size_t recv_len, counter;
 
     RT_ASSERT(serial != RT_NULL);
-    uart     = rt_container_of(serial, struct ch32_uart, serial);
+    uart = rt_container_of(serial, struct ch32_uart, serial);
     recv_len = 0;
     counter = uart->dma_rx.handle.Instance->CNTR;
 
@@ -1275,16 +1269,24 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
     {
     case UART_RX_DMA_IT_IDLE_FLAG:
         if (counter <= uart->dma_rx.remaining_cnt)
+        {
             recv_len = uart->dma_rx.remaining_cnt - counter;
+        }
         else
+        {
             recv_len = serial->config.dma_ping_bufsz + uart->dma_rx.remaining_cnt - counter;
+        }
 
         break;
     case UART_RX_DMA_IT_HT_FLAG:
         if (counter < uart->dma_rx.remaining_cnt)
+        {
             recv_len = uart->dma_rx.remaining_cnt - counter;
+        }
         else
+        {
             recv_len = 0;
+        }
         break;
     case UART_RX_DMA_IT_TC_FLAG:
         recv_len = uart->dma_rx.remaining_cnt;
@@ -1301,8 +1303,6 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
-
-
 }
 
 void HAL_UART_TxCpltCallback(struct UART_HandleTypeDef *huart)
@@ -1322,18 +1322,17 @@ void HAL_UART_RxCpltCallback(struct UART_HandleTypeDef *huart)
 }
 #endif /* RT_SERIAL_USING_DMA */
 
-static const struct rt_uart_ops ch32_uart_ops =
-{
+static const struct rt_uart_ops ch32_uart_ops = {
     .configure = ch32_configure,
-    .control   = ch32_control,
-    .putc      = ch32_putc,
-    .getc      = ch32_getc,
-    .transmit  = ch32_transmit
+    .control = ch32_control,
+    .putc = ch32_putc,
+    .getc = ch32_getc,
+    .transmit = ch32_transmit
 };
 
 int rt_hw_usart_init(void)
 {
-    rt_err_t  result  = 0;
+    rt_err_t result = 0;
     rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct ch32_uart);
 
     ch32_uart_get_config();

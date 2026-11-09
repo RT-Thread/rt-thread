@@ -52,7 +52,7 @@
 
 /** Macro to access the Distributor Control Register (GICD_CTLR)
 */
-#define GICD_CTLR_RWP (1<<31)
+#define GICD_CTLR_RWP      (1u << 31)
 #define GICD_CTLR_E1NWF (1<<7)
 #define GICD_CTLR_DS (1<<6)
 #define GICD_CTLR_ARE_NS (1<<5)
@@ -63,7 +63,7 @@
 
 /** Macro to access the Redistributor Control Register (GICR_CTLR)
 */
-#define GICR_CTLR_UWP (1<<31)
+#define GICR_CTLR_UWP       (1u << 31)
 #define GICR_CTLR_DPG1S (1<<26)
 #define GICR_CTLR_DPG1NS (1<<25)
 #define GICR_CTLR_DPG0 (1<<24)

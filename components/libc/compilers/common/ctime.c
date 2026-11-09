@@ -26,6 +26,7 @@
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-10-23     Shell        add lock for _g_timerid
  * 2023-11-16     Shell        Fixup of nanosleep if previous call was interrupted
+ * 2026-11-06     Parthiban    match the picolibc asctime_r/ctime_r prototypes
  */
 
 #include "sys/time.h"
@@ -58,6 +59,15 @@
 #include <rtdbg.h>
 
 #define _WARNING_NO_RTC "Cannot find a RTC device!"
+
+/* picolibc declares the buffer as char[restrict static __ASCTIME_SIZE], so it is non-null */
+#if defined(__PICOLIBC__) && defined(__ASCTIME_SIZE)
+#define _ASCTIME_BUF(b)      b[__restrict_arr __min_size(__ASCTIME_SIZE)]
+#define _ASCTIME_BUF_NULL(b) 0
+#else
+#define _ASCTIME_BUF(b)      *b
+#define _ASCTIME_BUF_NULL(b) ((b) == RT_NULL)
+#endif
 
 #if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
 #include <vdso_kernel.h>
@@ -255,9 +265,9 @@ time_t mktime(struct tm * const t)
 }
 RTM_EXPORT(mktime);
 
-char* asctime_r(const struct tm *t, char *buf)
+char *asctime_r(const struct tm *t, char _ASCTIME_BUF(buf))
 {
-    if(t == RT_NULL || buf == RT_NULL)
+    if (t == RT_NULL || _ASCTIME_BUF_NULL(buf))
     {
         rt_set_errno(EFAULT);
         return RT_NULL;
@@ -316,7 +326,7 @@ char *asctime(const struct tm *timeptr)
 }
 RTM_EXPORT(asctime);
 
-char *ctime_r(const time_t * tim_p, char * result)
+char *ctime_r(const time_t *tim_p, char _ASCTIME_BUF(result))
 {
     struct tm tm;
     return asctime_r(localtime_r(tim_p, &tm), result);
@@ -1337,9 +1347,17 @@ int timer_getoverrun(timer_t timerid)
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
     struct timer_obj *timer;
+    rt_ubase_t ktimerid;
     rt_uint32_t seconds, nanoseconds;
 
-    timer = _g_timerid[(rt_ubase_t)timerid];
+    ktimerid = (rt_ubase_t)timerid;
+    if (ktimerid >= TIMER_ID_MAX)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    timer = _g_timerid[ktimerid];
 
     if (timer == NULL)
     {
@@ -1388,7 +1406,16 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     rt_err_t        err = RT_EOK;
 
     struct timer_obj *timer;
-    timer = _g_timerid[(rt_ubase_t)timerid];
+    rt_ubase_t ktimerid;
+
+    ktimerid = (rt_ubase_t)timerid;
+    if (ktimerid >= TIMER_ID_MAX)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    timer = _g_timerid[ktimerid];
     if (timer == NULL ||
         value->it_interval.tv_nsec < 0 ||
         value->it_interval.tv_nsec >= NANOSECOND_PER_SECOND ||

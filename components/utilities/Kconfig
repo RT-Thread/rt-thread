@@ -226,6 +226,20 @@ config RT_USING_UTEST
             help
                 If enable this option, the test cases will be run automatically when board boot up.
 
+        config RT_UTEST_AUTO_RUN_LOOP
+            int "Loop count of the automatic run"
+            depends on RT_UTEST_USING_AUTO_RUN
+            range 1 18
+            default 1
+            help
+                How many times the automatic run repeats the registered test cases.
+                When it is greater than 1, "free" and "ps" are executed after each
+                loop, so memory or thread leaks show up in the log as growing numbers.
+
+                The upper bound matches the CI budget: the utest_auto_run workflow
+                budgets 20 minutes per loop with a 360 minute step timeout, so 18
+                loops are the most that can finish before GitHub cancels the step.
+
         if FINSH_USING_OPTION_COMPLETION
             config RT_UTEST_MAX_OPTIONS
                 int "Maximum number of utest cases for auto-completion"
