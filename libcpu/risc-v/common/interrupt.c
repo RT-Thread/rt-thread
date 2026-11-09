@@ -430,9 +430,12 @@ static rt_bool_t handler_irq(int hwirq, void *data)
 #if INTC_TYPE != INTC_TYPE_CLIC
 static rt_bool_t handler_plic_irq(int hwirq, void *data)
 {
+    rt_bool_t res = handler_irq(hwirq, data);
+
+    /* Complete after handling to avoid re-pending level interrupts. */
     plic_irq_ack_or_eoi(rt_hw_cpu_id(), hwirq);
 
-    return handler_irq(hwirq, data);
+    return res;
 }
 
 void plic_init(void)

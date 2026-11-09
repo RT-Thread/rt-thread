@@ -170,10 +170,40 @@ static void plic_irq_mask_raw(int cpu, int hwirq)
 static void plic_irq_ack_or_eoi(int cpu, int hwirq)
 {
     struct plic_percpu *percpu = &plic_percpu[cpu];
+    rt_uint32_t *enable_reg, enable_mask;
 
-    if (percpu->valid)
+    if (!percpu->valid)
+    {
+        return;
+    }
+
+    enable_reg = percpu->enable_base + (hwirq / 32) * sizeof(rt_uint32_t);
+    enable_mask = 1U << (hwirq % 32);
+
+    /*
+     * The PLIC ignores completion for a disabled source.
+     * Temporarily enable it if the handler masked the interrupt.
+     */
+    if (HWREG32(enable_reg) & enable_mask)
     {
         HWREG32(percpu->hart_base + CONTEXT_CLAIM) = hwirq;
+    }
+    else
+    {
+        rt_ubase_t level = rt_spin_lock_irqsave(&percpu->enable_lock);
+
+        if (HWREG32(enable_reg) & enable_mask)
+        {
+            HWREG32(percpu->hart_base + CONTEXT_CLAIM) = hwirq;
+        }
+        else
+        {
+            HWREG32(enable_reg) |= enable_mask;
+            HWREG32(percpu->hart_base + CONTEXT_CLAIM) = hwirq;
+            HWREG32(enable_reg) &= ~enable_mask;
+        }
+
+        rt_spin_unlock_irqrestore(&percpu->enable_lock, level);
     }
 }
 
