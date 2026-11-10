@@ -7,6 +7,7 @@
  * Date           Author               Notes
  * 2024-xx-xx     CDT                  first version
  * 2026-06-24     CDT                  Added _can_sendmsg_nonblocking. Fixed comments.
+ * 2026-11-10     wdfk-prog            Adapt generic CAN with TX mailbox tracking.
  */
 
 #include "drv_mcan.h"
@@ -19,6 +20,8 @@
 /****************************************************************************************
 * Type definitions for MCAN RT driver
 ****************************************************************************************/
+#define MCAN_TX_SLOT_NUM_MAX            (32U)
+
 typedef struct hc32_mcan_config_struct
 {
     char *name;                         /* MCAN instance name */
@@ -36,7 +39,7 @@ typedef struct hc32_mcan_driver_struct
 {
     hc32_mcan_config_t mcan;            /* MCAN configuration */
     struct rt_can_device can_device;    /* inherit from rt can device */
-    uint32_t tx_box_num;                /* current tx box number */
+    rt_uint32_t tx_slot_to_hw[MCAN_TX_SLOT_NUM_MAX]; /* Generic mailbox to MCAN TX element bitmap */
 } hc32_mcan_driver_t;
 
 typedef struct mcan_baud_rate_struct
@@ -80,10 +83,13 @@ typedef struct mcan_baud_rate_struct
 * Interrupt definitions
 ****************************************************************************************/
 #define MCAN_RX_INT   (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
-#define MCAN_TX_INT   (MCAN_INT_TX_CPLT)
+#define MCAN_TX_INT   (MCAN_INT_TX_CPLT | MCAN_INT_TX_ABORT_CPLT)
 #define MCAN_ERR_INT  (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
                        MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
 #define MCAN_INT0_SEL (MCAN_RX_INT | MCAN_TX_INT | MCAN_ERR_INT)
+
+/* MCAN TX status/request registers use a 32-bit physical element bitmap. */
+#define MCAN_TX_ABORT_TIMEOUT_TICKS     ((RT_TICK_PER_SECOND >= 10U) ? (RT_TICK_PER_SECOND / 10U) : 1U)
 
 /****************************************************************************************
 * Baud rate(bit timing) configuration based on 80MHz clock
@@ -201,7 +207,7 @@ static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg);
  * @brief Send out CAN message
  * @param [inout] device CAN device pointer
  * @param [in] buf CAN message buffer
- * @param [in] boxno Mailbox number, it is not used in this porting
+ * @param [in] boxno Generic mailbox number
  * @retval RT_EOK No error
  * @retval An error code on failure
  */
@@ -211,10 +217,11 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
  * @brief Send out CAN message non-blocking
  * @param [inout] device CAN device pointer
  * @param [in] buf CAN message buffer
+ * @param [out] mailbox Selected Generic mailbox number
  * @retval RT_EOK No error
  * @retval An error code on failure
  */
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf);
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf, rt_uint32_t *mailbox);
 
 /**
  * @brief Receive message from CAN
@@ -403,7 +410,7 @@ static void mcan_control_set_int(hc32_mcan_driver_t *driver, int cmd, void *arg)
         {
             tmp = (1UL << tmp) - 1;
         }
-        MCAN_TxBufferNotificationCmd(hard->instance, tmp, MCAN_INT_TX_CPLT, ENABLE);
+        MCAN_TxBufferNotificationCmd(hard->instance, tmp, MCAN_TX_INT, new_state);
 
         if (MCAN_TX_INT & hard->int0_sel)
         {
@@ -665,11 +672,87 @@ static void mcan_control_get_status(hc32_mcan_driver_t *driver, int cmd, void *a
     rt_can_stat->errcode = mcan_st.u8LastErrorCode;
 }
 
+/**
+ * @brief Start or stop the MCAN controller.
+ * @details On stop, abort outstanding hardware TX requests and wait until they
+ * are no longer pending. After MCAN_Stop succeeds, clear the BSP TX slot map.
+ * Generic CAN retires software TX ownership separately after a successful
+ * forced stop; this driver only handles hardware requests and its private map.
+ * @param [inout] driver MCAN driver instance.
+ * @param [in] enable Non-zero starts the controller; zero stops it.
+ * @retval RT_EOK Controller started or stopped successfully.
+ * @retval -RT_EINVAL Configured TX slot count exceeds the mapping capacity.
+ * @retval -RT_ETIMEOUT Hardware TX abort wait or MCAN stop timed out.
+ * @retval -RT_ERROR TX pending-state check or MCAN stop failed.
+ */
+static rt_err_t mcan_control_start(hc32_mcan_driver_t *driver, rt_uint32_t enable)
+{
+    hc32_mcan_config_t *hard = &driver->mcan;
+    rt_uint32_t i;
+    rt_uint32_t tx_mask = 0U;
+    rt_tick_t start_tick;
+    rt_base_t level;
+    rt_err_t result;
+
+    if (enable != 0U)
+    {
+        MCAN_Start(hard->instance);
+        return RT_EOK;
+    }
+
+    if (driver->can_device.config.sndboxnumber > MCAN_TX_SLOT_NUM_MAX)
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = 0U; i < driver->can_device.config.sndboxnumber; i++)
+    {
+        tx_mask |= driver->tx_slot_to_hw[i];
+    }
+
+    if (tx_mask != 0U)
+    {
+        MCAN_AbortTxRequest(hard->instance, tx_mask);
+        start_tick = rt_tick_get();
+        while (1)
+        {
+            result = MCAN_CheckTxBufferPending(hard->instance, tx_mask);
+            if (result == LL_ERR_BUF_EMPTY)
+            {
+                break;
+            }
+            if (result != LL_OK)
+            {
+                return -RT_ERROR;
+            }
+            if ((rt_tick_get() - start_tick) >= MCAN_TX_ABORT_TIMEOUT_TICKS)
+            {
+                return -RT_ETIMEOUT;
+            }
+            rt_thread_mdelay(1);
+        }
+    }
+
+    result = MCAN_Stop(hard->instance);
+    if (result != LL_OK)
+    {
+        return (result == LL_ERR_TIMEOUT) ? -RT_ETIMEOUT : -RT_ERROR;
+    }
+
+    level = rt_hw_interrupt_disable();
+    MCAN_ClearStatus(hard->instance, MCAN_FLAG_TX_CPLT | MCAN_FLAG_TX_ABORT_CPLT);
+    rt_memset(driver->tx_slot_to_hw, 0, sizeof(driver->tx_slot_to_hw));
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+
 static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg)
 {
     rt_err_t rt_ret = -RT_ERROR;
     struct can_configure new_cfg;
     hc32_mcan_driver_t *driver;
+    rt_uint32_t mailbox;
     RT_ASSERT(device);
     driver = (hc32_mcan_driver_t *)device->parent.user_data;
     RT_ASSERT(driver);
@@ -709,6 +792,32 @@ static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg)
         mcan_control_get_status(driver, cmd, arg);
         return RT_EOK;
 
+    case RT_CAN_CMD_START:
+        return mcan_control_start(driver, (rt_uint32_t)(rt_ubase_t)arg);
+
+    case RT_CAN_CMD_ABORT_TX:
+    {
+        rt_uint32_t tx_hw_mask;
+        rt_base_t level;
+
+        mailbox = (rt_uint32_t)(rt_ubase_t)arg;
+        if ((mailbox >= device->config.sndboxnumber) || (mailbox >= MCAN_TX_SLOT_NUM_MAX))
+        {
+            return -RT_EINVAL;
+        }
+
+        level = rt_hw_interrupt_disable();
+        tx_hw_mask = driver->tx_slot_to_hw[mailbox];
+        if (tx_hw_mask != 0U)
+        {
+            MCAN_AbortTxRequest(driver->mcan.instance, tx_hw_mask);
+        }
+        rt_hw_interrupt_enable(level);
+
+        /* An empty slot is a successful no-op, including Generic ABORT_ALL scans. */
+        return RT_EOK;
+    }
+
     default:
         return -RT_EINVAL;
     }
@@ -730,15 +839,33 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
     hc32_mcan_config_t *hard;
     stc_mcan_tx_msg_t ll_tx_msg = { 0 };
     struct rt_can_msg *tx_msg;
+    rt_uint32_t i;
+    rt_uint32_t tx_put_index;
+    rt_uint32_t tx_put_mask;
+    rt_uint32_t tx_hw_mask;
+    int32_t ll_ret;
 
-    RT_ASSERT(device);
+    if ((device == RT_NULL) || (buf == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
     driver = (hc32_mcan_driver_t *)device->parent.user_data;
-    RT_ASSERT(driver);
+    if (driver == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
     hard = &driver->mcan;
 
-    driver->tx_box_num = boxno;
+    if ((device->config.sndboxnumber > MCAN_TX_SLOT_NUM_MAX) ||
+        (boxno >= device->config.sndboxnumber) || (boxno >= MCAN_TX_SLOT_NUM_MAX))
+    {
+        return -RT_EINVAL;
+    }
+    if (driver->tx_slot_to_hw[boxno] != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
-    RT_ASSERT(buf);
     tx_msg = (struct rt_can_msg *)buf;
 
     /* Parameter validity check */
@@ -760,16 +887,89 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
 #endif
 
     rt_memcpy(ll_tx_msg.au8Data, tx_msg->data, m_mcan_data_size[ll_tx_msg.DLC]);
-    if (MCAN_AddMsgToTxFifoQueue(hard->instance, &ll_tx_msg) != LL_OK)
+
+    tx_put_index = (READ_REG32_BIT(hard->instance->TXFQS, MCAN_TXFQS_TFQPI) >> MCAN_TXFQS_TFQPI_POS);
+    if (tx_put_index >= MCAN_TX_SLOT_NUM_MAX)
+    {
+        return -RT_EBUSY;
+    }
+
+    tx_put_mask = 1UL << tx_put_index;
+    for (i = 0U; i < MCAN_TX_SLOT_NUM_MAX; i++)
+    {
+        if ((driver->tx_slot_to_hw[i] & tx_put_mask) != 0U)
+        {
+            return -RT_EBUSY;
+        }
+    }
+
+    ll_ret = MCAN_AddMsgToTxFifoQueue(hard->instance, &ll_tx_msg);
+    if (ll_ret == LL_ERR_BUF_FULL)
+    {
+        return -RT_EBUSY;
+    }
+    if (ll_ret != LL_OK)
     {
         return -RT_ERROR;
     }
+
+    tx_hw_mask = ll_tx_msg.u32LastTxFifoQueueRequest;
+    RT_ASSERT(tx_hw_mask != 0U);
+    RT_ASSERT((tx_hw_mask & (tx_hw_mask - 1U)) == 0U);
+    RT_ASSERT(tx_hw_mask == tx_put_mask);
+    driver->tx_slot_to_hw[boxno] = tx_hw_mask;
+
     return RT_EOK;
 }
 
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf)
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf, rt_uint32_t *mailbox)
 {
-    return mcan_sendmsg(device, buf, 0);
+    hc32_mcan_driver_t *driver;
+    rt_uint32_t slot;
+    rt_ssize_t result;
+
+    if ((device == RT_NULL) || (buf == RT_NULL) || (mailbox == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    driver = (hc32_mcan_driver_t *)device->parent.user_data;
+    if (driver == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+    if ((device->config.sndboxnumber == 0U) ||
+        (device->config.sndboxnumber > MCAN_TX_SLOT_NUM_MAX))
+    {
+        return -RT_EINVAL;
+    }
+
+    for (slot = 0U; slot < device->config.sndboxnumber; slot++)
+    {
+        /*
+         * The private map owns all hardware-accepted requests. sndchange is an
+         * additional guard for a blocking slot whose terminal was reported but
+         * whose waiting thread has not yet reclaimed the Generic slot.
+         */
+        if ((driver->tx_slot_to_hw[slot] != 0U) ||
+            ((device->status.sndchange & (1UL << slot)) != 0U))
+        {
+            continue;
+        }
+
+        result = mcan_sendmsg(device, buf, slot);
+        if (result == RT_EOK)
+        {
+            *mailbox = slot;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
 }
 
 /****************************************************************************************
@@ -848,6 +1048,32 @@ static rt_uint32_t mcan_get_rx_buffer_num(rt_uint32_t new_data)
     return num++;
 }
 
+/**
+ * @brief Map an MCAN protocol error code to a Generic CAN bus error type.
+ * @param [in] error_code MCAN last-error or data-last-error code.
+ * @return Generic CAN bus error type, or RT_CAN_BUS_NO_ERR when no error is reported.
+ */
+static rt_uint32_t mcan_map_protocol_error(rt_uint8_t error_code)
+{
+    switch (error_code)
+    {
+    case MCAN_PROTOCOL_STUFF_ERR:
+        return RT_CAN_BUS_BIT_PAD_ERR;
+    case MCAN_PROTOCOL_FORM_ERR:
+        return RT_CAN_BUS_FORMAT_ERR;
+    case MCAN_PROTOCOL_ACK_ERR:
+        return RT_CAN_BUS_ACK_ERR;
+    case MCAN_PROTOCOL_BIT1_ERR:
+        return RT_CAN_BUS_IMPLICIT_BIT_ERR;
+    case MCAN_PROTOCOL_BIT0_ERR:
+        return RT_CAN_BUS_EXPLICIT_BIT_ERR;
+    case MCAN_PROTOCOL_CRC_ERR:
+        return RT_CAN_BUS_CRC_ERR;
+    default:
+        return RT_CAN_BUS_NO_ERR;
+    }
+}
+
 rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
 {
     struct rt_can_device *device = &driver->can_device;
@@ -856,6 +1082,13 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
     uint32_t psr = MCANx->PSR;
     uint32_t ndat1 = MCANx->NDAT1;
     uint32_t ndat2 = MCANx->NDAT2;
+    uint32_t tx_done_mask = 0U;
+    uint32_t tx_abort_mask = 0U;
+    uint32_t tx_hw_mask;
+    uint32_t tx_event;
+    uint32_t error_type;
+    rt_uint32_t slot;
+    stc_mcan_protocol_status_t protocol_status;
     int rx_buf_index;
 
     int_sel &= ~(MCAN_FLAG_RX_FIFO0_NEW_MSG | MCAN_FLAG_RX_FIFO1_NEW_MSG | MCAN_FLAG_RX_BUF_NEW_MSG);
@@ -864,11 +1097,39 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
         MCAN_ClearStatus(MCANx, ir_status & int_sel);
     }
 
-    /* Check normal status flag */
-    /* Transmission completed */
+    /* Retire every mapped TX element reported by the hardware status bitmaps. */
     if (ir_status & MCAN_FLAG_TX_CPLT)
     {
-        rt_hw_can_isr(device, RT_CAN_EVENT_TX_DONE | (driver->tx_box_num << 8U));
+        tx_done_mask = MCAN_GetTxOccurredList(MCANx);
+    }
+    if (ir_status & MCAN_FLAG_TX_ABORT_CPLT)
+    {
+        tx_abort_mask = MCAN_GetTxAbortedList(MCANx);
+    }
+
+    for (slot = 0U; slot < device->config.sndboxnumber && slot < MCAN_TX_SLOT_NUM_MAX; slot++)
+    {
+        tx_hw_mask = driver->tx_slot_to_hw[slot];
+        if (tx_hw_mask == 0U)
+        {
+            continue;
+        }
+
+        if ((tx_hw_mask & tx_done_mask) != 0U)
+        {
+            tx_event = RT_CAN_EVENT_TX_DONE;
+        }
+        else if ((tx_hw_mask & tx_abort_mask) != 0U)
+        {
+            tx_event = RT_CAN_EVENT_TX_FAIL;
+        }
+        else
+        {
+            continue;
+        }
+
+        rt_hw_can_isr(device, tx_event | (slot << 8U));
+        driver->tx_slot_to_hw[slot] = 0U;
     }
 
     /* Rx FIFO0 new message */
@@ -929,20 +1190,28 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
         rt_hw_can_isr(device, RT_CAN_EVENT_RXOF_IND | (MCAN_RX_FIFO1 << 8));
     }
 
-    /* Error occurred during transmitting. Handle as tx failure. */
-    if ((psr & MCAN_PSR_ACT) == MCAN_PSR_ACT)
+    /* Protocol errors are diagnostics; automatic retransmission keeps TX ownership. */
+    if (ir_status & (MCAN_FLAG_ARB_PHASE_ERROR | MCAN_FLAG_DATA_PHASE_ERROR))
     {
-#if defined(RT_CAN_USING_CANFD)
-        if (ir_status & (MCAN_FLAG_ARB_PHASE_ERROR | MCAN_FLAG_DATA_PHASE_ERROR))
+        if (MCAN_GetProtocolStatus(MCANx, &protocol_status) == LL_OK)
         {
-            rt_hw_can_isr(device, RT_CAN_EVENT_TX_FAIL | (driver->tx_box_num << 8U));
+            if (ir_status & MCAN_FLAG_ARB_PHASE_ERROR)
+            {
+                error_type = mcan_map_protocol_error(protocol_status.u8LastErrorCode);
+                if (error_type != RT_CAN_BUS_NO_ERR)
+                {
+                    rt_hw_can_isr(device, RT_CAN_EVENT_ERR | (error_type << 8U));
+                }
+            }
+            if (ir_status & MCAN_FLAG_DATA_PHASE_ERROR)
+            {
+                error_type = mcan_map_protocol_error(protocol_status.u8DataLastErrorCode);
+                if (error_type != RT_CAN_BUS_NO_ERR)
+                {
+                    rt_hw_can_isr(device, RT_CAN_EVENT_ERR | (error_type << 8U));
+                }
+            }
         }
-#else
-        if (ir_status & MCAN_FLAG_ARB_PHASE_ERROR)
-        {
-            rt_hw_can_isr(device, RT_CAN_EVENT_TX_FAIL | (driver->tx_box_num << 8U));
-        }
-#endif
     }
 
     /* Check bus-off status flag */
@@ -1187,7 +1456,7 @@ static int rt_hw_mcan_init(void)
             tx_boxnum = (1UL << tx_boxnum) - 1;
         }
 
-        MCAN_TxBufferNotificationCmd(hard->instance, tx_boxnum, MCAN_INT_TX_CPLT, ENABLE);
+        MCAN_TxBufferNotificationCmd(hard->instance, tx_boxnum, MCAN_TX_INT, ENABLE);
         MCAN_IntCmd(hard->instance, hard->int0_sel, MCAN_INT_LINE0, ENABLE);
 
         if (i > 0)
