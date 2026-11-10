@@ -27,13 +27,25 @@ class RunnerTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()):
                 runner.run(args)
 
-    def passing_lines(self):
+    def passing_loop(self):
         return [f'[==========] utest unit name: ({name})' for name in sorted(runner.CASES)] + [
             '[  PASSED  ] [ result   ] testcase (' + runner.PREFIX + 'regression)',
             '[==========] [ utest    ] finished']
 
+    def passing_lines(self):
+        return self.passing_loop() + ['[==========] [ utest    ] all loops finished']
+
     def test_all_cases_required(self):
         self.execute(self.passing_lines())
+
+    def test_all_loops_are_checked(self):
+        self.execute(self.passing_loop() + self.passing_lines())
+        with self.assertRaisesRegex(RuntimeError, 'Missing passing tests'):
+            self.execute(self.passing_loop() + self.passing_lines()[1:])
+
+    def test_first_loop_is_not_completion(self):
+        with self.assertRaisesRegex(RuntimeError, 'exited'):
+            self.execute(self.passing_loop())
 
     def test_empty_suite_fails(self):
         with self.assertRaisesRegex(RuntimeError, 'Missing passing tests'):
@@ -48,7 +60,7 @@ class RunnerTests(unittest.TestCase):
             self.execute(['[  FAILED  ] [ result   ] testcase (broken)'] + self.passing_lines())
 
     def test_suite_success_required(self):
-        lines = self.passing_lines()
+        lines = self.passing_loop()
         del lines[-2]
         with self.assertRaisesRegex(RuntimeError, 'did not report success'):
             self.execute(lines)

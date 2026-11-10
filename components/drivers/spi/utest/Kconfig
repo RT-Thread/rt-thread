@@ -15,6 +15,11 @@ if RT_UTEST_SPI_LOOPBACK
 config RT_UTEST_SPI_LOOPBACK_BUS_NAME
     string "SPI bus name for loopback test"
     default "spi2"
+    help
+        The real SPI bus the loopback test attaches to. On boards with a
+        wired MOSI/MISO loopback this must be the hardware controller name.
+        BSPs without a real SPI controller can instead enable
+        RT_UTEST_SPI_VIRT_BUS and point this name at the virtual bus.
 
 config RT_UTEST_SPI_LOOPBACK_DEV_NAME
     string "Temporary SPI device name for loopback test"
@@ -45,6 +50,38 @@ config RT_UTEST_SPI_LOOPBACK_TIMEOUT
     int "SPI loopback test timeout (s)"
     range 1 3600
     default 60
+
+endif
+
+config RT_UTEST_SPI_VIRT_BUS
+    bool "SPI virtual loopback bus (software)"
+    depends on !RT_USING_DM
+    select RT_USING_SPI
+    default n
+    help
+        Compile and register a pure software SPI bus that feeds MOSI data
+        back to MISO. It is meant for BSPs without a real SPI controller,
+        such as QEMU targets, or for CI runs that have no wired loopback.
+        Keep it disabled on boards with a hardware SPI controller: enabling
+        it would add a second bus next to the real one.
+
+        This option is only available without the device model
+        (RT_USING_DM). spi_virt_bus.c registers the bus with
+        rt_spi_bus_register(), which needs no device tree node; on a DM
+        and OFW based BSP without a matching DT node that registration
+        fails with -RT_EINVAL. Do not enable this option on BSPs that
+        enable RT_USING_DM.
+
+if RT_UTEST_SPI_VIRT_BUS
+
+config RT_UTEST_SPI_VIRT_BUS_NAME
+    string "SPI virtual bus device name"
+    default "spi_virt"
+    help
+        Name of the software loopback bus registered by spi_virt_bus.c.
+        Use a dedicated name that does not collide with any real SPI
+        controller of the board, and set RT_UTEST_SPI_LOOPBACK_BUS_NAME
+        to the same value so the test attaches to it.
 
 endif
 

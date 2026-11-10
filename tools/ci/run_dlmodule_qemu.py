@@ -25,6 +25,7 @@ def run(args):
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     units = set()
     passed = False
+    completed_loop = False
     deadline = time.monotonic() + args.timeout
     pending = b''
     selector = selectors.DefaultSelector()
@@ -58,6 +59,12 @@ def run(args):
                                 raise RuntimeError('Missing passing tests: ' + ', '.join(sorted(missing)))
                             if not passed:
                                 raise RuntimeError('The dlmodule suite did not report success')
+                            completed_loop = True
+                            units.clear()
+                            passed = False
+                        if '[==========] [ utest    ] all loops finished' in line:
+                            if not completed_loop or units or passed:
+                                raise RuntimeError('QEMU reported completion without a complete dlmodule loop')
                             print(f'DLMODULE_QEMU_PASS cases={len(CASES)}', flush=True)
                             return
             raise RuntimeError(f'QEMU test timeout after {args.timeout} seconds')

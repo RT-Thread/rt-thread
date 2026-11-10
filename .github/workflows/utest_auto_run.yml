@@ -51,6 +51,11 @@ on:
         required: false
         default: 'manual'
         type: string
+      utest_loop:
+        description: '自动运行重复次数 (1-18)，大于 1 时每轮结束后执行 free/ps 观测内存与线程变化'
+        required: false
+        default: '1'
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -152,6 +157,12 @@ jobs:
             config_file: "components/dfs.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/libc.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/spi.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/dac.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/i2c.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/dlmodule.cfg"
 
@@ -270,7 +281,31 @@ jobs:
 
       - name: Build BSP
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
+        env:
+          # Passed through env rather than interpolated into the script, so a value
+          # like "$(...)" or a backtick can never be executed by the shell.
+          UTEST_LOOP_INPUT: ${{ github.event.inputs.utest_loop }}
         run: |
+          # Validate the loop count before anything is appended to .config. The value
+          # must be a plain decimal integer in 1..18: 18 loops x 20 minutes is the
+          # 360 minute step budget of the monitor step, so a larger value could only
+          # be cancelled by GitHub without a useful message.
+          UTEST_LOOP="${UTEST_LOOP_INPUT:-1}"
+          case "$UTEST_LOOP" in
+            ''|*[!0-9]*)
+              echo "ERROR: utest_loop must be a decimal integer in 1..18, got '$UTEST_LOOP'"
+              exit 1
+              ;;
+          esac
+          # 10# forces a decimal parse, so 08/09 are not treated as octal
+          UTEST_LOOP=$((10#$UTEST_LOOP))
+          if [ "$UTEST_LOOP" -lt 1 ] || [ "$UTEST_LOOP" -gt 18 ]; then
+            echo "ERROR: utest_loop must be in 1..18, got '$UTEST_LOOP'"
+            exit 1
+          fi
+          echo "UTEST_LOOP=$UTEST_LOOP" >> $GITHUB_ENV
+          echo "utest auto run loop: $UTEST_LOOP"
+
           # Keep regular RISC-V jobs UP; SMP coverage has its own matrix entry.
           if [[ "$TEST_BSP_ROOT" == "bsp/qemu-virt64-riscv" && "${{ matrix.platform.SMP_RUN }}" != "smp" ]]; then
             echo "# CONFIG_RT_USING_SMP is not set" >> $TEST_BSP_ROOT/.config
@@ -295,6 +330,12 @@ jobs:
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
           cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           echo >> $TEST_BSP_ROOT/.config
+
+          # Repeat the automatic utest run when a loop count is requested, so that
+          # resources leaked by a test case show up as growing memory/threads.
+          if [ "$UTEST_LOOP" -ne 1 ]; then
+            echo "CONFIG_RT_UTEST_AUTO_RUN_LOOP=$UTEST_LOOP" >> $TEST_BSP_ROOT/.config
+          fi
 
           # Keep standard qemu tests free of PM/tickless side effects.
           if [[ "${{ matrix.platform.KERNEL }}" == "standard" && ( "$TEST_BSP_ROOT" == "bsp/qemu-virt64-riscv" || "$TEST_BSP_ROOT" == "bsp/qemu-virt64-aarch64" ) ]]; then
@@ -424,7 +465,7 @@ jobs:
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
         # Same known-flaky qemu-virt64-riscv standard kernel utest run as the previous step.
         continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && (matrix.config_file == 'kernel/ipc.cfg' || matrix.config_file == 'kernel/kernel_basic.cfg') }}
-        timeout-minutes: 20
+        timeout-minutes: 360
         run: |
           LOG_FILE="qemu_output_${TEST_QEMU_ARCH}.log"
           FAILURE_DETECTED=false
@@ -442,7 +483,15 @@ jobs:
           echo " VV                                                                                    VV "
           echo "=========================================================================================="
           set +e
-          timeout 20m bash -c '
+          # Bound the QEMU wait by the loop count (20 minutes per loop). The step level
+          # timeout-minutes cannot take an expression, so the real limit is applied here.
+          LOOP_NUM="${UTEST_LOOP:-1}"
+          case "$LOOP_NUM" in
+            ''|*[!0-9]*) LOOP_NUM=1 ;;
+          esac
+          MONITOR_TIMEOUT_MIN=$(( LOOP_NUM * 20 ))
+          echo "Monitoring the QEMU log for at most ${MONITOR_TIMEOUT_MIN} minutes (utest_loop=${LOOP_NUM})"
+          timeout "${MONITOR_TIMEOUT_MIN}m" bash -c '
             tail -n +1 -f "$1" | while IFS= read -r line; do
               echo "$line"
               if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
@@ -459,7 +508,7 @@ jobs:
                 exit 1
               fi
 
-              if [[ "$line" == *"[==========] [ utest    ] finished"* ]]; then
+              if [[ "$line" == *"[==========] [ utest    ] all loops finished"* ]]; then
                 if [[ "$FAILURE_DETECTED" == "true" ]]; then
                   echo "=========================================================================================="
                   echo " ||                                                                                    || "
@@ -482,7 +531,7 @@ jobs:
           if [[ $monitor_status -eq 124 ]]; then
             echo "=========================================================================================="
             echo " ||                                                                                    || "
-            echo " ||             Error: Utest run timed out after 20 minutes. Exiting...               || "
+            echo " ||             Error: Utest run timed out after ${MONITOR_TIMEOUT_MIN} minutes. Exiting...               || "
             echo " VV                                                                                    VV "
             echo "=========================================================================================="
             pkill -f "qemu-system-${TEST_QEMU_ARCH}.*${TEST_BSP_ROOT}/rtthread.bin" || true
@@ -494,6 +543,24 @@ jobs:
           fi
 
           exit $monitor_status
+
+      - name: Verify DAC test execution
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && matrix.config_file == 'components/dac.cfg' }}
+        run: |
+          testcase=components.drivers.dac.framework
+          if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" qemu_output_${TEST_QEMU_ARCH}.log; then
+            echo "Error: $testcase did not report a passing result."
+            exit 1
+          fi
+
+      - name: Verify I2C test execution
+        if: ${{ env.TOOLCHAIN_INSTALLED != '' && matrix.config_file == 'components/i2c.cfg' }}
+        run: |
+          testcase=components.drivers.i2c.framework
+          if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" qemu_output_${TEST_QEMU_ARCH}.log; then
+            echo "Error: $testcase did not report a passing result."
+            exit 1
+          fi
   # # Post CI status to PR comment
   # post-ci-status:
   #   needs: test
