@@ -40,6 +40,10 @@
  * - **Scenario 4 (Calloc Overflow Test / calloc_overflow_test):**
  * 1. Reject an object count and size whose product wraps to a small allocation
  * 2. Verify a normal allocation is zero-initialized
+ * - **Scenario 5 (Heap-end Free Regression / mem_free_near_heap_end_test):**
+ * 1. Allocate the last block so its next points at the heap_end sentinel
+ * 2. Simulate a sentinel whose pool_ptr carries only the used bit
+ * 3. Free the block and verify the heap is fully merged
  *
  * Verification Metrics:
  * - **Pass (Scenario 1):** All allocation operations return non-NULL pointers
@@ -57,6 +61,7 @@
  * - **Pass (Scenario 3):** Magic number patterns maintained correctly after reallocation
  * - **Pass (Scenario 3):** Realloc to zero size properly frees memory blocks
  * - **Pass (Scenario 4):** Overflow returns NULL and normal allocation is zero-initialized
+ * - **Pass (Scenario 5):** Freeing the last block does not trigger the MEM_POOL assertion
  *
  * Dependencies:
  * - No specific hardware requirements, runs on any RT-Thread supported platform
@@ -113,6 +118,8 @@ struct rt_small_mem
 
 #define MEM_SIZE(_heap, _mem) \
     (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
+
+#define SIZEOF_STRUCT_MEM RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE)
 
 #define TEST_MEM_SIZE 1024
 
@@ -353,6 +360,42 @@ static void mem_functional_test(void)
     /* small heap deinit */
     rt_smem_detach(&heap->parent);
     /* release test resources */
+    rt_free(buf);
+}
+
+static void mem_free_near_heap_end_test(void)
+{
+    rt_uint8_t *buf;
+    struct rt_small_mem *heap;
+    struct rt_small_mem_item *mem;
+    rt_ubase_t sentinel_pool_ptr;
+    rt_size_t total, heap_end_offset;
+    void *ptr;
+
+    buf = rt_malloc(TEST_MEM_SIZE);
+    uassert_not_null(buf);
+    rt_memset(buf, 0xAA, TEST_MEM_SIZE);
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    uassert_not_null(heap);
+    total = max_block(heap);
+    uassert_int_not_equal(total, 0);
+
+    heap_end_offset = (rt_size_t)((rt_uint8_t *)heap->heap_end - heap->heap_ptr);
+    /* Allocate the last block so its next points at the heap_end sentinel. */
+    ptr = rt_smem_alloc(&heap->parent, total);
+    uassert_not_null(ptr);
+    mem = (struct rt_small_mem_item *)((rt_uint8_t *)ptr - SIZEOF_STRUCT_MEM);
+    uassert_int_equal(mem->next, heap_end_offset);
+
+    /* Older/vendor pools may keep only the used bit in the sentinel's
+     * pool_ptr; the free path must still accept the sentinel by offset. */
+    sentinel_pool_ptr = heap->heap_end->pool_ptr;
+    heap->heap_end->pool_ptr = 0x1;
+    rt_smem_free(ptr);
+    uassert_int_equal(max_block(heap), total);
+    heap->heap_end->pool_ptr = sentinel_pool_ptr;
+
+    rt_smem_detach(&heap->parent);
     rt_free(buf);
 }
 
@@ -685,6 +728,7 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(mem_functional_test);
+    UTEST_UNIT_RUN(mem_free_near_heap_end_test);
     UTEST_UNIT_RUN(mem_alloc_test);
     UTEST_UNIT_RUN(mem_realloc_test);
 #if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
