@@ -214,19 +214,25 @@ static rt_err_t rt_wlan_send_to_thread(rt_wlan_event_t event, void *buff, int le
 
     RT_WLAN_LOG_D("F:%s is run event:%d", __FUNCTION__, event);
 
+    if (len < 0)
+    {
+        RT_WLAN_LOG_E("wlan mgnt send msg err! Invalid length:%d", len);
+        return -RT_EINVAL;
+    }
+
     /* Event packing */
-    msg = rt_malloc(sizeof(struct rt_wlan_msg) + len);
+    msg = rt_malloc(sizeof(struct rt_wlan_msg) + (size_t)len);
     if (msg == RT_NULL)
     {
         RT_WLAN_LOG_E("wlan mgnt send msg err! No memory");
         return -RT_ENOMEM;
     }
-    rt_memset(msg, 0, sizeof(struct rt_wlan_msg) + len);
+    rt_memset(msg, 0, sizeof(struct rt_wlan_msg) + (size_t)len);
     msg->event = event;
     if (len != 0)
     {
         msg->buff = (void *)&msg[1];
-        rt_memcpy(msg->buff, buff, len);
+        rt_memcpy(msg->buff, buff, (size_t)len);
         msg->len = len;
     }
 
