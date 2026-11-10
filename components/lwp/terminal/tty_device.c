@@ -445,7 +445,12 @@ void lwp_tty_delete(lwp_tty_t tp)
     if (tp->t_mtx == &tp->t_mtxobj)
         rt_mutex_detach(&tp->t_mtxobj);
     ttydevsw_free(tp);
-    rt_device_unregister(&tp->parent);
+    /* A tty that failed before lwp_tty_register() was never added to the
+     * device object list. Detaching such an object corrupts memory. */
+    if (rt_object_get_type(&tp->parent.parent) == RT_Object_Class_Device)
+    {
+        rt_device_unregister(&tp->parent);
+    }
     rt_free(tp);
 }
 

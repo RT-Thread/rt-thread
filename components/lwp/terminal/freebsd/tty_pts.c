@@ -763,6 +763,8 @@ int pts_alloc(int fflags, struct rt_thread *td, struct dfs_file *ptm_file)
 
     /* Allocate TTY and softc. */
     psc = rt_calloc(1, sizeof(struct pts_softc));
+    /* No unit is registered yet; the free path must not unregister unit 0. */
+    psc->pts_unit = -1;
     cv_init(&psc->pts_inwait, "ptsin");
     cv_init(&psc->pts_outwait, "ptsout");
     rt_wqueue_init(&psc->pts_inpoll);
@@ -778,9 +780,9 @@ int pts_alloc(int fflags, struct rt_thread *td, struct dfs_file *ptm_file)
     tp = lwp_tty_create(&pts_class, psc);
     if (!tp)
     {
-        rt_free(psc);
         rt_condvar_detach(&psc->pts_inwait);
         rt_condvar_detach(&psc->pts_outwait);
+        rt_free(psc);
         return -ENOMEM;
     }
 

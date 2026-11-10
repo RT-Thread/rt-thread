@@ -303,6 +303,8 @@ rt_err_t ptyfs_unregister_pts(rt_device_t ptmx, ptsno_t ptsno)
             ptyfile_remove_from_root(sb, pts_file);
             ptsno_pool = &sb->ptsno_pool;
             rid_bitmap_put(ptsno_pool, ptsno);
+            /* the file is no longer reachable from the root list */
+            rt_free(pts_file);
             rc = 0;
         }
         else
