@@ -581,6 +581,89 @@ static IRQn_Type _fdcan_get_int1_irqn(FDCAN_Module *FDCANx)
 #endif
 }
 
+/**
+ * @brief Stop an initialized controller and verify that every TX request is finished.
+ *
+ * Cancellation is asynchronous. A successful STOP only retires the BSP's pending
+ * mask after TXBRP confirms no request can survive into a later START.
+ * Stop intent remains asserted even if hardware STOP fails; a confirmed START
+ * clears it. Generic CAN owns its own mailbox retirement.
+ *
+ * @param[in] p_drv N32 FDCAN instance with initialized Message RAM.
+ * @return RT_EOK on confirmed STOP, or a negative error if hardware remains busy.
+ */
+static rt_err_t _fdcan_stop(struct n32_fdcan *p_drv)
+{
+    /* Dedicated hardware TX Buffer bitmask; never includes FIFO/Queue elements. */
+    rt_uint32_t tx_mask = _fdcan_get_tx_buffer_mask(p_drv->init_struct.TxBufferSize);
+    /* Bounded wait for asynchronous hardware cancellation before STOP. */
+    volatile uint32_t timeout = 1000000;
+
+    if (!p_drv->hw_initialized)
+    {
+        return -RT_ERROR;
+    }
+
+    /* A late arbitration-error IRQ must not release INIT after a requested STOP. */
+    p_drv->stop_requested = RT_TRUE;
+
+    if ((p_drv->fdcan_x->TXBRP & tx_mask) != 0U)
+    {
+        FDCAN_AbortTxRequest(p_drv->fdcan_x, p_drv->fdcan_x->TXBRP & tx_mask);
+        while ((p_drv->fdcan_x->TXBRP & tx_mask) && --timeout)
+        {
+        }
+    }
+
+    /* Always attempt hardware STOP, even if the abort request did not finish. */
+    if (FDCAN_Stop(p_drv->fdcan_x) != SUCCESS)
+    {
+        LOG_E("%s: FDCAN_Stop failed", p_drv->name);
+        return -RT_ERROR;
+    }
+    if ((p_drv->fdcan_x->TXBRP & tx_mask) != 0U)
+    {
+        LOG_E("%s: TX requests remain pending after STOP", p_drv->name);
+        return -RT_EBUSY;
+    }
+
+    p_drv->tx_pending_mask = 0;
+    FDCAN_ClearFlag(p_drv->fdcan_x, FDCAN_FLAG_TX_COMPLETE | FDCAN_FLAG_TX_ABORT_COMPLETE);
+    return RT_EOK;
+}
+
+/**
+ * @brief Start the controller and allow automatic error recovery again.
+ *
+ * The stop intent remains set until INIT is confirmed clear, so a failed
+ * START cannot enable a delayed arbitration-error ISR to restart the device.
+ *
+ * @param[in] p_drv N32 FDCAN instance with initialized Message RAM.
+ * @return RT_EOK on confirmed START, or -RT_ERROR on failure.
+ */
+static rt_err_t _fdcan_start(struct n32_fdcan *p_drv)
+{
+    /* Limit the hardware INIT-clear handshake. */
+    volatile uint32_t timeout = 1000000;
+
+    if (!p_drv->hw_initialized)
+    {
+        return -RT_ERROR;
+    }
+
+    FDCAN_Start(p_drv->fdcan_x);
+    while ((p_drv->fdcan_x->CCCR & FDCAN_CCCR_INIT) && --timeout)
+    {
+    }
+    if ((p_drv->fdcan_x->CCCR & FDCAN_CCCR_INIT) != 0U)
+    {
+        return -RT_ERROR;
+    }
+
+    p_drv->stop_requested = RT_FALSE;
+    return RT_EOK;
+}
+
 /*==============================================================================
  * FDCAN device operations: configure
  *============================================================================*/
@@ -759,21 +842,10 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     }
 #endif
 
-    /* Stop FDCAN before re-initializing (needed for mode/baud changes) */
-    FDCAN_Stop(p_drv->fdcan_x);
-
-    /* A Tx Buffer Request stays pending in hardware (TXBRP) until it
-     * completes or is explicitly cancelled, so cancel any leftover request
-     * on every reconfigure. FDCAN_AbortTxRequest() is asynchronous - poll
-     * TXBRP until it actually clears before continuing. */
+    /* First-time FDCAN_Stop would access Message RAM state not yet set by FDCAN_Init. */
+    if (p_drv->hw_initialized && _fdcan_stop(p_drv) != RT_EOK)
     {
-        rt_uint32_t cancel_mask = _fdcan_get_tx_buffer_mask(resource.tx_buffer_size);
-        volatile uint32_t timeout = 1000000;
-        FDCAN_AbortTxRequest(p_drv->fdcan_x, cancel_mask);
-        while ((p_drv->fdcan_x->TXBRP & cancel_mask) && --timeout)
-        {
-        }
-        p_drv->tx_pending_mask = 0;
+        return -RT_ERROR;
     }
 
     /* Initialize FDCAN */
@@ -783,6 +855,7 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
         LOG_E("%s: FDCAN_Init failed", p_drv->name);
         return -RT_ERROR;
     }
+    p_drv->hw_initialized = RT_TRUE;
 
 #if defined(RT_CAN_USING_CANFD)
     /* Configure and enable Transmitter Delay Compensation (TDC) */
@@ -830,8 +903,12 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     p_drv->tx_header.TxEventFifo = FDCAN_NO_TX_EVENTS;
     p_drv->tx_header.MsgMarker = 0;
 
-    /* Start FDCAN */
-    FDCAN_Start(p_drv->fdcan_x);
+    /* Confirm START before releasing the STOP latch after reconfiguration. */
+    if (_fdcan_start(p_drv) != RT_EOK)
+    {
+        LOG_E("%s: FDCAN start failed", p_drv->name);
+        return -RT_ERROR;
+    }
 
     /* RT_DEVICE_CTRL_CONFIG bypasses the CAN framework's field-by-field
      * setters, so keep the device's configuration snapshot synchronized. */
@@ -929,10 +1006,14 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
-            /* Disable TX Complete interrupt (including per-buffer activation) */
-            FDCAN_DeactivateInt(p_drv->fdcan_x, FDCAN_INT_TX_COMPLETE);
-            FDCAN_DisableInt(p_drv->fdcan_x, FDCAN_INT_TX_COMPLETE);
-            NVIC_DisableIRQ(_fdcan_get_int1_irqn(p_drv->fdcan_x));
+            /* Disable both per-buffer TX terminal notifications. */
+            FDCAN_DeactivateInt(p_drv->fdcan_x,
+                                FDCAN_INT_TX_COMPLETE | FDCAN_INT_TX_ABORT_COMPLETE);
+            /* INT1 also carries errors: preserve NVIC while any line-1 source is enabled. */
+            if ((p_drv->fdcan_x->IE & p_drv->fdcan_x->ILS) == 0U)
+            {
+                NVIC_DisableIRQ(_fdcan_get_int1_irqn(p_drv->fdcan_x));
+            }
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
@@ -941,6 +1022,11 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
             FDCAN_DisableInt(p_drv->fdcan_x, FDCAN_INT_ERROR_WARNING);
             FDCAN_DisableInt(p_drv->fdcan_x, FDCAN_INT_ERROR_PASSIVE);
             FDCAN_DisableInt(p_drv->fdcan_x, FDCAN_INT_ARB_PROTOCOL_ERROR);
+            /* Keep INT1 enabled when TX terminal events still use this IRQ. */
+            if ((p_drv->fdcan_x->IE & p_drv->fdcan_x->ILS) == 0U)
+            {
+                NVIC_DisableIRQ(_fdcan_get_int1_irqn(p_drv->fdcan_x));
+            }
         }
         break;
 
@@ -960,11 +1046,12 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
-            /* Enable TX Complete interrupt (INT1) */
-            FDCAN_ConfigIntLine(p_drv->fdcan_x, FDCAN_INT_TX_COMPLETE,
+            /* Enable TX success and cancellation terminals on INT1. */
+            FDCAN_ConfigIntLine(p_drv->fdcan_x,
+                                FDCAN_INT_TX_COMPLETE | FDCAN_INT_TX_ABORT_COMPLETE,
                                 FDCAN_INTERRUPT_LINE1);
-            /* Activate TX Complete interrupt for each dedicated TX Buffer */
-            FDCAN_ActivateInt(p_drv->fdcan_x, FDCAN_INT_TX_COMPLETE,
+            FDCAN_ActivateInt(p_drv->fdcan_x,
+                              FDCAN_INT_TX_COMPLETE | FDCAN_INT_TX_ABORT_COMPLETE,
                               _fdcan_get_tx_buffer_mask(p_drv->init_struct.TxBufferSize));
             NVIC_SetPriority(_fdcan_get_int1_irqn(p_drv->fdcan_x), 2);
             NVIC_EnableIRQ(_fdcan_get_int1_irqn(p_drv->fdcan_x));
@@ -986,7 +1073,28 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
             FDCAN_EnableInt(p_drv->fdcan_x, FDCAN_INT_ERROR_PASSIVE);
             FDCAN_EnableInt(p_drv->fdcan_x, FDCAN_INT_ARB_PROTOCOL_ERROR);
             p_drv->fdcan_x->ILE |= FDCAN_INTERRUPT_LINE1;
+            /* ERR-only opens and post-STOP recovery must restore the shared NVIC line. */
+            NVIC_SetPriority(_fdcan_get_int1_irqn(p_drv->fdcan_x), 2);
+            NVIC_EnableIRQ(_fdcan_get_int1_irqn(p_drv->fdcan_x));
         }
+        break;
+
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            return _fdcan_stop(p_drv);
+        }
+        return _fdcan_start(p_drv);
+
+    case RT_CAN_CMD_ABORT_TX:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval >= can->config.sndboxnumber ||
+            argval >= p_drv->init_struct.TxBufferSize)
+        {
+            return -RT_EINVAL;
+        }
+        /* Accept the request; only the TX terminal ISR may retire its mailbox. */
+        FDCAN_AbortTxRequest(p_drv->fdcan_x, FDCAN_TX_BUFFER0 << argval);
         break;
 
     case RT_CAN_CMD_SET_FILTER:
@@ -1174,6 +1282,17 @@ static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_
     p_drv = (struct n32_fdcan *)can->parent.user_data;
     RT_ASSERT(p_drv != RT_NULL);
 
+    if (box_no >= can->config.sndboxnumber ||
+        box_no >= p_drv->init_struct.TxBufferSize)
+    {
+        return -RT_EINVAL;
+    }
+    if ((p_drv->tx_pending_mask & (FDCAN_TX_BUFFER0 << box_no)) != 0U ||
+        FDCAN_CheckTxBufRequest(p_drv->fdcan_x, FDCAN_TX_BUFFER0 << box_no) == SET)
+    {
+        return -RT_EBUSY;
+    }
+
     p_msg = (struct rt_can_msg *)buf;
 
     /* Set ID type */
@@ -1336,16 +1455,19 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
  *============================================================================*/
 
 /**
- *\*\name   _fdcan_sendmsg_nonblocking.
- *\*\fun    Send a CAN message in non-blocking mode.
- *\*\       Checks for a free dedicated TX Buffer, sends immediately, and returns.
- *\*\param  can :
- *\*\          Pointer to RT-Thread CAN device structure
- *\*\param  buf :
- *\*\          Pointer to the CAN message to be sent
- *\*\return RT_EOK on success, -RT_EBUSY if no TX Buffer is available
+ * @brief Submit through a free dedicated TX Buffer without waiting for completion.
+ *
+ * Generic holds its TX lock during this call. Blocking mailbox owners and
+ * unreported hardware requests remain ineligible for non-blocking reuse.
+ *
+ * @param[in] can RT-Thread CAN device.
+ * @param[in] buf Frame to submit.
+ * @param[out] mailbox Selected zero-based hardware TX Buffer on RT_EOK only.
+ * @return RT_EOK on hardware submission, -RT_EBUSY if no buffer is available,
+ *         or another negative error for a hardware submission failure.
  */
-static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                              rt_uint32_t *mailbox)
 {
     struct n32_fdcan *p_drv;
     struct rt_can_msg *p_msg;
@@ -1354,14 +1476,19 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
 
     p_drv = (struct n32_fdcan *)can->parent.user_data;
     RT_ASSERT(p_drv != RT_NULL);
 
     /* Scan dedicated TX Buffers for a free one */
-    for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
+    for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize && i < can->config.sndboxnumber; i++)
     {
-        if (FDCAN_CheckTxBufRequest(p_drv->fdcan_x, FDCAN_TX_BUFFER0 << i) == RESET)
+        /* Physical TX mask for the candidate Generic mailbox index. */
+        rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
+        if ((can->status.sndchange & (1UL << i)) == 0U &&
+            (p_drv->tx_pending_mask & bit) == 0U &&
+            FDCAN_CheckTxBufRequest(p_drv->fdcan_x, bit) == RESET)
         {
             free_buf = (int32_t)i;
             break;
@@ -1392,12 +1519,13 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
                                     p_msg->data, buf_bit);
     if (status != SUCCESS)
     {
-        return -RT_EBUSY;
+        return -RT_ERROR;
     }
 
     /* Request transmission */
     FDCAN_EnableTxBufferRequest(p_drv->fdcan_x, buf_bit);
     p_drv->tx_pending_mask |= buf_bit;
+    *mailbox = (rt_uint32_t)free_buf;
 
     return RT_EOK;
 }
@@ -1442,9 +1570,10 @@ static void _fdcan_int0_isr(struct n32_fdcan *p_drv)
 
 /**
  *\*\name   _fdcan_int1_isr.
- *\*\fun    FDCAN INT1 interrupt handler (TX Complete + Errors).
+ *\*\fun    FDCAN INT1 interrupt handler (TX terminals + Errors).
  *\*\       Handles:
- *\*\        - TX Complete: transmission completed event
+ *\*\        - TX Complete: successful transmission per hardware buffer
+ *\*\        - TX Abort Complete: cancellation per hardware buffer
  *\*\        - Bus Off / Error Warning / Error Passive / Arbitration Protocol Error
  *\*\param  p_drv :
  *\*\          Pointer to FDCAN device structure
@@ -1456,84 +1585,36 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
     rt_uint32_t ecr_val;
     rt_uint32_t psr_val;
 
-    /* Check TX Complete flag */
-    if (FDCAN_GetFlag(fdcan, FDCAN_FLAG_TX_COMPLETE) == SET)
+    /* Drain all completed dedicated buffers, not only the first one reported. */
+    if (FDCAN_GetFlag(fdcan, FDCAN_FLAG_TX_COMPLETE) == SET ||
+        FDCAN_GetFlag(fdcan, FDCAN_FLAG_TX_ABORT_COMPLETE) == SET)
     {
-        FDCAN_ClearFlag(fdcan, FDCAN_FLAG_TX_COMPLETE);
-
-        /* Determine which TX Buffer completed. FDCAN_CheckBufTxResult()
-         * reads TXBTO which is a sticky snapshot of TXBRP — bits
-         * accumulate across multiple completions, so after the first
-         * successful send the ISR would forever report buffer 0 even
-         * when buffer 1 or 2 actually just finished.  Instead walk
-         * our software pending mask and look for buffers whose TXBRP
-         * was just cleared by the hardware (pending → !pending). */
-        rt_uint32_t buffer_idx = 0;
-        rt_bool_t found = RT_FALSE;
-
+        FDCAN_ClearFlag(fdcan, FDCAN_FLAG_TX_COMPLETE | FDCAN_FLAG_TX_ABORT_COMPLETE);
         for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
         {
             rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-            if ((p_drv->tx_pending_mask & bit) && !(fdcan->TXBRP & bit))
+            if ((p_drv->tx_pending_mask & bit) == 0U || (fdcan->TXBRP & bit) != 0U)
+            {
+                continue;
+            }
+            if ((fdcan->TXBTO & bit) != 0U)
             {
                 p_drv->tx_pending_mask &= ~bit;
-                buffer_idx = i;
-                found = RT_TRUE;
-                break;
+                rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_DONE | (i << 8));
             }
-        }
-
-        /* Fallback: if no buffer matched the TXBRP transition (should
-         * not normally happen), report buffer 0 rather than silently
-         * dropping the event. */
-        if (!found)
-        {
-            for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
+            else if ((fdcan->TXBCF & bit) != 0U)
             {
-                rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-                if (p_drv->tx_pending_mask & bit)
-                {
-                    p_drv->tx_pending_mask &= ~bit;
-                    buffer_idx = i;
-                    found = RT_TRUE;
-                    break;
-                }
+                p_drv->tx_pending_mask &= ~bit;
+                rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_FAIL | (i << 8));
             }
-        }
-
-        if (found)
-        {
-            rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_DONE | (buffer_idx << 8));
         }
     }
 
-    /* IR.EW/EP/PEA are bus protocol *status* change notifications, not
-     * per-buffer completion events - AutoRetransmission keeps retrying a
-     * still-pending Tx request straight through an Error-Passive/Warning
-     * transition. Only a genuine Bus-Off entry actually makes the hardware
-     * abort every pending Tx request, so that is the only status condition
-     * reported as TX_FAIL - and only for the buffers that were actually
-     * pending, the same way the TX Complete branch above discovers
-     * completions via the tx_pending_mask/TXBRP transition. */
+    /* Bus-Off is a controller status, not proof that a specific request ended.
+     * Retire each mailbox only on its hardware TXBTO/TXBCF terminal or STOP. */
     if (FDCAN_GetFlag(fdcan, FDCAN_FLAG_BUS_OFF) == SET)
     {
         FDCAN_ClearFlag(fdcan, FDCAN_FLAG_BUS_OFF);
-
-        if (fdcan->PSR & FDCAN_PSR_BO)
-        {
-            /* PSR.BO == 1 means this IR.BO edge is a Bus-Off *entry*; == 0
-             * would mean leaving Bus-Off (recovery is kicked off separately
-             * by the ARB_PROTOCOL_ERROR branch below). */
-            for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
-            {
-                rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-                if (p_drv->tx_pending_mask & bit)
-                {
-                    p_drv->tx_pending_mask &= ~bit;
-                    rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_FAIL | (i << 8));
-                }
-            }
-        }
     }
     if (FDCAN_GetFlag(fdcan, FDCAN_FLAG_ERROR_WARNING) == SET)
     {
@@ -1547,8 +1628,8 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
     {
         FDCAN_ClearFlag(fdcan, FDCAN_FLAG_ARB_PROTOCOL_ERROR);
 
-        /* Check for Bus-Off recovery condition (ARB_PROTOCOL_ERROR + INIT) */
-        if (fdcan->CCCR & FDCAN_CCCR_INIT)
+        /* An explicit STOP/reconfigure owns INIT; only recover in run mode. */
+        if (!p_drv->stop_requested && (fdcan->CCCR & FDCAN_CCCR_INIT))
         {
             /* Bus-Off state: set CCE, clear INIT to trigger recovery sequence */
             fdcan->CCCR |= FDCAN_CCCR_CCE;
