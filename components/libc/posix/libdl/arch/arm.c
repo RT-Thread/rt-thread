@@ -23,6 +23,16 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym
     Elf32_Sword addend, offset;
     rt_uint32_t upper, lower, sign, j1, j2;
 
+    if (ELF32_R_TYPE(rel->r_info) == R_ARM_NONE)
+    {
+        return 0;
+    }
+
+    if (dlmodule_check_rel_target(module, (rt_ubase_t)rel->r_offset, sizeof(Elf32_Addr)) != RT_EOK)
+    {
+        return -1;
+    }
+
     where = (Elf32_Addr *)((rt_uint8_t *)module->mem_space
                            + rel->r_offset
                            - module->vstart_addr);
