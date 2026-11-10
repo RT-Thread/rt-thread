@@ -20,6 +20,28 @@
 #include <vdso_data_page.h>
 #include <vdso_arch.h>
 
+/*
+ * Some bare-metal C libraries (for example newlib) hide the POSIX monotonic
+ * and GNU clock IDs unless feature-test macros are defined. The freestanding
+ * vDSO build does not define them, so provide the ABI values as fallbacks.
+ * These IDs are part of the clock_gettime ABI and are shared with the kernel.
+ */
+#ifndef CLOCK_REALTIME_COARSE
+#define CLOCK_REALTIME_COARSE 0
+#endif
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC 4
+#endif
+#ifndef CLOCK_MONOTONIC_RAW
+#define CLOCK_MONOTONIC_RAW 5
+#endif
+#ifndef CLOCK_MONOTONIC_COARSE
+#define CLOCK_MONOTONIC_COARSE 6
+#endif
+#ifndef CLOCK_BOOTTIME
+#define CLOCK_BOOTTIME 7
+#endif
+
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
