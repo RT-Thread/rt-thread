@@ -77,10 +77,13 @@ struct n32_fdcan
     FDCAN_FilterType filter_cfg;        /**< default filter configuration */
     FDCAN_TxHeaderType tx_header;       /**< TX header cache */
     FDCAN_RxHeaderType rx_header;       /**< RX header cache */
-    rt_uint32_t tx_pending_mask;        /**< software mask of TX buffers with a pending request
-                                              (FDCAN_TX_BUFFER0<<i).  Cleared when the ISR detects
-                                              TXBRP has gone to zero for that buffer, i.e. the
-                                              hardware finished/cancelled the transmission. */
+    rt_uint32_t tx_pending_mask;        /**< BSP-submitted dedicated TX requests awaiting a
+                                              TXBTO/TXBCF terminal; confirmed STOP may clear the
+                                              mask before Generic retires its own mailbox slots. */
+    rt_bool_t hw_initialized;           /**< First FDCAN_Init succeeded and LL Stop may access
+                                              this instance's configured Message RAM metadata. */
+    volatile rt_bool_t stop_requested;   /**< BSP STOP/reconfigure owns CCCR.INIT until confirmed START;
+                                              the arbitration-error ISR must not restart it. */
     struct rt_can_device device;        /**< RT-Thread CAN device base */
 };
 
