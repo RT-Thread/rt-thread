@@ -13,6 +13,12 @@ config RT_USING_ZERO
 config RT_USING_RANDOM
     bool "Using RANDOM device drivers"
     default n
+    help
+        Enable the /dev/random and /dev/urandom devices.
+
+        These devices are a non-cryptographic software PRNG. Do not use
+        them for cryptographic keys, nonces or other security-sensitive
+        values.
 
 menuconfig RT_USING_PWM
     bool "Using PWM device drivers"
