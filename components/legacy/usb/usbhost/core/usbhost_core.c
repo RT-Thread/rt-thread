@@ -119,6 +119,14 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
         return ret;
     }
 
+    /* bLength is device controlled and is used as the size of the next
+     * transfer into dev_desc. Reject anything but the standard size. */
+    if(dev_desc->bLength != sizeof(struct udevice_descriptor))
+    {
+        LOG_E("invalid device descriptor length %d", dev_desc->bLength);
+        return -RT_EINVAL;
+    }
+
     /* reset bus */
     rt_usbh_hub_reset_port(device->parent_hub, device->port);
     rt_thread_delay(2);
