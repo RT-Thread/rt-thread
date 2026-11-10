@@ -213,8 +213,20 @@ static rt_ssize_t frame_send(struct rt_link_frame *frame)
     rt_size_t length = 0;
     rt_uint8_t *data = RT_NULL;
 
-    rt_memset(rt_link_scb->sendbuffer, 0, sizeof(rt_link_scb->sendbuffer));
-    data = rt_link_scb->sendbuffer;
+    if (frame == RT_NULL)
+    {
+        return 0;
+    }
+
+    if (frame->attribute == RT_LINK_SHORT_DATA_FRAME || frame->attribute == RT_LINK_LONG_DATA_FRAME)
+    {
+        if (frame->data_len > RT_LINK_MAX_DATA_LENGTH)
+        {
+            LOG_E("frame data length (%d) exceeds max (%d)", frame->data_len, RT_LINK_MAX_DATA_LENGTH);
+            return 0;
+        }
+    }
+
     length = RT_LINK_HEAD_LENGTH;
     if (frame->head.crc)
     {
@@ -224,8 +236,16 @@ static rt_ssize_t frame_send(struct rt_link_frame *frame)
     {
         length += RT_LINK_EXTEND_LENGTH;
     }
-
     length += frame->data_len;
+
+    if (length > sizeof(rt_link_scb->sendbuffer))
+    {
+        LOG_E("frame length (%d) exceeds sendbuffer size (%d)", length, sizeof(rt_link_scb->sendbuffer));
+        return 0;
+    }
+
+    rt_memset(rt_link_scb->sendbuffer, 0, sizeof(rt_link_scb->sendbuffer));
+    data = rt_link_scb->sendbuffer;
     frame->head.length = frame->data_len;
     rt_memcpy(data, &frame->head, RT_LINK_HEAD_LENGTH);
     data = data + RT_LINK_HEAD_LENGTH;
