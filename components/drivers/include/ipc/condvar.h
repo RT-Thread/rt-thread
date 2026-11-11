@@ -25,7 +25,7 @@ typedef struct rt_condvar
 
 void rt_condvar_init(rt_condvar_t cv, char *name);
 int rt_condvar_timedwait(rt_condvar_t cv, rt_mutex_t mtx, int suspend_flag,
-                         rt_tick_t timeout);
+                         rt_int32_t timeout);
 int rt_condvar_signal(rt_condvar_t cv);
 int rt_condvar_broadcast(rt_condvar_t cv);
 
