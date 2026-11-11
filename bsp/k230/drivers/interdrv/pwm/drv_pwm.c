@@ -8,19 +8,17 @@
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
- * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 /*
  * Copyright (c) 2006-2025 RT-Thread Development Team
@@ -76,7 +74,8 @@ struct k230_pwm_dev
     rt_ubase_t base;
 };
 
-static struct k230_pwm_dev pwm_devs[] = {
+static struct k230_pwm_dev pwm_devs[] =
+{
 #ifdef BSP_USING_PWM0
     {
         .name = "pwm0",
@@ -131,7 +130,7 @@ static rt_err_t kd_pwm_get(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 {
     int ret;
     uint64_t pulse, period;
-    uint32_t pwm_pclock, pwmscale;
+    uint32_t pwm_pclock, pwmscale, period_count, compare;
 
     ret = check_channel(channel);
     if (ret < 0)
@@ -141,9 +140,11 @@ static rt_err_t kd_pwm_get(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 
     pwmscale = reg->pwmcfg & 0xf;
     pwm_pclock >>= pwmscale;
-    period = reg->pwmcmp0;
-    period = period * NSEC_PER_SEC / pwm_pclock;
-    pulse = *((&reg->pwmcmp1) + channel);
+    period_count = reg->pwmcmp0;
+    compare = *((&reg->pwmcmp1) + channel);
+    period = period_count * NSEC_PER_SEC / pwm_pclock;
+    /* A compare value at or beyond the period produces no high pulse. */
+    pulse = compare < period_count ? period_count - compare : 0;
     pulse = pulse * NSEC_PER_SEC / pwm_pclock;
 
     configuration->period = period;
