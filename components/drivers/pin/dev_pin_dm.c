@@ -12,6 +12,7 @@
 
 static rt_size_t pin_total_nr = 0;
 static RT_DEFINE_SPINLOCK(pin_lock);
+static RT_DEFINE_SPINLOCK(pin_irq_lock);
 static rt_list_t pin_nodes = RT_LIST_OBJECT_INIT(pin_nodes);
 
 static struct rt_device_pin *pin_device_find(rt_ubase_t pin)
@@ -68,7 +69,7 @@ static rt_ssize_t pin_api_read(struct rt_device *device, rt_base_t pin)
 }
 
 static rt_err_t pin_api_attach_irq(struct rt_device *device, rt_base_t pin,
-        rt_uint8_t mode, void (*hdr)(void *args), void *args)
+                                   rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     struct rt_device_pin *gpio = pin_device_find(pin);
 
@@ -79,6 +80,7 @@ static rt_err_t pin_api_attach_irq(struct rt_device *device, rt_base_t pin,
         if (!gpio->ops->pin_attach_irq)
         {
             rt_err_t err;
+            rt_base_t level;
             struct rt_pin_irq_hdr *legacy_isr;
 
             if ((err = gpio->ops->pin_irq_mode(&gpio->parent, pin_index, mode)))
@@ -86,11 +88,14 @@ static rt_err_t pin_api_attach_irq(struct rt_device *device, rt_base_t pin,
                 return err;
             }
 
+            /* publish the handler pair as one update for pin_pic_handle_isr() */
+            level = rt_spin_lock_irqsave(&pin_irq_lock);
             legacy_isr = &gpio->legacy_isr[pin_index];
             legacy_isr->pin = pin_index;
             legacy_isr->mode = mode;
             legacy_isr->hdr = hdr;
             legacy_isr->args = args;
+            rt_spin_unlock_irqrestore(&pin_irq_lock, level);
 
             return RT_EOK;
         }
@@ -113,10 +118,14 @@ static rt_err_t pin_api_detach_irq(struct rt_device *device, rt_base_t pin)
 
         if (!gpio->ops->pin_detach_irq)
         {
+            rt_base_t level;
             struct rt_pin_irq_hdr *legacy_isr;
 
+            /* clear the handler pair as one update for pin_pic_handle_isr() */
+            level = rt_spin_lock_irqsave(&pin_irq_lock);
             legacy_isr = &gpio->legacy_isr[pin_index];
             rt_memset(legacy_isr, 0, sizeof(*legacy_isr));
+            rt_spin_unlock_irqrestore(&pin_irq_lock, level);
 
             return RT_EOK;
         }
@@ -130,7 +139,7 @@ static rt_err_t pin_api_detach_irq(struct rt_device *device, rt_base_t pin)
 }
 
 static rt_err_t pin_api_irq_enable(struct rt_device *device, rt_base_t pin,
-        rt_uint8_t enabled)
+                                   rt_uint8_t enabled)
 {
     struct rt_device_pin *gpio = pin_device_find(pin);
 
@@ -163,7 +172,7 @@ static rt_base_t pin_api_get(const char *name)
 }
 
 static rt_err_t pin_api_debounce(struct rt_device *device, rt_base_t pin,
-        rt_uint32_t debounce)
+                                 rt_uint32_t debounce)
 {
     struct rt_device_pin *gpio = pin_device_find(pin);
 
@@ -176,7 +185,7 @@ static rt_err_t pin_api_debounce(struct rt_device *device, rt_base_t pin,
 }
 
 static rt_err_t pin_api_irq_mode(struct rt_device *device, rt_base_t pin,
-        rt_uint8_t mode)
+                                 rt_uint8_t mode)
 {
     struct rt_device_pin *gpio = pin_device_find(pin);
 
@@ -188,8 +197,7 @@ static rt_err_t pin_api_irq_mode(struct rt_device *device, rt_base_t pin,
     return -RT_EINVAL;
 }
 
-static const struct rt_pin_ops pin_api_dm_ops =
-{
+static const struct rt_pin_ops pin_api_dm_ops = {
     .pin_mode = pin_api_mode,
     .pin_write = pin_api_write,
     .pin_read = pin_api_read,
@@ -300,7 +308,7 @@ static int pin_dm_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 }
 
 static rt_err_t pin_dm_irq_parse(struct rt_pic *pic,
-        struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq)
+                                 struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq)
 {
     rt_err_t err = RT_EOK;
 
@@ -317,8 +325,7 @@ static rt_err_t pin_dm_irq_parse(struct rt_pic *pic,
     return err;
 }
 
-const static struct rt_pic_ops pin_dm_ops =
-{
+const static struct rt_pic_ops pin_dm_ops = {
     .name = "GPIO",
     .irq_enable = pin_dm_irq_mask,
     .irq_disable = pin_dm_irq_unmask,
@@ -342,6 +349,9 @@ rt_err_t pin_pic_handle_isr(struct rt_device_pin *gpio, rt_base_t pin)
         {
             struct rt_pic_irq *pirq;
             struct rt_pin_irq_hdr *legacy_isr;
+            void (*hdr)(void *args) = RT_NULL;
+            void *args = RT_NULL;
+            rt_base_t level;
 
             pirq = rt_pic_find_irq(&irqchip->parent, pin_index);
 
@@ -354,11 +364,15 @@ rt_err_t pin_pic_handle_isr(struct rt_device_pin *gpio, rt_base_t pin)
                 err = -RT_EINVAL;
             }
 
+            level = rt_spin_lock_irqsave(&pin_irq_lock);
             legacy_isr = &gpio->legacy_isr[pin_index];
+            hdr = legacy_isr->hdr;
+            args = legacy_isr->args;
+            rt_spin_unlock_irqrestore(&pin_irq_lock, level);
 
-            if (legacy_isr->hdr)
+            if (hdr)
             {
-                legacy_isr->hdr(legacy_isr->args);
+                hdr(args);
             }
         }
         else
@@ -417,7 +431,7 @@ rt_err_t pin_pic_init(struct rt_device_pin *gpio, int pin_irq)
 }
 
 rt_ssize_t rt_pin_get_named_pin(struct rt_device *dev, const char *propname, int index,
-        rt_uint8_t *out_mode, rt_uint8_t *out_value)
+                                rt_uint8_t *out_mode, rt_uint8_t *out_value)
 {
     rt_ssize_t res = -RT_ENOSYS;
 
