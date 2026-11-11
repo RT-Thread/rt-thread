@@ -148,6 +148,12 @@ int lwp_tty_set_ctrl_proc(lwp_tty_t tp, rt_thread_t td)
     int rc = -1;
     struct rt_lwp *p = td->lwp;
 
+    /* a kernel thread cannot own a controlling terminal */
+    if (p == RT_NULL)
+    {
+        return -EPERM;
+    }
+
     tty_unlock(tp);
     LWP_LOCK(p);
     tty_lock(tp);

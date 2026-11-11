@@ -421,6 +421,11 @@ int tty_wait_background(struct lwp_tty *tp, struct rt_thread *td, int sig)
     tty_assert_locked(tp);
 
     p = td->lwp;
+    if (p == RT_NULL)
+    {
+        /* kernel threads have no process group: nothing to wait for */
+        return 0;
+    }
     for (;;)
     {
         pg = p->pgrp;
@@ -924,6 +929,12 @@ static int tty_drop_ctty(struct lwp_tty *tp, struct rt_lwp *p)
 #ifdef USING_BSD_VNODE
     struct vnode *vp;
 #endif
+
+    /* a kernel thread owns no session or process group */
+    if (p == RT_NULL)
+    {
+        return -ENOTTY;
+    }
 
     /*
      * This looks terrible, but it's generally safe as long as the tty

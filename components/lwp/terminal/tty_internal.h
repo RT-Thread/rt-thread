@@ -86,6 +86,12 @@ rt_inline int tty_is_ctty(struct lwp_tty *tp, struct rt_lwp *p)
 {
     tty_assert_locked(tp);
 
+    /* kernel threads have no process group or controlling terminal */
+    if (p == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
     return p->pgrp->session == tp->t_session && p->term_ctrlterm;
 }
 
