@@ -696,10 +696,13 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
  * @param format output format
  * @param args variable argument list
  */
+/* guard against recursive logging from a synchronous backend, shared by all
+ * the output paths so that the context path behaves the same way */
+static rt_bool_t ulog_voutput_recursion = RT_FALSE;
+
 void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const rt_uint8_t *hex_buf, rt_size_t hex_size,
                   rt_size_t hex_width, rt_base_t hex_addr, const char *format, va_list args)
 {
-    static rt_bool_t ulog_voutput_recursion = RT_FALSE;
     char *log_buf = RT_NULL;
     static rt_size_t log_len = 0;
 
@@ -844,55 +847,217 @@ static const char *ulog_basename(const char *path)
 }
 
 /**
- * check whether a log with the given level and tag would be dropped by the
- * runtime filters
+ * format the calling context prefix
  *
- * Mirrors the checks done in ulog_voutput(), so that ulog_output_ctx() can
- * skip formatting entirely for a log that is going to be dropped.
+ * writes "[file:line func()] " into the given buffer. The line number and the
+ * function name are reserved first, so that a long file name can never
+ * truncate them.
+ *
+ * @param buf buffer to write to
+ * @param size size of the buffer
+ * @param file file name, can be RT_NULL
+ * @param func function name, can be RT_NULL
+ * @param line line number, 0 means not enabled
+ *
+ * @return length written, 0 means nothing was written
+ */
+static rt_size_t ulog_ctx_formater(char *buf, rt_size_t size, const char *file, const char *func, rt_int32_t line)
+{
+    rt_size_t pos = 0;
+    rt_size_t reserved = 0;
+    rt_size_t room;
+    int n;
+
+    if (size < 8)
+    {
+        return 0;
+    }
+
+    /* reserve the space needed by the line number and the function name
+     * first, so that they are never truncated by a long file name */
+    if (line > 0)
+    {
+        reserved += 12; /* ':' plus up to 10 digits */
+    }
+    if (func != RT_NULL)
+    {
+        reserved += rt_strlen(func) + 4; /* " (" and ")" */
+    }
+    if (reserved + 6 > size)
+    {
+        reserved = size / 3;
+    }
+
+    buf[pos++] = '[';
+
+    /* file name, bounded so that the line number and the function name fit */
+    if ((file != RT_NULL) && (size - pos > reserved + 3))
+    {
+        file = ulog_basename(file);
+        room = size - pos - reserved - 3; /* keep room for "] " and "\0" */
+        n = rt_snprintf(buf + pos, room, "%s", file);
+        if (n > 0)
+        {
+            pos += ((rt_size_t)n < room) ? (rt_size_t)n : (room - 1);
+        }
+    }
+
+    if ((line > 0) && (size - pos > 3))
+    {
+        room = size - pos - 3;
+        n = rt_snprintf(buf + pos, room, ":%d", line);
+        if (n > 0)
+        {
+            pos += ((rt_size_t)n < room) ? (rt_size_t)n : (room - 1);
+        }
+    }
+
+    if ((func != RT_NULL) && (size - pos > 3))
+    {
+        room = size - pos - 3;
+        n = rt_snprintf(buf + pos, room, " %s()", func);
+        if (n > 0)
+        {
+            pos += ((rt_size_t)n < room) ? (rt_size_t)n : (room - 1);
+        }
+    }
+
+    buf[pos++] = ']';
+    buf[pos++] = ' ';
+
+    return pos;
+}
+
+/**
+ * voutput the log with calling context, reusing the thread or ISR log buffer
+ *
+ * The context prefix and the message are written into the existing log buffer
+ * while the output is locked, so this path needs no extra buffer on the
+ * caller stack.
  *
  * @param level level
  * @param tag tag
- *
- * @return RT_TRUE if the log should be dropped
+ * @param newline has newline
+ * @param file file name, can be RT_NULL
+ * @param func function name, can be RT_NULL
+ * @param line line number, 0 means not enabled
+ * @param format output format
+ * @param args args
  */
-static rt_bool_t ulog_output_ctx_filtered(rt_uint32_t level, const char *tag)
+static void ulog_voutput_ctx(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *file,
+                             const char *func, rt_int32_t line, const char *format, va_list args)
 {
+    char *log_buf = RT_NULL;
+    static rt_size_t log_len = 0;
+    int fmt_result;
+
+    RT_ASSERT(tag);
+    RT_ASSERT(format);
+#ifndef ULOG_USING_SYSLOG
+    RT_ASSERT(level <= LOG_LVL_DBG);
+#else
+    RT_ASSERT(LOG_PRI(level) <= LOG_DEBUG);
+#endif /* ULOG_USING_SYSLOG */
+
     if (!ulog.init_ok)
     {
-        return RT_TRUE;
+        return;
     }
 
 #ifdef ULOG_USING_FILTER
+    /* the runtime filters run before any formatting, so a dropped log does not
+     * scan the format string or convert any argument */
 #ifndef ULOG_USING_SYSLOG
-    /* level filter */
     if ((level > ulog.filter.level) || (level > ulog_tag_lvl_filter_get(tag)))
     {
-        return RT_TRUE;
+        return;
     }
 #else
     if (((LOG_MASK(LOG_PRI(level)) & ulog.filter.level) == 0) ||
         ((LOG_MASK(LOG_PRI(level)) & ulog_tag_lvl_filter_get(tag)) == 0))
     {
-        return RT_TRUE;
+        return;
     }
 #endif /* ULOG_USING_SYSLOG */
-
-    /* tag filter */
-    if (!rt_strstr(tag, ulog.filter.tag))
+    else if (!rt_strstr(tag, ulog.filter.tag))
     {
-        return RT_TRUE;
+        return;
     }
 #endif /* ULOG_USING_FILTER */
 
-    return RT_FALSE;
+    /* get log buffer */
+    log_buf = get_log_buf();
+
+    /* lock output */
+    output_lock();
+
+    if (ulog_voutput_recursion == RT_TRUE)
+    {
+        /* a synchronous backend is logging again: format into a small local
+         * buffer and print it directly, so that the va_list is never handed to
+         * rt_kprintf() as an ordinary argument */
+        char tmp_buf[64];
+
+        rt_vsnprintf(tmp_buf, sizeof(tmp_buf), format, args);
+        rt_kprintf("%s", tmp_buf);
+
+        if (newline == RT_TRUE)
+        {
+            rt_kprintf(ULOG_NEWLINE_SIGN);
+        }
+
+        output_unlock();
+        return;
+    }
+
+    ulog_voutput_recursion = RT_TRUE;
+
+    /* log head */
+    log_len = ulog_head_formater(log_buf, level, tag);
+    /* calling context prefix, e.g. "[ulog.c:42 app_entry()] " */
+    log_len += ulog_ctx_formater(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, file, func, line);
+    /* log content */
+    fmt_result = rt_vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
+    /* calculate log length; the complete byte count is kept so that a message
+     * with an embedded NUL still reaches the backend in full */
+    if ((fmt_result > -1) && (log_len + fmt_result <= ULOG_LINE_BUF_SIZE))
+    {
+        log_len += fmt_result;
+    }
+    else
+    {
+        log_len = ULOG_LINE_BUF_SIZE;
+        ulog_no_enough_buffer_printf();
+    }
+    /* log tail */
+    log_len = ulog_tail_formater(log_buf, log_len, newline, level);
+
+#ifdef ULOG_USING_FILTER
+    /* keyword filter */
+    if (ulog.filter.keyword[0] != '\0')
+    {
+        log_buf[log_len] = '\0';
+
+        if (!rt_strstr(log_buf, ulog.filter.keyword))
+        {
+            ulog_voutput_recursion = RT_FALSE;
+            output_unlock();
+            return;
+        }
+    }
+#endif /* ULOG_USING_FILTER */
+
+    /* do log output */
+    do_output(level, tag, RT_FALSE, log_buf, log_len);
+
+    ulog_voutput_recursion = RT_FALSE;
+
+    /* unlock output */
+    output_unlock();
 }
 
 /**
  * output the log with calling context (file name / function name / line number)
- *
- * Only one buffer is used on the caller's stack: the context prefix and the
- * formatted message are both built into it, so that this function keeps a
- * small stack footprint and stays usable from threads with a 512 bytes stack.
  *
  * @param level level
  * @param tag tag
@@ -907,80 +1072,23 @@ void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const
                      rt_bool_t newline, const char *format, ...)
 {
     va_list args;
-    char out_buf[ULOG_LINE_BUF_SIZE + 8];
-    rt_size_t pos = 1;
-    int n;
 
     RT_ASSERT(tag);
     RT_ASSERT(format);
 
-    /* apply the runtime filters before formatting, so that a dropped log does
-     * not scan the format string or convert any argument */
-    if (ulog_output_ctx_filtered(level, tag))
-    {
-        return;
-    }
-
-    /* reserve the first byte for '[' */
-    out_buf[0] = '[';
-
-    /* build the context prefix as plain text, e.g. "[main.c:42 app_entry()]".
-     * The prefix is bounded by ULOG_LINE_BUF_SIZE so that the message keeps
-     * enough room even when __FILE__ carries a long build path */
-    if (file)
-    {
-        file = ulog_basename(file);
-        n = rt_snprintf(out_buf + pos, ULOG_LINE_BUF_SIZE / 2 - pos, "%s", file);
-        if (n > 0)
-        {
-            pos += (n < (int)(ULOG_LINE_BUF_SIZE / 2 - pos)) ? (rt_size_t)n : (ULOG_LINE_BUF_SIZE / 2 - pos - 1);
-        }
-    }
-    if (line > 0)
-    {
-        n = rt_snprintf(out_buf + pos, ULOG_LINE_BUF_SIZE / 2 - pos, ":%d", line);
-        if (n > 0)
-        {
-            pos += (n < (int)(ULOG_LINE_BUF_SIZE / 2 - pos)) ? (rt_size_t)n : (ULOG_LINE_BUF_SIZE / 2 - pos - 1);
-        }
-    }
-    if (func)
-    {
-        n = rt_snprintf(out_buf + pos, ULOG_LINE_BUF_SIZE / 2 - pos, " %s()", func);
-        if (n > 0)
-        {
-            pos += (n < (int)(ULOG_LINE_BUF_SIZE / 2 - pos)) ? (rt_size_t)n : (ULOG_LINE_BUF_SIZE / 2 - pos - 1);
-        }
-    }
-
     va_start(args, format);
 
-    if (pos == 1)
+    if ((file == RT_NULL) && (func == RT_NULL) && (line <= 0))
     {
         /* no context available, keep the original path with zero overhead */
         ulog_voutput(level, tag, newline, RT_NULL, 0, 0, 0, format, args);
-        va_end(args);
-        return;
     }
-
-    out_buf[pos++] = ']';
-    out_buf[pos++] = ' ';
-
-    /* format the message directly into the remaining space, so that only the
-     * result is truncated for over-long messages and the format string itself
-     * is always used in full */
-    n = rt_vsnprintf(out_buf + pos, sizeof(out_buf) - pos, format, args);
-    if (n < 0)
+    else
     {
-        out_buf[pos] = '\0';
+        ulog_voutput_ctx(level, tag, newline, file, func, line, format, args);
     }
 
     va_end(args);
-
-    /* hand the assembled "[context] message" to the formatter as a "%s"
-     * argument, so that '%' characters inside the file name or the message
-     * are never parsed as format specifiers */
-    ulog_output(level, tag, newline, "%s", out_buf);
 }
 
 /**
