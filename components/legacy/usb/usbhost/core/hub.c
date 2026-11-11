@@ -468,6 +468,7 @@ static void rt_usbh_hub_irq(void* context)
     upipe_t pipe;
     uhub_t hub;
     int timeout = USB_TIMEOUT_BASIC;
+    rt_size_t xfer_len;
 
     RT_ASSERT(context != RT_NULL);
 
@@ -484,10 +485,17 @@ static void rt_usbh_hub_irq(void* context)
 
     LOG_D("hub int xfer...");
 
-    /* parameter check */
-     RT_ASSERT(pipe->inst->hcd != RT_NULL);
+    /* the endpoint packet size is device controlled and may exceed buffer */
+    xfer_len = pipe->ep.wMaxPacketSize;
+    if (xfer_len > sizeof(hub->buffer))
+    {
+        xfer_len = sizeof(hub->buffer);
+    }
 
-    rt_usb_hcd_pipe_xfer(hub->self->hcd, pipe, hub->buffer, pipe->ep.wMaxPacketSize, timeout);
+    /* parameter check */
+    RT_ASSERT(pipe->inst->hcd != RT_NULL);
+
+    rt_usb_hcd_pipe_xfer(hub->self->hcd, pipe, hub->buffer, xfer_len, timeout);
 }
 
 /**
@@ -509,6 +517,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     struct uhintf* intf = (struct uhintf*)arg;
     upipe_t pipe_in = RT_NULL;
     int timeout = USB_TIMEOUT_LONG;
+    rt_size_t xfer_len;
     /* paremeter check */
     RT_ASSERT(intf != RT_NULL);
 
@@ -528,6 +537,15 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     if(ret != RT_EOK)
     {
         rt_kprintf("get hub descriptor failed\n");
+        return -RT_ERROR;
+    }
+
+    /* length is device supplied and is reused as the next read size into
+     * hub_desc; it must cover the head read and fit the descriptor field. */
+    if (hub->hub_desc.length < 8 ||
+        hub->hub_desc.length > sizeof(struct uhub_descriptor))
+    {
+        rt_kprintf("invalid hub descriptor length %d\n", hub->hub_desc.length);
         return -RT_ERROR;
     }
 
@@ -589,8 +607,14 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     /* parameter check */
     RT_ASSERT(device->hcd != RT_NULL);
     pipe_in->user_data = hub;
-    rt_usb_hcd_pipe_xfer(hub->hcd, pipe_in, hub->buffer,
-        pipe_in->ep.wMaxPacketSize, timeout);
+
+    xfer_len = pipe_in->ep.wMaxPacketSize;
+    if (xfer_len > sizeof(hub->buffer))
+    {
+        xfer_len = sizeof(hub->buffer);
+    }
+
+    rt_usb_hcd_pipe_xfer(hub->hcd, pipe_in, hub->buffer, xfer_len, timeout);
     return RT_EOK;
 }
 

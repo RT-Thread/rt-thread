@@ -145,6 +145,14 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
     LOG_D("get device descriptor length %d",
                                 dev_desc->bLength);
 
+    /* bLength is device controlled and is reused as the size of the next
+     * transfer into dev_desc. Reject anything but the standard size. */
+    if (dev_desc->bLength != sizeof(struct udevice_descriptor))
+    {
+        LOG_E("invalid device descriptor length %d", dev_desc->bLength);
+        return -RT_EINVAL;
+    }
+
     /* get full device descriptor again */
     ret = rt_usbh_get_descriptor(device, USB_DESC_TYPE_DEVICE, (void*)dev_desc, dev_desc->bLength);
     if(ret != RT_EOK)
