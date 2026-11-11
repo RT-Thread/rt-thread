@@ -339,6 +339,7 @@ static void _stop_recv_long(void)
         rt_free(rt_link_scb->rx_record.dataspace);
         rt_link_scb->rx_record.dataspace = RT_NULL;
     }
+    rt_link_scb->rx_record.dataspace_size = 0;
     rt_link_scb->rx_record.long_count = 0;
     rt_link_scb->rx_record.total = 0;
 }
@@ -351,6 +352,7 @@ static rt_err_t rt_link_frame_stop_receive(struct rt_link_frame *frame)
         rt_free(rt_link_scb->rx_record.dataspace);
     }
     rt_link_scb->rx_record.dataspace = RT_NULL;
+    rt_link_scb->rx_record.dataspace_size = 0;
     rt_link_scb->rx_record.long_count = 0;
     rt_link_scb->rx_record.total = 0;
 
@@ -458,9 +460,14 @@ static void rt_link_recv_finish(rt_uint16_t serv, void *data, rt_size_t size)
 static rt_err_t rt_link_short_handle(struct rt_link_frame *receive_frame)
 {
     LOG_D("Seq(%d) short data", receive_frame->head.sequence);
+    if (rt_link_scb->rx_record.dataspace != RT_NULL)
+    {
+        _stop_recv_long();
+    }
     rt_link_scb->rx_record.dataspace = rt_malloc(receive_frame->data_len);
     if (rt_link_scb->rx_record.dataspace != RT_NULL)
     {
+        rt_link_scb->rx_record.dataspace_size = receive_frame->data_len;
         if (receive_frame->head.ack)
         {
             rt_link_command_frame_send(receive_frame->head.service,
@@ -471,6 +478,7 @@ static rt_err_t rt_link_short_handle(struct rt_link_frame *receive_frame)
         rt_link_hw_copy(rt_link_scb->rx_record.dataspace, receive_frame->real_data, receive_frame->data_len);
         rt_link_recv_finish(receive_frame->head.service, rt_link_scb->rx_record.dataspace, receive_frame->data_len);
         rt_link_scb->rx_record.dataspace = RT_NULL;
+        rt_link_scb->rx_record.dataspace_size = 0;
     }
     else
     {
@@ -482,6 +490,21 @@ static rt_err_t rt_link_short_handle(struct rt_link_frame *receive_frame)
 
 static void _long_handle_first(struct rt_link_frame *receive_frame)
 {
+    rt_size_t max_payload = (rt_size_t)RT_LINK_FRAMES_MAX * RT_LINK_MAX_DATA_LENGTH;
+
+    if ((receive_frame->extend.parameter == 0) ||
+        ((rt_size_t)receive_frame->extend.parameter > max_payload))
+    {
+        LOG_W("long data invalid len (%uB).", (unsigned int)receive_frame->extend.parameter);
+        _stop_recv_long();
+        return;
+    }
+
+    if (rt_link_scb->rx_record.dataspace != RT_NULL)
+    {
+        _stop_recv_long();
+    }
+
     if (receive_frame->extend.parameter % RT_LINK_MAX_DATA_LENGTH == 0)
     {
         receive_frame->total = receive_frame->extend.parameter / RT_LINK_MAX_DATA_LENGTH;
@@ -491,12 +514,16 @@ static void _long_handle_first(struct rt_link_frame *receive_frame)
         receive_frame->total = receive_frame->extend.parameter / RT_LINK_MAX_DATA_LENGTH + 1;
     }
 
-    rt_link_scb->rx_record.total = receive_frame->total;
     rt_link_scb->rx_record.dataspace = rt_malloc(receive_frame->extend.parameter);
     if (rt_link_scb->rx_record.dataspace == RT_NULL)
     {
         LOG_W("long data (%dB) alloc failed.", receive_frame->extend.parameter);
+        _stop_recv_long();
+        return;
     }
+
+    rt_link_scb->rx_record.dataspace_size = receive_frame->extend.parameter;
+    rt_link_scb->rx_record.total = receive_frame->total;
 }
 
 static void _long_handle_second(struct rt_link_frame *receive_frame)
@@ -512,14 +539,45 @@ static void _long_handle_second(struct rt_link_frame *receive_frame)
           , receive_frame->total
           , rt_link_scb->rx_record.long_count);
 
-    if ((receive_frame->index > RT_LINK_FRAMES_MAX) || (rt_link_scb->rx_record.long_count & (0x01 << receive_frame->index)))
+    if (receive_frame->data_len > RT_LINK_MAX_DATA_LENGTH)
+    {
+        LOG_W("ERR:long data_len %u exceeds max %u",
+              (unsigned int)receive_frame->data_len,
+              (unsigned int)RT_LINK_MAX_DATA_LENGTH);
+        _stop_recv_long();
+        return;
+    }
+
+    if ((receive_frame->index >= RT_LINK_FRAMES_MAX) ||
+        (receive_frame->index >= rt_link_scb->rx_record.total))
+    {
+        LOG_D("ERR:index %d, total %d, rx_seq %d",
+              receive_frame->index,
+              rt_link_scb->rx_record.total,
+              rt_link_scb->rx_record.rx_seq);
+        _stop_recv_long();
+        return;
+    }
+
+    if (rt_link_scb->rx_record.long_count & (0x01 << receive_frame->index))
     {
         LOG_D("ERR:index %d, rx_seq %d", receive_frame->index, rt_link_scb->rx_record.rx_seq);
     }
     else if (rt_link_scb->rx_record.dataspace != RT_NULL)
     {
+        offset = (rt_size_t)RT_LINK_MAX_DATA_LENGTH * (rt_size_t)receive_frame->index;
+        if ((offset > rt_link_scb->rx_record.dataspace_size) ||
+            ((rt_size_t)receive_frame->data_len > (rt_link_scb->rx_record.dataspace_size - offset)))
+        {
+            LOG_W("ERR:long data offset %u len %u exceeds size %u",
+                  (unsigned int)offset,
+                  (unsigned int)receive_frame->data_len,
+                  (unsigned int)rt_link_scb->rx_record.dataspace_size);
+            _stop_recv_long();
+            return;
+        }
+
         rt_link_scb->rx_record.long_count |= (0x01 << receive_frame->index);
-        offset = RT_LINK_MAX_DATA_LENGTH * receive_frame->index;
         rt_link_hw_copy(rt_link_scb->rx_record.dataspace + offset, receive_frame->real_data, receive_frame->data_len);
 
         if (receive_frame->head.ack)
@@ -543,12 +601,15 @@ static void _long_handle_second(struct rt_link_frame *receive_frame)
         if (rt_link_utils_num1(rt_link_scb->rx_record.long_count) == rt_link_scb->rx_record.total)
         {
             rt_timer_stop(&rt_link_scb->longframetimer);
-            rt_link_recv_finish(receive_frame->head.service, rt_link_scb->rx_record.dataspace, receive_frame->extend.parameter);
+            rt_link_recv_finish(receive_frame->head.service,
+                                rt_link_scb->rx_record.dataspace,
+                                rt_link_scb->rx_record.dataspace_size);
 
             rt_enter_critical();
             /* empty  rx_record */
             rt_link_scb->rx_record.rx_seq += rt_link_scb->rx_record.total;
             rt_link_scb->rx_record.dataspace = RT_NULL;
+            rt_link_scb->rx_record.dataspace_size = 0;
             rt_link_scb->rx_record.long_count = 0;
             rt_link_scb->rx_record.total = 0;
             ack_mask = RT_LINK_ACK_MAX;
@@ -560,6 +621,10 @@ static void _long_handle_second(struct rt_link_frame *receive_frame)
             rt_timer_control(&rt_link_scb->longframetimer, RT_TIMER_CTRL_SET_TIME, &timeout);
             rt_timer_start(&rt_link_scb->longframetimer);
         }
+    }
+    else
+    {
+        _stop_recv_long();
     }
 }
 
@@ -802,6 +867,16 @@ static void rt_link_frame_check(void)
 
             default:
                 LOG_D("quick filter error frame.");
+                rt_link_hw_buffer_point_shift(&rt_link_scb->rx_buffer->read_point, 1);
+                goto __find_head;
+            }
+            if (((receive_frame.attribute == RT_LINK_SHORT_DATA_FRAME) ||
+                 (receive_frame.attribute == RT_LINK_LONG_DATA_FRAME)) &&
+                (receive_frame.data_len > RT_LINK_MAX_DATA_LENGTH))
+            {
+                LOG_W("data frame length (%u) exceeds max (%u).",
+                      (unsigned int)receive_frame.data_len,
+                      (unsigned int)RT_LINK_MAX_DATA_LENGTH);
                 rt_link_hw_buffer_point_shift(&rt_link_scb->rx_buffer->read_point, 1);
                 goto __find_head;
             }
