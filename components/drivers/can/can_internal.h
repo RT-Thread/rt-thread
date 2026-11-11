@@ -188,6 +188,20 @@ rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_ac
 rt_bool_t rt_can_tx_is_idle(struct rt_can_device *can);
 
 /**
+ * @brief Release abandoned TX ownership after a confirmed forced controller stop.
+ *
+ * A successful hardware stop must have already suppressed old TX terminals. An
+ * ACTIVE blocking slot is converted to FAILED and wakes its owner, while
+ * non-blocking and timed-out slots are reclaimed immediately. The caller must
+ * only invoke this helper after the BSP confirmed that the controller no longer
+ * owns the pending requests.
+ *
+ * @param can CAN device whose stale TX ownership is retired.
+ * @note Thread context only; the caller serializes this against final close.
+ */
+void rt_can_tx_retire_after_stop(struct rt_can_device *can);
+
+/**
  * @brief Drain TX after the caller has already established device lifetime serialization.
  *
  * Unlike the public rt_can_tx_drain(), this helper intentionally skips the ref_count
