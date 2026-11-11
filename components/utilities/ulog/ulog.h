@@ -72,8 +72,13 @@ void ulog_deinit(void);
  * ulog_e/w/i/d path, so that the compile-time log level filtering
  * (LOG_LVL / ULOG_OUTPUT_LVL) still works and the arguments are not
  * evaluated for logs that would be filtered out.
+ *
+ * The context switches are not available in syslog mode: every record is
+ * formatted by syslog_formater() there, so the prefix cannot be inserted
+ * without changing the syslog format. Kconfig already hides the switches in
+ * that case; the check below also covers hand-written configurations.
  */
-#if defined(ULOG_USING_OUTPUT_FILE) || defined(ULOG_USING_OUTPUT_FUNC) || defined(ULOG_USING_OUTPUT_LINE)
+#if (defined(ULOG_USING_OUTPUT_FILE) || defined(ULOG_USING_OUTPUT_FUNC) || defined(ULOG_USING_OUTPUT_LINE)) && !defined(ULOG_USING_SYSLOG)
 #define LOG_E(...) ulog_e_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
 #define LOG_W(...) ulog_w_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
 #define LOG_I(...) ulog_i_ctx(LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, __VA_ARGS__)
