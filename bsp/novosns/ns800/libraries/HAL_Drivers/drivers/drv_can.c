@@ -222,33 +222,23 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     return 0; /* default baud is CAN1MBaud */
 }
 
+/**
+ * @brief Submit one frame to a hardware TX mailbox without waiting for its terminal.
+ * @param[in] base Controller instance with per-mailbox software state.
+ * @param[in] TxMsgObj Message descriptor and target hardware MB number.
+ * @param[in] msg_id CAN frame identifier.
+ * @param[in] is_ext_id Nonzero for an extended CAN identifier.
+ * @param[in] brs Nonzero to enable CAN-FD bitrate switching for this frame.
+ * @return RT_EOK on hardware acceptance, or -RT_EBUSY while the MB is owned.
+ */
 static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxMsgObj,
                                    rt_uint32_t msg_id, rt_uint8_t is_ext_id,
                                    rt_uint8_t brs)
 {
-    /* Check if Message Buffer is idle.
-     * In loopback mode the controller may generate a spurious TX-done event
-     * right after FLEXCANDRV_Configure, leaving the software state in limbo.
-     * If the MB is not idle, wait briefly for the ISR to catch up. */
+    /* Generic TX holds an IRQ-safe lock here, so waiting for the ISR would deadlock. */
     if (StateIdle != base->mbState[TxMsgObj->msgBufId])
     {
-        rt_uint32_t retry;
-        for (retry = 0; retry < 50; retry++)
-        {
-            rt_thread_mdelay(1);
-            if (StateIdle == base->mbState[TxMsgObj->msgBufId])
-            {
-                break;
-            }
-        }
-
-        if (StateIdle != base->mbState[TxMsgObj->msgBufId])
-        {
-            LOG_E("sendBlocking: MB%u not idle, state=%u",
-                  (unsigned int)TxMsgObj->msgBufId,
-                  (unsigned int)base->mbState[TxMsgObj->msgBufId]);
-            return -RT_EBUSY;
-        }
+        return -RT_EBUSY;
     }
 
     {
@@ -695,10 +685,56 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
 #endif /* RT_CAN_USING_CANFD */
     case RT_CAN_CMD_START:
-        /* Controller starts automatically during _can_config().
-         * For a true start/stop, re-init would be needed.
-         * This command is a no-op for this driver. */
+        {
+            /* RCC readback confirms that the selected controller is held in reset. */
+            rt_bool_t stopped;
+
+            if ((rt_ubase_t)arg != 0U)
+            {
+                return _can_config(can, &can->config);
+            }
+
+            Interrupt_disable(drv_can->irqn1);
+            Interrupt_disable(drv_can->irqn2);
+            /* A successful STOP must suppress all old hardware TX terminals. */
+            RCC_unlockRccRegister();
+            switch (drv_can->instance)
+            {
+            case NS800RT7_CAN_INSTANCE_CAN1:
+                RCC_resetCan1Module();
+                RCC_disableCan1Clock();
+                stopped = ((RCC->AHBRST2.WORDVAL & RCC_AHBRST2_CAN1RST_M) != 0U) &&
+                          ((RCC->HCLKEN2.WORDVAL & RCC_HCLKEN2_CAN1EN_M) == 0U);
+                break;
+            case NS800RT7_CAN_INSTANCE_CANFD1:
+                RCC_resetCanfd1Module();
+                RCC_disableCanfd1Clock();
+                stopped = ((RCC->AHBRST2.WORDVAL & RCC_AHBRST2_CANFD1RST_M) != 0U) &&
+                          ((RCC->HCLKEN2.WORDVAL & RCC_HCLKEN2_CANFD1EN_M) == 0U);
+                break;
+            case NS800RT7_CAN_INSTANCE_CANFD2:
+                RCC_resetCanfd2Module();
+                RCC_disableCanfd2Clock();
+                stopped = ((RCC->AHBRST2.WORDVAL & RCC_AHBRST2_CANFD2RST_M) != 0U) &&
+                          ((RCC->HCLKEN2.WORDVAL & RCC_HCLKEN2_CANFD2EN_M) == 0U);
+                break;
+            default:
+                stopped = RT_FALSE;
+                break;
+            }
+            RCC_lockRccRegister();
+            if (!stopped)
+            {
+                return -RT_ERROR;
+            }
+            /* Discard CPU-side IRQ latches before a subsequent reconfiguration. */
+            NVIC_ClearPendingIRQ(drv_can->irqn1);
+            NVIC_ClearPendingIRQ(drv_can->irqn2);
+        }
         break;
+    case RT_CAN_CMD_ABORT_TX:
+        /* The HAL cannot guarantee an asynchronous TX_FAIL terminal on abort. */
+        return -RT_ENOSYS;
     case RT_CAN_CMD_SET_PRIV:
         return -RT_ERROR;
         break;
@@ -752,8 +788,8 @@ static rt_uint8_t _can_len_to_dlc(rt_uint8_t len)
  * @internal
  * @brief Low-level function to send a CAN message to a specific hardware mailbox.
  *
- * This function is part of the **blocking** send mechanism. It is called by
- * `_can_int_tx` after a hardware mailbox has already been acquired.
+ * Generic CAN selects MB0 for blocking TX; this routine only submits to hardware.
+ * TX completion is reported later through the hardware interrupt.
  *
  * @param[in] can     A pointer to the CAN device structure.
  * @param[in] buf     A pointer to the `rt_can_msg` to be sent.
@@ -818,72 +854,37 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
 /**
  * @internal
- * @brief Low-level non-blocking send. Places message into hardware mailbox
- *        directly without waiting if the mailbox is idle.
+ * @brief Submit once to MB0 without waiting, reporting the chosen Generic slot.
  *
- * @param[in] can A pointer to the CAN device structure.
- * @param[in] buf A pointer to the `rt_can_msg` to be sent.
+ * Generic serializes submission. A completed blocking sender may retain slot 0
+ * until its waiter clears sndchange, even when the hardware mailbox is idle.
  *
- * @return `RT_EOK` on success, `-RT_EBUSY` if TX mailbox is busy,
- *         or other error code on failure.
+ * @param[in] can CAN device containing the Generic mailbox ownership mask.
+ * @param[in] buf CAN frame to submit immediately.
+ * @param[out] mailbox Receives the zero-based TX mailbox index (0) on success.
+ * @return RT_EOK on acceptance, -RT_EBUSY if occupied, or another negative error.
  */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                           rt_uint32_t *mailbox)
 {
-    ns800rt7_can *hcan;
-    struct rt_can_msg *pmsg;
-    FLEXCANDRV_MsgObjType fdTxMsgObj;
-    rt_uint8_t data_len;
+    /* Immediate submit result, not the hardware TX terminal status. */
+    rt_ssize_t result;
 
-    RT_ASSERT(can);
-    RT_ASSERT(buf);
-    hcan = (ns800rt7_can *)can->parent.user_data;
-    pmsg = (struct rt_can_msg *)buf;
-
-    /* Check if TX MB (MB0) is idle */
-    if (StateIdle != hcan->mbState[0])
+    if (mailbox == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+    if ((can->status.sndchange & 1UL) != 0U)
     {
         return -RT_EBUSY;
     }
 
-    /* Validate payload byte length */
-    if (!IS_CAN_LEN_VALID(pmsg->len))
+    result = _can_sendmsg(can, buf, 0U);
+    if (result == RT_EOK)
     {
-        return -RT_ERROR;
+        *mailbox = 0U;
     }
-
-#ifdef RT_CAN_USING_CANFD
-    if (pmsg->fd_frame && (!hcan->fd_capable || !hcan->device.config.enable_canfd))
-    {
-        return -RT_ERROR;
-    }
-
-    if (!pmsg->fd_frame && pmsg->len > 8U)
-    {
-        return -RT_ERROR;
-    }
-#endif
-
-    rt_memset(&fdTxMsgObj, 0, sizeof(fdTxMsgObj));
-    fdTxMsgObj.msgBufId = 0;  /* MB0 is the dedicated TX mailbox */
-
-    /* Convert byte length to hardware DLC code */
-    data_len = pmsg->len;
-#ifdef RT_CAN_USING_CANFD
-    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);
-    fdTxMsgObj.isFd = (pmsg->fd_frame != 0 && hcan->device.config.enable_canfd) ? true : false;
-#else
-    fdTxMsgObj.dlc = pmsg->len;
-#endif
-
-    rt_memcpy(fdTxMsgObj.data, pmsg->data, data_len);
-
-    return _can_sendBlocking(hcan, &fdTxMsgObj,
-                             pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
-#ifdef RT_CAN_USING_CANFD
-                             (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
-#else
-                             0U);
-#endif
+    return result;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -1024,8 +1025,10 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
 
         if (result == 0U)
         {
-            hcan->mbState[result] = StateIdle;
+            /* Retire Generic TX ownership before making MB0 available again. */
+            FLEXCANDRV_ClearMsgObjFlag(&(hcan->CanHandle), result);
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (result << 8));
+            hcan->mbState[result] = StateIdle;
         }
         else if (result >= TX_MB_COUNT && result < TOTAL_MB_COUNT)
         {
@@ -1036,9 +1039,8 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
             rt_memcpy(&hcan->rx_frame[frame_idx], &msgObj, sizeof(msgObj));
             hcan->mbState[result] = StateIdle;
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | (result << 8));
+            FLEXCANDRV_ClearMsgObjFlag(&(hcan->CanHandle), result);
         }
-
-        FLEXCANDRV_ClearMsgObjFlag(&(hcan->CanHandle), result);
     }
 }
 
