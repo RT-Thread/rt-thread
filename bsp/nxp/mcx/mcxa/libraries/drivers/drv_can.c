@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2025-12-23     CYFS         the first version.
  * 2026-07-05     WANGYU       add CAN-FD and loopback support.
+ * 2026-11-10     wdfk-prog    Adapt FlexCAN to the asynchronous Generic CAN TX framework.
  */
 
 #include <rtdevice.h>
@@ -20,7 +21,6 @@
 #define TX_MB_IDX      (0)
 #define RX_MB_IDX      (1)
 #define RX_MB_COUNT    (1)
-#define CAN_TX_WAIT_MS (2000U)
 
 enum
 {
@@ -48,78 +48,9 @@ struct imxrt_can
     rt_bool_t fd_enabled;
 #endif
     rt_uint32_t filter_mask;
+    rt_bool_t stopped; /**< SDK deinitialized; do not read MMIO after clock gating. */
+    rt_bool_t configured; /**< All hardware initialization steps completed successfully. */
 };
-
-static void _can_dump_err(struct imxrt_can *can, const char *stage)
-{
-    uint32_t esr1 = can->base->ESR1;
-    uint32_t fltconf = (esr1 & CAN_ESR1_FLTCONF_MASK) >> CAN_ESR1_FLTCONF_SHIFT;
-    const char *flt = "active";
-
-    if (fltconf == 1U)
-    {
-        flt = "passive";
-    }
-    else if (fltconf >= 2U)
-    {
-        flt = "busoff";
-    }
-
-    rt_kprintf("%s: %s, MCR=0x%08x ESR1=0x%08x IFLAG1=0x%08x flt=%s",
-               can->name, stage, can->base->MCR, esr1, can->base->IFLAG1, flt);
-    if (0U != (esr1 & CAN_ESR1_ACKERR_MASK))
-    {
-        rt_kprintf(" ACKERR");
-    }
-    if (0U != (esr1 & CAN_ESR1_BIT1ERR_MASK))
-    {
-        rt_kprintf(" BIT1ERR");
-    }
-    if (0U != (esr1 & CAN_ESR1_BIT0ERR_MASK))
-    {
-        rt_kprintf(" BIT0ERR");
-    }
-    rt_kprintf("\n");
-}
-
-static void _can_recover_bus(struct imxrt_can *can)
-{
-    CAN_Type *base = can->base;
-    uint32_t fltconf = (base->ESR1 & CAN_ESR1_FLTCONF_MASK) >> CAN_ESR1_FLTCONF_SHIFT;
-
-    if (fltconf < 2U)
-    {
-        return;
-    }
-
-    (void)FLEXCAN_EnterFreezeMode(base);
-    base->MCR &= ~CAN_MCR_HALT_MASK;
-    (void)FLEXCAN_ExitFreezeMode(base);
-    FLEXCAN_ClearStatusFlags(base, (uint32_t)kFLEXCAN_BusOffIntFlag);
-}
-
-static void _can_setup_loopback_mb(struct imxrt_can *can)
-{
-    flexcan_rx_mb_config_t mb_config;
-
-    mb_config.format = kFLEXCAN_FrameFormatStandard;
-    mb_config.type = kFLEXCAN_FrameTypeData;
-    mb_config.id = FLEXCAN_ID_STD(0);
-
-    FLEXCAN_SetRxMbGlobalMask(can->base, 0U);
-    FLEXCAN_SetRxIndividualMask(can->base, RX_MB_IDX, 0U);
-
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled)
-    {
-        FLEXCAN_SetFDRxMbConfig(can->base, RX_MB_IDX, &mb_config, true);
-    }
-    else
-#endif
-    {
-        FLEXCAN_SetRxMbConfig(can->base, RX_MB_IDX, &mb_config, true);
-    }
-}
 
 #ifdef RT_CAN_USING_CANFD
 static rt_uint8_t _can_dlc2len(rt_uint8_t dlc)
@@ -285,20 +216,6 @@ static rt_bool_t _can_is_loopback(const struct can_configure *cfg)
            (cfg->mode == RT_CAN_MODE_LOOPBACKANLISTEN);
 }
 
-static void _can_abort_rx(struct imxrt_can *can)
-{
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled)
-    {
-        FLEXCAN_TransferFDAbortReceive(can->base, &can->handle, RX_MB_IDX);
-    }
-    else
-#endif
-    {
-        FLEXCAN_TransferAbortReceive(can->base, &can->handle, RX_MB_IDX);
-    }
-}
-
 static void _can_enable_periph_clock(struct imxrt_can *can)
 {
     clock_ip_name_t can_clocks[] = FLEXCAN_CLOCKS;
@@ -321,49 +238,6 @@ static void _can_safe_deinit(struct imxrt_can *can)
     }
 
     FLEXCAN_Deinit(base);
-}
-
-static status_t _can_wait_mb_tx_done(struct imxrt_can *can, uint8_t mb_idx)
-{
-    CAN_Type *base = can->base;
-    rt_tick_t start = rt_tick_get();
-    rt_tick_t timeout = rt_tick_from_millisecond(CAN_TX_WAIT_MS);
-
-    while (0U == FLEXCAN_GetMbStatusFlags(base, (uint64_t)1U << mb_idx))
-    {
-        if ((rt_tick_get() - start) >= timeout)
-        {
-            _can_dump_err(can, "tx timeout");
-            return kStatus_Timeout;
-        }
-        rt_thread_mdelay(1);
-    }
-
-    FLEXCAN_ClearMbStatusFlags(base, (uint64_t)1U << mb_idx);
-    return kStatus_Success;
-}
-
-static status_t _can_wait_mb_rx_done(CAN_Type *base, uint8_t mb_idx)
-{
-    rt_tick_t start = rt_tick_get();
-    rt_tick_t timeout = rt_tick_from_millisecond(CAN_TX_WAIT_MS);
-
-    while (0U == FLEXCAN_GetMbStatusFlags(base, (uint64_t)1U << mb_idx))
-    {
-        if ((rt_tick_get() - start) >= timeout)
-        {
-            return kStatus_Timeout;
-        }
-        rt_thread_mdelay(1);
-    }
-
-    FLEXCAN_ClearMbStatusFlags(base, (uint64_t)1U << mb_idx);
-    return kStatus_Success;
-}
-
-static void _can_loopback_post_rx(struct imxrt_can *can)
-{
-    rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_RX_IND | RX_MB_IDX << 8);
 }
 
 static void _can_setup_mode(flexcan_config_t *config, const struct can_configure *cfg)
@@ -431,12 +305,12 @@ static void _can_start_rx(struct imxrt_can *can)
     }
 }
 
+/**
+ * @brief Enable the shared FlexCAN NVIC line after the requested MB/error source is unmasked.
+ * @param can FlexCAN instance whose IRQ line is being enabled.
+ */
 static void _can_enable_controller_irq(struct imxrt_can *can)
 {
-    FLEXCAN_EnableInterrupts(can->base, (uint32_t)kFLEXCAN_BusOffInterruptEnable |
-                                            (uint32_t)kFLEXCAN_ErrorInterruptEnable |
-                                            (uint32_t)kFLEXCAN_RxWarningInterruptEnable |
-                                            (uint32_t)kFLEXCAN_TxWarningInterruptEnable);
     EnableIRQ(can->irqn);
 }
 
@@ -458,6 +332,19 @@ void CAN1_IRQHandler(void)
 }
 #endif
 
+/**
+ * @brief Publish RX frames and completed MB0 transmissions through Generic CAN.
+ *
+ * SDK TxIdle means the hardware request has finished. An RTR request instead
+ * transitions MB0 to RX; restore its TX role before publishing TX_DONE so the
+ * next Generic owner cannot inherit a receive-configured mailbox.
+ *
+ * @param base FlexCAN register instance.
+ * @param handle NXP transactional transfer handle.
+ * @param status SDK transfer event.
+ * @param result Hardware mailbox index for the handled RX/TX event.
+ * @param userData Registered imxrt_can instance.
+ */
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint64_t result, void *userData)
 {
     struct imxrt_can *can;
@@ -470,6 +357,10 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
     {
     case kStatus_FLEXCAN_RxIdle:
         mb_idx = (rt_uint8_t)result;
+        if (mb_idx != RX_MB_IDX)
+        {
+            break;
+        }
         rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_RX_IND | mb_idx << 8);
 
 #ifdef RT_CAN_USING_CANFD
@@ -492,14 +383,55 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
         }
         break;
 
+    case kStatus_FLEXCAN_TxSwitchToRx:
+        if (result != TX_MB_IDX)
+        {
+            break;
+        }
+        /* An RTR TX becomes an RX MB in the SDK; restore MB0 before retiring TX ownership. */
+#ifdef RT_CAN_USING_CANFD
+        if (can->fd_enabled)
+        {
+            FLEXCAN_TransferFDAbortReceive(base, handle, TX_MB_IDX);
+            FLEXCAN_SetFDTxMbConfig(base, TX_MB_IDX, true);
+        }
+        else
+#endif /* RT_CAN_USING_CANFD */
+        {
+            FLEXCAN_TransferAbortReceive(base, handle, TX_MB_IDX);
+            FLEXCAN_SetTxMbConfig(base, TX_MB_IDX, true);
+        }
+        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | TX_MB_IDX << 8);
+        break;
+
     case kStatus_FLEXCAN_TxIdle:
-        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | result << 8);
+        if (result == TX_MB_IDX)
+        {
+            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | TX_MB_IDX << 8);
+        }
         break;
     default:
         break;
     }
 }
 
+/**
+ * @brief Reconfigure FlexCAN and prepare MB0 TX and MB1 RX for Generic CAN.
+ *
+ * RX/TX mailbox interrupts remain masked until Generic publishes/reopens their
+ * runtime gates. The SDK's error sources remain enabled when reconfiguring an
+ * open device. Hardware filters are reset and may need reapplication.
+ * BOFFREC is kept clear so the peripheral can recover Bus-Off after the
+ * required recessive bus sequence; the Generic TX callback never blocks.
+ * A failed reconfiguration remains invalid until a successful START(1);
+ * if FD timing setup fails after SDK Init, deinitialize before reporting error.
+ * SDK CreateHandle briefly enables CAN NVIC, which is remasked atomically
+ * before mailbox setup and released only after Generic runtime publication.
+ *
+ * @param can_dev Generic CAN device.
+ * @param cfg Requested CAN timing, mode and optional FD configuration.
+ * @return RT_EOK after peripheral setup or -RT_ERROR on configuration failure.
+ */
 static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure *cfg)
 {
     struct imxrt_can *can = (struct imxrt_can *)can_dev->parent.user_data;
@@ -507,8 +439,13 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
     flexcan_timing_config_t timing_config;
     rt_uint32_t clk_freq;
     rt_err_t res = RT_EOK;
+    /* Preserve the caller's global IRQ mask while the SDK briefly enables CAN NVIC. */
+    rt_base_t irq_level;
 
-    can_dev->config = *cfg;
+    /* A failed reconfiguration must not be mistaken for a runnable controller. */
+    can->configured = RT_FALSE;
+    /* No controller IRQ may run while the SDK handle and RX buffers are rebuilt. */
+    DisableIRQ(can->irqn);
     _can_enable_periph_clock(can);
     clk_freq = CLOCK_GetFlexcanClkFreq(can->instance);
     if (clk_freq == 0U)
@@ -520,6 +457,8 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
     rt_kprintf("%s: flexcan clk=%u Hz, baud=%u\n", can->name, clk_freq, cfg->baud_rate);
 
     _can_safe_deinit(can);
+    /* A completed Deinit, not configured=false, establishes hardware STOP. */
+    can->stopped = RT_TRUE;
 
     FLEXCAN_GetDefaultConfig(&config);
     config.baudRate = cfg->baud_rate;
@@ -561,12 +500,18 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
             rt_memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
         }
 
+        /* FDInit may activate hardware before fallback bit timing can fail. */
+        can->stopped = RT_FALSE;
         FLEXCAN_FDInit(can->base, &config, clk_freq, kFLEXCAN_16BperMB, brs_enable);
         if (!timing_ok)
         {
             if (FLEXCAN_SetFDBitRate(can->base, clk_freq, config.baudRate, config.bitRateFD) != kStatus_Success)
             {
                 rt_kprintf("%s: CAN FD timing setup failed, clk=%u\n", can->name, clk_freq);
+                /* Roll back partially initialized hardware before reporting failure to Generic. */
+                _can_safe_deinit(can);
+                can->stopped = RT_TRUE;
+                NVIC_ClearPendingIRQ(can->irqn);
                 return -RT_ERROR;
             }
         }
@@ -579,24 +524,61 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
             rt_memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
         }
 
+        /* Classic Init may activate hardware; STOP must not skip Deinit. */
+        can->stopped = RT_FALSE;
         FLEXCAN_Init(can->base, &config, clk_freq);
     }
 
+    /* BOFFREC=0 enables hardware Bus-Off recovery without blocking Generic TX submission. */
+    can->base->CTRL1 &= ~CAN_CTRL1_BOFFREC_MASK;
+
     can->filter_mask = 0;
+    /* The SDK enables CAN NVIC inside CreateHandle; prevent an ISR before MB setup. */
+    irq_level = rt_hw_interrupt_disable();
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
-    if (_can_is_loopback(cfg))
+    DisableIRQ(can->irqn);
+    rt_hw_interrupt_enable(irq_level);
+#ifdef RT_CAN_USING_CANFD
+    if (can->fd_enabled)
     {
-        _can_setup_loopback_mb(can);
+        FLEXCAN_SetFDTxMbConfig(can->base, TX_MB_IDX, true);
     }
     else
+#endif /* RT_CAN_USING_CANFD */
     {
-        _can_start_rx(can);
+        FLEXCAN_SetTxMbConfig(can->base, TX_MB_IDX, true);
     }
-    _can_enable_controller_irq(can);
+    _can_start_rx(can);
+    /* Generic CAN publishes RX/TX runtimes before enabling individual IRQ sources. */
+    FLEXCAN_DisableMbInterrupts(can->base, ((uint64_t)1U << TX_MB_IDX) | ((uint64_t)1U << RX_MB_IDX));
+    NVIC_ClearPendingIRQ(can->irqn);
+    /* Commit a staged configuration only after hardware setup succeeds. */
+    can_dev->config = *cfg;
+    can->stopped = RT_FALSE;
+    can->configured = RT_TRUE;
+    /* SDK error sources remain enabled across a Generic runtime reconfiguration. */
+    if (can_dev->can_rx != RT_NULL || can_dev->can_tx != RT_NULL)
+    {
+        _can_enable_controller_irq(can);
+    }
 
     return res;
 }
 
+/**
+ * @brief Dispatch CAN setup commands and independently gate RX/TX/error IRQ sources.
+ *
+ * START(0) deinitializes FlexCAN and invalidates old hardware requests. SDK
+ * Deinit may gate the clock, so a private flag replaces post-Deinit MMIO reads.
+ * A separate configured flag prevents failed runtime reconfiguration from
+ * being treated as an already-running controller on START(1).
+ * Generic owns TX retirement; Abort-TX has no proven hardware terminal contract.
+ *
+ * @param can_dev Generic CAN device.
+ * @param cmd RT-Thread device control or Generic CAN command.
+ * @param arg Command-specific encoded value or pointer.
+ * @return RT_EOK on success, or the corresponding negative RT-Thread error.
+ */
 static rt_err_t _can_control(struct rt_can_device *can_dev, int cmd, void *arg)
 {
     struct imxrt_can *can;
@@ -615,21 +597,67 @@ static rt_err_t _can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t)arg;
-        if (argval == RT_DEVICE_FLAG_INT_RX || argval == RT_DEVICE_FLAG_INT_TX ||
-            argval == RT_DEVICE_CAN_INT_ERR)
+        if (can->stopped || !can->configured)
         {
-            _can_enable_controller_irq(can);
+            res = -RT_ERROR;
+            break;
+        }
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            FLEXCAN_EnableMbInterrupts(can->base, (uint64_t)1U << RX_MB_IDX);
+        }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            /* The SDK enables the selected TX MB interrupt on submission. */
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            FLEXCAN_EnableInterrupts(can->base, (uint32_t)kFLEXCAN_BusOffInterruptEnable |
+                                                (uint32_t)kFLEXCAN_ErrorInterruptEnable |
+                                                (uint32_t)kFLEXCAN_RxWarningInterruptEnable |
+                                                (uint32_t)kFLEXCAN_TxWarningInterruptEnable);
+        }
+        else
+        {
+            res = -RT_ERROR;
+            break;
+        }
+        _can_enable_controller_irq(can);
+        break;
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* STOP or a failed configuration has no valid interrupt sources to disable. */
+        if (can->stopped || !can->configured)
+        {
+            break;
+        }
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            FLEXCAN_DisableMbInterrupts(can->base, (uint64_t)1U << RX_MB_IDX);
+        }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            FLEXCAN_DisableMbInterrupts(can->base, (uint64_t)1U << TX_MB_IDX);
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            FLEXCAN_DisableInterrupts(can->base, (uint32_t)kFLEXCAN_BusOffInterruptEnable |
+                                                 (uint32_t)kFLEXCAN_ErrorInterruptEnable |
+                                                 (uint32_t)kFLEXCAN_RxWarningInterruptEnable |
+                                                 (uint32_t)kFLEXCAN_TxWarningInterruptEnable);
         }
         else
         {
             res = -RT_ERROR;
         }
         break;
-    case RT_DEVICE_CTRL_CLR_INT:
-        DisableIRQ(can->irqn);
-        break;
     case RT_CAN_CMD_SET_FILTER:
+        if (can->stopped || !can->configured)
+        {
+            res = -RT_ERROR;
+            break;
+        }
         cfg = (struct rt_can_filter_config *)arg;
         item = cfg->items;
         count = cfg->count;
@@ -756,14 +784,36 @@ static rt_err_t _can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         break;
 #endif
     case RT_CAN_CMD_SET_PRIV:
-        res = -RT_ERROR;
         break;
     case RT_CAN_CMD_GET_STATUS:
-        FLEXCAN_GetBusErrCount(can->base, (rt_uint8_t *)(&can->can_dev.status.snderrcnt),
-                               (rt_uint8_t *)(&can->can_dev.status.rcverrcnt));
+        if (!can->stopped && can->configured)
+        {
+            FLEXCAN_GetBusErrCount(can->base, (rt_uint8_t *)(&can->can_dev.status.snderrcnt),
+                                   (rt_uint8_t *)(&can->can_dev.status.rcverrcnt));
+        }
         rt_memcpy(arg, &can->can_dev.status, sizeof(can->can_dev.status));
         break;
     case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            DisableIRQ(can->irqn);
+            if (!can->stopped)
+            {
+                /* SDK Deinit resets all requests and may gate the peripheral clock. */
+                _can_safe_deinit(can);
+                can->stopped = RT_TRUE;
+                can->configured = RT_FALSE;
+            }
+            NVIC_ClearPendingIRQ(can->irqn);
+        }
+        else if (can->stopped || !can->configured)
+        {
+            /* A prior reconfiguration failure must be retried, not reported as success. */
+            res = _can_config(can_dev, &can_dev->config);
+        }
+        break;
+    case RT_CAN_CMD_ABORT_TX:
+        res = -RT_ENOSYS;
         break;
     default:
         res = -RT_ERROR;
@@ -826,114 +876,73 @@ static void _can_parse_fd_frame(struct rt_can_msg *msg, const flexcan_fd_frame_t
 }
 #endif
 
+/**
+ * @brief Submit one frame immediately to the sole hardware TX mailbox, without waiting.
+ *
+ * Generic owns slot zero until the SDK callback publishes the actual terminal;
+ * this entry runs under Generic's IRQ-safe TX lock and must not sleep or report
+ * a synthetic completion. The NXP SDK copies the local frame into MB0 on submit.
+ *
+ * @param can_dev Generic CAN device.
+ * @param buf Frame to send.
+ * @param boxno Required physical TX mailbox index (TX_MB_IDX).
+ * @return RT_EOK if accepted, -RT_EBUSY if occupied, or a negative error.
+ */
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
-    struct rt_can_msg *msg;
-    status_t ret = kStatus_Fail;
-    rt_uint8_t hw_mb = TX_MB_IDX;
+    /* Immutable request frame owned by the Generic CAN caller. */
+    const struct rt_can_msg *msg;
+    /* SDK descriptor and immediate hardware acceptance result. */
+    flexcan_mb_transfer_t txXfer;
+    status_t ret;
 
     RT_ASSERT(can_dev != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
+    if (boxno != TX_MB_IDX)
+    {
+        return -RT_EINVAL;
+    }
+
     can = (struct imxrt_can *)can_dev->parent.user_data;
-    msg = (struct rt_can_msg *)buf;
-    RT_UNUSED(boxno);
-
-    if (!_can_is_loopback(&can_dev->config))
+    if (can->stopped || !can->configured)
     {
-        _can_recover_bus(can);
+        return -RT_ERROR;
     }
-
-    if (!_can_is_loopback(&can_dev->config))
-    {
-        _can_abort_rx(can);
-    }
-    else
-    {
-        _can_setup_loopback_mb(can);
-    }
+    msg = (const struct rt_can_msg *)buf;
+    txXfer.mbIdx = TX_MB_IDX;
 
 #ifdef RT_CAN_USING_CANFD
     if (can->fd_enabled && msg->fd_frame)
     {
+        /* Stack-local FD payload copied into the hardware mailbox by the SDK call. */
         flexcan_fd_frame_t tx_frame;
 
-        FLEXCAN_ClearMbStatusFlags(can->base, ((uint64_t)1U << hw_mb) | ((uint64_t)1U << RX_MB_IDX));
-        FLEXCAN_SetFDTxMbConfig(can->base, hw_mb, true);
         _can_fill_fd_frame(&tx_frame, msg);
-
-        if (FLEXCAN_WriteFDTxMb(can->base, hw_mb, &tx_frame) != kStatus_Success)
-        {
-            ret = kStatus_Fail;
-        }
-        else
-        {
-            ret = _can_wait_mb_tx_done(can, hw_mb);
-        }
-
-        if (ret == kStatus_Success && _can_is_loopback(&can_dev->config))
-        {
-            ret = _can_wait_mb_rx_done(can->base, RX_MB_IDX);
-            if (ret == kStatus_Success)
-            {
-                ret = FLEXCAN_ReadFDRxMb(can->base, RX_MB_IDX, &can->framefd[0]);
-                if (ret == kStatus_Success)
-                {
-                    _can_loopback_post_rx(can);
-                }
-            }
-        }
+        txXfer.framefd = &tx_frame;
+        txXfer.frame = RT_NULL;
+        ret = FLEXCAN_TransferFDSendNonBlocking(can->base, &can->handle, &txXfer);
     }
     else
-#endif
+#endif /* RT_CAN_USING_CANFD */
     {
+        /* Stack-local classic payload copied into the hardware mailbox by the SDK call. */
         flexcan_frame_t tx_frame;
 
-        FLEXCAN_ClearMbStatusFlags(can->base, ((uint64_t)1U << hw_mb) | ((uint64_t)1U << RX_MB_IDX));
-        FLEXCAN_SetTxMbConfig(can->base, hw_mb, true);
         _can_fill_classic_frame(&tx_frame, msg);
-
-        if (FLEXCAN_WriteTxMb(can->base, hw_mb, &tx_frame) != kStatus_Success)
-        {
-            ret = kStatus_Fail;
-        }
-        else
-        {
-            ret = _can_wait_mb_tx_done(can, hw_mb);
-        }
-
-        if (ret == kStatus_Success && _can_is_loopback(&can_dev->config))
-        {
-            ret = _can_wait_mb_rx_done(can->base, RX_MB_IDX);
-            if (ret == kStatus_Success)
-            {
-                ret = FLEXCAN_ReadRxMb(can->base, RX_MB_IDX, &can->frame[0]);
-                if (ret == kStatus_Success)
-                {
-                    _can_loopback_post_rx(can);
-                }
-            }
-        }
+        txXfer.frame = &tx_frame;
+#ifdef RT_CAN_USING_CANFD
+        txXfer.framefd = RT_NULL;
+#endif /* RT_CAN_USING_CANFD */
+        ret = FLEXCAN_TransferSendNonBlocking(can->base, &can->handle, &txXfer);
     }
 
-    if (ret == kStatus_Success)
+    if (ret == kStatus_FLEXCAN_TxBusy)
     {
-        if (!_can_is_loopback(&can_dev->config))
-        {
-            _can_start_rx(can);
-        }
-
-        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | boxno << 8);
-        return RT_EOK;
+        return -RT_EBUSY;
     }
-
-    if (ret == kStatus_Timeout)
-    {
-        _can_dump_err(can, "tx fail");
-    }
-
-    return -RT_ERROR;
+    return (ret == kStatus_Success) ? RT_EOK : -RT_ERROR;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
@@ -970,71 +979,38 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint
     return 0;
 }
 
-static uint8_t FLEXCAN_GetFirstValidMb(CAN_Type *base)
+/**
+ * @brief Attempt one non-blocking hardware submission without a software TX queue.
+ *
+ * A blocking owner must retire before its mailbox may be selected again.
+ * The SDK tracks active non-blocking hardware transfers in its MB0 state.
+ *
+ * @param can_dev Generic CAN device.
+ * @param buf Frame to send.
+ * @param mailbox Selected zero-based hardware mailbox on success only.
+ * @return RT_EOK if accepted, -RT_EBUSY if unavailable, or a negative error.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
 {
-    uint8_t firstValidMbNum;
-
-    if (0U != (base->MCR & CAN_MCR_RFEN_MASK))
-    {
-        firstValidMbNum = (uint8_t)((base->CTRL2 & CAN_CTRL2_RFFN_MASK) >> CAN_CTRL2_RFFN_SHIFT);
-        firstValidMbNum = ((firstValidMbNum + 1U) * 2U) + 6U;
-    }
-    else
-    {
-        firstValidMbNum = 0U;
-    }
-
-    return firstValidMbNum;
-}
-
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const void *buf)
-{
-    struct imxrt_can *can;
-    struct rt_can_msg *msg;
-    status_t ret;
-    rt_uint32_t boxno;
+    /* Immediate hardware acceptance result; not a bus-completion indication. */
+    rt_ssize_t result;
 
     RT_ASSERT(can_dev != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
 
-    can = (struct imxrt_can *)can_dev->parent.user_data;
-    msg = (struct rt_can_msg *)buf;
-    boxno = FLEXCAN_GetFirstValidMb(can->base);
-
-    if (boxno == 0xFF)
+    /* A completed blocking owner may still be waiting to retire Generic slot 0. */
+    if ((can_dev->status.sndchange & (1UL << TX_MB_IDX)) != 0U)
     {
         return -RT_EBUSY;
     }
 
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled && msg->fd_frame)
+    result = _can_sendmsg(can_dev, buf, TX_MB_IDX);
+    if (result == RT_EOK)
     {
-        flexcan_mb_transfer_t txXfer;
-        flexcan_fd_frame_t tx_frame;
-
-        FLEXCAN_SetFDTxMbConfig(can->base, boxno, true);
-        _can_fill_fd_frame(&tx_frame, msg);
-        txXfer.mbIdx = boxno;
-        txXfer.framefd = &tx_frame;
-        txXfer.frame = RT_NULL;
-        ret = FLEXCAN_TransferFDSendNonBlocking(can->base, &can->handle, &txXfer);
+        *mailbox = TX_MB_IDX;
     }
-    else
-#endif
-    {
-        flexcan_mb_transfer_t txXfer;
-        flexcan_frame_t tx_frame;
-
-        _can_fill_classic_frame(&tx_frame, msg);
-        txXfer.mbIdx = boxno;
-        txXfer.frame = &tx_frame;
-#ifdef RT_CAN_USING_CANFD
-        txXfer.framefd = RT_NULL;
-#endif
-        ret = FLEXCAN_TransferSendNonBlocking(can->base, &can->handle, &txXfer);
-    }
-
-    return (ret == kStatus_Success) ? RT_EOK : -RT_ERROR;
+    return result;
 }
 
 static struct rt_can_ops imxrt_can_ops = {
