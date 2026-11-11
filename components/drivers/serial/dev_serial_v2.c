@@ -147,12 +147,12 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
         flags &= mask;
         fd->flags &= ~mask;
         fd->flags |= flags;
-        break;
+        return 0;
     default:
         break;
     }
 
-#ifdef RT_USING_LWP
+#if defined(RT_USING_LWP) && defined(ARCH_MM_MMU)
     if (lwp_self() != RT_NULL)
     {
         union serial_user_ioctl_arg
@@ -243,8 +243,15 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
             kptr = &karg.winsize;
             copy_out = RT_TRUE;
             break;
+        case RT_SERIAL_CTRL_RX_FLUSH:
+        case RT_SERIAL_CTRL_TX_FLUSH:
+#ifdef RT_USING_POSIX_TERMIOS
+        case TCFLSH:
+        case TCXONC:
+#endif
+            return rt_device_control(device, cmd, args);
         default:
-            break;
+            return -RT_ENOSYS;
         }
 
         if (arg_size)
@@ -1596,6 +1603,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 break;
             }
 
+            if (serial->ops == RT_NULL || serial->ops->configure == RT_NULL)
+            {
+                ret = -RT_ENOSYS;
+                break;
+            }
+
             ret = serial->ops->configure(serial, pconfig);
             if (ret != RT_EOK)
             {
@@ -1806,6 +1819,11 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         config = serial->config;
 
         baudrate = _get_baudrate(cfgetospeed(tio));
+        if (baudrate == 0)
+        {
+            ret = -RT_EINVAL;
+            break;
+        }
         config.baud_rate = baudrate;
 
         switch (tio->c_cflag & CSIZE)
@@ -1847,6 +1865,11 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         /* Software-only termios changes must not reset the UART FIFO. */
         if (rt_memcmp(&config, &serial->config, sizeof(config)) != 0)
         {
+            if (serial->ops == RT_NULL || serial->ops->configure == RT_NULL)
+            {
+                ret = -RT_ENOSYS;
+                break;
+            }
             ret = serial->ops->configure(serial, &config);
             if (ret != RT_EOK)
             {
@@ -1872,6 +1895,11 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     {
         struct winsize *p_winsize;
 
+        if (args == RT_NULL)
+        {
+            ret = -RT_EINVAL;
+            break;
+        }
         p_winsize = (struct winsize *)args;
         rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
     }
