@@ -304,12 +304,19 @@ struct rt_object
 #endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_SMART
-    rt_atomic_t lwp_ref_count;                           /**< ref count for lwp */
-#endif /* RT_USING_SMART */
+    rt_atomic_t lwp_ref_count;   /**< ref count for lwp */
+    rt_atomic_t lwp_owner_count; /**< number of LWPs owning this object */
+    rt_atomic_t lwp_flags;       /**< RT_LWP_OBJECT_FLAG_* */
+#endif                           /* RT_USING_SMART */
 
     rt_list_t   list;                                    /**< list node of kernel object */
 };
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
+
+#ifdef RT_USING_SMART
+/** last LWP owner has closed the object. */
+#define RT_LWP_OBJECT_FLAG_CLOSING 0x01
+#endif /* RT_USING_SMART */
 
 /**
  * iterator of rt_object_for_each()

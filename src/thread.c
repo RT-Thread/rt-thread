@@ -130,6 +130,15 @@ static void _thread_exit(void)
 
     _thread_detach_from_mutex(thread);
 
+#ifdef RT_USING_SMART
+    if (thread->pending_object)
+    {
+        extern void lwp_user_object_put(rt_object_t object);
+        lwp_user_object_put(thread->pending_object);
+        thread->pending_object = RT_NULL;
+    }
+#endif
+
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
@@ -519,6 +528,15 @@ static rt_err_t _thread_detach(rt_thread_t thread)
     error = rt_thread_close(thread);
 
     _thread_detach_from_mutex(thread);
+
+#ifdef RT_USING_SMART
+    if (thread->pending_object)
+    {
+        extern void lwp_user_object_put(rt_object_t object);
+        lwp_user_object_put(thread->pending_object);
+        thread->pending_object = RT_NULL;
+    }
+#endif
 
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);

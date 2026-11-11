@@ -101,8 +101,16 @@ void lwp_user_object_lock(struct rt_lwp *lwp);
 void lwp_user_object_unlock(struct rt_lwp *lwp);
 int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object);
 rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object);
+rt_object_t lwp_user_object_get(struct rt_lwp *lwp, rt_object_t object, rt_uint8_t type);
+void lwp_user_object_put(rt_object_t object);
 void lwp_user_object_clear(struct rt_lwp *lwp);
 void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp);
+
+void *lwp_timer_callback_data_alloc(rt_sem_t sem);
+void lwp_timer_callback_data_free(void *data);
+void lwp_timer_callback(void *parameter);
+rt_sem_t lwp_timer_callback_data_get(rt_timer_t timer);
+rt_sem_t lwp_timer_callback_data_swap(rt_timer_t timer, rt_sem_t sem);
 
 rt_inline struct rt_lwp *lwp_from_pid_and_lock(pid_t pid)
 {
