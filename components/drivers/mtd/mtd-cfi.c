@@ -210,6 +210,11 @@ static rt_off_t cfi_flash_find(struct cfi_flash_device *fdev, rt_ubase_t addr)
 {
     rt_off_t sect = 0;
 
+    if (fdev->sect_count == 0)
+    {
+        return 0;
+    }
+
     while (sect < fdev->sect_count - 1 && fdev->sect[sect] < addr)
     {
         sect++;
@@ -1056,6 +1061,11 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
     }
 
     fdev->sect[0] = (rt_ubase_t)rt_ioremap((void *)addr, size);
+    if (!fdev->sect[0])
+    {
+        err = -RT_EIO;
+        goto _fail;
+    }
 
     if (!cfi_flash_detect(fdev, query))
     {
@@ -1130,9 +1140,20 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
         size_ratio >>= 1;
     }
 
-    fdev->size = 1 << query->dev_size;
+    if (size_ratio <= 0 || query->dev_size >= sizeof(fdev->size) * 8)
+    {
+        err = -RT_EINVAL;
+        goto _fail;
+    }
+
+    fdev->size = (rt_size_t)1 << query->dev_size;
+    if (fdev->size > RT_SIZE_MAX / (rt_size_t)size_ratio)
+    {
+        err = -RT_EINVAL;
+        goto _fail;
+    }
     /* Multiply the size by the number of chips */
-    fdev->size *= size_ratio;
+    fdev->size *= (rt_size_t)size_ratio;
 
     max_size = size;
     if (max_size && fdev->size > max_size)
@@ -1160,9 +1181,11 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
 
             if (sect_count >= RT_ARRAY_SIZE(fdev->sect))
             {
-                LOG_E("Too many %d (> %d) sector found",
-                       sect_count, RT_ARRAY_SIZE(fdev->sect));
-                break;
+                LOG_E("Too many %lu (>= %lu) sectors found",
+                      (unsigned long)sect_count,
+                      (unsigned long)RT_ARRAY_SIZE(fdev->sect));
+                err = -RT_EINVAL;
+                goto _fail;
             }
 
             fdev->sect[sect_count] = sect;
@@ -1194,6 +1217,13 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
         }
 
         fdev->sect_count = sect_count;
+    }
+
+    if (fdev->sect_count == 0)
+    {
+        LOG_E("No sector found");
+        err = -RT_EINVAL;
+        goto _fail;
     }
 
     if (fdev->interface == FLASH_CFI_X8X16 && fdev->chipwidth == FLASH_CFI_BY8)
@@ -1241,6 +1271,7 @@ _fail:
     if (fdev->sect[0])
     {
         rt_iounmap((void *)fdev->sect[0]);
+        fdev->sect[0] = 0;
     }
     rt_free(query);
 
