@@ -9,6 +9,8 @@
  * 2024-02-20     CDT          modify exclk clock max frequency to 40MHz for HC32F4A0
  *                             add t_rcd_p/t_rfc_p/t_rp_p configuration
  * 2024-12-24     CDT          modify sample clock to EXMC_DMC_SAMPLE_CLK_EXTCLK for HC32F4A0
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-05     CDT          support HC32F467
  */
 
 
@@ -39,8 +41,8 @@
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#if defined (BSP_USING_SDRAM)
-    rt_err_t rt_hw_board_sdram_init(void);
+#if defined(BSP_USING_SDRAM)
+rt_err_t rt_hw_board_sdram_init(void);
 #endif
 
 /*******************************************************************************
@@ -51,7 +53,7 @@
  * Local variable definitions ('static')
  ******************************************************************************/
 #ifdef RT_USING_MEMHEAP_AS_HEAP
-    static struct rt_memheap _system_heap;
+static struct rt_memheap _system_heap;
 #endif
 
 /*******************************************************************************
@@ -84,7 +86,7 @@ static rt_int32_t _sdram_verify_clock_frequency(void)
 {
     rt_int32_t ret = RT_EOK;
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
     /* EXCLK max frequency for SDRAM */
     if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > EXMC_EXCLK_DMC_MAX_FREQ)
     {
@@ -124,36 +126,36 @@ static rt_int32_t _sdram_init(void)
 
     /* configure DMC width && refresh period & chip & timing. */
     (void)EXMC_DMC_StructInit(&stcDmcInit);
-#if defined (HC32F4A0)
-    stcDmcInit.u32SampleClock          = EXMC_DMC_SAMPLE_CLK_EXTCLK;
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)
+    stcDmcInit.u32SampleClock = EXMC_DMC_SAMPLE_CLK_EXTCLK;
 #endif
-    stcDmcInit.u32RefreshPeriod        = SDRAM_REFRESH_COUNT;
-    stcDmcInit.u32ColumnBitsNumber     = SDRAM_COLUMN_BITS;
-    stcDmcInit.u32RowBitsNumber        = SDRAM_ROW_BITS;
-    stcDmcInit.u32MemBurst             = SDRAM_BURST_LENGTH;
-    stcDmcInit.u32AutoRefreshChips     = EXMC_DMC_AUTO_REFRESH_4CHIPS;
-    stcDmcInit.stcTimingConfig.u8CASL  = SDRAM_CAS_LATENCY;
-    stcDmcInit.stcTimingConfig.u8DQSS  = 0U;
-    stcDmcInit.stcTimingConfig.u8MRD   = SDRAM_TMDR;
-    stcDmcInit.stcTimingConfig.u8RAS   = SDRAM_TRAS;
-    stcDmcInit.stcTimingConfig.u8RC    = SDRAM_TRC;
+    stcDmcInit.u32RefreshPeriod = SDRAM_REFRESH_COUNT;
+    stcDmcInit.u32ColumnBitsNumber = SDRAM_COLUMN_BITS;
+    stcDmcInit.u32RowBitsNumber = SDRAM_ROW_BITS;
+    stcDmcInit.u32MemBurst = SDRAM_BURST_LENGTH;
+    stcDmcInit.u32AutoRefreshChips = EXMC_DMC_AUTO_REFRESH_4CHIPS;
+    stcDmcInit.stcTimingConfig.u8CASL = SDRAM_CAS_LATENCY;
+    stcDmcInit.stcTimingConfig.u8DQSS = 0U;
+    stcDmcInit.stcTimingConfig.u8MRD = SDRAM_TMDR;
+    stcDmcInit.stcTimingConfig.u8RAS = SDRAM_TRAS;
+    stcDmcInit.stcTimingConfig.u8RC = SDRAM_TRC;
     stcDmcInit.stcTimingConfig.u8RCD_B = SDRAM_TRCD_B;
     stcDmcInit.stcTimingConfig.u8RCD_P = SDRAM_TRCD_P;
     stcDmcInit.stcTimingConfig.u8RFC_B = SDRAM_TRFC_B;
     stcDmcInit.stcTimingConfig.u8RFC_P = SDRAM_TRFC_P;
-    stcDmcInit.stcTimingConfig.u8RP_B  = SDRAM_TRP_B;
-    stcDmcInit.stcTimingConfig.u8RP_P  = SDRAM_TRP_P;
-    stcDmcInit.stcTimingConfig.u8RRD   = SDRAM_TRRD;
-    stcDmcInit.stcTimingConfig.u8WR    = SDRAM_TWR;
-    stcDmcInit.stcTimingConfig.u8WTR   = SDRAM_TWTR;
-    stcDmcInit.stcTimingConfig.u8XP    = SDRAM_TXP;
-    stcDmcInit.stcTimingConfig.u8XSR   = SDRAM_TXSR;
-    stcDmcInit.stcTimingConfig.u8ESR   = SDRAM_TESR;
+    stcDmcInit.stcTimingConfig.u8RP_B = SDRAM_TRP_B;
+    stcDmcInit.stcTimingConfig.u8RP_P = SDRAM_TRP_P;
+    stcDmcInit.stcTimingConfig.u8RRD = SDRAM_TRRD;
+    stcDmcInit.stcTimingConfig.u8WR = SDRAM_TWR;
+    stcDmcInit.stcTimingConfig.u8WTR = SDRAM_TWTR;
+    stcDmcInit.stcTimingConfig.u8XP = SDRAM_TXP;
+    stcDmcInit.stcTimingConfig.u8XSR = SDRAM_TXSR;
+    stcDmcInit.stcTimingConfig.u8ESR = SDRAM_TESR;
     (void)EXMC_DMC_Init(&stcDmcInit);
 
     /* configure DMC address space. */
-    stcCsConfig.u32AddrMatch      = (SDRAM_BANK_ADDR >> 24);
-    stcCsConfig.u32AddrMask       = EXMC_DMC_ADDR_MASK_128MB;
+    stcCsConfig.u32AddrMatch = (SDRAM_BANK_ADDR >> 24);
+    stcCsConfig.u32AddrMask = EXMC_DMC_ADDR_MASK_128MB;
     stcCsConfig.u32AddrDecodeMode = EXMC_DMC_CS_DECODE_ROWBANKCOL;
     (void)EXMC_DMC_ChipConfig(SDRAM_CHIP, &stcCsConfig);
 

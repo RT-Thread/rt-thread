@@ -20,7 +20,7 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define MIC_BUS_NAME    "i2c4"
+#define MIC_BUS_NAME "swi2c4"
 
 /* SYSRAM  */
 #define RX_FIFO_SIZE (4096)

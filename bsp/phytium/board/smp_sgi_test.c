@@ -26,16 +26,20 @@
 
 struct rt_thread core_test_thread[RT_CPUS_NR];
 
-static char *core_thread_name[4] =
+static char *core_thread_name[] =
 {
     "core0_sgi_test",
     "core1_sgi_test",
     "core2_sgi_test",
     "core3_sgi_test",
+    "core4_sgi_test",
+    "core5_sgi_test",
+    "core6_sgi_test",
+    "core7_sgi_test",
 };
 static rt_uint8_t core_stack[RT_CPUS_NR][4096];
 
-static rt_isr_handler_t smp_test_ipi_handle(int vector, void *param)
+static void  smp_test_ipi_handle(int vector, void *param)
 {
     rt_int32_t cpu_id = rt_hw_cpu_id();
     rt_kprintf("smp_test_ipi_handle, cpu_id = %d\n", cpu_id);
@@ -82,7 +86,7 @@ static void smp_sgi_test_thread(void *parameter)
 {
     rt_uint32_t cpu_mask = 0;
 
-    for (int i = 0; i < RT_CPUS_NR; i++)
+    for (rt_uint32_t i = 0; i < RT_CPUS_NR; i++)
     {
         cpu_mask = (1 << i);
         rt_hw_ipi_send(RT_TEST_IPI, cpu_mask);
@@ -95,7 +99,7 @@ void smp_sgi_sample(int argc, char *argv[])
     rt_thread_t thread;
     rt_err_t res;
     demo_core_test();
-    rt_thread_mdelay(1000);
+    rt_thread_mdelay(100);
     thread = rt_thread_create("smp_test_thread", smp_sgi_test_thread, RT_NULL, 4096, 25, 10);
     res = rt_thread_startup(thread);
     RT_ASSERT(res == RT_EOK);

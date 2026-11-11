@@ -1,0 +1,9 @@
+config RT_I2C_BCM2835
+    bool "Broadcom BCM2835 I2C controller"
+    depends on RT_USING_PINCTRL
+    default n
+
+config RT_I2C_BRCMSTB
+    bool "BRCM Settop/DSL I2C controller"
+    depends on RT_USING_PINCTRL
+    default n

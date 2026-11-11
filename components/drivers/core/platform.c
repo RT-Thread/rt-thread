@@ -15,6 +15,10 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_CLK
+#include <drivers/clk.h>
+#endif
+#include <drivers/dev_pin.h>
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/core/dm.h>
@@ -117,6 +121,20 @@ static rt_err_t platform_probe(rt_device_t dev)
     struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
 #ifdef RT_USING_OFW
     struct rt_ofw_node *np = dev->ofw_node;
+#endif
+
+#ifdef RT_USING_PINCTRL
+    if (rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL))
+    {
+        rt_pin_ctrl_confs_apply(dev, 0);
+    }
+#endif
+
+#ifdef RT_USING_CLK
+    if ((err = rt_ofw_clk_set_defaults(dev->ofw_node)))
+    {
+        return err;
+    }
 #endif
 
     err = rt_dm_power_domain_attach(dev, RT_TRUE);

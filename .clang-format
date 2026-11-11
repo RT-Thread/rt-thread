@@ -4,14 +4,13 @@
 #
 # clang-format -style=llvm -dump-config > .clang-format
 #
----
 Language: Cpp
 BasedOnStyle: LLVM
 AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
-AlignArrayOfStructures: Right
+AlignArrayOfStructures: None
 AlignConsecutiveAssignments:
-  Enabled: true
+  Enabled: false
   AcrossEmptyLines: false
   AcrossComments: false
   AlignCompound: true
@@ -23,7 +22,7 @@ AlignConsecutiveBitFields:
   AlignCompound: true
   PadOperators: true
 AlignConsecutiveDeclarations:
-  Enabled: true
+  Enabled: false
   AcrossEmptyLines: false
   AcrossComments: false
   AlignCompound: false
@@ -43,15 +42,15 @@ AlignEscapedNewlines: Left
 AlignOperands: Align
 AlignTrailingComments:
   Kind: Always
-  OverEmptyLines: 1
+  OverEmptyLines: 0
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortBlocksOnASingleLine: Always
+AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
@@ -62,20 +61,21 @@ AttributeMacros:
 BinPackArguments: true
 BinPackParameters: true
 BitFieldColonSpacing: Both
+BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: false
+  AfterCaseLabel: true
   AfterClass: true
   AfterControlStatement: Always
   AfterEnum: true
-  AfterExternBlock: false
+  AfterExternBlock: true
   AfterFunction: true
   AfterNamespace: true
   AfterObjCDeclaration: true
   AfterStruct: true
-  AfterUnion: false
+  AfterUnion: true
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: false
+  BeforeLambdaBody: true
   BeforeWhile: false
   IndentBraces: false
   SplitEmptyFunction: true
@@ -84,9 +84,8 @@ BraceWrapping:
 BreakAfterAttributes: Never
 BreakAfterJavaFieldAnnotations: false
 BreakArrays: false
-BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: Always
-BreakBeforeBraces: Custom
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
@@ -97,7 +96,7 @@ CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
-Cpp11BracedListStyle: true
+Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 DisableFormat: false
 EmptyLineAfterAccessModifier: Never
@@ -135,7 +134,7 @@ IndentPPDirectives: None
 IndentRequiresClause: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-InsertBraces: false
+InsertBraces: true
 InsertNewlineAtEOF: true
 InsertTrailingCommas: None
 IntegerLiteralSeparator:
@@ -153,8 +152,8 @@ LambdaBodyIndentation: Signature
 LineEnding: DeriveLF
 MacroBlockBegin: ""
 MacroBlockEnd: ""
-MaxEmptyLinesToKeep: 2
-NamespaceIndentation: None
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
 ObjCBinPackProtocolList: Auto
 ObjCBlockIndentWidth: 2
 ObjCBreakBeforeNestedBlockParam: true
@@ -238,5 +237,3 @@ WhitespaceSensitiveMacros:
   - NS_SWIFT_NAME
   - PP_STRINGIZE
   - STRINGIZE
----
-

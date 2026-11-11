@@ -35,7 +35,7 @@
 #define HID_REPORT_OUTPUT  0x02
 #define HID_REPORT_FEATURE 0x03
 
-/* HID Descriptor ***********************************************************/
+/* HID Descriptor */
 
 #define HID_COUNTRY_NONE        0x00 /* Not Supported */
 #define HID_COUNTRY_ARABIC      0x01 /* Arabic */
@@ -74,99 +74,114 @@
 #define HID_COUNTRY_YUGOSLAVIA  0x34 /* Yugoslavia */
 #define HID_COUNTRY_TURKISHF    0x35 /* Turkish-F */
 
-/* HID report items */
-#define HID_REPORT_ITEM_SIZE_MASK   0x03
-#define HID_REPORT_ITEM_SIZE_0      0x00 /* No data follows */
-#define HID_REPORT_ITEM_SIZE_1      0x01 /* 1 byte of data follows */
-#define HID_REPORT_ITEM_SIZE_2      0x02 /* 2 bytes of data follow */
-#define HID_REPORT_ITEM_SIZE_4      0x03 /* 4 bytes of data follow */
-#define HID_REPORT_ITEM_TYPE_MASK   0x0c
-#define HID_REPORT_ITEM_TYPE_MAIN   0x00
-#define HID_REPORT_ITEM_TYPE_GLOBAL 0x04
-#define HID_REPORT_ITEM_TYPE_LOCAL  0x08
-#define HID_REPORT_ITEM_TAG_MASK    0xf0
+/* HID report See specification at
+ * https://www.usb.org/sites/default/files/hid1_11.pdf
+ * https://www.usb.org/sites/default/files/hut1_22.pdf
+ */
+
+#define HID_SIZE_MASK (0x3 << 0)
+#define HID_TYPE_MASK (0x3 << 2)
+#define HID_TAG_MASK  (0xF << 4)
+
+#define HID_ITEMTYPE_MAIN   (0x0 << 2)
+#define HID_ITEMTYPE_GLOBAL (0x1 << 2)
+#define HID_ITEMTYPE_LOCAL  (0x2 << 2)
+#define HID_ITEMTYPE_LONG   (0x3 << 2)
 
 /* Main Items (HID 6.2.2.4) */
-#define HID_MAIN_ITEM_CONSTANT      (1 << 0) /* Constant(1) vs Data(0) */
-#define HID_MAIN_ITEM_VARIABLE      (1 << 1) /* Variable(1) vs Array(0) */
-#define HID_MAIN_ITEM_RELATIVE      (1 << 2) /* Relative(1) vs Absolute(0) */
-#define HID_MAIN_ITEM_WRAP          (1 << 3) /* Wrap(1) vs No Wrap(0) */
-#define HID_MAIN_ITEM_NONLINEAR     (1 << 4) /* Non Linear(1) vs Linear(0) */
-#define HID_MAIN_ITEM_NOPREFERRED   (1 << 5) /* No Preferred (1) vs Preferred State(0) */
-#define HID_MAIN_ITEM_NULLSTATE     (1 << 6) /* Null state(1) vs No Null position(0) */
-#define HID_MAIN_ITEM_VOLATILE      (1 << 7) /* Volatile(1) vs Non volatile(0) */
-#define HID_MAIN_ITEM_BUFFEREDBYTES (1 << 8) /* Buffered Bytes(1) vs Bit Field(0) */
+#define HID_MAINITEM_TAG_INPUT         (0x08 << 4)
+#define HID_MAINITEM_TAG_OUTPUT        (0x09 << 4)
+#define HID_MAINITEM_TAG_COLLECTION    (0x0a << 4)
+#define HID_MAINITEM_TAG_FEATURE       (0x0b << 4)
+#define HID_MAINITEM_TAG_ENDCOLLECTION (0x0c << 4)
 
-#define HID_MAIN_ITEM_SIZE(pfx)           ((pfx)&HID_REPORT_ITEM_SIZE_MASK)
-#define HID_MAIN_ITEM_INPUT_PREFIX        0x80
-#define HID_MAIN_ITEM_INPUT_CONSTANT      HID_MAIN_ITEM_CONSTANT
-#define HID_MAIN_ITEM_INPUT_VARIABLE      HID_MAIN_ITEM_VARIABLE
-#define HID_MAIN_ITEM_INPUT_RELATIVE      HID_MAIN_ITEM_RELATIVE
-#define HID_MAIN_ITEM_INPUT_WRAP          HID_MAIN_ITEM_WRAP
-#define HID_MAIN_ITEM_INPUT_NONLINEAR     HID_MAIN_ITEM_NONLINEAR
-#define HID_MAIN_ITEM_INPUT_NOPREFERRED   HID_MAIN_ITEM_NOPREFERRED
-#define HID_MAIN_ITEM_INPUT_NULLSTATE     HID_MAIN_ITEM_NULLSTATE
-#define HID_MAIN_ITEM_INPUT_BUFFEREDBYTES HID_MAIN_ITEM_BUFFEREDBYTES
+#define HID_MAINITEM_CONSTANT      (1 << 0) /* Constant(1) vs Data(0) */
+#define HID_MAINITEM_VARIABLE      (1 << 1) /* Variable(1) vs Array(0) */
+#define HID_MAINITEM_RELATIVE      (1 << 2) /* Relative(1) vs Absolute(0) */
+#define HID_MAINITEM_WRAP          (1 << 3) /* Wrap(1) vs No Wrap(0) */
+#define HID_MAINITEM_NONLINEAR     (1 << 4) /* Non Linear(1) vs Linear(0) */
+#define HID_MAINITEM_NOPREFERRED   (1 << 5) /* No Preferred (1) vs Preferred State(0) */
+#define HID_MAINITEM_NULLSTATE     (1 << 6) /* Null state(1) vs No Null position(0) */
+#define HID_MAINITEM_VOLATILE      (1 << 7) /* Volatile(1) vs Non volatile(0) */
+#define HID_MAINITEM_BUFFEREDBYTES (1 << 8) /* Buffered Bytes(1) vs Bit Field(0) */
 
-#define HID_MAIN_ITEM_OUTPUT_PREFIX        0x90
-#define HID_MAIN_ITEM_OUTPUT_CONSTANT      HID_MAIN_ITEM_CONSTANT
-#define HID_MAIN_ITEM_OUTPUT_VARIABLE      HID_MAIN_ITEM_VARIABLE
-#define HID_MAIN_ITEM_OUTPUT_RELATIVE      HID_MAIN_ITEM_RELATIVE
-#define HID_MAIN_ITEM_OUTPUT_WRAP          HID_MAIN_ITEM_WRAP
-#define HID_MAIN_ITEM_OUTPUT_NONLINEAR     HID_MAIN_ITEM_NONLINEAR
-#define HID_MAIN_ITEM_OUTPUT_NOPREFERRED   HID_MAIN_ITEM_NOPREFERRED
-#define HID_MAIN_ITEM_OUTPUT_NULLSTATE     HID_MAIN_ITEM_NULLSTATE
-#define HID_MAIN_ITEM_OUTPUT_VOLATILE      HID_MAIN_ITEM_VOLATILE
-#define HID_MAIN_ITEM_OUTPUT_BUFFEREDBYTES HID_MAIN_ITEM_BUFFEREDBYTES
-
-#define HID_MAIN_ITEM_FEATURE_PREFIX        0xb0
-#define HID_MAIN_ITEM_FEATURE_CONSTANT      HID_MAIN_ITEM_CONSTANT
-#define HID_MAIN_ITEM_FEATURE_VARIABLE      HID_MAIN_ITEM_VARIABLE
-#define HID_MAIN_ITEM_FEATURE_RELATIVE      HID_MAIN_ITEM_RELATIVE
-#define HID_MAIN_ITEM_FEATURE_WRAP          HID_MAIN_ITEM_WRAP
-#define HID_MAIN_ITEM_FEATURE_NONLINEAR     HID_MAIN_ITEM_NONLINEAR
-#define HID_MAIN_ITEM_FEATURE_NOPREFERRED   HID_MAIN_ITEM_NOPREFERRED
-#define HID_MAIN_ITEM_FEATURE_NULLSTATE     HID_MAIN_ITEM_NULLSTATE
-#define HID_MAIN_ITEM_FEATURE_VOLATILE      HID_MAIN_ITEM_VOLATILE
-#define HID_MAIN_ITEM_FEATURE_BUFFEREDBYTES HID_MAIN_ITEM_BUFFEREDBYTES
-
-#define HID_MAIN_ITEM_COLLECTION_PREFIX    0xa0
-#define HID_MAIN_ITEM_COLLECTION_PHYSICAL  0x00 /* Physical (group of axes) */
-#define HID_MAIN_ITEM_COLLECTION_APPL      0x01 /* Application (mouse, keyboard) */
-#define HID_MAIN_ITEM_COLLECTION_LOGICAL   0x02 /* Logical (interrelated data) */
-#define HID_MAIN_ITEM_COLLECTION_REPORT    0x03 /* Report */
-#define HID_MAIN_ITEM_COLLECTION_ARRAY     0x04 /* Named Array */
-#define HID_MAIN_ITEM_COLLECTION_SWITCH    0x05 /* Usage Switch */
-#define HID_MAIN_ITEM_COLLECTION_MODIFIER  0x06 /* Usage Modifier */
-#define HID_MAIN_ITEM_ENDCOLLECTION_PREFIX 0xc0
+#define HID_MAINITEM_COLLECTION_PHYSICAL 0x00 /* Physical (group of axes) */
+#define HID_MAINITEM_COLLECTION_APPL     0x01 /* Application (mouse, keyboard) */
+#define HID_MAINITEM_COLLECTION_LOGICAL  0x02 /* Logical (interrelated data) */
+#define HID_MAINITEM_COLLECTION_REPORT   0x03 /* Report */
+#define HID_MAINITEM_COLLECTION_ARRAY    0x04 /* Named Array */
+#define HID_MAINITEM_COLLECTION_SWITCH   0x05 /* Usage Switch */
+#define HID_MAINITEM_COLLECTION_MODIFIER 0x06 /* Usage Modifier */
 
 /* Global Items (HID 6.2.2.7) */
-#define HID_GLOBAL_ITEM_SIZE(pfx)          ((pfx)&HID_REPORT_ITEM_SIZE_MASK)
-#define HID_GLOBAL_ITEM_USAGEPAGE_PREFIX   0x04 /* Usage Page */
-#define HID_GLOBAL_ITEM_LOGICALMIN_PREFIX  0x14 /* Logical Minimum */
-#define HID_GLOBAL_ITEM_LOGICALMAX_PREFIX  0x24 /* Logical Maximum */
-#define HID_GLOBAL_ITEM_PHYSICALMIN_PREFIX 0x34 /* Physical Minimum */
-#define HID_GLOBAL_ITEM_PHYSMICALAX_PREFIX 0x44 /* Physical Maximum */
-#define HID_GLOBAL_ITEM_UNITEXP_PREFIX     0x54 /* Unit Exponent */
-#define HID_GLOBAL_ITEM_UNIT_PREFIX        0x64 /* Unit */
-#define HID_GLOBAL_ITEM_REPORTSIZE_PREFIX  0x74 /* Report Size */
-#define HID_GLOBAL_ITEM_REPORTID_PREFIX    0x84 /* Report ID */
-#define HID_GLOBAL_ITEM_REPORTCOUNT_PREFIX 0x94 /* Report Count */
-#define HID_GLOBAL_ITEM_PUSH_PREFIX        0xa4 /* Push */
-#define HID_GLOBAL_ITEM_POP_PREFIX         0xb4 /* Pop */
+#define HID_GLOBALITEM_TAG_USAGE_PAGE   (0x00 << 4)
+#define HID_GLOBALITEM_TAG_LOGICAL_MIN  (0x01 << 4)
+#define HID_GLOBALITEM_TAG_LOGICAL_MAX  (0x02 << 4)
+#define HID_GLOBALITEM_TAG_PHYSICAL_MIN (0x03 << 4)
+#define HID_GLOBALITEM_TAG_PHYSICAL_MAX (0x04 << 4)
+#define HID_GLOBALITEM_TAG_UNIT_EXP     (0x05 << 4)
+#define HID_GLOBALITEM_TAG_UNIT         (0x06 << 4)
+#define HID_GLOBALITEM_TAG_REPORT_SIZE  (0x07 << 4)
+#define HID_GLOBALITEM_TAG_REPORT_ID    (0x08 << 4)
+#define HID_GLOBALITEM_TAG_REPORT_COUNT (0x09 << 4)
+#define HID_GLOBALITEM_TAG_PUSH         (0x0a << 4)
+#define HID_GLOBALITEM_TAG_POP          (0x0b << 4)
 
 /* Local Items (HID 6.2.2.8) */
-#define HID_LOCAL_ITEM_SIZE(pfx)            ((pfx)&HID_REPORT_ITEM_SIZE_MASK)
-#define HID_LOCAL_ITEM_USAGE_PREFIX         0x08 /* Usage */
-#define HID_LOCAL_ITEM_USAGEMIN_PREFIX      0x18 /* Usage Minimum */
-#define HID_LOCAL_ITEM_USAGEMAX_PREFIX      0x28 /* Usage Maximum */
-#define HID_LOCAL_ITEM_DESIGNATORIDX_PREFIX 0x38 /* Designator Index  */
-#define HID_LOCAL_ITEM_DESIGNATORMIN_PREFIX 0x48 /* Designator Minimum */
-#define HID_LOCAL_ITEM_DESIGNATORMAX_PREFIX 0x58 /* Designator Maximum */
-#define HID_LOCAL_ITEM_STRINGIDX_PREFIX     0x78 /* String Index */
-#define HID_LOCAL_ITEM_STRINGMIN_PREFIX     0x88 /* String Minimum */
-#define HID_LOCAL_ITEM_STRINGMAX_PREFIX     0x98 /* xx */
-#define HID_LOCAL_ITEM_DELIMITER_PREFIX     0xa8 /* Delimiter */
+#define HID_LOCALITEM_TAG_USAGE       (0x00 << 4)
+#define HID_LOCALITEM_TAG_USAGE_MIN   (0x01 << 4)
+#define HID_LOCALITEM_TAG_USAGE_MAX   (0x02 << 4)
+#define HID_LOCALITEM_TAG_DESIG_INDEX (0x03 << 4)
+#define HID_LOCALITEM_TAG_DESIG_MIN   (0x04 << 4)
+#define HID_LOCALITEM_TAG_DESIG_MAX   (0x05 << 4)
+/* No 6 in spec */
+#define HID_LOCALITEM_TAG_STRING_INDEX (0x07 << 4)
+#define HID_LOCALITEM_TAG_STRING_MIN   (0x08 << 4)
+#define HID_LOCALITEM_TAG_STRING_MAX   (0x09 << 4)
+#define HID_LOCALITEM_TAG_DELIMITER    (0x0a << 4) /* Also listed as reserved in spec! */
+
+/* Usage pages (HuT 3) */
+#define HID_USAGE_PAGE_UNDEFINED                0x00  /* Undefined */
+#define HID_USAGE_PAGE_GENERIC_DESKTOP_CONTROLS 0x01  /* Generic Desktop Controls */
+#define HID_USAGE_PAGE_SIMULATION_CONTROLS      0x02  /* Simulation Controls */
+#define HID_USAGE_PAGE_VR_CONTROLS              0x03  /* VR Controls */
+#define HID_USAGE_PAGE_SPORT_CONTROLS           0x04  /* Sport Controls */
+#define HID_USAGE_PAGE_GAME_CONTROLS            0x05  /* Game Controls */
+#define HID_USAGE_PAGE_GENERIC_DEVICE_CONTROLS  0x06  /* Generic Device Controls */
+#define HID_USAGE_PAGE_KEYBOARD_KEYPAD          0x07  /* Keyboard/Keypad */
+#define HID_USAGE_PAGE_LED                      0x08  /* LEDs */
+#define HID_USAGE_PAGE_BUTTON                   0x09  /* Button */
+#define HID_USAGE_PAGE_ORDINAL                  0x0a  /* Ordinal */
+#define HID_USAGE_PAGE_TELEPHONY                0x0b  /* Telephony */
+#define HID_USAGE_PAGE_CONSUMER                 0x0c  /* Consumer */
+#define HID_USAGE_PAGE_DIGITIZER                0x0d  /* Digitizer */
+#define HID_USAGE_PAGE_HAPTICS                        /* 0x0e Reserved */
+#define HID_USAGE_PAGE_PID                      0x0f  /* PID Page  Physical Interface Device */
+#define HID_USAGE_PAGE_UNICODE                  0x10  /* Unicode */
+#define HID_USAGE_PAGE_SOC                      0x11  /* Sensor Orientation Category */
+#define HID_USAGE_PAGE_EYE_AND_HEAD_TRACKER     0x12  /* Eye and Head Tracker */
+                                                      /* 0x13 Reserved */
+#define HID_USAGE_PAGE_ALPHA_DISPLAY 0x14             /* Alphanumeric Display */
+                                                      /* 0x15-3f Reserved */
+#define HID_USAGE_PAGE_MEDICAL         0x40           /* Medical Instruments */
+#define HID_USAGE_PAGE_BRAILLE_DISPLAY 0x41           /* Braille Display */
+                                                      /* 0x42-0x58 Reserved */
+#define HID_USAGE_PAGE_LIGHTING_AND_ILLUMINATION 0x59 /* Lighting and Illumination */
+                                                      /* 0x5a-0x7f Reserved */
+#define HID_USAGE_PAGE_USB_MONITOR           0x80     /* USB Monitor */
+#define HID_USAGE_PAGE_USB_ENUMERATED_VALUES 0x81     /* USB Enumerated Values */
+#define HID_USAGE_PAGE_VESA_VIRTUAL_CONTROLS 0x82     /* VESA Virtual Controls */
+#define HID_USAGE_PAGE_POWER_DEVICE          0x84     /* Power Device */
+#define HID_USAGE_PAGE_BATTERY_SYSTEM        0x85     /* Battery System */
+#define HID_USAGE_PAGE_BARCODE_SCANNER       0x8c     /* Bar Code Scanner page */
+#define HID_USAGE_PAGE_SCALE                 0x8d     /* Scale page */
+#define HID_USAGE_PAGE_MSR                   0x8e     /* Magnetic Stripe Reading (MSR) Devices */
+#define HID_USAGE_PAGE_POS                   0x8f     /* Point of Sale devices */
+#define HID_USAGE_PAGE_CAMERA_CONTROL        0x90     /* Camera Control Page */
+#define HID_USAGE_PAGE_ARCADE                0x91
+#define HID_USAGE_PAGE_GAMING_DEVICE         0x92
+#define HID_USAGE_PAGE_FIDO_ALLIANCE         0xF1D0
+#define HID_USAGE_PAGE_VENDOR_PAGE_HBYTE     0xFF00
 
 /* Modifier Keys (HID 8.3) */
 #define HID_MODIFIER_LCTRL  (1 << 0) /* Left Ctrl */
@@ -204,38 +219,6 @@
 #define HID_JS_INPUT_REPORT_BUTTON2         (1 << 5)
 #define HID_JS_INPUT_REPORT_BUTTON3         (1 << 6)
 #define HID_JS_INPUT_REPORT_BUTTON4         (1 << 7)
-
-/* Usage pages (HuT 3) */
-#define HID_USAGE_PAGE_UNDEFINED       0x00 /* Undefined */
-#define HID_USAGE_PAGE_GENERIC_DCTRL   0x01 /* Generic Desktop Controls */
-#define HID_USAGE_PAGE_SIMCTRL         0x02 /* Simulation Controls */
-#define HID_USAGE_PAGE_VRCTRL          0x03 /* VR Controls */
-#define HID_USAGE_PAGE_SPORTCTRL       0x04 /* Sport Controls */
-#define HID_USAGE_PAGE_GAMECTRL        0x05 /* Game Controls */
-#define HID_USAGE_PAGE_GENERIC_DEVCTRL 0x06 /* Generic Device Controls */
-#define HID_USAGE_PAGE_KBD             0x07 /* Keyboard/Keypad */
-#define HID_USAGE_PAGE_LEDS            0x08 /* LEDs */
-#define HID_USAGE_PAGE_BUTTON          0x09 /* Button */
-#define HID_USAGE_PAGE_ORDINAL         0x0a /* Ordinal */
-#define HID_USAGE_PAGE_TELEPHONY       0x0b /* Telephony */
-#define HID_USAGE_PAGE_CONSUMER        0x0c /* Consumer */
-#define HID_USAGE_PAGE_DIGITIZER       0x0d /* Digitizer */
-                                            /* 0x0e Reserved */
-#define HID_USAGE_PAGE_PIDPAGE 0x0f         /* PID Page  Physical Interface Device */
-#define HID_USAGE_PAGE_UNICODE 0x10         /* Unicode */
-                                            /* 0x11-13 Reserved */
-#define HID_USAGE_PAGE_ALPHA_DISPLAY 0x14   /* Alphanumeric Display */
-                                            /* 0x15-3f Reserved */
-#define HID_USAGE_PAGE_MEDICAL 0x40         /* Medical Instruments */
-                                            /* 0x41-7f Reserved */
-                                            /* 0x80-83 Monitor Devices */
-                                            /* 0x84-87 Power Devices */
-                                            /* 0x88-8b Reserved */
-#define HID_USAGE_PAGE_BARCODE_SCANNER 0x8c /* Bar Code Scanner page */
-#define HID_USAGE_PAGE_SCALE           0x8d /* Scale page */
-#define HID_USAGE_PAGE_MSR             0x8e /* Magnetic Stripe Reading (MSR) Devices */
-#define HID_USAGE_PAGE_POS             0x8f /* Point of Sale devices */
-#define HID_USAGE_PAGE_CAMERA_CTRL     0x90 /* Camera Control Page */
 
 /* Generic Desktop Page Usage IDs (HuT 4) */
 #define HID_DESKTOP_USAGE_UNDEFINED 0x00        /* Undefined */
@@ -634,7 +617,7 @@ struct usb_hid_js_report {
 
 #define HID_CUSTOM_INOUT_DESCRIPTOR_LEN (9 + 9 + 7 + 7)
 
-#define HID_CUSTOM_INOUT_DESCRIPTOR_INIT(bInterfaceNumber, bInterfaceSubClass, wItemLength, in_ep, out_ep,wMaxPacketSize, bInterval) \
+#define HID_CUSTOM_INOUT_DESCRIPTOR_INIT(bInterfaceNumber, bInterfaceSubClass, wItemLength, out_ep, in_ep, wMaxPacketSize, bInterval) \
     0x09,                          /* bLength: Interface Descriptor size */                                         \
     USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */                                 \
     bInterfaceNumber,              /* bInterfaceNumber: Number of Interface */                                      \
@@ -654,13 +637,13 @@ struct usb_hid_js_report {
     WBVAL(wItemLength),           /* wItemLength: Total length of Report descriptor */                              \
     0x07,                         /* bLength: Endpoint Descriptor size */                                           \
     USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */                                                            \
-    in_ep,                        /* bEndpointAddress: Endpoint Address (IN) */                                     \
+    out_ep,                       /* bEndpointAddress: Endpoint Address (OUT) */                                    \
     0x03,                         /* bmAttributes: Interrupt endpoint */                                            \
     WBVAL(wMaxPacketSize),        /* wMaxPacketSize: x Byte max */                                                  \
     bInterval,                    /* bInterval: Polling Interval */                                                 \
     0x07,                         /* bLength: Endpoint Descriptor size */                                           \
     USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */                                                            \
-    out_ep,                       /* bEndpointAddress: Endpoint Address (IN) */                                     \
+    in_ep,                        /* bEndpointAddress: Endpoint Address (IN) */                                     \
     0x03,                         /* bmAttributes: Interrupt endpoint */                                            \
     WBVAL(wMaxPacketSize),        /* wMaxPacketSize: x Byte max */                                                  \
     bInterval                     /* bInterval: Polling Interval */

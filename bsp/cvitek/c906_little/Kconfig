@@ -51,7 +51,7 @@ config SOC_TYPE_SG2002
     bool
     default n
 
-choice
+choice BOARD_TYPE_MILKV_DUO_SEL
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
 

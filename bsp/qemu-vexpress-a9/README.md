@@ -40,7 +40,13 @@
 
   ![image-20220626114020634](figures/image-20220626114020634.png)
 
-- 如果在Linux下使用，请自行下载[GNU GCC工具链][3]。
+- 如果在Linux下使用，推荐用发行版的包管理器安装 `arm-none-eabi` 工具链，`rtconfig.py` 默认的 `EXEC_PATH` 即为 `/usr/bin`，装好后无需额外配置。以 Debian/Ubuntu 为例：
+
+  ```shell
+  sudo apt install gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib
+  ```
+
+  其中 `libstdc++-arm-none-eabi-newlib` 提供链接阶段 `-lsupc++` 所需的库。也可以从 [Arm GNU Toolchain 下载页][3] 获取官方预编译版本，解压后用 `RTT_EXEC_PATH` 环境变量指向其 `bin` 目录。
 
 ## 3 执行和退出
 
@@ -244,6 +250,6 @@ msh />QEMU: Terminated
 
 [1]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.boards.express/index.html
 [2]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
-[3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+[3]: https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 [4]: https://github.com/BernardXiong
 [5]: https://github.com/recan-li

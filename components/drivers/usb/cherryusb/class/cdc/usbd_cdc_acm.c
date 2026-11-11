@@ -39,7 +39,7 @@ static int cdc_acm_class_interface_request_handler(uint8_t busid, struct usb_set
             /*                                        4 - Space                            */
             /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
             /*******************************************************************************/
-            memcpy(&line_coding, *data, setup->wLength);
+            memcpy(&line_coding, *data, 7);
             USB_LOG_DBG("Set intf:%d linecoding <%d %d %s %s>\r\n",
                         intf_num,
                         (unsigned int)line_coding.dwDTERate,
@@ -76,7 +76,6 @@ static int cdc_acm_class_interface_request_handler(uint8_t busid, struct usb_set
             usbd_cdc_acm_send_break(busid, intf_num);
             break;
         default:
-            USB_LOG_WRN("Unhandled CDC Class bRequest 0x%02x\r\n", setup->bRequest);
             return -1;
     }
 

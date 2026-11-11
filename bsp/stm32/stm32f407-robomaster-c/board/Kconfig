@@ -19,11 +19,25 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM8_CH1
         select BSP_USING_PWM8_CH2
         select BSP_USING_PWM8_CH3
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
+
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 81 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 80 if RT_USING_SOFT_I2C1
 
 endmenu
 
@@ -43,31 +57,105 @@ menu "On-chip Peripheral Drivers"
                 int "UART TX timeout"
                 default 2000
                 depends on RT_USING_SERIAL_V1
-                
-            config BSP_USING_UART1
+
+            menuconfig BSP_USING_UART1
                 bool "Enable UART1 (FinSH , symbol UART2 on board)"
                 default y
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
+                        bool "Enable UART1 RX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_UART1_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
+                    config BSP_UART1_TX_USING_DMA
+                        bool "Enable UART1 TX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_USING_UART3
+                    config BSP_UART1_RX_BUFSIZE
+                        int "Set UART1 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART1_TX_BUFSIZE
+                        int "Set UART1 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+
+                    config BSP_UART1_DMA_PING_BUFSIZE
+                        int "Set UART1 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
+                        default 64    
+                endif
+
+            menuconfig BSP_USING_UART3
                 bool "Enable UART3 (DBUS)"
                 default n
-            config BSP_UART3_RX_USING_DMA
-                bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_USING_DMA
+                        bool "Enable UART3 RX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_USING_UART6
+                    config BSP_UART3_TX_USING_DMA
+                        bool "Enable UART3 TX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                        default n
+                        
+                    config BSP_UART3_RX_BUFSIZE
+                        int "Set UART3 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART3_TX_BUFSIZE
+                        int "Set UART3 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+
+                    config BSP_UART3_DMA_PING_BUFSIZE
+                        int "Set UART3 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART3_RX_USING_DMA
+                        default 64    
+                endif
+
+            menuconfig BSP_USING_UART6
                 bool "Enable UART6"
                 default n
-            config BSP_UART6_RX_USING_DMA
-                bool "Enable UART6 RX DMA"
-                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                default n
+                if BSP_USING_UART6
+                    config BSP_UART6_RX_USING_DMA
+                        bool "Enable UART6 RX DMA"
+                        select RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART6_TX_USING_DMA
+                        bool "Enable UART6 TX DMA"
+                        select RT_SERIAL_USING_DMA
+                        default n
+                    
+                    config BSP_UART6_RX_BUFSIZE
+                        int "Set UART6 RX buffer size"
+                        range 64 65535
+                        depends on BSP_USING_UART6
+                        default 256
+
+                    config BSP_UART6_TX_BUFSIZE
+                        int "Set UART6 TX buffer size"
+                        range 0 65535
+                        depends on BSP_USING_UART6
+                        default 0
+
+                    config BSP_UART6_DMA_PING_BUFSIZE
+                        int "Set UART6 RX DMA ping-pong buffer size"
+                        range 32 65535
+                        depends on RT_USING_SERIAL_V2 && BSP_UART6_RX_USING_DMA
+                        default 64    
+                endif
 
         endif
 
@@ -183,23 +271,25 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PF0 --> 80; PF1 --> 81"
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                default 81
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                default 80
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 81
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 80
+            endif
         endif
-
-
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
@@ -207,5 +297,6 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
 
 endmenu

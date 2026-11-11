@@ -1,0 +1,5 @@
+config RT_SERIAL_XILINX_PS
+    bool "Cadence (Xilinx Zynq) UART"
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default y

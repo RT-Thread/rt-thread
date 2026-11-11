@@ -113,15 +113,15 @@ _start:
 #endif
 
     /* Now we are in the end of boot cpu process */
-    ldr     x8, =rtthread_startup
+    ldr     x19, =rtthread_startup
     b       init_mmu_early
     /* never come back */
 
 kernel_start:
     /* jump to the PE's system entry */
     mov     x29, xzr
-    mov     x30, x8
-    br      x8
+    mov     x30, x19
+    br      x19
 
 cpu_idle:
     wfe
@@ -169,7 +169,7 @@ _secondary_cpu_entry:
     bl      init_cpu_stack_early
 
     /* secondary cpu start to startup */
-    ldr     x8, =rt_hw_secondary_cpu_bsp_start
+    ldr     x19, =rt_hw_secondary_cpu_bsp_start
     b       enable_mmu_early
 #endif /* RT_USING_SMP */
 

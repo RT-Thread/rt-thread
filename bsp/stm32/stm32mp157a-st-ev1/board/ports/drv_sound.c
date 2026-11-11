@@ -23,7 +23,7 @@
 #define LOG_TAG             "drv.sound"
 #include <drv_log.h>
 
-#define SOUND_BUS_NAME       "i2c2"
+#define SOUND_BUS_NAME "swi2c2"
 
 #define TX_FIFO_SIZE         (4096)
 #if defined(__ARMCC_VERSION)

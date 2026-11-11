@@ -18,7 +18,7 @@
 #define LOG_TAG             "drv.audio"
 #include <drv_log.h>
 
-#define SOUND_BUS_NAME    "i2c4"
+#define SOUND_BUS_NAME "swi2c4"
 
 /* SYSRAM  */
 #define TX_FIFO_SIZE       (4096)

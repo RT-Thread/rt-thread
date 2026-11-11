@@ -141,7 +141,7 @@ if BSP_USING_LCD
     config BSP_LCD_BACKLIGHT_PIN
         int "Backlight control pin number (-1 for not used)"
         default -1
-    choice
+    choice BSP_LCD_BACKLIGHT_ACTIVE_SEL
         prompt "backlight active polarity"
         default BSP_LCD_BACKLIGHT_ACTIVE_LOW
 
@@ -155,7 +155,7 @@ if BSP_USING_LCD
         int "Lcd max clk frequency"
         default 15000000
 
-    choice
+    choice BSP_BOARD_SEL
         prompt "lcd scan direction"
         default BSP_BOARD_K210_OPENMV_TEST
 

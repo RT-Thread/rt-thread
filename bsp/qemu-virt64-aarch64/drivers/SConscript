@@ -3,8 +3,14 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c')
+src     = ['board.c']
 CPPPATH = [cwd]
+
+if GetDepend(['RT_GRAPHIC_FB']):
+    src += ['drv_romfb.c']
+
+if GetDepend(['RT_SOC_CAMERA']):
+    src += ['drv_camera.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

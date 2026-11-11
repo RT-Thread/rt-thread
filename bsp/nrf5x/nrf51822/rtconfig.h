@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -105,7 +105,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -305,6 +306,22 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

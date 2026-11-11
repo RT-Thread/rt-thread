@@ -20,11 +20,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig ENABLE_FPU
-        bool "Enable FPU"
-        select ARCH_RISCV_FPU
-        default n
-          
 endmenu
 
 endmenu

@@ -17,13 +17,12 @@
  */
 
 /*
-   This is an example board.h for Board Compment, New Board should flow the macro defines.
+   This is an example board.h for Board Component, New Board should follow the macro defines.
 */
 
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <soc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +43,7 @@ extern "C" {
      · WIFI
      · BT
      · AUDIO
-    BOARD_XXX Macro descripted below should be defined if the board support.
+    BOARD_XXX Macro described below should be defined if the board support.
 */
 
 /****************************************************************************/
@@ -120,8 +119,8 @@ extern "C" {
 // UART
 
 /*
-    The total supported uart numbers on this board, 0 meas No uart support.
-    the BOARD_UART<x>_XXX, x in rang of (0, BOARD_UART_NUM - 1)
+    The total supported uart numbers on this board, 0 means No uart support.
+    the BOARD_UART<x>_XXX, x in range of (0, BOARD_UART_NUM - 1)
 */
 #ifndef BOARD_UART_NUM
 #define BOARD_UART_NUM (1)
@@ -363,6 +362,36 @@ extern "C" {
 
 /* other board specific defines */
 //#define CUSTOM_BOARD_xxx
+
+/* ---- xiaohui C908 RT-Thread Smart ---- */
+
+#include <rtconfig.h>
+#include "mem_layout.h"
+
+extern unsigned int __bss_start;
+extern unsigned int __bss_end;
+extern unsigned int __sram_end;
+extern unsigned int _end;
+
+/* heap starts after the whole kernel image */
+#define RT_HW_HEAP_BEGIN ((void *)&_end)
+#define RT_HW_HEAP_END   ((void *)(((rt_size_t)RT_HW_HEAP_BEGIN) + MEM_HEAP_SIZE))
+
+#define RT_HW_PAGE_START ((void *)((rt_size_t)RT_HW_HEAP_END + sizeof(rt_size_t)))
+#define RT_HW_PAGE_END   ((void *)&__sram_end)
+
+/* xiaohui peripherals */
+#define XIAOHUI_UART0_PHY_ADDR 0x1900D000UL
+#define XIAOHUI_UART0_IRQ      20
+#define XIAOHUI_CLINT_PHY_ADDR 0x0C000000UL
+#define XIAOHUI_STIMECMP_OFF   0xD000UL
+
+/* satp translation modes supported by hardware, probed by the M-mode
+ * boot shim */
+extern unsigned long g_mmu_modes_supported;
+
+void rt_hw_board_init(void);
+
 
 /****************************************************************************/
 /**

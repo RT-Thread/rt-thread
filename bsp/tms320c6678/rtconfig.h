@@ -8,7 +8,7 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_USING_ARCH_DATA_TYPE
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_8

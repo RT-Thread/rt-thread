@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -105,7 +105,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define ARCH_ARM
@@ -153,6 +154,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CLOCK_TIME
 #define RT_USING_ADC
 #define RT_USING_PWM
 #define RT_USING_PM
@@ -160,7 +162,6 @@
 #define RT_USING_RTC
 #define RT_USING_WDT
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -201,6 +202,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 /* end of Utilities */
 
 /* Using USB legacy version */
@@ -221,35 +223,46 @@
 
 #define RT_USING_UTESTCASES
 
-/* Utest Self Testcase */
+/* Kernel Core */
 
-#define UTEST_SELF_PASS_TC
-/* end of Utest Self Testcase */
+#define RT_UTEST_SMALL_MEM
+/* end of Kernel Core */
 
-/* Kernel Testcase */
+/* Kernel Components */
 
-#define UTEST_SMALL_MEM_TC
-/* end of Kernel Testcase */
+/* Drivers */
 
-/* CPP11 Testcase */
 
-/* end of CPP11 Testcase */
+/* IPC Test */
 
-/* Utest Serial Testcase */
+/* end of IPC Test */
 
-/* end of Utest Serial Testcase */
+/* Serial Test */
 
-/* Serial-Bypass Testcase */
+/* end of Serial Test */
 
-/* end of Serial-Bypass Testcase */
+/* SMP-Call Test */
 
-/* Utest IPC Testcase */
+/* end of SMP-Call Test */
+/* end of Drivers */
 
-/* end of Utest IPC Testcase */
+/* File System */
 
-/* RTT Posix Testcase */
+/* end of File System */
 
-/* end of RTT Posix Testcase */
+/* CPP11 */
+
+/* end of CPP11 */
+
+/* Network */
+
+/* end of Network */
+
+/* Utest Framework */
+
+#define RT_UTEST_SELF_PASS
+/* end of Utest Framework */
+/* end of Kernel Components */
 
 /* Memory Management Subsytem Testcase */
 
@@ -258,10 +271,6 @@
 /* Tmpfs Testcase */
 
 /* end of Tmpfs Testcase */
-
-/* SMP-Call Testcase */
-
-/* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -380,8 +389,6 @@
 
 /* NUVOTON Drivers */
 
-#define PKG_USING_NUVOTON_CMSIS_DRIVER
-#define PKG_USING_NUVOTON_CMSIS_DRIVER_LATEST_VERSION
 #define PKG_USING_NUVOTON_SERIES_DRIVER
 #define PKG_USING_NUVOTON_SERIES_DRIVER_LATEST_VERSION
 /* end of NUVOTON Drivers */
@@ -389,6 +396,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

@@ -70,7 +70,7 @@ Open RT-Thread ENV command-line, and change directory to this BSP directory, the
 
 - Users can download the project via the below command:
   ```console
-  %OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\cmsis_dap.cfg -f boards\debug_scripts\soc\hpm5300.cfg -f boards\debug_scripts\boards\hpm5301evklite.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
+  %OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\cmsis_dap.cfg -f board\debug_scripts\openocd\soc\hpm5300.cfg -f board\debug_scripts\openocd\boards\hpm5301evklite.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
   ```
 
 - Users can debug the project via the below command:
@@ -78,7 +78,7 @@ Open RT-Thread ENV command-line, and change directory to this BSP directory, the
   - Connect debugger via `OpenOCD`:
 
 ```console
-%OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\cmsis_dap.cfg -f boards\debug_scripts\soc\hpm5300.cfg -f boards\debug_scripts\boards\hpm5301evklite.cfg
+%OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\cmsis_dap.cfg -f board\debug_scripts\openocd\soc\hpm5300.cfg -f board\debug_scripts\openocd\boards\hpm5301evklite.cfg
 ```
   - Start Debugger via `GDB`:
 

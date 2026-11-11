@@ -12,10 +12,10 @@
 
 struct regulator_fixed
 {
-    struct rt_regulator_node parent;
+    struct rt_regulator_node  parent;
     struct rt_regulator_param param;
 
-    rt_base_t enable_pin;
+    rt_base_t   enable_pin;
     const char *input_supply;
 };
 
@@ -23,10 +23,10 @@ struct regulator_fixed
 
 static rt_err_t regulator_fixed_enable(struct rt_regulator_node *reg_np)
 {
-    struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
+    struct regulator_fixed    *rf    = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_EOK;
     }
@@ -39,32 +39,31 @@ static rt_err_t regulator_fixed_enable(struct rt_regulator_node *reg_np)
 
 static rt_err_t regulator_fixed_disable(struct rt_regulator_node *reg_np)
 {
-    struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
+    struct regulator_fixed    *rf    = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_EOK;
     }
 
     rt_pin_mode(rf->enable_pin, PIN_MODE_OUTPUT);
-    rt_pin_write(rf->enable_pin, param->enable_active_high ? PIN_LOW: PIN_HIGH);
+    rt_pin_write(rf->enable_pin, param->enable_active_high ? PIN_LOW : PIN_HIGH);
 
     return RT_EOK;
 }
 
 static rt_bool_t regulator_fixed_is_enabled(struct rt_regulator_node *reg_np)
 {
-    rt_uint8_t active;
-    struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
+    rt_uint8_t                 active;
+    struct regulator_fixed    *rf    = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_TRUE;
     }
 
-    rt_pin_mode(rf->enable_pin, PIN_MODE_INPUT);
     active = rt_pin_read(rf->enable_pin);
 
     if (param->enable_active_high)
@@ -82,20 +81,19 @@ static int regulator_fixed_get_voltage(struct rt_regulator_node *reg_np)
     return rf->param.min_uvolt + (rf->param.max_uvolt - rf->param.min_uvolt) / 2;
 }
 
-static const struct rt_regulator_ops regulator_fixed_ops =
-{
-    .enable = regulator_fixed_enable,
-    .disable = regulator_fixed_disable,
-    .is_enabled = regulator_fixed_is_enabled,
+static const struct rt_regulator_ops regulator_fixed_ops = {
+    .enable      = regulator_fixed_enable,
+    .disable     = regulator_fixed_disable,
+    .is_enabled  = regulator_fixed_is_enabled,
     .get_voltage = regulator_fixed_get_voltage,
 };
 
 static rt_err_t regulator_fixed_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err;
-    rt_uint32_t val;
-    struct rt_device *dev = &pdev->parent;
-    struct regulator_fixed *rf = rt_calloc(1, sizeof(*rf));
+    rt_err_t                  err;
+    rt_uint32_t               val;
+    struct rt_device         *dev = &pdev->parent;
+    struct regulator_fixed   *rf  = rt_calloc(1, sizeof(*rf));
     struct rt_regulator_node *rnp;
 
     if (!rf)
@@ -105,11 +103,11 @@ static rt_err_t regulator_fixed_probe(struct rt_platform_device *pdev)
 
     regulator_ofw_parse(dev->ofw_node, &rf->param);
 
-    rnp = &rf->parent;
+    rnp              = &rf->parent;
     rnp->supply_name = rf->param.name;
-    rnp->ops = &regulator_fixed_ops;
-    rnp->param = &rf->param;
-    rnp->dev = &pdev->parent;
+    rnp->ops         = &regulator_fixed_ops;
+    rnp->param       = &rf->param;
+    rnp->dev         = &pdev->parent;
 
     rf->enable_pin = rt_pin_get_named_pin(dev, "enable", 0, RT_NULL, RT_NULL);
 
@@ -148,16 +146,14 @@ _fail:
     return err;
 }
 
-static const struct rt_ofw_node_id regulator_fixed_ofw_ids[] =
-{
+static const struct rt_ofw_node_id regulator_fixed_ofw_ids[] = {
     { .compatible = "regulator-fixed" },
     { /* sentinel */ }
 };
 
-static struct rt_platform_driver regulator_fixed_driver =
-{
+static struct rt_platform_driver regulator_fixed_driver = {
     .name = "reg-fixed-voltage",
-    .ids = regulator_fixed_ofw_ids,
+    .ids  = regulator_fixed_ofw_ids,
 
     .probe = regulator_fixed_probe,
 };

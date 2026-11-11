@@ -572,14 +572,14 @@ START_TEST(domain_eq_length)
   LWIP_UNUSED_ARG(_i);
 
   memset(&domain1, 0, sizeof(domain1));
-  memset(domain1.name, 0xAA, sizeof(MDNS_DOMAIN_MAXLEN));
+  memset(domain1.name, 0xAA, sizeof(domain1.name));
   res = mdns_domain_add_label(&domain1, "multi", 5);
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain1, "cast", 4);
   fail_unless(res == ERR_OK);
 
   memset(&domain2, 0, sizeof(domain2));
-  memset(domain2.name, 0xBB, sizeof(MDNS_DOMAIN_MAXLEN));
+  memset(domain2.name, 0xBB, sizeof(domain2.name));
   res = mdns_domain_add_label(&domain2, "multi", 5);
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain2, "cast", 4);

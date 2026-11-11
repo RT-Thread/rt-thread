@@ -106,7 +106,6 @@ static int cdc_ecm_class_interface_request_handler(uint8_t busid, struct usb_set
 #endif
             break;
         default:
-            USB_LOG_WRN("Unhandled CDC ECM Class bRequest 0x%02x\r\n", setup->bRequest);
             return -1;
     }
 

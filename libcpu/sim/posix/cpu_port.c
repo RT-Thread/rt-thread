@@ -54,7 +54,7 @@ rt_ubase_t rt_thread_switch_interrupt_flag;
 
 /* interrupt event mutex */
 static pthread_mutex_t *ptr_int_mutex;
-static pthread_cond_t cond_int_hit; /* interrupt occured! */
+static pthread_cond_t cond_int_hit; /* interrupt occurred! */
 static volatile unsigned int  cpu_pending_interrupts;
 static int (* cpu_isr_table[MAX_INTERRUPT_NUM])(void) = {0};
 

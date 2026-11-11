@@ -1,4 +1,6 @@
 config RT_USING_VDSO
     bool "vDSO (Virtual Dynamic Shared Object)"
-    depends on (ARCH_ARMV8 || ARCH_RISCV)
+    depends on RT_USING_CLOCK_TIME
+    depends on (ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64)
+    depends on (!(ARCH_ARM_CORTEX_A || ARCH_ARMV8) || ARCH_CPU_64BIT || RT_CLOCK_TIME_ARM_ARCH)
     default y

@@ -1,0 +1,17 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd]
+
+if GetDepend(['BSP_USING_ON_BOARD_FLASH']):
+    src += Glob('spi_flash_init.c')
+
+group = DefineGroup(
+    'Drivers',
+    src,
+    depend = ['BSP_USING_ON_BOARD_FLASH'],
+    CPPPATH = CPPPATH,
+)
+
+Return('group')

@@ -12,6 +12,7 @@
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
 [![RT-Thread BSP Static Build Check](https://github.com/RT-Thread/rt-thread/actions/workflows/bsp_buildings.yml/badge.svg)](https://github.com/RT-Thread/rt-thread/actions/workflows/bsp_buildings.yml)
+[![MemBrowse](https://membrowse.com/badge.svg)](https://membrowse.com/public/RT-Thread/rt-thread)
 <a href="https://hellogithub.com/repository/5816fc3c1e714d109631ceb377538ca9" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=5816fc3c1e714d109631ceb377538ca9&claim_uid=kVCe5FXIMGAjJfy" alt="Featured｜HelloGitHub" style="width: 100px; height: 20px;" width="250" height="54" /></a>
 # RT-Thread
 

@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2006-2025, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author           Notes
+ * 2026-01-24     ox-horse         first version
+ * 2026-08-28     FUNMSAN          add N32H47_48x and N32H49x support
+ */
+
+#ifndef __DRV_CONFIG_H_
+#define __DRV_CONFIG_H_
+
+#include <board.h>
+#include <rtdevice.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#if defined(SOC_SERIES_N32H7xx)
+#include "h7xx/dma_config.h"
+#include "h7xx/uart_config.h"
+#include "h7xx/i2c_hard_config.h"
+#include "h7xx/adc_config.h"
+#include "h7xx/spi_config.h"
+#include "h7xx/tim_config.h"
+#include "h7xx/dac_config.h"
+#include "h7xx/can_config.h"
+#include "h7xx/pwm_config.h"
+#include "h7xx/pulse_encoder_config.h"
+#include "h7xx/lptim_config.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "h49x/dma_config.h"
+#include "h49x/uart_config.h"
+#include "h49x/adc_config.h"
+#include "h49x/dac_config.h"
+#include "h49x/can_config.h"
+#include "h49x/spi_config.h"
+#include "h49x/i2c_hard_config.h"
+#include "h49x/tim_config.h"
+#include "h49x/pwm_config.h"
+#include "h49x/pulse_encoder_config.h"
+#include "h49x/lptim_config.h"
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include "h47x_48x/dma_config.h"
+#include "h47x_48x/uart_config.h"
+#include "h47x_48x/adc_config.h"
+#include "h47x_48x/dac_config.h"
+#include "h47x_48x/can_config.h"
+#include "h47x_48x/spi_config.h"
+#include "h47x_48x/i2c_hard_config.h"
+#include "h47x_48x/tim_config.h"
+#include "h47x_48x/pwm_config.h"
+#include "h47x_48x/pulse_encoder_config.h"
+#include "h47x_48x/lptim_config.h"
+#endif /* defined(SOC_SERIES_N32H7xx) */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /*__DRV_CONFIG_H_ */
+

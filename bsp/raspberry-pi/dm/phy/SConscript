@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PHY_BCM54213']):
+    src += ['phy-bcm54213.c']
+
+if GetDepend(['RT_PHY_MDIO_BCM_UNIMAC']):
+    src += ['mdio-bcm-unimac.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,5 +1,0 @@
-config RT_HWTIMER_ROCKCHIP
-    bool "RockChip Timer"
-    depends on RT_USING_DM
-    depends on RT_USING_HWTIMER
-    default n

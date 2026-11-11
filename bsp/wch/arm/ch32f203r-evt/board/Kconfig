@@ -109,9 +109,9 @@ config BSP_USING_TIM
         default n
 
         if BSP_USING_TIM
-                config BSP_USING_HWTIMER
+                config BSP_USING_CLOCK_TIMER
                         bool
-                        select RT_USING_HWTIMER
+                        select RT_USING_CLOCK_TIME
                         default n
 
                 config BSP_USING_PWM
@@ -124,13 +124,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM1
-                        choice
-                                prompt "using TIM1 as hwtimer or PWM mode"
-                                default BSP_USING_TIM1_HWTIMER
+                        choice BSP_TIM1_SEL
+                                prompt "using TIM1 as clock_timer or PWM mode"
+                                default BSP_USING_TIM1_CLOCK_TIMER
 
-                                config BSP_USING_TIM1_HWTIMER
-                                        bool "using TIM1 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM1_CLOCK_TIMER
+                                        bool "using TIM1 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM1_PWM
                                         bool "using TIM1 as PWM mode"
@@ -162,13 +162,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM2
-                        choice
-                                prompt "using TIM2 as hwtimer or PWM mode"
-                                default BSP_USING_TIM2_HWTIMER
+                        choice BSP_TIM2_SEL
+                                prompt "using TIM2 as clock_timer or PWM mode"
+                                default BSP_USING_TIM2_CLOCK_TIMER
 
-                                config BSP_USING_TIM2_HWTIMER
-                                        bool "using TIM2 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM2_CLOCK_TIMER
+                                        bool "using TIM2 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM2_PWM
                                         bool "using TIM2 as PWM mode"
@@ -200,13 +200,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM3
-                        choice
-                                prompt "using TIM3 as hwtimer or PWM mode"
-                                default BSP_USING_TIM3_HWTIMER
+                        choice BSP_TIM3_SEL
+                                prompt "using TIM3 as clock_timer or PWM mode"
+                                default BSP_USING_TIM3_CLOCK_TIMER
 
-                                config BSP_USING_TIM3_HWTIMER
-                                        bool "using TIM3 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM3_CLOCK_TIMER
+                                        bool "using TIM3 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM3_PWM
                                         bool "using TIM3 as PWM mode"
@@ -238,13 +238,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM4
-                        choice
-                                prompt "using TIM4 as hwtimer or PWM mode"
-                                default BSP_USING_TIM4_HWTIMER
+                        choice BSP_TIM4_SEL
+                                prompt "using TIM4 as clock_timer or PWM mode"
+                                default BSP_USING_TIM4_CLOCK_TIMER
 
-                                config BSP_USING_TIM4_HWTIMER
-                                        bool "using TIM4 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM4_CLOCK_TIMER
+                                        bool "using TIM4 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM4_PWM
                                         bool "using TIM4 as PWM mode"
@@ -276,13 +276,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM4
-                        choice
-                                prompt "using TIM5 as hwtimer or PWM mode"
-                                default BSP_USING_TIM5_HWTIMER
+                        choice BSP_TIM5_SEL
+                                prompt "using TIM5 as clock_timer or PWM mode"
+                                default BSP_USING_TIM5_CLOCK_TIMER
 
-                                config BSP_USING_TIM5_HWTIMER
-                                        bool "using TIM5 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM5_CLOCK_TIMER
+                                        bool "using TIM5 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM5_PWM
                                         bool "using TIM5 as PWM mode"
@@ -315,9 +315,9 @@ config BSP_USING_TIM
 
                 if BSP_USING_TIM6
 
-                        config BSP_USING_TIM6_HWTIMER
-                                bool "using TIM6 as hwtimer mode"
-                                select BSP_USING_HWTIMER
+                        config BSP_USING_TIM6_CLOCK_TIMER
+                                bool "using TIM6 as clock_timer mode"
+                                select BSP_USING_CLOCK_TIMER
 
                 endif
 
@@ -327,9 +327,9 @@ config BSP_USING_TIM
 
                 if BSP_USING_TIM7
 
-                        config BSP_USING_TIM7_HWTIMER
-                                bool "using TIM7 as hwtimer mode"
-                                select BSP_USING_HWTIMER
+                        config BSP_USING_TIM7_CLOCK_TIMER
+                                bool "using TIM7 as clock_timer mode"
+                                select BSP_USING_CLOCK_TIMER
 
                 endif
 
@@ -338,13 +338,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM8
-                        choice
-                                prompt "using TIM8 as hwtimer or PWM mode"
-                                default BSP_USING_TIM8_HWTIMER
+                        choice BSP_TIM8_SEL
+                                prompt "using TIM8 as clock_timer or PWM mode"
+                                default BSP_USING_TIM8_CLOCK_TIMER
 
-                                config BSP_USING_TIM8_HWTIMER
-                                        bool "using TIM8 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM8_CLOCK_TIMER
+                                        bool "using TIM8 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM8_PWM
                                         bool "using TIM8 as PWM mode"
@@ -376,13 +376,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM9
-                        choice
-                                prompt "using TIM9 as hwtimer or PWM mode"
-                                default BSP_USING_TIM9_HWTIMER
+                        choice BSP_TIM9_SEL
+                                prompt "using TIM9 as clock_timer or PWM mode"
+                                default BSP_USING_TIM9_CLOCK_TIMER
 
-                                config BSP_USING_TIM9_HWTIMER
-                                        bool "using TIM9 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM9_CLOCK_TIMER
+                                        bool "using TIM9 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM9_PWM
                                         bool "using TIM9 as PWM mode"
@@ -414,13 +414,13 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM10
-                        choice
-                                prompt "using TIM10 as hwtimer or PWM mode"
-                                default BSP_USING_TIM10_HWTIMER
+                        choice BSP_TIM10_SEL
+                                prompt "using TIM10 as clock_timer or PWM mode"
+                                default BSP_USING_TIM10_CLOCK_TIMER
 
-                                config BSP_USING_TIM10_HWTIMER
-                                        bool "using TIM10 as hwtimer mode"
-                                        select BSP_USING_HWTIMER
+                                config BSP_USING_TIM10_CLOCK_TIMER
+                                        bool "using TIM10 as clock_timer mode"
+                                        select BSP_USING_CLOCK_TIMER
 
                                 config BSP_USING_TIM10_PWM
                                         bool "using TIM10 as PWM mode"

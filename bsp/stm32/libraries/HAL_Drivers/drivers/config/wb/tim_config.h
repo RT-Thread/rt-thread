@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-10-14     Dozingfiretruck   first version
+ * 2020-10-14     PeakRacing   first version
  */
 
 #ifndef __TIM_CONFIG_H__
@@ -23,7 +23,7 @@ extern "C" {
         .maxfreq = 1000000,                     \
         .minfreq = 2000,                        \
         .maxcnt  = 0xFFFF,                      \
-        .cntmode = HWTIMER_CNTMODE_UP,          \
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,          \
     }
 #endif /* TIM_DEV_INFO_CONFIG */
 

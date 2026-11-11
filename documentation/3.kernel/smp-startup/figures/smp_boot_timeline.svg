@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1100" viewBox="0 0 1560 1100">
+  <defs>
+    <style>
+      .canvas { fill: #f8fafc; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 30px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; fill: #475569; }
+      .lane-box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.8; }
+      .lane-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .lane-subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #64748b; }
+      .lane-line { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 8 8; }
+      .event { stroke: #334155; stroke-width: 2.3; fill: none; }
+      .event-alt { stroke: #0f766e; stroke-width: 2.3; fill: none; }
+      .event-join { stroke: #7c3aed; stroke-width: 2.3; fill: none; }
+      .event-label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #334155; font-weight: 600; }
+      .step { fill: #0f172a; }
+      .step-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; }
+      .callout { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.7; }
+      .callout-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .callout-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #475569; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowhead-alt" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arrowhead-join" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <rect class="canvas" x="0" y="0" width="1560" height="1100"/>
+
+  <text class="title" x="60" y="58">QEMU virt64 AArch64 SMP Bring-up Timeline</text>
+  <text class="subtitle" x="60" y="88">CPU0 enters the scheduler first, then main_thread_entry wakes the remaining CPUs through PSCI.</text>
+
+  <rect class="lane-box" x="60" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="155" y="150" text-anchor="middle">Firmware / PSCI</text>
+  <text class="lane-subtitle" x="155" y="171" text-anchor="middle">BootROM, BL1, CPU_ON handler</text>
+
+  <rect class="lane-box" x="300" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="395" y="150" text-anchor="middle">Boot CPU ASM</text>
+  <text class="lane-subtitle" x="395" y="171" text-anchor="middle">entry_point.S</text>
+
+  <rect class="lane-box" x="540" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="635" y="150" text-anchor="middle">Boot CPU C</text>
+  <text class="lane-subtitle" x="635" y="171" text-anchor="middle">components.c / setup.c</text>
+
+  <rect class="lane-box" x="780" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="875" y="150" text-anchor="middle">Secondary CPU ASM</text>
+  <text class="lane-subtitle" x="875" y="171" text-anchor="middle">_secondary_cpu_entry</text>
+
+  <rect class="lane-box" x="1020" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="1115" y="150" text-anchor="middle">Secondary CPU C</text>
+  <text class="lane-subtitle" x="1115" y="171" text-anchor="middle">rt_hw_secondary_cpu_bsp_start</text>
+
+  <rect class="lane-box" x="1260" y="120" width="190" height="72" rx="18" ry="18"/>
+  <text class="lane-title" x="1355" y="150" text-anchor="middle">Scheduler</text>
+  <text class="lane-subtitle" x="1355" y="171" text-anchor="middle">CPU0 first, then CPU1..N-1</text>
+
+  <line class="lane-line" x1="155" y1="210" x2="155" y2="980"/>
+  <line class="lane-line" x1="395" y1="210" x2="395" y2="980"/>
+  <line class="lane-line" x1="635" y1="210" x2="635" y2="980"/>
+  <line class="lane-line" x1="875" y1="210" x2="875" y2="980"/>
+  <line class="lane-line" x1="1115" y1="210" x2="1115" y2="980"/>
+  <line class="lane-line" x1="1355" y1="210" x2="1355" y2="980"/>
+
+  <circle class="step" cx="250" cy="250" r="15"/>
+  <text class="step-text" x="250" y="254" text-anchor="middle">1</text>
+  <line class="event" x1="155" y1="250" x2="395" y2="250" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="275" y="238" text-anchor="middle">jump to _start, x0 = DTB</text>
+
+  <circle class="step" cx="485" cy="340" r="15"/>
+  <text class="step-text" x="485" y="344" text-anchor="middle">2</text>
+  <path class="event" d="M 395 340 h 90 v 34 h -90" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="505" y="329">EL1h, clear BSS, set SP_EL1, enable early MMU</text>
+
+  <circle class="step" cx="520" cy="435" r="15"/>
+  <text class="step-text" x="520" y="439" text-anchor="middle">3</text>
+  <line class="event" x1="395" y1="435" x2="635" y2="435" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="520" y="423" text-anchor="middle">branch to rtthread_startup()</text>
+
+  <circle class="step" cx="725" cy="530" r="15"/>
+  <text class="step-text" x="725" y="534" text-anchor="middle">4</text>
+  <path class="event" d="M 635 530 h 90 v 34 h -90" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="747" y="518">rt_hw_common_setup: full MMU, GIC, UART, GTIMER, SMP IPI</text>
+
+  <circle class="step" cx="970" cy="625" r="15"/>
+  <text class="step-text" x="970" y="629" text-anchor="middle">5</text>
+  <line class="event" x1="635" y1="625" x2="1355" y2="625" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="995" y="613" text-anchor="middle">rt_system_scheduler_start() on CPU0</text>
+
+  <circle class="step" cx="970" cy="715" r="15"/>
+  <text class="step-text" x="970" y="719" text-anchor="middle">6</text>
+  <line class="event-join" x1="1355" y1="715" x2="635" y2="715" marker-end="url(#arrowhead-join)"/>
+  <text class="event-label" x="995" y="703" text-anchor="middle">main_thread_entry becomes the first running thread</text>
+
+  <circle class="step" cx="395" cy="805" r="15"/>
+  <text class="step-text" x="395" y="809" text-anchor="middle">7</text>
+  <line class="event-alt" x1="635" y1="805" x2="155" y2="805" marker-end="url(#arrowhead-alt)"/>
+  <text class="event-label" x="395" y="793" text-anchor="middle">rt_hw_secondary_cpu_up(): resolve entry PA and issue CPU_ON</text>
+
+  <circle class="step" cx="515" cy="895" r="15"/>
+  <text class="step-text" x="515" y="899" text-anchor="middle">8</text>
+  <line class="event-alt" x1="155" y1="895" x2="875" y2="895" marker-end="url(#arrowhead-alt)"/>
+  <text class="event-label" x="515" y="883" text-anchor="middle">firmware wakes the target core at _secondary_cpu_entry</text>
+
+  <circle class="step" cx="960" cy="960" r="15"/>
+  <text class="step-text" x="960" y="964" text-anchor="middle">9</text>
+  <path class="event" d="M 875 960 h 85 v 34 h -85" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="982" y="948">read MPIDR, set TPIDR/stack, reuse early MMU</text>
+
+  <circle class="step" cx="990" cy="1035" r="15"/>
+  <text class="step-text" x="990" y="1039" text-anchor="middle">10</text>
+  <line class="event" x1="875" y1="1035" x2="1115" y2="1035" marker-end="url(#arrowhead)"/>
+  <text class="event-label" x="995" y="1023" text-anchor="middle">branch to rt_hw_secondary_cpu_bsp_start()</text>
+
+  <rect class="callout" x="1230" y="860" width="260" height="90" rx="18" ry="18"/>
+  <text class="callout-title" x="1360" y="892" text-anchor="middle">Convergence point</text>
+  <text class="callout-text" x="1360" y="916" text-anchor="middle">CPU0 arrives first through rtthread_startup().</text>
+  <text class="callout-text" x="1360" y="934" text-anchor="middle">CPU1..N-1 join after local BSP initialization.</text>
+</svg>

@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_ETIMER) && defined(RT_USING_HWTIMER)
+#if defined(BSP_USING_ETIMER) && defined(RT_USING_CLOCK_TIME)
 
 #include <rtdevice.h>
 #include "NuMicro.h"
@@ -42,7 +42,7 @@ enum
 /* Private typedef --------------------------------------------------------------*/
 struct nu_etimer
 {
-    rt_hwtimer_t  parent;
+    rt_clock_timer_t  parent;
     char         *name;
     uint32_t      idx;
     IRQn_Type     irqn;
@@ -52,11 +52,11 @@ struct nu_etimer
 typedef struct nu_etimer *nu_etimer_t;
 
 /* Private functions ------------------------------------------------------------*/
-static void nu_etimer_init(rt_hwtimer_t *timer, rt_uint32_t state);
-static rt_err_t nu_etimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t opmode);
-static void nu_etimer_stop(rt_hwtimer_t *timer);
-static rt_uint32_t nu_etimer_count_get(rt_hwtimer_t *timer);
-static rt_err_t nu_etimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args);
+static void nu_etimer_init(rt_clock_timer_t *timer, rt_uint32_t state);
+static rt_err_t nu_etimer_start(rt_clock_timer_t *timer, rt_uint32_t cnt, rt_clock_timer_mode_t opmode);
+static void nu_etimer_stop(rt_clock_timer_t *timer);
+static rt_uint32_t nu_etimer_count_get(rt_clock_timer_t *timer);
+static rt_err_t nu_etimer_control(rt_clock_timer_t *timer, rt_uint32_t cmd, void *args);
 
 /* Public functions -------------------------------------------------------------*/
 
@@ -102,15 +102,15 @@ static struct nu_etimer nu_etimer_arr [] =
 #endif
 };
 
-static struct rt_hwtimer_info nu_etimer_info =
+static struct rt_clock_timer_info nu_etimer_info =
 {
     12000000,            /* maximum count frequency */
     46875,               /* minimum count frequency */
     0xFFFFFF,            /* the maximum counter value */
-    HWTIMER_CNTMODE_UP,  /* Increment or Decreasing count mode */
+    CLOCK_TIMER_CNTMODE_UP,  /* Increment or Decreasing count mode */
 };
 
-static struct rt_hwtimer_ops nu_etimer_ops =
+static struct rt_clock_timer_ops nu_etimer_ops =
 {
     nu_etimer_init,
     nu_etimer_start,
@@ -120,7 +120,7 @@ static struct rt_hwtimer_ops nu_etimer_ops =
 };
 
 /* Functions define ------------------------------------------------------------*/
-static void nu_etimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
+static void nu_etimer_init(rt_clock_timer_t *timer, rt_uint32_t state)
 {
     nu_etimer_t psNuETmr = NU_TIMER_DEVICE(timer);
     RT_ASSERT(psNuETmr != RT_NULL);
@@ -128,7 +128,7 @@ static void nu_etimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     if (1 == state)
     {
         uint32_t timer_clk;
-        struct rt_hwtimer_info *info = &nu_etimer_info;
+        struct rt_clock_timer_info *info = &nu_etimer_info;
 
         timer_clk = ETIMER_GetModuleClock(psNuETmr->idx);
         info->maxfreq = timer_clk;
@@ -145,7 +145,7 @@ static void nu_etimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     }
 }
 
-static rt_err_t nu_etimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t opmode)
+static rt_err_t nu_etimer_start(rt_clock_timer_t *timer, rt_uint32_t cnt, rt_clock_timer_mode_t opmode)
 {
     rt_err_t ret = -RT_EINVAL;
     rt_uint32_t u32OpMode;
@@ -160,11 +160,11 @@ static rt_err_t nu_etimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer
 
     switch (opmode)
     {
-    case HWTIMER_MODE_PERIOD:
+    case CLOCK_TIMER_MODE_PERIOD:
         u32OpMode = ETIMER_PERIODIC_MODE;
         break;
 
-    case HWTIMER_MODE_ONESHOT:
+    case CLOCK_TIMER_MODE_ONESHOT:
         u32OpMode = ETIMER_ONESHOT_MODE;
         break;
 
@@ -186,7 +186,7 @@ exit_nu_etimer_start:
     return -(ret);
 }
 
-static void nu_etimer_stop(rt_hwtimer_t *timer)
+static void nu_etimer_stop(rt_clock_timer_t *timer)
 {
     nu_etimer_t psNuETmr = NU_TIMER_DEVICE(timer);
     RT_ASSERT(psNuETmr != RT_NULL);
@@ -197,7 +197,7 @@ static void nu_etimer_stop(rt_hwtimer_t *timer)
     ETIMER_ClearCounter(psNuETmr->idx);
 }
 
-static rt_uint32_t nu_etimer_count_get(rt_hwtimer_t *timer)
+static rt_uint32_t nu_etimer_count_get(rt_clock_timer_t *timer)
 {
     nu_etimer_t psNuETmr = NU_TIMER_DEVICE(timer);
     RT_ASSERT(psNuETmr != RT_NULL);
@@ -205,7 +205,7 @@ static rt_uint32_t nu_etimer_count_get(rt_hwtimer_t *timer)
     return ETIMER_GetCounter(psNuETmr->idx);
 }
 
-static rt_err_t nu_etimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args)
+static rt_err_t nu_etimer_control(rt_clock_timer_t *timer, rt_uint32_t cmd, void *args)
 {
     rt_err_t ret = RT_EOK;
     nu_etimer_t psNuETmr = NU_TIMER_DEVICE(timer);
@@ -213,7 +213,7 @@ static rt_err_t nu_etimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *ar
 
     switch (cmd)
     {
-    case HWTIMER_CTRL_FREQ_SET:
+    case CLOCK_TIMER_CTRL_FREQ_SET:
     {
         uint32_t clk;
         uint32_t pre;
@@ -225,7 +225,7 @@ static rt_err_t nu_etimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *ar
     }
     break;
 
-    case HWTIMER_CTRL_STOP:
+    case CLOCK_TIMER_CTRL_STOP:
         ETIMER_Stop(psNuETmr->idx);
         break;
 
@@ -248,7 +248,7 @@ static void nu_etimer_isr(int vector, void *param)
     if (ETIMER_GetIntFlag(psNuETmr->idx))
     {
         ETIMER_ClearIntFlag(psNuETmr->idx);
-        rt_device_hwtimer_isr(&psNuETmr->parent);
+        rt_clock_timer_isr(&psNuETmr->parent);
     }
 }
 
@@ -271,8 +271,8 @@ int rt_hw_etimer_init(void)
         /* Register Etimer interrupt service routine. */
         rt_hw_interrupt_install(nu_etimer_arr[i].irqn, nu_etimer_isr, &nu_etimer_arr[i], nu_etimer_arr[i].name);
 
-        /* Register RT hwtimer device. */
-        ret = rt_device_hwtimer_register(&nu_etimer_arr[i].parent, nu_etimer_arr[i].name, &nu_etimer_arr[i]);
+        /* Register RT clock_timer device. */
+        ret = rt_clock_timer_register(&nu_etimer_arr[i].parent, nu_etimer_arr[i].name, &nu_etimer_arr[i]);
         RT_ASSERT(ret == RT_EOK);
     }
     return 0;
@@ -280,4 +280,4 @@ int rt_hw_etimer_init(void)
 
 INIT_BOARD_EXPORT(rt_hw_etimer_init);
 
-#endif //#if defined(BSP_USING_ETIMER) && defined(RT_USING_HWTIMER)
+#endif //#if defined(BSP_USING_ETIMER) && defined(RT_USING_CLOCK_TIME)

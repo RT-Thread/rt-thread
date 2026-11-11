@@ -7,17 +7,6 @@
 
 /* rt_vsnprintf options */
 
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-#define RT_KLIBC_USING_VSNPRINTF_STANDARD
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
-#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -72,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 24
 #define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
@@ -92,11 +81,13 @@
 #define RT_TIMER_THREAD_STACK_SIZE 32768
 #define RT_USING_TIMER_ALL_SOFT
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
 /* end of kservice options */
 #define RT_USING_DEBUG
+#define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 
 /* Inter-Thread communication */
@@ -111,6 +102,7 @@
 
 /* Memory Management */
 
+#define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -120,11 +112,13 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
+#define RT_USING_INTERRUPT_INFO
 #define RT_USING_THREADSAFE_PRINTF
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 1024
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -141,7 +135,6 @@
 /* end of AArch64 Architecture Configuration */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
-#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
@@ -180,10 +173,24 @@
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 512
 #define RT_USING_DFS_V2
+#define RT_USING_DFS_ELMFAT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
+#define RT_DFS_ELM_WORD_ACCESS
+#define RT_DFS_ELM_USE_LFN_3
+#define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 4
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_USE_EXFAT
+/* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_PTYFS
 #define RT_USING_DFS_PROCFS
-#define RT_USING_DFS_CROMFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_DFS_MQUEUE
 #define RT_USING_PAGECACHE
@@ -212,17 +219,140 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_8250
+#define RT_SERIAL_8250_DW
+#define RT_USING_CAN
+#define RT_CAN_USING_CANFD
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_CAN_CANFD_ROCKCHIP
+#define RT_USING_ADC
+#define RT_USING_ADC_V1
+#define RT_ADC_ROCKCHIP_SARADC
+#define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
+#define RT_CLOCK_TIMER_ROCKCHIP
+#define RT_USING_ETHERNET
+#define RT_ETHERNET_DWMAC
+#define RT_ETHERNET_DWMAC_PTP
+#define RT_ETHERNET_DWMAC_ROCKCHIP
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_I2C_RK3X
+#define RT_USING_PHY_V2
+#define RT_PHY_V2_REALTEK
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
+#define RT_PWM_ROCKCHIP
+#define RT_USING_MTD_NOR
+#define RT_USING_MTD_NOR_SPI
 #define RT_USING_RTC
-#define RT_USING_SOFT_RTC
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 16384
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_RTC_HYM8563
+#define RT_RTC_PCF8523
+#define RT_RTC_PCF8563
+#define RT_RTC_RX8010
+#define RT_RTC_RK8XX
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 16384
-#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_SDIO_THREAD_PRIORITY 10
 #define RT_MMCSD_STACK_SIZE 16384
-#define RT_MMCSD_THREAD_PRIORITY 22
+#define RT_MMCSD_THREAD_PRIORITY 10
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SDHCI
+#define RT_SDIO_DW_MMC
+#define RT_SDIO_SDHCI_DWCMSHC
+#define RT_SDIO_DW_MMC_ROCKCHIP
+#define RT_SDIO_SDHCI_DWCMSHC_ROCKCHIP
+#define RT_USING_SPI
+#define RT_USING_SPI_ISR
+#define RT_USING_QSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_SPI_ROCKCHIP
+#define RT_USING_WDT
+#define RT_WDT_DW
+#define RT_WDT_RK8XX
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_ROCKCHIP
+#define RT_AUDIO_ROCKCHIP_I2S_TDM
+#define RT_AUDIO_ROCKCHIP_CODEC
+#define RT_AUDIO_ROCKCHIP_CODEC_RK817
+#define RT_AUDIO_ROCKCHIP_CARD
+#define RT_USING_TOUCH
+#define RT_USING_LCD
+#define RT_USING_GRAPHIC
+#define RT_GRAPHIC_BACKLIGHT
+#define RT_GRAPHIC_BACKLIGHT_PWM
+#define RT_GRAPHIC_FB
+#define RT_GRAPHIC_FB_VOP2
+#define RT_GRAPHIC_FB_VOPL
+#define RT_GRAPHIC_FB_VOP1
+#define RT_GRAPHIC_DISPLAY_ROCKCHIP
+#define RT_GRAPHIC_CONNECTOR_DSI
+#define RT_GRAPHIC_CONNECTOR_HDMI
+#define RT_GRAPHIC_BACKLIGHT_HINT
+#define RT_GRAPHIC_PANEL_SIMPLE
+#define RT_GRAPHIC_INPUT_TOUCH_HINT
+#define RT_GRAPHIC_LOGO
+#define RT_GRAPHIC_LOGO_RADXA_CLUT224
+#define RT_GRAPHIC_LOGO_RADXA_CLUT224_PATH "../dm/graphic/logo/logo-radxa-clut224.ppm"
+#define RT_USING_HWCRYPTO
+#define RT_HWCRYPTO_DEFAULT_NAME "hwcrypto"
+#define RT_HWCRYPTO_IV_MAX_SIZE 16
+#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
+#define RT_HWCRYPTO_USING_GCM
+#define RT_HWCRYPTO_USING_AES
+#define RT_HWCRYPTO_USING_AES_ECB
+#define RT_HWCRYPTO_USING_DES
+#define RT_HWCRYPTO_USING_DES_ECB
+#define RT_HWCRYPTO_USING_3DES
+#define RT_HWCRYPTO_USING_3DES_ECB
+#define RT_HWCRYPTO_USING_MD5
+#define RT_HWCRYPTO_USING_SHA1
+#define RT_HWCRYPTO_USING_SHA2
+#define RT_HWCRYPTO_USING_SHA2_256
+#define RT_HWCRYPTO_USING_RNG
+#define RT_HWCRYPTO_USING_BIGNUM
+#define RT_HWCRYPTO_USING_BIGNUM_EXPTMOD
+#define RT_HWCRYPTO_RNG_ROCKCHIP
+#define RT_HWCRYPTO_CRYPTO_ROCKCHIP_V2
+#define RT_USING_PTP
+#define RT_USING_LED
+#define RT_LED_GPIO
+#define RT_USING_INPUT
+#define RT_INPUT_POWER
+#define RT_INPUT_MISC
+#define RT_INPUT_MISC_PWRKEY_RK8XX
+#define RT_INPUT_TOUCHSCREEN
+#define RT_INPUT_TOUCHSCREEN_GOODIX
+#define RT_USING_MBOX
+#define RT_MBOX_PIC
+#define RT_MBOX_ROCKCHIP
+#define RT_USING_HWSPINLOCK
+#define RT_HWSPINLOCK_ROCKCHIP
+#define RT_USING_PHYE
+#define RT_PHYE_ROCKCHIP_NANENG_COMBO
+#define RT_PHYE_ROCKCHIP_SNPS_PCIE3
+#define RT_PHYE_ROCKCHIP_INNO_DSIDPHY
+#define RT_USING_ATA
+#define RT_ATA_AHCI
+#define RT_ATA_AHCI_DW
+#define RT_USING_NVME
+#define RT_USING_NVME_IO_QUEUE 4
+#define RT_NVME_PCI
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -230,19 +360,109 @@
 #define RT_BLK_PARTITION_DFS
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
+#define RT_USING_SCSI
+#define RT_SCSI_SD
+#define RT_SCSI_CDROM
+#define RT_USING_UFS
+#define RT_UFS_ROCKCHIP
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_ARM_SCMI
+#define RT_FIRMWARE_ARM_SCMI_TRANSPORT_MAILBOX
+#define RT_FIRMWARE_ARM_SCMI_TRANSPORT_SMC
+#define RT_USING_DVFS
+#define RT_USING_DVFS_EVENT
+#define RT_USING_DVFS_OPP_RETRY_MAX 10
+
+/* DVFS Event Drivers */
+
+#define RT_DVFS_EVENT_ROCKCHIP_DFI
+
+/* DVFS CPUfreq Drivers */
+
+#define RT_DVFS_ROCKCHIP_CPUFREQ
+
+/* DVFS Devfreq Drivers */
+
+#define RT_DVFS_ROCKCHIP_DMC
+#define RT_USING_REGULATOR
+#define RT_REGULATOR_FAN53555
+#define RT_REGULATOR_FIXED
+#define RT_REGULATOR_GPIO
+#define RT_REGULATOR_SCMI
+#define RT_REGULATOR_RK8XX
 #define RT_USING_RESET
+#define RT_RESET_SCMI
+
+/* Power Management (PM) Domains device drivers */
+
+#define RT_PMDOMAIN_SCMI
+#define RT_PMDOMAIN_ROCKCHIP
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_THERMAL
+
+/* Thermal Sensors Drivers */
+
+#define RT_THERMAL_ROCKCHIP_TSADC
+
+/* Thermal Cool Drivers */
+
+#define RT_THERMAL_COOL_DVFS
+#define RT_THERMAL_COOL_PWM_FAN
+#define RT_USING_NVMEM
+#define RT_NVMEM_ROCKCHIP_OTP
+#define RT_USING_DMA
+#define RT_DMA_PL330
+#define RT_USING_MFD
+#define RT_MFD_SYSCON
+#define RT_MFD_RK8XX
+#define RT_MFD_RK8XX_I2C
+#define RT_MFD_RK8XX_SPI
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PCI
+#define RT_PCI_MSI
+#define RT_PCI_ENDPOINT
+#define RT_PCI_SYS_64BIT
+#define RT_PCI_CACHE_LINE_SIZE 8
+
+/* PCI Device Drivers */
+
+#define RT_PCI_DW
+#define RT_PCI_DW_HOST
+#define RT_PCI_DW_EP
+#define RT_PCI_DW_ROCKCHIP
 #define RT_USING_PIC
-#define MAX_HANDLERS 1024
+#define MAX_HANDLERS 2048
+#define RT_PIC_ARM_GIC
 #define RT_PIC_ARM_GIC_V3
+#define RT_PIC_ARM_GIC_V3_ITS
+#define RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX 256
+#define RT_PIC_ARM_GIC_MAX_NR 1
 #define RT_USING_PIN
+#define RT_PIN_ROCKCHIP
 #define RT_USING_PINCTRL
-#define RT_USING_KTIME
+#define RT_PINCTRL_ROCKCHIP_RK8XX
+#define RT_PINCTRL_ROCKCHIP
 #define RT_USING_CLK
-#define RT_USING_HWTIMER
-#define RT_HWTIMER_ARM_ARCH
+#define RT_CLK_SCMI
+#define RT_CLK_ROCKCHIP_RK8XX_CLKOUT
+#define RT_CLK_ROCKCHIP_LINK
+#define RT_CLK_ROCKCHIP
+#define RT_CLK_ROCKCHIP_RK3528
+#define RT_CLK_ROCKCHIP_RK3568
+#define RT_CLK_ROCKCHIP_RK3576
+#define RT_CLK_ROCKCHIP_RK3588
+
+/* SoC (System on Chip) Drivers */
+
+#define RT_SOC_ROCKCHIP_FIQ_DEBUGGER
+#define RT_SOC_ROCKCHIP_GRF
+#define RT_SOC_ROCKCHIP_HW_DECOMPRESS
+#define RT_ROCKCHIP_JPEG_DEC
+#define RT_ROCKCHIP_RGA2
+#define RT_SOC_ROCKCHIP_IODOMAIN
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -293,6 +513,7 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -364,6 +585,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 32768
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -406,50 +628,69 @@
 
 #define RT_USING_UTESTCASES
 
-/* Utest Self Testcase */
-
-/* end of Utest Self Testcase */
-
-/* Kernel Testcase */
+/* Kernel Core */
 
 
-/* Kernel SMP Testcase */
+/* SMP Test */
 
-/* end of Kernel SMP Testcase */
-/* end of Kernel Testcase */
+/* end of SMP Test */
+/* end of Kernel Core */
 
-/* CPP11 Testcase */
+/* Kernel Components */
 
-/* end of CPP11 Testcase */
+/* Drivers */
 
-/* Utest Serial Testcase */
 
-/* end of Utest Serial Testcase */
+/* IPC Test */
 
-/* Serial-Bypass Testcase */
+/* end of IPC Test */
 
-/* end of Serial-Bypass Testcase */
+/* Pin Test */
 
-/* Utest IPC Testcase */
+/* end of Pin Test */
 
-/* end of Utest IPC Testcase */
+/* Serial Test */
 
-/* RTT Posix Testcase */
+/* end of Serial Test */
 
-/* end of RTT Posix Testcase */
+/* SMP-Call Test */
 
-/* Memory Management Subsytem Testcase */
+#define RT_UTEST_SMP_CALL_FUNC
+/* end of SMP-Call Test */
 
-/* end of Memory Management Subsytem Testcase */
+/* SPI Test */
+
+/* end of SPI Test */
+/* end of Drivers */
+
+/* File System */
+
+/* end of File System */
 
 /* Tmpfs Testcase */
 
 /* end of Tmpfs Testcase */
 
-/* SMP-Call Testcase */
+/* CPP11 */
 
-#define UTEST_SMP_CALL_FUNC
-/* end of SMP-Call Testcase */
+/* end of CPP11 */
+
+/* LWP Testcase */
+
+/* end of LWP Testcase */
+
+/* Memory Management Subsytem Testcase */
+
+/* end of Memory Management Subsytem Testcase */
+
+/* Network */
+
+/* end of Network */
+
+/* Utest Framework */
+
+/* end of Utest Framework */
+/* end of Kernel Components */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -565,6 +806,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -646,15 +895,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* RT-Thread rockchip RK3500 drivers */
-
-#define RT_CLK_ROCKCHIP
-#define RT_CLK_ROCKCHIP_RK3568
-#define RT_CLK_ROCKCHIP_RK3588
-#define RT_SERIAL_8250
-#define RT_HWTIMER_ROCKCHIP
-/* end of RT-Thread rockchip RK3500 drivers */
-#define SOC_RK3568
+#define SOC_RK3500
 
 #endif

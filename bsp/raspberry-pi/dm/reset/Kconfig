@@ -1,0 +1,15 @@
+config RT_RESET_BRCMSTB_RESCAL
+    bool "Broadcom STB RESCAL reset controller"
+    depends on RT_USING_RESET
+    default n
+
+config RT_RESET_BRCMSTB
+    bool "Broadcom STB reset controller"
+    depends on RT_USING_RESET
+    default n
+
+config RT_RESET_RASPBERRYPI
+    bool "Raspberry Pi 4 Firmware Reset Driver"
+    depends on RT_USING_RESET
+    depends on RT_FIRMWARE_RASPBERRYPI
+    default n

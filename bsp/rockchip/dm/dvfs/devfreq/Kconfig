@@ -1,0 +1,10 @@
+config RT_DVFS_ROCKCHIP_DMC
+    bool "Rockchip DMC devfreq (DFI event test stub)"
+    depends on RT_USING_DVFS
+    depends on RT_USING_DVFS_EVENT
+    select RT_DVFS_EVENT_ROCKCHIP_DFI
+    default n
+    help
+        Minimal devfreq on the DMC node to bind DFI event and verify
+        devfreq_load_from_event. Does not perform ATF/SIP DDR scaling.
+

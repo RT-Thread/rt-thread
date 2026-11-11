@@ -97,8 +97,8 @@ static unsigned long event_delays_ns[] = {
 static void ehci_enable_event(struct ehci_hcd *ehci, unsigned event,
         bool resched)
 {
-    unsigned long *timeout = &ehci->hr_timeouts[event];
-    unsigned long time_interval = 0;
+    rt_tick_t *timeout = &ehci->hr_timeouts[event];
+    rt_tick_t time_interval = 0;
 
     if (resched)
     {

@@ -1,0 +1,74 @@
+/dts-v1/;
+
+#include <dt-bindings/pin/pin.h>
+
+/ {
+    compatible = "rt-thread,ra8p1-titan-board", "renesas,ra8p1";
+    model = "RT-Thread RA8P1 Titan Board M85";
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    aliases {
+    };
+
+    chosen {
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            compatible = "arm,cortex-m85";
+            device_type = "cpu";
+            reg = <0>;
+        };
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+        interrupt-parent = <&nvic>;
+
+        nvic: interrupt-controller@e000e100 {
+            compatible = "arm,v8m-nvic";
+            reg = <0xe000e100 0xc00>;
+            interrupt-controller;
+            #interrupt-cells = <2>;
+            arm,num-irqs = <96>;
+            arm,num-irq-priority-bits = <4>;
+        };
+
+        externalirq20: external-interrupt@40006018 {
+            compatible = "renesas,ra-external-interrupt";
+            reg = <0x40006018 0x1>;
+            interrupts = <49 12>;
+            channel = <20>;
+            renesas,trigger = "falling";
+            renesas,sample-clock-div = <64>;
+        };
+
+        ioport1: gpio@40400020 {
+            compatible = "renesas,ra-gpio-ioport";
+            reg = <0x40400020 0x20>;
+            port = <1>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            ngpios = <16>;
+            port-irqs = <&externalirq20>;
+            port-irq-names = "irq20";
+            port-irq20-pins = <10>;
+        };
+
+        ioport0: gpio@40400000 {
+            compatible = "renesas,ra-gpio-ioport";
+            reg = <0x40400000 0x20>;
+            port = <0>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            ngpios = <16>;
+        };
+    };
+};

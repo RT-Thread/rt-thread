@@ -163,3 +163,7 @@ menuconfig RT_USING_HWCRYPTO
                 default n
         endif
     endif
+
+if RT_USING_DM && RT_USING_HWCRYPTO
+    osource "$(SOC_DM_HWCRYPTO_DIR)/Kconfig"
+endif

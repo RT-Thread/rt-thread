@@ -1,0 +1,6 @@
+config RT_SOC_BROADCOM_RASPBERRYPI_VOLTAGE_MONITOR
+    bool "Raspberry Pi voltage monitor"
+    depends on RT_FIRMWARE_RASPBERRYPI
+    select RT_USING_DEVICE_IPC
+    select RT_USING_SYSTEM_WORKQUEUE
+    default y

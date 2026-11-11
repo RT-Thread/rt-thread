@@ -121,7 +121,7 @@ get_mac:
     }
 
     memset(mac_buffer, 0, 12);
-    ret = usbh_get_string_desc(cdc_ecm_class->hport, mac_str_idx, (uint8_t *)mac_buffer);
+    ret = usbh_get_string_desc(cdc_ecm_class->hport, mac_str_idx, (uint8_t *)mac_buffer, 12);
     if (ret < 0) {
         return ret;
     }
@@ -304,16 +304,6 @@ int usbh_cdc_ecm_eth_output(uint32_t buflen)
 
     usbh_bulk_urb_fill(&g_cdc_ecm_class.bulkout_urb, g_cdc_ecm_class.hport, g_cdc_ecm_class.bulkout, g_cdc_ecm_tx_buffer, buflen, USB_OSAL_WAITING_FOREVER, NULL, NULL);
     return usbh_submit_urb(&g_cdc_ecm_class.bulkout_urb);
-}
-
-__WEAK void usbh_cdc_ecm_run(struct usbh_cdc_ecm *cdc_ecm_class)
-{
-    (void)cdc_ecm_class;
-}
-
-__WEAK void usbh_cdc_ecm_stop(struct usbh_cdc_ecm *cdc_ecm_class)
-{
-    (void)cdc_ecm_class;
 }
 
 const struct usbh_class_driver cdc_ecm_class_driver = {

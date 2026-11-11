@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend(['RT_UTEST_COMPLETION']):
+    src += ['completion_tc.c', 'completion_timeout_tc.c']
+
+if GetDepend(['RT_UTEST_WORKQUEUE']):
+    src += ['workqueue_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
+
+Return('group')

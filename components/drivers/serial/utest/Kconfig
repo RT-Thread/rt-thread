@@ -1,0 +1,56 @@
+menu "Serial Test"
+
+    config RT_UTEST_SERIAL_BYPASS
+        bool "Serial Bypass Test"
+        default n
+        depends on RT_USING_SERIAL_BYPASS
+
+    config RT_UTEST_SERIAL_V2
+        bool "Serial V2 Test"
+        default n
+        depends on RT_USING_SERIAL_V2
+
+    if RT_UTEST_SERIAL_V2
+
+        config RT_SERIAL_TC_DEVICE_NAME
+            string "Device Name for Serial Test"
+            default "uart2"
+
+        config RT_SERIAL_TC_RXBUF_SIZE
+            int "RX Buffer Size for Serial Test"
+            default 128
+
+        config RT_SERIAL_TC_TXBUF_SIZE
+            int "TX Buffer Size for Serial Test"
+            default 128
+
+        config RT_SERIAL_TC_SEND_ITERATIONS
+            int "Number of Iterations for Test Routines"
+            default 100
+
+        config RT_UTEST_SERIAL_QEMU
+            bool "QEMU Dedicated Test"
+            default n
+
+        config RT_UTEST_SERIAL_POSIX
+            bool "Serial POSIX Test"
+            default n
+            select RT_USING_DFS
+            select RT_USING_POSIX_FS
+            select RT_USING_POSIX_TERMIOS
+
+        if RT_UTEST_SERIAL_POSIX
+
+            config RT_SERIAL_POSIX_TC_DEVICE_NAME
+                string "Device Name for Serial POSIX Test"
+                default "dev/uart2"
+
+            config RT_SERIAL_POSIX_TC_SEND_ITERATIONS
+                int "Number of Iterations for POSIX Test Routines"
+                default 100
+
+        endif
+
+    endif
+
+endmenu

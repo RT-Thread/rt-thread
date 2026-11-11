@@ -37,7 +37,7 @@ if rtconfig.PLATFORM in ['gcc']:
             print('build M0 exit with code %d\n' % res)
             sys.exit(res)
         os.chdir(ocwd)
-        res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
+        res = os.system('cd ../libraries/; find -name \*.o -exec rm {} \;')
         os.chdir(ocwd)
     else:
         # Assume Windows.

@@ -19,18 +19,18 @@ extern "C" {
 
 #ifdef BSP_USING_DAC1
 #ifndef DAC1_INIT_PARAMS
-#define DAC1_INIT_PARAMS                                                    \
-    {                                                                       \
-       .name                      = "dac1",                                 \
+#define DAC1_INIT_PARAMS \
+    {                    \
+        .name = "dac1",  \
     }
 #endif /* DAC1_INIT_PARAMS */
 #endif /* BSP_USING_DAC1 */
 
 #ifdef BSP_USING_DAC2
 #ifndef DAC2_INIT_PARAMS
-#define DAC2_INIT_PARAMS                                                    \
-    {                                                                       \
-       .name                      = "dac2",                                 \
+#define DAC2_INIT_PARAMS \
+    {                    \
+        .name = "dac2",  \
     }
 #endif /* DAC2_INIT_PARAMS */
 #endif /* BSP_USING_DAC2 */

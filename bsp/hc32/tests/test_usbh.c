@@ -22,9 +22,10 @@
                                                                 (/) Udisk mount dir
   2.  RT-Thread Components ---> DFS: device virtual files system --->
                                 ......
-                                [*] Enable elm0chan fatfs
+                                [*] Enable elm-chan fatfs
                                 ......
   3.如果命令执行不成功，需参考对应Board目录下的README.md文件(注意事项中的USB Host部分)
+  4.命令成功创建文件后，可以通过ls命令查看、通过cat命令查看文件内容、通过rm命令删除文件等操作
  */
 
 /*
@@ -37,7 +38,7 @@
 */
 #include <unistd.h>
 #include <fcntl.h>
-#define TEST_FN     "/test_usbh.c"
+#define TEST_FN "/test_usbh.c"
 static char test_data[120], buffer[120];
 
 void usbh_readwrite(const char *filename)
@@ -52,7 +53,7 @@ void usbh_readwrite(const char *filename)
         return;
     }
 
-    for (index = 0; index < sizeof(test_data); index ++)
+    for (index = 0; index < sizeof(test_data); index++)
     {
         test_data[index] = index + 27;
     }
@@ -82,7 +83,7 @@ void usbh_readwrite(const char *filename)
         return;
     }
 
-    for (index = 0; index < sizeof(test_data); index ++)
+    for (index = 0; index < sizeof(test_data); index++)
     {
         if (test_data[index] != buffer[index])
         {

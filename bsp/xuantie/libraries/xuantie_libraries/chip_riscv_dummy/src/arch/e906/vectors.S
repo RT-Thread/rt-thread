@@ -18,10 +18,9 @@
 
 #include "riscv_asm_macro.h"
 
-/* Enable interrupts when returning from the handler */
-#define MSTATUS_PRV1 0x1880
+#define RISCV_MCAUSE_IRQ_POS 31
 
-.section .stack
+.section .stack, "aw", @nobits
     .align  4
     .global g_trapstackbase
     .global g_top_trapstack
@@ -32,11 +31,19 @@ g_top_trapstack:
 #if CONFIG_SUPPORT_IRQ_NESTED
 #define IRQ_NESTED_MAX  (6)
 .section .bss
-irq_nested_level:
-.long 0
+    .align 2
+    irq_nested_level:
+    .long 0
 
-irq_nested_mcause:
-.long 0, 0, 0, 0, 0, 0
+    irq_nested_mcause:
+    .long 0, 0, 0, 0, 0, 0
+#endif
+
+/* for interrupt tail-chaining debug */
+#if CONFIG_DEBUG_TAIL_CHAINING
+.global g_irq_tailchain_loops
+g_irq_tailchain_loops:
+.long 0
 #endif
 
 .text
@@ -46,23 +53,21 @@ irq_nested_mcause:
     .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
 Default_IRQHandler:
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -4
+    sw      s0, (sp)
+#endif
     csrw    mscratch, sp
     la      sp, g_top_irqstack
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, -76
-#else
-    addi    sp, sp, -72
-#endif
     sw      t0, 4(sp)
     sw      t1, 8(sp)
     csrr    t0, mepc
     csrr    t1, mcause
     sw      t1, 64(sp)
     sw      t0, 68(sp)
-#if CONFIG_CHECK_FPU_DIRTY
-    csrr    t0, mstatus
-    sw      t0, 72(sp)
-#endif
+    csrr    t1, mstatus
+    sw      t1, 72(sp)
     sw      ra, 0(sp)
     sw      t2, 12(sp)
     sw      a0, 16(sp)
@@ -78,14 +83,14 @@ Default_IRQHandler:
     sw      t5, 56(sp)
     sw      t6, 60(sp)
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     addi    sp, sp, -4
     csrr    t0, vxsat
     sw      t0, 0(sp)
 #endif /*__riscv_dsp */
 
 #if CONFIG_CHECK_FPU_DIRTY
-    csrr    t3, mstatus
+    mv      t3, t1
 #endif
     SAVE_FLOAT_REGISTERS
 
@@ -94,13 +99,15 @@ Default_IRQHandler:
 
     /* get mcause from sp */
     addi    t0, sp, 64
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     addi    t0, t0, 4
 #endif /*__riscv_dsp */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
     addi    t0, t0, 164
 #elif __riscv_flen == 32
     addi    t0, t0, 84
+#endif
 #endif
     lw      a1, (t0)
     andi    a0, a1, 0x3FF
@@ -115,16 +122,13 @@ Default_IRQHandler:
     and     a5, a4, a3
     sb      a5, 0(a2)
 
-#if CONFIG_CHECK_FPU_DIRTY
     RESTORE_MSTATUS
-#endif
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
+
     csrw    mcause, a1
 
     RESTORE_FLOAT_REGISTERS
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     lw      t0, 0(sp)
     csrw    vxsat, t0
     addi    sp, sp, 4
@@ -149,14 +153,15 @@ Default_IRQHandler:
     lw      t5, 56(sp)
     lw      t6, 60(sp)
 
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, 76
-#else
-    addi    sp, sp, 72
-#endif
     csrr    sp, mscratch
+
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 4
+#endif
+
     mret
-#else
+#else /* CONFIG_SUPPORT_IRQ_NESTED */
     .align  2
     .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
@@ -186,9 +191,12 @@ Default_IRQHandler:
     li      t0, 1
     bgt     t1, t0, .Lnested1
 
-    lw      t0, 0(sp)
-    lw      t1, 4(sp)
-    addi    sp, sp, 8
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -8
+    sw      s0, (sp)
+    csrr    t0, mepc
+    sw      t0, 4(sp)
+#endif
 
     csrw    mscratch, sp
     la      sp, g_top_irqstack
@@ -198,21 +206,16 @@ Default_IRQHandler:
     lw      t1, 4(sp)
     addi    sp, sp, 8
 .Lnested2:
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, -76
-#else
-    addi    sp, sp, -72
-#endif
     sw      t0, 4(sp)
     sw      t1, 8(sp)
     csrr    t0, mepc
     csrr    t1, mcause
     sw      t1, 64(sp)
     sw      t0, 68(sp)
-#if CONFIG_CHECK_FPU_DIRTY
-    csrr    t0, mstatus
-    sw      t0, 72(sp)
-#endif
+    csrr    t1, mstatus
+    sw      t1, 72(sp)
+
     csrs    mstatus, 8
 
     sw      ra, 0(sp)
@@ -230,14 +233,14 @@ Default_IRQHandler:
     sw      t5, 56(sp)
     sw      t6, 60(sp)
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     addi    sp, sp, -4
     csrr    t0, vxsat
     sw      t0, 0(sp)
 #endif /*__riscv_dsp */
 
 #if CONFIG_CHECK_FPU_DIRTY
-    csrr    t3, mstatus
+    mv      t3, t1
 #endif
     SAVE_FLOAT_REGISTERS
 
@@ -248,13 +251,15 @@ Default_IRQHandler:
 
     /* get mcause from sp */
     addi    t0, sp, 64
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     addi    t0, t0, 4
 #endif /*__riscv_dsp */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
     addi    t0, t0, 164
 #elif __riscv_flen == 32
     addi    t0, t0, 84
+#endif
 #endif
     lw      a1, (t0)
     andi    a0, a1, 0x3FF
@@ -275,17 +280,13 @@ Default_IRQHandler:
     sw      t1, (t0)
     bgt     t1, zero, .Lnested3
 
-#if CONFIG_CHECK_FPU_DIRTY
     RESTORE_MSTATUS
-#endif
 
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
     csrw    mcause, a1
 
     RESTORE_FLOAT_REGISTERS
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     lw      t0, 0(sp)
     csrw    vxsat, t0
     addi    sp, sp, 4
@@ -310,12 +311,14 @@ Default_IRQHandler:
     lw      t5, 56(sp)
     lw      t6, 60(sp)
 
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, 76
-#else
-    addi    sp, sp, 72
-#endif
     csrr    sp, mscratch
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 8
+#endif
+    lw      t0, 0(sp)
+    lw      t1, 4(sp)
+    addi    sp, sp, 8
     mret
 
 .Lnested3:
@@ -330,12 +333,11 @@ Default_IRQHandler:
     or      t0, a0, t0
     csrw    mcause, t0
 
-#if CONFIG_CHECK_FPU_DIRTY
     RESTORE_MSTATUS
-#endif
+
     RESTORE_FLOAT_REGISTERS
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     lw      t0, 0(sp)
     csrw    vxsat, t0
     addi    sp, sp, 4
@@ -343,9 +345,6 @@ Default_IRQHandler:
 
     lw      t0, 68(sp)
     csrw    mepc, t0
-
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
 
     lw      ra, 0(sp)
     lw      t0, 4(sp)
@@ -364,13 +363,9 @@ Default_IRQHandler:
     lw      t5, 56(sp)
     lw      t6, 60(sp)
 
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, 76
-#else
-    addi    sp, sp, 72
-#endif
     mret
-#endif
+#endif /* CONFIG_SUPPORT_IRQ_NESTED */
 
 /******************************************************************************
  * Functions:
@@ -429,7 +424,12 @@ trap:
     la      a1, exceptionHandler
     jalr    a1
 
-
+/*******************************************************************************
+ * Functions:
+ *     void Default_Handler(void);
+ * Non-Vector Interrupt Handler,Exception Handler,NMI Handler
+ ******************************************************************************/
+#if !CONFIG_SUPPORT_IRQ_NESTED
     .align  6
     .weak   Default_Handler
     .type   Default_Handler, %function
@@ -439,36 +439,37 @@ Default_Handler:
     sw      t0, 0x0(sp)
     sw      t1, 0x4(sp)
     csrr    t0, mcause
+
+    srli    t1, t0, RISCV_MCAUSE_IRQ_POS
+    bnez    t1, is_interrupt
+
     andi    t0, t0, 0x3FF
     li      t1, 24
     beq     t0, t1, .NMI_Handler
     lw      t0, 0x0(sp)
     lw      t1, 0x4(sp)
     addi    sp, sp, 8
-    j      trap
-.NMI_Handler:
-    /* mscratch may be used before */
-    addi    sp, sp, -4
-    csrr    t0, mscratch
-    sw      t0, 0x0(sp)
+    j       trap
 
-    csrw    mscratch, sp
-    la      sp, g_top_trapstack
-#if CONFIG_CHECK_FPU_DIRTY
-    addi    sp, sp, -76
-#else
-    addi    sp, sp, -72
+is_interrupt:
+    lw      t0, 0x0(sp)
+    lw      t1, 0x4(sp)
+    addi    sp, sp, 8
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -4
+    sw      s0, (sp)
 #endif
+    csrw    mscratch, sp
+    la      sp, g_top_irqstack
+    addi    sp, sp, -76
     sw      t0, 4(sp)
     sw      t1, 8(sp)
     csrr    t0, mepc
     csrr    t1, mcause
     sw      t1, 64(sp)
     sw      t0, 68(sp)
-#if CONFIG_CHECK_FPU_DIRTY
-    csrr    t0, mstatus
-    sw      t0, 72(sp)
-#endif
+    csrr    t1, mstatus
+    sw      t1, 72(sp)
 
     sw      ra, 0(sp)
     sw      t2, 12(sp)
@@ -485,64 +486,55 @@ Default_Handler:
     sw      t5, 56(sp)
     sw      t6, 60(sp)
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     addi    sp, sp, -4
     csrr    t0, vxsat
     sw      t0, 0(sp)
 #endif /*__riscv_dsp */
 
 #if CONFIG_CHECK_FPU_DIRTY
-    csrr    t3, mstatus
+    mv      t3, t1
 #endif
     SAVE_FLOAT_REGISTERS
 
-    la      t0, handle_nmi_exception
-    jalr    t0
-
-    /* get mcause from sp */
-    addi    t0, sp, 64
-#if __riscv_dsp
-    addi    t0, t0, 4
-#endif /*__riscv_dsp */
-#if __riscv_flen == 64
-    addi    t0, t0, 164
-#elif __riscv_flen == 32
-    addi    t0, t0, 84
+#if CONFIG_DEBUG_TAIL_CHAINING
+    li       t2, 0
+    la       t1, g_irq_tailchain_loops
+    sw       t2, 0(t1)
 #endif
-    lw      a1, (t0)
-    andi    a0, a1, 0x3FF
-    slli    a0, a0, 2
 
-    /* clear pending */
-    li      a2, 0xE0801000
-    add     a2, a2, a0
-    lb      a3, 0(a2)
-    li      a4, 1
-    not     a4, a4
-    and     a5, a4, a3
-    sb      a5, 0(a2)
+    csrrci   t0, mnxti, MSTATUS_MIE
+    beqz     t0, irq_done
 
-#if CONFIG_CHECK_FPU_DIRTY
+irq_loop:
+#if CONFIG_DEBUG_TAIL_CHAINING
+    la       t2, g_irq_tailchain_loops
+    lw       t1, 0(t2)
+    addi     t1, t1, 1
+    sw       t1, 0(t2)
+#endif
+    lw       t1, 0(t0)
+    jalr     t1
+    csrrci   t0, mnxti, MSTATUS_MIE
+    bnez     t0, irq_loop
+
+irq_done:
     RESTORE_MSTATUS
-#endif
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
-    csrw    mcause, a1
 
     RESTORE_FLOAT_REGISTERS
 
-#if __riscv_dsp
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
     lw      t0, 0(sp)
     csrw    vxsat, t0
     addi    sp, sp, 4
 #endif /*__riscv_dsp */
 
+    lw      a1, 64(sp)
+    csrw    mcause, a1
+
     lw      t0, 68(sp)
     csrw    mepc, t0
-#if CONFIG_CHECK_FPU_DIRTY
-    lw      t0, 72(sp)
-    csrw    mstatus, t0
-#endif
+
     lw      ra, 0(sp)
     lw      t0, 4(sp)
     lw      t1, 8(sp)
@@ -560,11 +552,336 @@ Default_Handler:
     lw      t5, 56(sp)
     lw      t6, 60(sp)
 
-#if CONFIG_CHECK_FPU_DIRTY
     addi    sp, sp, 76
-#else
-    addi    sp, sp, 72
+    csrr    sp, mscratch
+
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 4
 #endif
+    mret
+
+#else /* CONFIG_SUPPORT_IRQ_NESTED */
+
+    .align  6
+    .weak   Default_Handler
+    .type   Default_Handler, %function
+Default_Handler:
+    addi    sp, sp, -8
+    sw      t0, 0x0(sp)
+    sw      t1, 0x4(sp)
+
+    csrr    t0, mcause
+
+    /* Check is interrupt */
+    srli    t1, t0, RISCV_MCAUSE_IRQ_POS
+    bnez    t1, is_interrupt
+
+    /* Check for nmi */
+    andi    t0, t0, 0x3FF
+    li      t1, 24
+    beq     t0, t1, .NMI_Handler
+
+    lw      t0, 0x0(sp)
+    lw      t1, 0x4(sp)
+    addi    sp, sp, 8
+
+    /* is exception */
+    j       trap
+
+is_interrupt:
+    la      t0, irq_nested_level
+    lw      t1, (t0)
+    addi    t1, t1, 1
+    sw      t1, (t0)
+
+    li      t0, IRQ_NESTED_MAX
+    /* nested too deeply, may be error happens */
+    bgt     t1, t0, trap
+
+    addi    t1, t1, -1
+    la      t0, irq_nested_mcause
+    slli    t1, t1, 2
+    add     t0, t0, t1
+    csrr    t1, mcause
+    sw      t1, (t0)
+
+    la      t0, irq_nested_level
+    lw      t1, (t0)
+    li      t0, 1
+    bgt     t1, t0, .Nested_Context
+
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -8
+    sw      s0, (sp)
+    csrr    t0, mepc
+    sw      t0, 4(sp)
+#endif
+
+    csrw    mscratch, sp
+    la      sp, g_top_irqstack
+    j       .Save_Context
+
+.Nested_Context:
+    lw      t0, 0(sp)
+    lw      t1, 4(sp)
+    addi    sp, sp, 8
+.Save_Context:
+    addi    sp, sp, -76
+    sw      t0, 4(sp)
+    sw      t1, 8(sp)
+    csrr    t0, mepc
+    csrr    t1, mcause
+    sw      t1, 64(sp)
+    sw      t0, 68(sp)
+    csrr    t1, mstatus
+    sw      t1, 72(sp)
+
+    sw      ra, 0(sp)
+    sw      t2, 12(sp)
+    sw      a0, 16(sp)
+    sw      a1, 20(sp)
+    sw      a2, 24(sp)
+    sw      a3, 28(sp)
+    sw      a4, 32(sp)
+    sw      a5, 36(sp)
+    sw      a6, 40(sp)
+    sw      a7, 44(sp)
+    sw      t3, 48(sp)
+    sw      t4, 52(sp)
+    sw      t5, 56(sp)
+    sw      t6, 60(sp)
+
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    addi    sp, sp, -4
+    csrr    t0, vxsat
+    sw      t0, 0(sp)
+#endif /*__riscv_dsp */
+
+#if CONFIG_CHECK_FPU_DIRTY
+    mv      t3, t1
+#endif
+    SAVE_FLOAT_REGISTERS
+
+    csrrci  t0, mnxti, MSTATUS_MIE
+    csrs    mstatus, 8                     /* enable irq for preemption */
+    lw      t1, 0(t0)                      /* Get handler from vector table */
+    jalr    t1                             /* Call handler */
+
+    csrc    mstatus, 8                     /* disable irq for critical section */
+
+    /* get mcause from sp */
+    addi    t0, sp, 64
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    addi    t0, t0, 4
+#endif /*__riscv_dsp */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
+#if __riscv_flen == 64
+    addi    t0, t0, 164
+#elif __riscv_flen == 32
+    addi    t0, t0, 84
+#endif
+#endif
+    lw      a1, (t0)
+
+    la      t0, irq_nested_level
+    lw      t1, (t0)
+    addi    t1, t1, -1
+    sw      t1, (t0)
+    bgt     t1, zero, .Nested_Return
+
+    RESTORE_MSTATUS
+
+    csrw    mcause, a1
+
+    RESTORE_FLOAT_REGISTERS
+
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    lw      t0, 0(sp)
+    csrw    vxsat, t0
+    addi    sp, sp, 4
+#endif /*__riscv_dsp */
+
+    lw      t0, 68(sp)
+    csrw    mepc, t0
+    lw      ra, 0(sp)
+    lw      t0, 4(sp)
+    lw      t1, 8(sp)
+    lw      t2, 12(sp)
+    lw      a0, 16(sp)
+    lw      a1, 20(sp)
+    lw      a2, 24(sp)
+    lw      a3, 28(sp)
+    lw      a4, 32(sp)
+    lw      a5, 36(sp)
+    lw      a6, 40(sp)
+    lw      a7, 44(sp)
+    lw      t3, 48(sp)
+    lw      t4, 52(sp)
+    lw      t5, 56(sp)
+    lw      t6, 60(sp)
+
+    addi    sp, sp, 76
+    csrr    sp, mscratch
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 8
+#endif
+    lw      t0, 0(sp)
+    lw      t1, 4(sp)
+    addi    sp, sp, 8
+    mret
+
+.Nested_Return:
+    /* keep mpil in current mcause & load exception code before */
+    addi    t1, t1, -1
+    la      t0, irq_nested_mcause
+    slli    t1, t1, 2
+    add     t1, t0, t1
+    lw      t0, (t1)
+    andi    t0, t0, 0x3FF
+    andi    a0, a1, 0xFFFFFC00
+    or      t0, a0, t0
+    csrw    mcause, t0
+
+    RESTORE_MSTATUS
+
+    RESTORE_FLOAT_REGISTERS
+
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    lw      t0, 0(sp)
+    csrw    vxsat, t0
+    addi    sp, sp, 4
+#endif /*__riscv_dsp */
+
+    lw      t0, 68(sp)
+    csrw    mepc, t0
+
+    lw      ra, 0(sp)
+    lw      t0, 4(sp)
+    lw      t1, 8(sp)
+    lw      t2, 12(sp)
+    lw      a0, 16(sp)
+    lw      a1, 20(sp)
+    lw      a2, 24(sp)
+    lw      a3, 28(sp)
+    lw      a4, 32(sp)
+    lw      a5, 36(sp)
+    lw      a6, 40(sp)
+    lw      a7, 44(sp)
+    lw      t3, 48(sp)
+    lw      t4, 52(sp)
+    lw      t5, 56(sp)
+    lw      t6, 60(sp)
+
+    addi    sp, sp, 76
+    mret
+#endif /* CONFIG_SUPPORT_IRQ_NESTED */
+.NMI_Handler:
+    /* mscratch may be used before */
+    addi    sp, sp, -4
+    csrr    t0, mscratch
+    sw      t0, 0x0(sp)
+
+    csrw    mscratch, sp
+    la      sp, g_top_trapstack
+    addi    sp, sp, -76
+    sw      t0, 4(sp)
+    sw      t1, 8(sp)
+    csrr    t0, mepc
+    csrr    t1, mcause
+    sw      t1, 64(sp)
+    sw      t0, 68(sp)
+    csrr    t1, mstatus
+    sw      t1, 72(sp)
+
+    sw      ra, 0(sp)
+    sw      t2, 12(sp)
+    sw      a0, 16(sp)
+    sw      a1, 20(sp)
+    sw      a2, 24(sp)
+    sw      a3, 28(sp)
+    sw      a4, 32(sp)
+    sw      a5, 36(sp)
+    sw      a6, 40(sp)
+    sw      a7, 44(sp)
+    sw      t3, 48(sp)
+    sw      t4, 52(sp)
+    sw      t5, 56(sp)
+    sw      t6, 60(sp)
+
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    addi    sp, sp, -4
+    csrr    t0, vxsat
+    sw      t0, 0(sp)
+#endif /*__riscv_dsp */
+
+#if CONFIG_CHECK_FPU_DIRTY
+    mv      t3, t1
+#endif
+    SAVE_FLOAT_REGISTERS
+
+    la      t0, handle_nmi_exception
+    jalr    t0
+
+    /* get mcause from sp */
+    addi    t0, sp, 64
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    addi    t0, t0, 4
+#endif /*__riscv_dsp */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
+#if __riscv_flen == 64
+    addi    t0, t0, 164
+#elif __riscv_flen == 32
+    addi    t0, t0, 84
+#endif
+#endif
+    lw      a1, (t0)
+    andi    a0, a1, 0x3FF
+    slli    a0, a0, 2
+
+    /* clear pending */
+    li      a2, 0xE0801000
+    add     a2, a2, a0
+    lb      a3, 0(a2)
+    li      a4, 1
+    not     a4, a4
+    and     a5, a4, a3
+    sb      a5, 0(a2)
+
+    RESTORE_MSTATUS
+
+    csrw    mcause, a1
+
+    RESTORE_FLOAT_REGISTERS
+
+#if __riscv_dsp && defined(ARCH_RISCV_DSP)
+    lw      t0, 0(sp)
+    csrw    vxsat, t0
+    addi    sp, sp, 4
+#endif /*__riscv_dsp */
+
+    lw      t0, 68(sp)
+    csrw    mepc, t0
+    lw      t0, 72(sp)
+    csrw    mstatus, t0
+
+    lw      ra, 0(sp)
+    lw      t0, 4(sp)
+    lw      t1, 8(sp)
+    lw      t2, 12(sp)
+    lw      a0, 16(sp)
+    lw      a1, 20(sp)
+    lw      a2, 24(sp)
+    lw      a3, 28(sp)
+    lw      a4, 32(sp)
+    lw      a5, 36(sp)
+    lw      a6, 40(sp)
+    lw      a7, 44(sp)
+    lw      t3, 48(sp)
+    lw      t4, 52(sp)
+    lw      t5, 56(sp)
+    lw      t6, 60(sp)
+
+    addi    sp, sp, 76
     csrr    sp, mscratch
 
     /* restore mscratch */

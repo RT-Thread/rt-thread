@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1600"
+   height="1200"
+   viewBox="0 0 1600 1200"
+   version="1.1"
+   id="svg69"
+   sodipodi:docname="smp_boot_overview.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview69"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.48833333"
+     inkscape:cx="870.30717"
+     inkscape:cy="499.65871"
+     inkscape:window-width="1440"
+     inkscape:window-height="830"
+     inkscape:window-x="2553"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg69"
+     showgrid="false" />
+  <defs
+     id="defs3">
+    <style
+       id="style1">
+      .canvas { fill: #f8fafc; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 30px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; fill: #475569; }
+      .group-boot { fill: #fff7ed; stroke: #f59e0b; stroke-width: 2.5; }
+      .group-secondary { fill: #ecfdf5; stroke: #22c55e; stroke-width: 2.5; }
+      .group-shared { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 2.5; }
+      .group-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #0f172a; }
+      .legend-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; fill: #334155; }
+      .chip-boot { fill: #f59e0b; }
+      .chip-secondary { fill: #22c55e; }
+      .chip-shared { fill: #7c3aed; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.8; }
+      .box-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #0f172a; }
+      .box-file { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; font-style: italic; fill: #64748b; }
+      .box-note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #334155; }
+      .step { fill: #0f172a; }
+      .step-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; }
+      .arrow { stroke: #475569; stroke-width: 2.5; fill: none; }
+      .arrow-dashed { stroke: #0f766e; stroke-width: 2.5; stroke-dasharray: 8 6; fill: none; }
+      .join-arrow { stroke: #7c3aed; stroke-width: 2.5; fill: none; }
+      .arrow-label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #334155; }
+      .label-bg { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1; }
+      .footer { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #64748b; }
+    </style>
+    <marker
+       id="arrowhead"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#475569"
+         id="path1" />
+    </marker>
+    <marker
+       id="arrowhead-dashed"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#0f766e"
+         id="path2" />
+    </marker>
+    <marker
+       id="arrowhead-join"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#7c3aed"
+         id="path3" />
+    </marker>
+  </defs>
+  <rect
+     class="canvas"
+     x="0"
+     y="0"
+     width="1600"
+     height="1200"
+     id="rect3" />
+  <text
+     class="title"
+     x="60"
+     y="58"
+     id="text3">QEMU virt64 AArch64 SMP Boot Overview</text>
+  <text
+     class="subtitle"
+     x="60"
+     y="88"
+     id="text4">CPU0 completes the shared platform bring-up first, then wakes the remaining CPUs and all cores join the same scheduler.</text>
+  <circle
+     class="chip-boot"
+     cx="1180"
+     cy="54"
+     r="9"
+     id="circle4" />
+  <text
+     class="legend-text"
+     x="1198"
+     y="59"
+     id="text5">Boot CPU path</text>
+  <circle
+     class="chip-secondary"
+     cx="1325"
+     cy="54"
+     r="9"
+     id="circle5" />
+  <text
+     class="legend-text"
+     x="1343"
+     y="59"
+     id="text6">Secondary CPU path</text>
+  <circle
+     class="chip-shared"
+     cx="1180"
+     cy="84"
+     r="9"
+     id="circle6" />
+  <text
+     class="legend-text"
+     x="1198"
+     y="89"
+     id="text7">Shared runtime state</text>
+  <rect
+     class="group-boot"
+     x="40"
+     y="118"
+     width="1520"
+     height="470"
+     rx="24"
+     ry="24"
+     id="rect7" />
+  <text
+     class="group-title"
+     x="66"
+     y="150"
+     id="text8">Boot CPU</text>
+  <rect
+     class="box"
+     x="70"
+     y="180"
+     width="210"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect8" />
+  <circle
+     class="step"
+     cx="94"
+     cy="200"
+     r="15"
+     id="circle8" />
+  <text
+     class="step-text"
+     x="94"
+     y="204"
+     text-anchor="middle"
+     id="text9">1</text>
+  <text
+     class="box-title"
+     x="175"
+     y="220"
+     text-anchor="middle"
+     id="text10">BootROM / BL1</text>
+  <text
+     class="box-file"
+     x="175"
+     y="244"
+     text-anchor="middle"
+     id="text11">QEMU firmware handoff</text>
+  <text
+     class="box-note"
+     x="175"
+     y="266"
+     text-anchor="middle"
+     id="text12">Load the image and jump to _start.</text>
+  <text
+     class="box-note"
+     x="175"
+     y="284"
+     text-anchor="middle"
+     id="text13">x0 carries the DTB physical address.</text>
+  <rect
+     class="box"
+     x="330"
+     y="180"
+     width="200"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect13" />
+  <circle
+     class="step"
+     cx="354"
+     cy="200"
+     r="15"
+     id="circle13" />
+  <text
+     class="step-text"
+     x="354"
+     y="204"
+     text-anchor="middle"
+     id="text14">2</text>
+  <text
+     class="box-title"
+     x="430"
+     y="220"
+     text-anchor="middle"
+     id="text15">_start</text>
+  <text
+     class="box-file"
+     x="430"
+     y="244"
+     text-anchor="middle"
+     id="text16">entry_point.S</text>
+  <text
+     class="box-note"
+     x="430"
+     y="266"
+     text-anchor="middle"
+     id="text17">Kernel entry for CPU0.</text>
+  <text
+     class="box-note"
+     x="430"
+     y="284"
+     text-anchor="middle"
+     id="text18">Sets up the first control flow.</text>
+  <rect
+     class="box"
+     x="580"
+     y="180"
+     width="310"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect18" />
+  <circle
+     class="step"
+     cx="604"
+     cy="200"
+     r="15"
+     id="circle18" />
+  <text
+     class="step-text"
+     x="604"
+     y="204"
+     text-anchor="middle"
+     id="text19">3</text>
+  <text
+     class="box-title"
+     x="735"
+     y="218"
+     text-anchor="middle"
+     id="text20">Early assembly setup</text>
+  <text
+     class="box-file"
+     x="735"
+     y="242"
+     text-anchor="middle"
+     id="text21">init_cpu_el / init_kernel_bss / init_cpu_stack_early</text>
+  <text
+     class="box-note"
+     x="735"
+     y="266"
+     text-anchor="middle"
+     id="text22">Synchronize to EL1h, clear BSS, set SP_EL1.</text>
+  <text
+     class="box-note"
+     x="735"
+     y="284"
+     text-anchor="middle"
+     id="text23">Save the FDT and enable the early MMU map.</text>
+  <rect
+     class="box"
+     x="940"
+     y="180"
+     width="240"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect23" />
+  <circle
+     class="step"
+     cx="964"
+     cy="200"
+     r="15"
+     id="circle23" />
+  <text
+     class="step-text"
+     x="964"
+     y="204"
+     text-anchor="middle"
+     id="text24">4</text>
+  <text
+     class="box-title"
+     x="1060"
+     y="220"
+     text-anchor="middle"
+     id="text25">rtthread_startup</text>
+  <text
+     class="box-file"
+     x="1060"
+     y="244"
+     text-anchor="middle"
+     id="text26">src/components.c</text>
+  <text
+     class="box-note"
+     x="1060"
+     y="266"
+     text-anchor="middle"
+     id="text27">Disable local IRQs and start the</text>
+  <text
+     class="box-note"
+     x="1060"
+     y="284"
+     text-anchor="middle"
+     id="text28">kernel initialization backbone.</text>
+  <rect
+     class="box"
+     x="1230"
+     y="180"
+     width="280"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect28" />
+  <circle
+     class="step"
+     cx="1254"
+     cy="200"
+     r="15"
+     id="circle28" />
+  <text
+     class="step-text"
+     x="1254"
+     y="204"
+     text-anchor="middle"
+     id="text29">5</text>
+  <text
+     class="box-title"
+     x="1370"
+     y="220"
+     text-anchor="middle"
+     id="text30">rt_hw_common_setup</text>
+  <text
+     class="box-file"
+     x="1370"
+     y="244"
+     text-anchor="middle"
+     id="text31">libcpu/aarch64/common/setup.c</text>
+  <text
+     class="box-note"
+     x="1370"
+     y="266"
+     text-anchor="middle"
+     id="text32">Build the full MMU map, memblock, and heap.</text>
+  <text
+     class="box-note"
+     x="1370"
+     y="284"
+     text-anchor="middle"
+     id="text33">Initialize GIC, UART, GTIMER, and SMP IPIs.</text>
+  <rect
+     class="box"
+     x="600"
+     y="370"
+     width="280"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect33" />
+  <circle
+     class="step"
+     cx="624"
+     cy="390"
+     r="15"
+     id="circle33" />
+  <text
+     class="step-text"
+     x="624"
+     y="394"
+     text-anchor="middle"
+     id="text34">6</text>
+  <text
+     class="box-title"
+     x="740"
+     y="410"
+     text-anchor="middle"
+     id="text35">rt_system_scheduler_start</text>
+  <text
+     class="box-file"
+     x="740"
+     y="434"
+     text-anchor="middle"
+     id="text36">CPU0 starts scheduling</text>
+  <text
+     class="box-note"
+     x="740"
+     y="456"
+     text-anchor="middle"
+     id="text37">The main thread becomes the first runnable task.</text>
+  <rect
+     class="box"
+     x="940"
+     y="370"
+     width="240"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect37" />
+  <circle
+     class="step"
+     cx="964"
+     cy="390"
+     r="15"
+     id="circle37" />
+  <text
+     class="step-text"
+     x="964"
+     y="394"
+     text-anchor="middle"
+     id="text38">7</text>
+  <text
+     class="box-title"
+     x="1060"
+     y="410"
+     text-anchor="middle"
+     id="text39">main_thread_entry</text>
+  <text
+     class="box-file"
+     x="1060"
+     y="434"
+     text-anchor="middle"
+     id="text40">Before user main()</text>
+  <text
+     class="box-note"
+     x="1060"
+     y="456"
+     text-anchor="middle"
+     id="text41">Wake the remaining CPUs before</text>
+  <text
+     class="box-note"
+     x="1060"
+     y="474"
+     text-anchor="middle"
+     id="text42">the application starts running.</text>
+  <rect
+     class="box"
+     x="1240"
+     y="370"
+     width="270"
+     height="120"
+     rx="18"
+     ry="18"
+     id="rect42" />
+  <circle
+     class="step"
+     cx="1264"
+     cy="390"
+     r="15"
+     id="circle42" />
+  <text
+     class="step-text"
+     x="1264"
+     y="394"
+     text-anchor="middle"
+     id="text43">8</text>
+  <text
+     class="box-title"
+     x="1375"
+     y="410"
+     text-anchor="middle"
+     id="text44">rt_hw_secondary_cpu_up</text>
+  <text
+     class="box-file"
+     x="1375"
+     y="434"
+     text-anchor="middle"
+     id="text45">entry PA plus enable-method</text>
+  <text
+     class="box-note"
+     x="1375"
+     y="456"
+     text-anchor="middle"
+     id="text46">Resolve PA(_secondary_cpu_entry).</text>
+  <text
+     class="box-note"
+     x="1375"
+     y="474"
+     text-anchor="middle"
+     id="text47">Issue PSCI CPU_ON or spin-table wakeup.</text>
+  <line
+     class="arrow"
+     x1="280"
+     y1="240"
+     x2="330"
+     y2="240"
+     marker-end="url(#arrowhead)"
+     id="line47" />
+  <line
+     class="arrow"
+     x1="530"
+     y1="240"
+     x2="580"
+     y2="240"
+     marker-end="url(#arrowhead)"
+     id="line48" />
+  <line
+     class="arrow"
+     x1="890"
+     y1="240"
+     x2="940"
+     y2="240"
+     marker-end="url(#arrowhead)"
+     id="line49" />
+  <line
+     class="arrow"
+     x1="1180"
+     y1="240"
+     x2="1230"
+     y2="240"
+     marker-end="url(#arrowhead)"
+     id="line50" />
+  <path
+     class="arrow"
+     d="M 1370 300 L 1370 335 L 740 335 L 740 370"
+     marker-end="url(#arrowhead)"
+     id="path50" />
+  <line
+     class="arrow"
+     x1="880"
+     y1="430"
+     x2="940"
+     y2="430"
+     marker-end="url(#arrowhead)"
+     id="line51" />
+  <line
+     class="arrow"
+     x1="1180"
+     y1="430"
+     x2="1240"
+     y2="430"
+     marker-end="url(#arrowhead)"
+     id="line52" />
+  <rect
+     class="group-secondary"
+     x="829.52216"
+     y="652.52563"
+     width="690"
+     height="210"
+     rx="24"
+     ry="24"
+     id="rect52" />
+  <text
+     class="group-title"
+     x="876"
+     y="682.47784"
+     id="text52">Secondary CPU</text>
+  <rect
+     class="box"
+     x="890"
+     y="715.47784"
+     width="280"
+     height="115"
+     rx="18"
+     ry="18"
+     id="rect53" />
+  <circle
+     class="step"
+     cx="914"
+     cy="735.47784"
+     r="15"
+     id="circle53" />
+  <text
+     class="step-text"
+     x="914"
+     y="739.47784"
+     text-anchor="middle"
+     id="text53">9</text>
+  <text
+     class="box-title"
+     x="1030"
+     y="755.47784"
+     text-anchor="middle"
+     id="text54">_secondary_cpu_entry</text>
+  <text
+     class="box-file"
+     x="1030"
+     y="779.47784"
+     text-anchor="middle"
+     id="text55">entry_point.S</text>
+  <text
+     class="box-note"
+     x="1030"
+     y="801.47784"
+     text-anchor="middle"
+     id="text56">Read MPIDR, find the logical CPU id,</text>
+  <text
+     class="box-note"
+     x="1030"
+     y="819.47784"
+     text-anchor="middle"
+     id="text57">set TPIDR and the private stack.</text>
+  <rect
+     class="box"
+     x="1210"
+     y="715.47784"
+     width="290"
+     height="115"
+     rx="18"
+     ry="18"
+     id="rect57" />
+  <circle
+     class="step"
+     cx="1234"
+     cy="735.47784"
+     r="15"
+     id="circle57" />
+  <text
+     class="step-text"
+     x="1234"
+     y="739.47784"
+     text-anchor="middle"
+     id="text58">10</text>
+  <text
+     class="box-title"
+     x="1367.0004"
+     y="755.47784"
+     text-anchor="middle"
+     id="text59">rt_hw_secondary_cpu_bsp_start</text>
+  <text
+     class="box-file"
+     x="1355"
+     y="779.47784"
+     text-anchor="middle"
+     id="text60">libcpu/aarch64/common/setup.c</text>
+  <text
+     class="box-note"
+     x="1355"
+     y="801.47784"
+     text-anchor="middle"
+     id="text61">Bind the shared MMU table, initialize</text>
+  <text
+     class="box-note"
+     x="1355"
+     y="819.47784"
+     text-anchor="middle"
+     id="text62">local GIC, GTIMER, SMP IPI, and CPU device.</text>
+  <path
+     class="arrow-dashed"
+     d="M 1375,490 V 628 H 1030 V 715.47784"
+     marker-end="url(#arrowhead-dashed)"
+     id="path62"
+     sodipodi:nodetypes="cccc"
+     style="display:inline" />
+  <text
+     class="arrow-label"
+     x="1250.752"
+     y="616.58801"
+     text-anchor="middle"
+     id="text63"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:14.6667px;font-family:'Segoe UI', Arial, sans-serif;-inkscape-font-specification:'Segoe UI, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#334155">PSCI CPU_ON wakes the target CPU</text>
+  <line
+     class="arrow"
+     x1="1170"
+     y1="772.47784"
+     x2="1210"
+     y2="772.47784"
+     marker-end="url(#arrowhead)"
+     id="line63" />
+  <rect
+     class="group-shared"
+     x="360"
+     y="930"
+     width="880"
+     height="180"
+     rx="24"
+     ry="24"
+     id="rect63" />
+  <text
+     class="group-title"
+     x="386"
+     y="962"
+     id="text64">Shared scheduler state</text>
+  <rect
+     class="box"
+     x="525"
+     y="995"
+     width="550"
+     height="78"
+     rx="18"
+     ry="18"
+     id="rect64" />
+  <text
+     class="box-title"
+     x="800"
+     y="1029"
+     text-anchor="middle"
+     id="text65">rt_system_scheduler_start on all CPUs</text>
+  <text
+     class="box-note"
+     x="800"
+     y="1051"
+     text-anchor="middle"
+     id="text66">CPU0 continues from main(); CPU1..N-1 join after local BSP bring-up.</text>
+  <path
+     class="join-arrow"
+     d="M 1060,490 V 596 H 660 V 995"
+     marker-end="url(#arrowhead-join)"
+     id="path66"
+     sodipodi:nodetypes="cccc" />
+  <text
+     class="arrow-label"
+     x="979.15204"
+     y="577.34796"
+     text-anchor="middle"
+     id="text67"
+     style="-inkscape-font-specification:'Segoe UI, Arial, sans-serif, Semi-Bold';font-family:'Segoe UI', Arial, sans-serif;font-weight:600;font-style:normal;font-stretch:normal;font-variant:normal;font-size:14.6667px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#334155">CPU0 keeps running</text>
+  <path
+     class="join-arrow"
+     d="M 1355,830 V 898 H 945 V 995"
+     marker-end="url(#arrowhead-join)"
+     id="path67"
+     sodipodi:nodetypes="cccc" />
+  <text
+     class="arrow-label"
+     x="1196.652"
+     y="887.31201"
+     text-anchor="middle"
+     id="text68"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:14.6667px;font-family:'Segoe UI', Arial, sans-serif;-inkscape-font-specification:'Segoe UI, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#334155">Secondary CPUs join after local BSP bring-up</text>
+  <text
+     class="footer"
+     x="60"
+     y="1180"
+     id="text69">Key source files: libcpu/aarch64/cortex-a/entry_point.S, libcpu/aarch64/common/setup.c, src/components.c</text>
+</svg>

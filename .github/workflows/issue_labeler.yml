@@ -1,0 +1,30 @@
+name: Issue Labeler
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+concurrency:
+  group: issue-labeler-${{ github.repository_id }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  label:
+    if: ${{ github.event.issue.pull_request == null }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout trusted workflow code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Add issue labels
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/ci/issue_labeler.py

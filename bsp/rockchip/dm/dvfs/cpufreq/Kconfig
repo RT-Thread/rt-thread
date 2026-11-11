@@ -1,0 +1,10 @@
+config RT_DVFS_ROCKCHIP_CPUFREQ
+    bool "Rockchip CPUfreq driver"
+    depends on RT_USING_DVFS
+    depends on RT_USING_OFW
+    default y
+    help
+      Rockchip CPUfreq with OPP table parsing and optional nvmem
+      bin/leakage voltage selection. Uses SCMI clock and DT cpu-supply
+      regulator (e.g. FAN53555). Thermal throttling uses
+      thermal-cool-dvfs on the cpufreq device.

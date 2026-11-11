@@ -88,6 +88,8 @@ typedef long (*syscall_func)(void);
                 };
 
 #endif  /* _MSC_VER */
+#else
+#define MSH_FUNCTION_EXPORT_CMD(name, cmd, desc, opt)
 #endif /* FINSH_USING_SYMTAB */
 
 /**
@@ -118,17 +120,6 @@ typedef long (*syscall_func)(void);
  * @param[in] desc Description of function, which will show in help.
  */
 #define FINSH_FUNCTION_EXPORT(name, desc)
-
-/**
- * @ingroup group_finsh
- *
- * @brief Exports a system function with an alias name to finsh shell.
- *
- * @param[in] name Name of function.
- * @param[in] alias Alias name of function.
- * @param[in] desc Description of function, which will show in help.
- */
-#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
 
 /**
  * @ingroup group_finsh

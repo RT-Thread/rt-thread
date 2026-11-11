@@ -1,4 +1,5 @@
 .vscode
+build
 **/Drivers/**
 **/MDK-ARM/DebugConfig/**
 **/MDK-ARM/RTE/**

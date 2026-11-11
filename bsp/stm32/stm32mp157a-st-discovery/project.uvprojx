@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_CM4, __RTTHREAD__, METAL_MAX_DEVICE_REGIONS=2, METAL_INTERNAL, __LOG_TRACE_IO_, VIRTIO_SLAVE_ONLY, STM32MP157Axx, NO_ATOMIC_64_SUPPORT</Define>
+              <Define>STM32MP157Axx, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, VIRTIO_SLAVE_ONLY, __RTTHREAD__, CORE_CM4, NO_ATOMIC_64_SUPPORT, METAL_INTERNAL</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\phy;.;board;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\smp_call;board\CubeMX_Config\CM4\Inc;board\ports;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\finsh;applications;..\libraries\HAL_Drivers\nano</IncludePath>
+              <IncludePath>.;..\..\..\components\drivers\include;board;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\finsh;..\libraries\HAL_Drivers\nano;..\libraries\HAL_Drivers;..\..\..\components\net\utest;..\..\..\libcpu\arm\common;board\CubeMX_Config\CM4\Inc;applications;..\..\..\components\drivers\smp_call;board\ports;..\..\..\include;..\..\..\components\drivers\phy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,6 +388,44 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
@@ -429,13 +467,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
@@ -453,6 +484,13 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -745,26 +783,19 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
-          <Files>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -776,47 +807,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>atomic_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>

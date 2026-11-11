@@ -1,0 +1,15 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+
+# ------ component CI ------
+component.can:
+    kconfig:
+      - CONFIG_BSP_USING_CAN=y
+      - CONFIG_BSP_USING_CAN0=y
+
+# ------ Peripheral CI ------
+Peripheral.arduino:
+    kconfig:
+      - CONFIG_BSP_USING_ARDUINO=y
+

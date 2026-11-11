@@ -17,7 +17,7 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define CODEC_I2C_NAME ("i2c1")
+#define CODEC_I2C_NAME   ("swi2c1")
 #define RX_DMA_FIFO_SIZE (2048)
 
 extern struct drv_sai _sai_a;
@@ -303,11 +303,11 @@ static rt_err_t stm32_mic_init(struct rt_audio_device *audio)
     _stm32_audio_record.i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(CODEC_I2C_NAME);
     if (_stm32_audio_record.i2c_bus != RT_NULL)
     {
-        LOG_D("Find device i2c1 success");
+        LOG_D("Find device swi2c1 success");
     }
     else
     {
-        LOG_E("Find device i2c1 error");
+        LOG_E("Find device swi2c1 error");
         return -RT_ERROR;
     }
 

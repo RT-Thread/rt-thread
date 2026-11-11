@@ -1,0 +1,56 @@
+# ------ devices CI ------
+devices.uart:
+    kconfig:
+      - CONFIG_BSP_USING_UART1=y
+      - CONFIG_BSP_USING_UART2=y
+devices.adc:
+    kconfig:
+      - CONFIG_BSP_USING_ADC=y
+devices.spi:
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI0=y
+      - CONFIG_BSP_USING_SPI1=y
+devices.i2c:
+    kconfig:
+      - CONFIG_BSP_USING_HW_I2C=y
+      - CONFIG_BSP_USING_HW_I2C0=y
+      - CONFIG_BSP_USING_HW_I2C1=y
+devices.timer:
+    kconfig:
+      - CONFIG_BSP_USING_TIM_W=y
+      - CONFIG_BSP_USING_TIM0=y
+      - CONFIG_BSP_USING_TIM1=y
+      - CONFIG_BSP_USING_TIM2=y
+      - CONFIG_BSP_USING_TIM3=y
+      - CONFIG_BSP_USING_TIM4=y
+      - CONFIG_BSP_USING_TIM5=y
+      - CONFIG_BSP_USING_TIM6=y
+      - CONFIG_BSP_USING_TIM7=y
+devices.pwm:
+    kconfig:
+      - CONFIG_BSP_USING_PWM_W=y
+      - CONFIG_BSP_USING_PWM0=y
+      - CONFIG_BSP_USING_PWM1=y
+      - CONFIG_BSP_USING_PWM2=y
+      - CONFIG_BSP_USING_PWM3=y
+      - CONFIG_BSP_USING_PWM4=y
+      - CONFIG_BSP_USING_PWM5=y
+      - CONFIG_BSP_USING_PWM6=y
+      - CONFIG_BSP_USING_PWM7=y
+devices.rtc:
+    kconfig:
+      - CONFIG_BSP_USING_ONCHIP_RTC=y
+devices.wdt:
+    kconfig:
+      - CONFIG_BSP_USING_WDT=y
+devices.psram:
+    kconfig:
+      - CONFIG_BSP_USING_QSPI_PSRAM=y
+devices.flash:
+    kconfig:
+      - CONFIG_BSP_USING_OSPI_FLASH=y
+
+
+
+

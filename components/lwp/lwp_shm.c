@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-10-12     Jesven       first version
  * 2023-02-20     wangxiaoyao  adapt to mm
+ * 2025-11-06     ibvqeibob    add Doxygen comments for lwp shared memory APIs
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -19,14 +20,21 @@
 #include <lwp_user_mm.h>
 #include <mmu.h>
 
-/* the kernel structure to represent a share-memory */
+/**
+ * @brief Kernel control block for a shared memory segment.
+ *
+ * Each lwp_shm_struct represents one shared memory region. It records
+ * the physical address, size, reference count and key. The embedded
+ * mem_obj is used together with the aspace/varea mechanism to handle
+ * mapping and page faults for this segment.
+ */
 struct lwp_shm_struct
 {
-    struct rt_mem_obj mem_obj;
-    size_t addr;    /* point to the next item in the free list when not used */
-    size_t size;
-    int    ref;
-    size_t key;
+    struct rt_mem_obj mem_obj;  /**< Memory object interface used by aspace/varea */
+    size_t addr;                /**< Physical address of the shared memory; used as next pointer in the free list when unused */
+    size_t size;                /**< Size of the shared memory in bytes, page aligned */
+    int    ref;                 /**< Reference count of mappings to this shared memory */
+    size_t key;                 /**< User-visible key used to look up the shared memory */
 };
 
 static struct lwp_avl_struct *shm_tree_key;
@@ -189,7 +197,22 @@ err:
     return -1;
 }
 
-/* A wrapping function, get the shared memory with interrupts disabled. */
+/**
+ * @brief Get or create a shared memory segment by key.
+ *
+ * Under the memory management lock, this function looks up an existing
+ * shared memory control block by key. If it does not exist and @p create
+ * is non-zero, a new segment is created with the requested size, physical
+ * pages are allocated and the segment is inserted into the internal index
+ * trees.
+ *
+ * @param[in] key    Key used to identify the shared memory segment.
+ * @param[in] size   Requested size in bytes; only effective when creating.
+ * @param[in] create Non-zero to allow creation; zero to only search.
+ *
+ * @return On success, returns a non-negative shared memory id.
+ *         On failure, returns -1.
+ */
 int lwp_shmget(size_t key, size_t size, int create)
 {
     int ret = 0;
@@ -253,7 +276,19 @@ static int _lwp_shmrm(int id)
     return 0;
 }
 
-/* A wrapping function, free the shared memory with interrupt disabled. */
+/**
+ * @brief Remove a shared memory segment by id.
+ *
+ * The internal control block is located by @p id. If the reference count
+ * is zero, the physical pages, control block and AVL index nodes are freed.
+ * If the segment is still referenced, no memory is actually released.
+ *
+ * @param[in] id Shared memory id returned by lwp_shmget().
+ *
+ * @return Returns 0 on success. If @p id is invalid or internal checks
+ *         fail, -1 is returned. When the reference count is non-zero,
+ *         0 is returned but the segment is not freed.
+ */
 int lwp_shmrm(int id)
 {
     int ret = 0;
@@ -300,7 +335,21 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     return va;
 }
 
-/* A wrapping function: attach the shared memory to the specified address. */
+/**
+ * @brief Map a shared memory segment into the current LWP.
+ *
+ * The shared memory control block is located by @p id and mapped into the
+ * user address space of the current LWP. If @p shm_vaddr is not RT_NULL,
+ * the system tries to map the segment at the specified virtual address,
+ * which must be page aligned.
+ *
+ * @param[in] id        Shared memory id returned by lwp_shmget().
+ * @param[in] shm_vaddr Desired user virtual address; if RT_NULL, the
+ *                      system chooses an address. When not RT_NULL it
+ *                      must be page aligned.
+ *
+ * @return The mapped user virtual address on success, or RT_NULL on failure.
+ */
 void *lwp_shmat(int id, void *shm_vaddr)
 {
     void *ret = RT_NULL;
@@ -346,6 +395,19 @@ static int _lwp_shm_ref_inc(struct rt_lwp *lwp, void *shm_vaddr)
     return -1;
 }
 
+/**
+ * @brief Increase the reference count of a shared memory segment.
+ *
+ * The shared memory control block is located according to the given
+ * @p lwp and the user virtual address @p shm_vaddr. If found, its
+ * reference count is increased by one.
+ *
+ * @param[in] lwp        LWP object to operate on.
+ * @param[in] shm_vaddr  User virtual address where the shared memory
+ *                       is mapped in this LWP.
+ *
+ * @return The new reference count on success, or -1 on failure.
+ */
 int lwp_shm_ref_inc(struct rt_lwp *lwp, void *shm_vaddr)
 {
     int ret = 0;
@@ -369,6 +431,19 @@ static int _lwp_shm_ref_dec(struct rt_lwp *lwp, void *shm_vaddr)
     return -1;
 }
 
+/**
+ * @brief Decrease the reference count of a shared memory segment.
+ *
+ * The shared memory control block is located according to the given
+ * @p lwp and the user virtual address @p shm_vaddr. If it exists and
+ * the reference count is greater than zero, the count is decreased by one.
+ *
+ * @param[in] lwp        LWP object to operate on.
+ * @param[in] shm_vaddr  User virtual address where the shared memory
+ *                       is mapped in this LWP.
+ *
+ * @return The new reference count on success, or -1 on failure.
+ */
 int lwp_shm_ref_dec(struct rt_lwp *lwp, void *shm_vaddr)
 {
     int ret = 0;
@@ -400,7 +475,16 @@ int _lwp_shmdt(void *shm_vaddr)
     return ret;
 }
 
-/* A wrapping function: detach the mapped shared memory. */
+/**
+ * @brief Unmap a shared memory segment from the current LWP.
+ *
+ * The mapping at @p shm_vaddr in the current LWP address space is
+ * removed. Internal errors are translated into a generic error code.
+ *
+ * @param[in] shm_vaddr User virtual address of the shared memory mapping.
+ *
+ * @return Returns 0 on success, or -1 on failure.
+ */
 int lwp_shmdt(void *shm_vaddr)
 {
     int ret = 0;
@@ -429,7 +513,17 @@ void *_lwp_shminfo(int id)
     return (void *)((char *)p->addr - PV_OFFSET);     /* get the virtual address */
 }
 
-/* A wrapping function: get the virtual address of a shared memory. */
+/**
+ * @brief Get the kernel virtual address of a shared memory segment.
+ *
+ * The internal control block is located by @p id and the kernel
+ * virtual address corresponding to that shared memory is returned.
+ *
+ * @param[in] id Shared memory id returned by lwp_shmget().
+ *
+ * @return Kernel virtual address of the shared memory on success,
+ *         or RT_NULL on failure.
+ */
 void *lwp_shminfo(int id)
 {
     void *vaddr = RT_NULL;
@@ -451,6 +545,13 @@ static int _shm_info(struct lwp_avl_struct* node_key, void *data)
     return 0;
 }
 
+/**
+ * @brief Print information of all shared memory segments.
+ *
+ * This function prints the key, physical address, size and id of each
+ * shared memory segment to the console. It is exported as the Finsh/Msh
+ * command @c list_shm for debugging and inspection.
+ */
 void list_shm(void)
 {
     rt_kprintf("   key        paddr      size       id\n");

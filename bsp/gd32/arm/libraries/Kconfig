@@ -35,3 +35,8 @@ config SOC_SERIES_GD32F5xx
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_GD32
+
+config SOC_SERIES_GD32E23x
+    bool
+    select ARCH_ARM_CORTEX_M23
+    select SOC_FAMILY_GD32

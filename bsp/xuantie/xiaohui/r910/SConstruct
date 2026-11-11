@@ -42,7 +42,7 @@ SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=True)
 
 bsp_vdir = 'build'
 library_vdir = 'build/libraries'

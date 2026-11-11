@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,7 @@
 #include <rtatomic.h>
 
 #if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
-#include <vdso.h>
+#include "vdso_kernel.h"
 #endif
 
 #ifdef RT_USING_SMP
@@ -77,14 +77,16 @@ RTM_EXPORT(rt_tick_get);
  * @brief    This function will return delta tick from base.
  *
  * @param    base to consider
- * 
+ *
  * @return   Return delta tick.
  */
 rt_tick_t rt_tick_get_delta(rt_tick_t base)
 {
     rt_tick_t tnow = rt_tick_get();
     if (tnow >= base)
+    {
         return tnow - base;
+    }
     return RT_TICK_MAX - base + tnow + 1;
 }
 RTM_EXPORT(rt_tick_get_delta);
@@ -105,12 +107,14 @@ static void _update_process_times(rt_tick_t tick)
     struct rt_thread *thread = rt_thread_self();
     struct rt_cpu *pcpu = rt_cpu_self();
 
+#ifdef RT_USING_SMART
     if (!LWP_IS_USER_MODE(thread))
     {
         thread->user_time += tick;
         pcpu->cpu_stat.user += tick;
     }
     else
+#endif /* RT_USING_SMART */
     {
         thread->system_time += tick;
         if (thread == pcpu->idle_thread)
@@ -161,6 +165,10 @@ void rt_tick_increase(void)
     }
 #endif
     rt_timer_check();
+
+#ifdef RT_USING_VDSO
+    rt_vdso_sync_clock_data();
+#endif
 }
 
 /**
@@ -195,10 +203,6 @@ void rt_tick_increase_tick(rt_tick_t tick)
     }
 #endif
     rt_timer_check();
-
-#ifdef RT_USING_VDSO
-    rt_vdso_update_glob_time();
-#endif
 }
 
 /**
@@ -252,10 +256,11 @@ rt_weak rt_tick_t rt_tick_get_millisecond(void)
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
 #else
-    #warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
+#warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
     please redefine this function in another file by using a high-precision hard-timer."
     return 0;
 #endif /* 1000 % RT_TICK_PER_SECOND == 0u */
 }
 
 /**@}*/
+

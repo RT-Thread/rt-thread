@@ -27,9 +27,9 @@ struct tmr_capture_dev_init_params
     uint8_t clk_div;
     uint32_t first_edge;
     IRQn_Type irq_num_cap;
-    uint32_t  irq_prio_cap;
+    uint32_t irq_prio_cap;
     IRQn_Type irq_num_ovf;
-    uint32_t  irq_prio_ovf;
+    uint32_t irq_prio_ovf;
 };
 
 extern rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance);

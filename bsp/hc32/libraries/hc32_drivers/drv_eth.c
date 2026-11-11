@@ -24,10 +24,10 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 //#define DRV_DEBUG
-#define LOG_TAG                         "drv.eth"
+#define LOG_TAG "drv.eth"
 #include <drv_log.h>
 
-#define MAX_ADDR_LEN                    6
+#define MAX_ADDR_LEN 6
 
 /*******************************************************************************
  * Local type definitions ('typedef')
@@ -35,26 +35,26 @@
 struct hc32_eth
 {
     /* inherit from ethernet device */
-    struct eth_device       parent;
+    struct eth_device parent;
 #if !(defined(ETH_PHY_USING_INTERRUPT_MODE))
-    rt_timer_t              poll_link_timer;
+    rt_timer_t poll_link_timer;
 #endif
     /* interface address info, hw address */
-    rt_uint8_t              dev_addr[MAX_ADDR_LEN];
+    rt_uint8_t dev_addr[MAX_ADDR_LEN];
     /* ETH_Speed */
-    rt_uint32_t             eth_speed;
+    rt_uint32_t eth_speed;
     /* ETH_Duplex_Mode */
-    rt_uint32_t             eth_mode;
+    rt_uint32_t eth_mode;
     /* eth irq */
-    struct hc32_irq_config  irq_config;
-    func_ptr_t              irq_callback;
+    struct hc32_irq_config irq_config;
+    func_ptr_t irq_callback;
 };
 
 /* eth phy status */
 enum
 {
-    ETH_PHY_LINK        = 0x01U,
-    ETH_PHY_100M        = 0x02U,
+    ETH_PHY_LINK = 0x01U,
+    ETH_PHY_100M = 0x02U,
     ETH_PHY_FULL_DUPLEX = 0x04U,
 };
 
@@ -77,10 +77,9 @@ static stc_eth_handle_t EthHandle;
 static stc_eth_dma_desc_t *EthDmaTxDscrTab, *EthDmaRxDscrTab;
 /* Ethernet Transmit,Receive Buffer */
 static rt_uint8_t *EthTxBuff, *EthRxBuff;
-static struct hc32_eth hc32_eth_device =
-{
-    .irq_config     = ETH_IRQ_CONFIG,
-    .irq_callback   = eth_global_irq_handle,
+static struct hc32_eth hc32_eth_device = {
+    .irq_config = ETH_IRQ_CONFIG,
+    .irq_callback = eth_global_irq_handle,
 };
 
 /*******************************************************************************
@@ -100,7 +99,6 @@ static rt_err_t rt_hc32_eth_init(rt_device_t dev)
     /* Configure structure initialization */
     (void)ETH_CommStructInit(&EthHandle.stcCommInit);
     (void)ETH_StructInit(&stcEthInit);
-    EthHandle.stcCommInit.u16AutoNego   = ETH_AUTO_NEGO_DISABLE;
     EthHandle.stcCommInit.au8MacAddr[0] = hc32_eth_device.dev_addr[0];
     EthHandle.stcCommInit.au8MacAddr[1] = hc32_eth_device.dev_addr[1];
     EthHandle.stcCommInit.au8MacAddr[2] = hc32_eth_device.dev_addr[2];
@@ -109,9 +107,9 @@ static rt_err_t rt_hc32_eth_init(rt_device_t dev)
     EthHandle.stcCommInit.au8MacAddr[5] = hc32_eth_device.dev_addr[5];
     EthHandle.stcCommInit.u32ReceiveMode = ETH_RX_MD_INT;
 #if defined(ETH_INTERFACE_USING_RMII)
-    EthHandle.stcCommInit.u32Interface  = ETH_MAC_IF_RMII;
+    EthHandle.stcCommInit.u32Interface = ETH_MAC_IF_RMII;
 #else
-    EthHandle.stcCommInit.u32Interface  = ETH_MAC_IF_MII;
+    EthHandle.stcCommInit.u32Interface = ETH_MAC_IF_MII;
 #endif
 #if defined(RT_LWIP_USING_HW_CHECKSUM)
     EthHandle.stcCommInit.u32ChecksumMode = ETH_MAC_CHECKSUM_MD_HW;
@@ -191,7 +189,7 @@ static rt_err_t rt_hc32_eth_control(rt_device_t dev, int cmd, void *args)
         }
         break;
 
-    default :
+    default:
         break;
     }
 
@@ -232,7 +230,7 @@ rt_err_t rt_hc32_eth_tx(rt_device_t dev, struct pbuf *p)
         while ((byteCnt + bufferOffset) > ETH_TX_BUF_SIZE)
         {
             /* Copy data to Tx buffer*/
-            SMEMCPY((uint8_t *) & (txBuffer[bufferOffset]), (uint8_t *) & (((uint8_t *)q->payload)[payloadOffset]), (ETH_TX_BUF_SIZE - bufferOffset));
+            SMEMCPY((uint8_t *)&(txBuffer[bufferOffset]), (uint8_t *)&(((uint8_t *)q->payload)[payloadOffset]), (ETH_TX_BUF_SIZE - bufferOffset));
             /* Point to next descriptor */
             DmaTxDesc = (stc_eth_dma_desc_t *)(DmaTxDesc->u32Buf2NextDescAddr);
             /* Check if the buffer is available */
@@ -249,7 +247,7 @@ rt_err_t rt_hc32_eth_tx(rt_device_t dev, struct pbuf *p)
             bufferOffset = 0UL;
         }
         /* Copy the remaining bytes */
-        SMEMCPY((uint8_t *) & (txBuffer[bufferOffset]), (uint8_t *) & (((uint8_t *)q->payload)[payloadOffset]), byteCnt);
+        SMEMCPY((uint8_t *)&(txBuffer[bufferOffset]), (uint8_t *)&(((uint8_t *)q->payload)[payloadOffset]), byteCnt);
         bufferOffset = bufferOffset + byteCnt;
         frameLength = frameLength + byteCnt;
     }
@@ -312,7 +310,7 @@ struct pbuf *rt_hc32_eth_rx(rt_device_t dev)
             while ((byteCnt + bufferOffset) > ETH_RX_BUF_SIZE)
             {
                 /* Copy data to pbuf */
-                SMEMCPY((uint8_t *) & (((uint8_t *)q->payload)[payloadOffset]), (uint8_t *) & (rxBuffer[bufferOffset]), (ETH_RX_BUF_SIZE - bufferOffset));
+                SMEMCPY((uint8_t *)&(((uint8_t *)q->payload)[payloadOffset]), (uint8_t *)&(rxBuffer[bufferOffset]), (ETH_RX_BUF_SIZE - bufferOffset));
                 /* Point to next descriptor */
                 DmaRxDesc = (stc_eth_dma_desc_t *)(DmaRxDesc->u32Buf2NextDescAddr);
                 rxBuffer = (uint8_t *)(DmaRxDesc->u32Buf1Addr);
@@ -321,7 +319,7 @@ struct pbuf *rt_hc32_eth_rx(rt_device_t dev)
                 bufferOffset = 0UL;
             }
             /* Copy remaining data in pbuf */
-            SMEMCPY((uint8_t *) & (((uint8_t *)q->payload)[payloadOffset]), (uint8_t *) & (rxBuffer[bufferOffset]), byteCnt);
+            SMEMCPY((uint8_t *)&(((uint8_t *)q->payload)[payloadOffset]), (uint8_t *)&(rxBuffer[bufferOffset]), byteCnt);
             bufferOffset = bufferOffset + byteCnt;
         }
     }
@@ -379,21 +377,21 @@ static void hc32_phy_link_change(void)
 {
     static rt_uint8_t phy_status = 0;
     rt_uint8_t phy_status_new = 0;
-#if defined (ETH_PHY_USING_RTL8201F)
+#if defined(ETH_PHY_USING_RTL8201F)
     uint16_t u16RegVal = 0U;
     uint16_t u16Page = 0U;
 #endif
 
-#if defined (ETH_PHY_USING_RTL8201F)
+#if defined(ETH_PHY_USING_RTL8201F)
     /* Switch page */
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16Page);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_PSR, &u16Page);
     if (u16Page != PHY_PAGE_ADDR_0)
     {
         u16RegVal = PHY_PAGE_ADDR_0;
-        (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+        (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16RegVal);
     }
     /* Read PHY_BSR */
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_BASIC_STATUS_REG, &u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_BASIC_STATUS_REG, &u16RegVal);
     LOG_D("phy basic status reg is 0x%X", u16RegVal);
     if ((0x0000U != u16RegVal) && (0xFFFFU != u16RegVal))
     {
@@ -401,7 +399,7 @@ static void hc32_phy_link_change(void)
         {
             phy_status_new |= ETH_PHY_LINK;
             /* Read the result of the auto-negotiation */
-            ETH_PHY_ReadReg(&EthHandle, PHY_SR, &u16RegVal);
+            ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_SR, &u16RegVal);
             /* Configure ETH duplex mode according to the result of automatic negotiation */
             if (0U != (u16RegVal & PHY_DUPLEX_STATUS))
             {
@@ -417,7 +415,7 @@ static void hc32_phy_link_change(void)
     /* Restore page */
     if (u16Page != PHY_PAGE_ADDR_0)
     {
-        (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16Page);
+        (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16Page);
     }
 #endif
 
@@ -461,10 +459,10 @@ static void hc32_phy_link_change(void)
 #if defined(ETH_PHY_USING_INTERRUPT_MODE)
 static void eth_phy_irq_handler(void *args)
 {
-#if defined (ETH_PHY_USING_RTL8201F)
+#if defined(ETH_PHY_USING_RTL8201F)
     rt_uint16_t status = 0;
 
-    ETH_PHY_ReadReg(&EthHandle, PHY_IISDR, &status);
+    ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_IISDR, &status);
     LOG_D("phy interrupt status reg is 0x%X", status);
 #endif
     hc32_phy_link_change();
@@ -480,12 +478,11 @@ static void hc32_phy_monitor_thread(void *parameter)
     /* phy search */
     while (phy_addr == 0xFF)
     {
-        rt_uint16_t i, temp;
+        rt_uint16_t i, temp = 0U;
 
         for (i = 0; i <= 0x1F; i++)
         {
-            EthHandle.stcCommInit.u16PhyAddr = i;
-            ETH_PHY_ReadReg(&EthHandle, PHY_ID1_REG, &temp);
+            ETH_PHY_ReadReg(i, PHY_ID1_REG, &temp);
             if (temp != 0xFFFF && temp != 0x00)
             {
                 phy_addr = i;
@@ -502,30 +499,30 @@ static void hc32_phy_monitor_thread(void *parameter)
     LOG_D("Found a phy, address:0x%02X", phy_addr);
 
     /* Reset PHY */
-    ETH_PHY_WriteReg(&EthHandle, PHY_BASIC_CONTROL_REG, PHY_RESET_MASK);
+    ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_BASIC_CONTROL_REG, PHY_RESET_MASK);
     rt_thread_mdelay(2000);
-    ETH_PHY_WriteReg(&EthHandle, PHY_BASIC_CONTROL_REG, PHY_AUTO_NEGOTIATION_MASK);
+    ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_BASIC_CONTROL_REG, PHY_AUTO_NEGOTIATION_MASK);
     hc32_phy_link_change();
 
-#if defined (ETH_PHY_USING_RTL8201F)
+#if defined(ETH_PHY_USING_RTL8201F)
     /* Configure PHY LED mode */
     u16RegVal = PHY_PAGE_ADDR_7;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_PSR, &u16RegVal);
 
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_P7_IWLFR, &u16RegVal);
     MODIFY_REG16(u16RegVal, PHY_LED_SELECT, PHY_LED_SELECT_10);
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_P7_IWLFR, u16RegVal);
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_P7_IWLFR, u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_P7_IWLFR, &u16RegVal);
 
     u16RegVal = PHY_PAGE_ADDR_0;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_PSR, &u16RegVal);
 #if defined(ETH_PHY_USING_RTL8201F) && defined(ETH_INTERFACE_USING_RMII)
     /* Disable Power Saving Mode */
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSMR, &u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_PSMR, &u16RegVal);
     CLR_REG16_BIT(u16RegVal, PHY_EN_PWR_SAVE);
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSMR, u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSMR, u16RegVal);
 #endif
 #endif
 
@@ -535,20 +532,20 @@ static void hc32_phy_monitor_thread(void *parameter)
     rt_pin_attach_irq(ETH_PHY_INTERRUPT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_irq_handler, (void *)"callbackargs");
     rt_pin_irq_enable(ETH_PHY_INTERRUPT_PIN, PIN_IRQ_ENABLE);
 
-#if defined (ETH_PHY_USING_RTL8201F)
+#if defined(ETH_PHY_USING_RTL8201F)
     /* Configure PHY to generate an interrupt when Eth Link state changes */
     u16RegVal = PHY_PAGE_ADDR_7;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16RegVal);
     /* Enable Interrupt on change of link status */
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
+    (void)ETH_PHY_ReadReg(ETH_PHY_ADDR, PHY_P7_IWLFR, &u16RegVal);
     SET_REG16_BIT(u16RegVal, PHY_INT_LINK_CHANGE);
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_P7_IWLFR, u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_P7_IWLFR, u16RegVal);
     u16RegVal = PHY_PAGE_ADDR_0;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_WriteReg(ETH_PHY_ADDR, PHY_PSR, u16RegVal);
 #endif
 #else
     hc32_eth_device.poll_link_timer = rt_timer_create("eth_phy_link", (void (*)(void *))hc32_phy_link_change,
-                                      NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
+                                                      NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
     if (!hc32_eth_device.poll_link_timer || rt_timer_start(hc32_eth_device.poll_link_timer) != RT_EOK)
     {
         LOG_E("Start eth phy link change detection timer failed");
@@ -594,7 +591,7 @@ static int rt_hw_hc32_eth_init(void)
     }
 
     hc32_eth_device.eth_speed = ETH_MAC_SPEED_100M;
-    hc32_eth_device.eth_mode  = ETH_MAC_DUPLEX_MD_FULL;
+    hc32_eth_device.eth_mode = ETH_MAC_DUPLEX_MD_FULL;
     /* 00-80 uid */
     hc32_eth_device.dev_addr[0] = 0x02;
     hc32_eth_device.dev_addr[1] = 0x80;
@@ -604,15 +601,15 @@ static int rt_hw_hc32_eth_init(void)
     hc32_eth_device.dev_addr[4] = (rt_uint8_t)READ_REG32(CM_EFM->UQID2);
     hc32_eth_device.dev_addr[5] = (rt_uint8_t)(READ_REG32(CM_EFM->UQID2) >> 8U);
 
-    hc32_eth_device.parent.parent.init      = rt_hc32_eth_init;
-    hc32_eth_device.parent.parent.open      = rt_hc32_eth_open;
-    hc32_eth_device.parent.parent.close     = rt_hc32_eth_close;
-    hc32_eth_device.parent.parent.read      = rt_hc32_eth_read;
-    hc32_eth_device.parent.parent.write     = rt_hc32_eth_write;
-    hc32_eth_device.parent.parent.control   = rt_hc32_eth_control;
+    hc32_eth_device.parent.parent.init = rt_hc32_eth_init;
+    hc32_eth_device.parent.parent.open = rt_hc32_eth_open;
+    hc32_eth_device.parent.parent.close = rt_hc32_eth_close;
+    hc32_eth_device.parent.parent.read = rt_hc32_eth_read;
+    hc32_eth_device.parent.parent.write = rt_hc32_eth_write;
+    hc32_eth_device.parent.parent.control = rt_hc32_eth_control;
     hc32_eth_device.parent.parent.user_data = RT_NULL;
-    hc32_eth_device.parent.eth_rx           = rt_hc32_eth_rx;
-    hc32_eth_device.parent.eth_tx           = rt_hc32_eth_tx;
+    hc32_eth_device.parent.eth_rx = rt_hc32_eth_rx;
+    hc32_eth_device.parent.eth_tx = rt_hc32_eth_tx;
     /* register eth device */
     state = eth_device_init(&(hc32_eth_device.parent), "e0");
     if (RT_EOK == state)

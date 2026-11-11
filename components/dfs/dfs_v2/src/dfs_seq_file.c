@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,16 +18,40 @@
 #define PAGE_SIZE 4096
 #endif
 
+/**
+ * @brief Handle buffer overflow condition in sequence file
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ *
+ * @details Sets the count to size to indicate buffer is full
+ */
 static void dfs_seq_overflow(struct dfs_seq_file *seq)
 {
     seq->count = seq->size;
 }
 
+/**
+ * @brief Allocate memory for sequence file operations
+ *
+ * @param[in] size Size of memory to allocate in bytes
+ *
+ * @return void* Pointer to allocated memory, or NULL if allocation fails
+ */
 static void *dfs_seq_alloc(unsigned long size)
 {
     return rt_calloc(1, size);
 }
 
+/**
+ * @brief Initialize and open a sequence file
+ *
+ * @param[in] file Pointer to the file structure to be initialized
+ * @param[in] ops Pointer to sequence operations structure containing callback functions
+ *
+ * @return int 0 on success, negative error code on failure:
+ *         -EINVAL if ops is NULL
+ *         -ENOMEM if memory allocation fails
+ */
 int dfs_seq_open(struct dfs_file *file, const struct dfs_seq_ops *ops)
 {
     struct dfs_seq_file *seq;
@@ -57,6 +81,21 @@ int dfs_seq_open(struct dfs_file *file, const struct dfs_seq_ops *ops)
     return 0;
 }
 
+/**
+ * @brief Traverse sequence file data with specified offset
+ *
+ * This function traverses the sequence file data starting from the specified offset.
+ * It handles buffer overflow conditions by dynamically resizing the buffer when needed.
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] offset Position to start traversing from
+ *
+ * @return int 0 on success, negative error code on failure:
+ *         -ENOMEM if memory allocation fails
+ *         -EAGAIN if buffer needs to be resized
+ *
+ * @note Data output loop: start() -> show() -> next() -> show() -> ... -> next() -> stop()
+ */
 static int dfs_seq_traverse(struct dfs_seq_file *seq, off_t offset)
 {
     off_t pos = 0;
@@ -111,6 +150,28 @@ Eoverflow:
     return !seq->buf ? -ENOMEM : -EAGAIN;
 }
 
+/**
+ * @brief Read data from sequence file
+ *
+ * @param[in] file Pointer to the file structure
+ * @param[out] buf Buffer to store the read data
+ * @param[in] size Size of the buffer in bytes
+ * @param[in,out] pos Current file position (updated after read)
+ *
+ * @return ssize_t Number of bytes read on success, negative error code on failure:
+ *         -EFAULT if buffer error occurs
+ *         -ENOMEM if memory allocation fails
+ *         0 if size is 0
+ *
+ * @details This function implements the core sequence file reading logic with following steps:
+ *          1. Reset iterator if reading from start
+ *          2. Synchronize position if needed
+ *          3. Allocate buffer if not exists
+ *          4. Copy remaining data from previous read
+ *          5. Start iteration and fill buffer with new data
+ *          6. Handle buffer overflow by doubling size
+ *          7. Copy data to user buffer and update positions
+ */
 ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos)
 {
     struct dfs_seq_file *seq = file->data;
@@ -160,7 +221,7 @@ ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos)
         if (!seq->buf)
             goto Enomem;
     }
-    // something left in the buffer - copy it out first
+    /* something left in the buffer - copy it out first */
     if (seq->count)
     {
         n = seq->count > size ? size : seq->count;
@@ -169,27 +230,27 @@ ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos)
         seq->count -= n;
         seq->from += n;
         copied += n;
-        if (seq->count) // hadn't managed to copy everything
+        if (seq->count) /* hadn't managed to copy everything */
             goto Done;
     }
-    // get a non-empty record in the buffer
+    /* get a non-empty record in the buffer */
     seq->from = 0;
     p = seq->ops->start(seq, &seq->index);
     while (p)
     {
         err = seq->ops->show(seq, p);
-        if (err < 0) // hard error
+        if (err < 0) /* hard error */
             break;
-        if (err) // ->show() says "skip it"
+        if (err) /* ->show() says "skip it" */
             seq->count = 0;
         if (!seq->count)
-        { // empty record
+        { /* empty record */
             p = seq->ops->next(seq, p, &seq->index);
             continue;
         }
-        if (!dfs_seq_is_full(seq)) // got it
+        if (!dfs_seq_is_full(seq)) /* got it */
             goto Fill;
-        // need a bigger buffer
+        /* need a bigger buffer */
         seq->ops->stop(seq, p);
         rt_free(seq->buf);
         seq->count = 0;
@@ -198,14 +259,14 @@ ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos)
             goto Enomem;
         p = seq->ops->start(seq, &seq->index);
     }
-    // EOF or an error
+    /* EOF or an error */
     seq->ops->stop(seq, p);
     seq->count = 0;
     goto Done;
 Fill:
-    // one non-empty record is in the buffer; if they want more,
-    // try to fit more in, but in any case we need to advance
-    // the iterator once for every record shown.
+    /* one non-empty record is in the buffer; if they want more, */
+    /* try to fit more in, but in any case we need to advance */
+    /* the iterator once for every record shown. */
     while (1)
     {
         size_t offs = seq->count;
@@ -217,13 +278,13 @@ Fill:
             LOG_W(".next function %p did not update position index\n", seq->ops->next);
             seq->index++;
         }
-        if (!p) // no next record for us
+        if (!p) /* no next record for us */
             break;
         if (seq->count >= size)
             break;
         err = seq->ops->show(seq, p);
         if (err > 0)
-        { // ->show() says "skip it"
+        { /* ->show() says "skip it" */
             seq->count = offs;
         }
         else if (err || dfs_seq_is_full(seq))
@@ -256,6 +317,17 @@ Enomem:
     goto Done;
 }
 
+/**
+ * @brief Reposition the file offset for sequence file
+ *
+ * @param[in] file Pointer to the file structure
+ * @param[in] offset Offset value according to whence
+ * @param[in] whence Reference position for offset:
+ *                  - SEEK_SET: from file beginning
+ *                  - SEEK_CUR: from current position
+ * @return off_t New file offset on success, negative error code on failure:
+ *         -EINVAL for invalid parameters
+ */
 off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence)
 {
     struct dfs_seq_file *seq = file->data;
@@ -295,6 +367,13 @@ off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence)
     return retval;
 }
 
+/**
+ * @brief Release resources associated with a sequence file
+ *
+ * @param[in] file Pointer to the file structure to be released
+ *
+ * @return int Always returns 0 indicating success
+ */
 int dfs_seq_release(struct dfs_file *file)
 {
     struct dfs_seq_file *seq = file->data;
@@ -312,6 +391,17 @@ int dfs_seq_release(struct dfs_file *file)
     return 0;
 }
 
+/**
+ * @brief Format and write data to sequence file buffer using variable arguments
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] f Format string (printf-style)
+ * @param[in] args Variable arguments list
+ *
+ * @details This function:
+ *          - Formats data using vsnprintf
+ *          - Triggers overflow if buffer is full
+ */
 void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *f, va_list args)
 {
     int len;
@@ -328,6 +418,13 @@ void dfs_seq_vprintf(struct dfs_seq_file *seq, const char *f, va_list args)
     dfs_seq_overflow(seq);
 }
 
+/**
+ * @brief Format and print data to sequence file buffer (printf-style)
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] f Format string (printf-style)
+ * @param[in] ... Variable arguments matching format string
+ */
 void dfs_seq_printf(struct dfs_seq_file *seq, const char *f, ...)
 {
     va_list args;
@@ -338,7 +435,10 @@ void dfs_seq_printf(struct dfs_seq_file *seq, const char *f, ...)
 }
 
 /**
- * write char to buffer
+ * @brief Write a single character to sequence file buffer
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] c Character to be written
  */
 void dfs_seq_putc(struct dfs_seq_file *seq, char c)
 {
@@ -349,7 +449,10 @@ void dfs_seq_putc(struct dfs_seq_file *seq, char c)
 }
 
 /**
- * write string to buffer
+ * @brief Write a string to sequence file buffer
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] s Null-terminated string to be written
  */
 void dfs_seq_puts(struct dfs_seq_file *seq, const char *s)
 {
@@ -365,7 +468,13 @@ void dfs_seq_puts(struct dfs_seq_file *seq, const char *s)
 }
 
 /**
- * write arbitrary data to buffer
+ * @brief Write arbitrary binary data to sequence file buffer
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] data Pointer to data to be written
+ * @param[in] len Length of data in bytes
+ *
+ * @return int 0 on success, -1 if buffer overflow occurs
  */
 int dfs_seq_write(struct dfs_seq_file *seq, const void *data, size_t len)
 {
@@ -380,7 +489,10 @@ int dfs_seq_write(struct dfs_seq_file *seq, const void *data, size_t len)
 }
 
 /**
- * write padding spaces to buffer
+ * @brief Pad the sequence file buffer with spaces and optionally append a character
+ *
+ * @param[in,out] seq Pointer to sequence file structure
+ * @param[in] c Optional character to append after padding (if not '\0')
  */
 void dfs_seq_pad(struct dfs_seq_file *seq, char c)
 {

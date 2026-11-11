@@ -63,9 +63,36 @@ rt_weak rt_size_t at_utils_send(rt_device_t dev,
 {
     return rt_device_write(dev, pos, buffer, size);
 }
+
+static rt_size_t _at_vsnprintf_len(char *send_buf, rt_size_t buf_size, rt_size_t suffix_size,
+                                   const char *format, va_list args)
+{
+    int len;
+    rt_size_t text_size;
+
+    if (buf_size <= suffix_size)
+    {
+        return 0;
+    }
+
+    text_size = buf_size - suffix_size;
+    len = vsnprintf(send_buf, text_size, format, args);
+    if (len <= 0)
+    {
+        return 0;
+    }
+
+    if ((rt_size_t)len >= text_size)
+    {
+        return text_size - 1;
+    }
+
+    return len;
+}
+
 rt_size_t at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
 {
-    rt_size_t len = vsnprintf(send_buf, buf_size, format, args);
+    rt_size_t len = _at_vsnprintf_len(send_buf, buf_size, 0, format, args);
     if (len == 0)
     {
         return 0;
@@ -79,7 +106,7 @@ rt_size_t at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, con
 }
 rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
 {
-    rt_size_t len = vsnprintf(send_buf, buf_size - 2, format, args);
+    rt_size_t len = _at_vsnprintf_len(send_buf, buf_size, 2, format, args);
     if (len == 0)
     {
         return 0;
@@ -96,7 +123,7 @@ rt_size_t at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, c
 }
 rt_size_t at_vprintfcr(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
 {
-    rt_size_t len = vsnprintf(send_buf, buf_size - 1, format, args);
+    rt_size_t len = _at_vsnprintf_len(send_buf, buf_size, 1, format, args);
     if (len == 0)
     {
         return 0;
@@ -112,7 +139,7 @@ rt_size_t at_vprintfcr(rt_device_t device, char *send_buf, rt_size_t buf_size, c
 }
 rt_size_t at_vprintflf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args)
 {
-    rt_size_t len = vsnprintf(send_buf, buf_size - 1, format, args);
+    rt_size_t len = _at_vsnprintf_len(send_buf, buf_size, 1, format, args);
     if (len == 0)
     {
         return 0;

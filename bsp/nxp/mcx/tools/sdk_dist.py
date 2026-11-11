@@ -9,8 +9,8 @@ def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files
     import rtconfig
 
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-    library_dir  = os.path.join(dist_dir, 'Libraries')
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+    library_dir  = os.path.join(dist_dir, 'libraries')
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
@@ -21,10 +21,10 @@ def dist_do_building(BSP_ROOT, dist_dir):
         print("project Kconfig not exists!")
         return
 
-    # replace '../Libraries/Kconfig' to 'Libraries/Kconfig'
+    # replace '../libraries/Kconfig' to 'libraries/Kconfig'
     with open(project_kconfig, 'r') as f:
         data = f.readlines()
     with open(project_kconfig, 'w') as f:
         for line in data:
-            line = line.replace('../Libraries/Kconfig', 'Libraries/Kconfig')
+            line = line.replace('../libraries/Kconfig', 'libraries/Kconfig')
             f.write(line)

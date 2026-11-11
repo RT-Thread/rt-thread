@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,15 +21,27 @@ extern "C" {
 
 #if defined SOC_SERIES_GD32VF103V
 #include "gd32vf103_gpio.h"
+#elif defined SOC_SERIES_GD32VW55x
+#include "gd32vw55x_gpio.h"
+#else
+#error "not support soc"
 #endif
 
 #define __GD32_PORT(port)  GPIO##port
 
-
+#if defined SOC_SERIES_GD32VF103V
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,        \
                                     GPIO##port, GPIO_PIN_##pin,   \
                                     GPIO_PORT_SOURCE_GPIO##port,  \
                                     GPIO_PIN_SOURCE_##pin}
+#elif defined SOC_SERIES_GD32VW55x
+#define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,        \
+                                    GPIO##port, GPIO_PIN_##pin,   \
+                                    EXTI_SOURCE_GPIO##port,  \
+                                    EXTI_SOURCE_PIN##pin}
+#else
+#endif
+
 
 #define GD32_PIN_DEFAULT            {-1, (rcu_periph_enum)0, 0, 0, 0, 0}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,9 +57,12 @@
  * 2023-12-01     Shell        Support of dynamic device
  * 2023-12-18     xqyjlj       add rt_always_inline
  * 2023-12-22     Shell        Support hook list
- * 2024-01-18     Shell        Seperate basical types to a rttypes.h
- *                             Seperate the compiler portings to rtcompiler.h
+ * 2024-01-18     Shell        Separate basical types to a rttypes.h
+ *                             Separate the compiler portings to rtcompiler.h
  * 2024-03-30     Meco Man     update version number to v5.2.0
+ * 2025-11-10     Rbb666       update version number to v5.3.0
+ * 2026-09-10     CYFS         update version number to v5.3.1
+ * 2026-10-17     Rbb666       update version number to v5.4.0
  */
 
 #ifndef __RT_DEF_H__
@@ -82,8 +85,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                4               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
@@ -105,6 +108,15 @@ extern "C" {
 #define RT_UINT32_MAX                   0xFFFFFFFFUL          /**< Maximum number of UINT32 */
 #define RT_UINT64_MAX                   0xFFFFFFFFFFFFFFFFULL /**< Maximum number of UINT64 */
 #endif /* RT_USING_LIBC */
+
+/* maximum value of rt_size_t */
+#if defined(RT_USING_LIBC) && !defined(RT_USING_NANO)
+#define RT_SIZE_MAX SIZE_MAX
+#elif defined(ARCH_CPU_64BIT)
+#define RT_SIZE_MAX RT_UINT64_MAX
+#else
+#define RT_SIZE_MAX RT_UINT32_MAX
+#endif
 
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
 
@@ -205,7 +217,6 @@ typedef int (*init_fn_t)(void);
 #if !defined(RT_USING_FINSH)
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
-#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
@@ -266,10 +277,9 @@ typedef int (*init_fn_t)(void);
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align) - 1))
 
 /**
- * @addtogroup group_kernel_object
+ * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * kernel object macros
@@ -512,7 +522,7 @@ struct rt_object_information
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)
 #endif /* RT_USING_HOOKLIST */
 
-/**@}*/
+/** @} group_object_management */
 
 /**
  * @addtogroup group_clock_management
@@ -578,7 +588,7 @@ typedef struct rt_timer *rt_timer_t;
 /**@}*/
 
 /**
- * @addtogroup group_Signal
+ * @addtogroup group_signal
  */
 /**@{*/
 
@@ -592,9 +602,8 @@ typedef void (*rt_sighandler_t)(int signo);
 
 /**
  * @addtogroup group_thread_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * Thread
@@ -848,9 +857,8 @@ struct rt_user_context
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
 /**
- * Thread structure
+ * @brief Thread Control Block
  */
-
 struct rt_thread
 {
     struct rt_object            parent;
@@ -896,10 +904,6 @@ struct rt_thread
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#ifdef RT_USING_CPU_USAGE
-    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
-#endif /* RT_USING_CPU_USAGE */
-
 #ifdef RT_USING_PTHREADS
     void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */
 #endif /* RT_USING_PTHREADS */
@@ -941,6 +945,8 @@ struct rt_thread
 #ifdef RT_USING_CPU_USAGE_TRACER
     rt_ubase_t                  user_time;              /**< Ticks on user */
     rt_ubase_t                  system_time;            /**< Ticks on system */
+    rt_ubase_t                  total_time_prev;        /**< Previous total ticks snapshot */
+    rt_uint8_t                  cpu_usage;              /**< Recent CPU usage in percent */
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
@@ -961,7 +967,7 @@ typedef struct rt_thread *rt_thread_t;
 #define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
-/**@}*/
+/** @} group_thread_management */
 
 /**
  * @addtogroup group_thread_comm
@@ -1381,6 +1387,9 @@ struct rt_device
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
     void *power_domain_unit;
+#ifdef RT_USING_DVFS
+    void *dvfs_scaling;
+#endif
 #ifdef RT_USING_DMA
     const void *dma_ops;
 #endif

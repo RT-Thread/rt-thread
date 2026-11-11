@@ -8,6 +8,14 @@
 
 #include "drv_common.h"
 
+#ifdef RT_USING_PIN
+#include "drv_gpio.h"
+#endif
+
+#ifdef RT_USING_SERIAL
+#include "drv_uart.h"
+#endif
+
 #define DBG_TAG    "drv_common"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>

@@ -454,8 +454,7 @@ static void ppp_do_connect(void *arg) {
  * ppp_netif_init_cb - netif init callback
  */
 static err_t ppp_netif_init_cb(struct netif *netif) {
-  netif->name[0] = 'p';
-  netif->name[1] = 'p';
+  rt_strncpy(netif->name, "pp", sizeof(netif->name));
 #if LWIP_IPV4
   /* FIXME: change that when netif_null_output_ip4() will materialize */
   netif->output = ppp_netif_output_ip4;

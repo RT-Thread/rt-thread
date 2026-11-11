@@ -14,10 +14,11 @@
 
  int main(void)
  {
-    rt_kprintf("Hello RT-Thread!\r\n");
-    while(1)
-    {
-        rt_thread_mdelay(1000);
-    }
+     rt_kprintf("Hello RT-Thread!\r\n");
+#ifdef RT_USING_SMP
+    extern void smp_example(void);
+    smp_example();
+#endif
+     return 0;
  }
 

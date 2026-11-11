@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2016/5/20      bernard      the first version
  * 2020/1/7       redoc        add include
+ * 2025-10-30     wdfk-prog    enable interrupt-safe operations using spinlocks
  */
 
 #ifndef __DEV_SPI_FLASH_H__
@@ -20,6 +21,10 @@ struct spi_flash_device
     struct rt_device_blk_geometry   geometry;
     struct rt_spi_device *          rt_spi_device;
     struct rt_mutex                 lock;
+#ifdef RT_USING_SPI_ISR
+    rt_base_t _isr_lvl;
+    struct rt_spinlock _spinlock;
+#endif /* RT_USING_SPI_ISR */
     void *                          user_data;
 };
 

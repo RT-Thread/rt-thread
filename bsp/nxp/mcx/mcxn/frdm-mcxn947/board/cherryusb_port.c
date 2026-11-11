@@ -30,7 +30,7 @@ INIT_COMPONENT_EXPORT(cherryusb_devinit);
 
 int cherryusb_hostinit(void)
 {
-    usbh_initialize(0, USBHS1__USBC_BASE);
+    usbh_initialize(0, USBHS1__USBC_BASE, NULL);
     return 0;
 }
 INIT_COMPONENT_EXPORT(cherryusb_hostinit);

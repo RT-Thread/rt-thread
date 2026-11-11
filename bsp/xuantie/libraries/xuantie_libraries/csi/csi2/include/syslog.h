@@ -119,3 +119,4 @@ extern const char *PFORMAT_E;
 #endif
 
 #endif /* _SYSLOG_H_ */
+

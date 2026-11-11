@@ -1,0 +1,51 @@
+menuconfig RT_USING_DVFS
+    bool "Using Dynamic Voltage and Frequency Scaling (DVFS)"
+    depends on RT_USING_DM
+    depends on RT_USING_CLK
+    depends on RT_USING_REGULATOR
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    select RT_USING_ADT_BITMAP
+    select RT_USING_DEVICE_IPC
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+
+config RT_USING_DVFS_EVENT
+    bool "Event"
+    depends on RT_USING_DVFS
+    default y
+
+config RT_USING_DVFS_OPP_RETRY_MAX
+    int "OPP retry max time"
+    depends on RT_USING_DVFS
+    default 10
+
+if RT_USING_DVFS && RT_USING_DVFS_EVENT
+    comment "DVFS Event Drivers"
+endif
+
+if RT_USING_DVFS
+    osource "$(SOC_DM_DVFS_EVENT_DIR)/Kconfig"
+endif
+
+if RT_USING_DVFS
+    comment "DVFS CPUfreq Drivers"
+endif
+
+config RT_DVFS_SCMI_CPUFREQ
+    bool "SCMI CPUfreq driver"
+    depends on RT_USING_DVFS
+    depends on RT_FIRMWARE_ARM_SCMI
+    default n
+
+if RT_USING_DVFS
+    osource "$(SOC_DM_DVFS_CPUFREQ_DIR)/Kconfig"
+endif
+
+if RT_USING_DVFS
+    comment "DVFS Devfreq Drivers"
+endif
+
+if RT_USING_DVFS
+    osource "$(SOC_DM_DVFS_DEVFREQ_DIR)/Kconfig"
+endif

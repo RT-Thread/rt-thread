@@ -106,7 +106,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
@@ -178,8 +179,11 @@
 #define RT_SERIAL_RB_BUFSZ 2048
 #define RT_USING_CAN
 #define RT_CAN_USING_HDR
-#define RT_USING_CPUTIME
-#define CPUTIME_TIMER_FREQ 0
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_ADC
@@ -192,6 +196,7 @@
 #define RT_ALARM_TIMESLICE 5
 #define RT_ALARM_PRIORITY 10
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_WDT
 #define RT_USING_AUDIO
@@ -216,7 +221,6 @@
 #define RT_HWCRYPTO_USING_SHA2_512
 #define RT_HWCRYPTO_USING_RNG
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -251,6 +255,7 @@
 /* Network */
 
 #define RT_USING_SAL
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -323,6 +328,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
 #define RT_USING_ADT_BITMAP
@@ -483,13 +489,21 @@
 
 /* NUVOTON Drivers */
 
-#define PKG_USING_NUVOTON_ARM926_LIB
-#define PKG_USING_NUVOTON_ARM926_LIB_LATEST_VERSION
+#define PKG_USING_NUVOTON_SERIES_DRIVER
+#define PKG_USING_NUVOTON_SERIES_DRIVER_LATEST_VERSION
 /* end of NUVOTON Drivers */
 
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

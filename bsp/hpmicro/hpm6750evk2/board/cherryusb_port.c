@@ -34,7 +34,7 @@ int cherryusb_hostinit(void)
 {
     board_init_usb_pins();
 
-    usbh_initialize(0, HPM_USB0_BASE);
+    usbh_initialize(0, HPM_USB0_BASE, NULL);
     return 0;
 }
 INIT_COMPONENT_EXPORT(cherryusb_hostinit);

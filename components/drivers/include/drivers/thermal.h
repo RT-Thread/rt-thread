@@ -59,6 +59,10 @@ struct rt_thermal_cooling_cell
     struct rt_thermal_cooling_device *cooling_devices;
 
     rt_uint32_t level_range[2];
+
+#ifdef RT_USING_OFW
+    struct rt_ofw_node *cooling_np;
+#endif
 };
 
 struct rt_thermal_cooling_map

@@ -61,7 +61,7 @@ else:
 hal_sconscript = os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')
 
 if os.path.isfile(hal_sconscript):
-    objs.extend(SConscript(hal_sconscript))
+    objs.extend(SConscript(hal_sconscript, variant_dir=os.path.join('build', 'libraries', bsp_library_type, 'HAL_Drivers'), duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

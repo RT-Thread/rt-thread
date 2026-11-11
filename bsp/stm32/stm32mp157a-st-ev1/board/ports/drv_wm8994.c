@@ -18,7 +18,7 @@
 #include <drv_log.h>
 
 #define CHIP_ADDRESS    0x1B     /* wm8994 address */
-#define I2C_NAME       "i2c2"
+#define I2C_NAME        "swi2c2"
 
 struct wm8994_dev
 {

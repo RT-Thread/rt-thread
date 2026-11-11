@@ -1,0 +1,37 @@
+# Rust build artifacts (now in build/rust)
+/target/
+**/*.rs.bk
+*.pdb
+
+# Cargo lock file (optional - uncomment if you want to exclude it)
+# Cargo.lock
+
+# Build directories
+/build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Backup files
+*.bak
+*.tmp
+*.temp
+
+# Log files
+*.log

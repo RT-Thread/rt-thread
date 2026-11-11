@@ -1,0 +1,9 @@
+config RT_GRAPHIC_FB_BCM2708
+    bool "BCM2708 framebuffer support"
+    depends on RT_FIRMWARE_RASPBERRYPI
+    default n
+
+config RT_GRAPHIC_FB_RPISENSE
+    bool "Raspberry Pi Sense HAT framebuffer"
+    depends on RT_MFD_RPI_SENSE
+    default n

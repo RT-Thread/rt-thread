@@ -1,0 +1,12 @@
+config RT_SERIAL_EARLY_HVC
+    bool "Early HVC"
+    default n
+
+config RT_SERIAL_PL011
+    bool "ARM PL011"
+    default n
+
+rsource "8250/Kconfig"
+rsource "virtual/Kconfig"
+
+osource "$(SOC_DM_SERIAL_DIR)/Kconfig"

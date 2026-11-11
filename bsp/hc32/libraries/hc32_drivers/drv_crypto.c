@@ -7,13 +7,16 @@
  * Date           Author       Notes
  * 2023-02-10     CDT          first version
  * 2024-06-11     CDT          Fix compiler warning
+ * 2025-07-29     CDT          Support HC32F334
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-03     CDT          Support HC32F467
  */
 #include "board.h"
 
 #if defined(BSP_USING_HWCRYPTO)
 
 // #define DRV_DEBUG
-#define LOG_TAG             "drv_crypto"
+#define LOG_TAG "drv_crypto"
 #include <drv_log.h>
 
 struct hc32_hwcrypto_device
@@ -24,10 +27,10 @@ struct hc32_hwcrypto_device
 
 #if defined(BSP_USING_CRC)
 
-#define DEFAULT_CRC16_CCITT_POLY    (0x1021)       /*!<  X^16 + X^12 + X^5 + 1 */
-#define DEFAULT_CRC32_POLY          (0x04C11DB7)   /*!<  X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 + X^4 + X^2+ X + 1 */
+#define DEFAULT_CRC16_CCITT_POLY (0x1021)       /*!<  X^16 + X^12 + X^5 + 1 */
+#define DEFAULT_CRC32_POLY       (0x04C11DB7)   /*!<  X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 + X^4 + X^2+ X + 1 */
 
-static struct hwcrypto_crc_cfg crc_cfgbk = {0};
+static struct hwcrypto_crc_cfg crc_cfgbk = { 0 };
 
 static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_size_t length)
 {
@@ -65,7 +68,7 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
             stcCrcInit.u32RefIn = CRC_REFIN_ENABLE;
             stcCrcInit.u32RefOut = CRC_REFOUT_ENABLE;
             break;
-        default :
+        default:
             LOG_E("crc flag parameter error.");
             goto _exit;
         }
@@ -88,13 +91,16 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
         case 32U:
             stcCrcInit.u32Protocol = CRC_CRC32;
             break;
-        default :
+        default:
             LOG_E("crc width only support 16/32.");
             goto _exit;
         }
-
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F472) || \
+    defined(HC32F334) || defined(HC32F467)
         stcCrcInit.u32InitValue = ctx->crc_cfg.last_val;
-
+#elif defined(HC32F4A8)
+        stcCrcInit.u64InitValue = ctx->crc_cfg.last_val;
+#endif
         if (CRC_Init(&stcCrcInit) != LL_OK)
         {
             LOG_E("crc init error.");
@@ -103,7 +109,17 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
         LOG_D("CRC_Init.");
         rt_memcpy(&crc_cfgbk, &ctx->crc_cfg, sizeof(struct hwcrypto_crc_cfg));
     }
-    if (16U  == ctx->crc_cfg.width)
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+    if (16U == ctx->crc_cfg.width)
+    {
+        (void)CRC_CRC16_AccumulateData(CRC_DATA_WIDTH_8BIT, in, length, (uint16_t *)&result);
+    }
+    else        /* CRC32 */
+    {
+        (void)CRC_CRC32_AccumulateData(CRC_DATA_WIDTH_8BIT, in, length, &result);
+    }
+#elif defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
+    if (16U == ctx->crc_cfg.width)
     {
         result = CRC_CRC16_AccumulateData(CRC_DATA_WIDTH_8BIT, in, length);
     }
@@ -111,15 +127,14 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
     {
         result = CRC_CRC32_AccumulateData(CRC_DATA_WIDTH_8BIT, in, length);
     }
-
+#endif
 _exit:
     rt_mutex_release(&hc32_hw_dev->mutex);
 
     return result;
 }
 
-static const struct hwcrypto_crc_ops crc_ops =
-{
+static const struct hwcrypto_crc_ops crc_ops = {
     .update = _crc_update,
 };
 #endif /* BSP_USING_CRC */
@@ -137,15 +152,14 @@ static rt_uint32_t _rng_rand(struct hwcrypto_rng *ctx)
     return gen_random;
 }
 
-static const struct hwcrypto_rng_ops rng_ops =
-{
+static const struct hwcrypto_rng_ops rng_ops = {
     .update = _rng_rand,
 };
 #endif /* BSP_USING_RNG */
 
 #if defined(BSP_USING_HASH)
 
-#define HASH_SHA256_MSG_DIGEST_SIZE        (32U)
+#define HASH_SHA256_MSG_DIGEST_SIZE (32U)
 
 static const rt_uint8_t *hash_in = RT_NULL;
 static rt_size_t hash_length = 0;
@@ -164,7 +178,7 @@ static rt_err_t _hash_update(struct hwcrypto_hash *ctx, const rt_uint8_t *in, rt
         hash_in = in;
         hash_length = length;
         break;
-    default :
+    default:
         LOG_E("not support hash type: %x", ctx->parent.type);
         result = -RT_ERROR;
         break;
@@ -172,7 +186,7 @@ static rt_err_t _hash_update(struct hwcrypto_hash *ctx, const rt_uint8_t *in, rt
 
     rt_mutex_release(&hc32_hw_dev->mutex);
 
-    return  result;
+    return result;
 }
 
 static rt_err_t _hash_finish(struct hwcrypto_hash *ctx, rt_uint8_t *out, rt_size_t length)
@@ -204,7 +218,7 @@ static rt_err_t _hash_finish(struct hwcrypto_hash *ctx, rt_uint8_t *out, rt_size
         }
         break;
 
-    default :
+    default:
         LOG_E("not support hash type: %x", ctx->parent.type);
         result = -RT_ERROR;
         break;
@@ -216,45 +230,138 @@ _exit:
     return result;
 }
 
-static const struct hwcrypto_hash_ops hash_ops =
-{
+static const struct hwcrypto_hash_ops hash_ops = {
     .update = _hash_update,
-    .finish  = _hash_finish
+    .finish = _hash_finish
 };
 
 #endif /* BSP_USING_HASH */
 
 #if defined(BSP_USING_AES)
+#if defined(HC32F4A8)
+#define AES_KEY_SIZE_16BYTE (16U)
+#define AES_KEY_SIZE_24BYTE (24U)
+#define AES_KEY_SIZE_32BYTE (32U)
+static stc_ske_init_t stcSkeInit = { 0 };
+static int32_t AES_Encrypt(const uint8_t *pu8Plaintext, uint32_t u32PlaintextSize,
+                           const uint8_t *pu8Key, uint8_t u8KeySize, uint8_t *pu8Ciphertext)
+{
+    int32_t i32Ret = LL_ERR_INVD_PARAM;
+    stc_ske_crypto_t stcCrypto;
+
+    if ((pu8Plaintext != NULL) && (u32PlaintextSize > 0UL) && (pu8Key != NULL) && (pu8Ciphertext != NULL))
+    {
+        if (u8KeySize == AES_KEY_SIZE_16BYTE)
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_128;
+        }
+        else if (u8KeySize == AES_KEY_SIZE_24BYTE)
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_192;
+        }
+        else
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_256;
+        }
+        stcSkeInit.u32Crypto = SKE_CRYPTO_ENCRYPT;
+        stcSkeInit.pu8Key = pu8Key;
+        /* Initialize SKE */
+        i32Ret = SKE_Init(&stcSkeInit);
+
+        stcCrypto.u32Alg = stcSkeInit.u32Alg;
+        stcCrypto.u32Mode = stcSkeInit.u32Mode;
+        stcCrypto.u32CryptoSize = u32PlaintextSize;
+        /* Encrypt blocks */
+        stcCrypto.pu8In = pu8Plaintext;
+        stcCrypto.pu8Out = pu8Ciphertext;
+        i32Ret = SKE_CryptoBlocks(&stcCrypto);
+    }
+
+    return i32Ret;
+}
+
+static int32_t AES_Decrypt(const uint8_t *pu8Ciphertext, uint32_t u32CiphertextSize,
+                           const uint8_t *pu8Key, uint8_t u8KeySize, uint8_t *pu8Plaintext)
+{
+    int32_t i32Ret = LL_ERR_INVD_PARAM;
+    stc_ske_crypto_t stcCrypto;
+
+    if ((pu8Plaintext != NULL) && (u32CiphertextSize > 0UL) && (pu8Key != NULL) && (pu8Ciphertext != NULL))
+    {
+        if (u8KeySize == AES_KEY_SIZE_16BYTE)
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_128;
+        }
+        else if (u8KeySize == AES_KEY_SIZE_24BYTE)
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_192;
+        }
+        else
+        {
+            stcSkeInit.u32Alg = SKE_ALG_AES_256;
+        }
+        stcSkeInit.u32Crypto = SKE_CRYPTO_DECRYPT;
+        stcSkeInit.pu8Key = pu8Key;
+        /* Initialize SKE */
+        i32Ret = SKE_Init(&stcSkeInit);
+
+        stcCrypto.u32Alg = stcSkeInit.u32Alg;
+        stcCrypto.u32Mode = stcSkeInit.u32Mode;
+        stcCrypto.u32CryptoSize = u32CiphertextSize;
+        /* Decrypt blocks */
+        stcCrypto.pu8In = pu8Ciphertext;
+        stcCrypto.pu8Out = pu8Plaintext;
+        i32Ret = SKE_CryptoBlocks(&stcCrypto);
+    }
+
+    return i32Ret;
+}
+#endif
+
 static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx, struct hwcrypto_symmetric_info *info)
 {
     rt_err_t result = RT_EOK;
     struct hc32_hwcrypto_device *hc32_hw_dev = (struct hc32_hwcrypto_device *)ctx->parent.device->user_data;
     rt_mutex_take(&hc32_hw_dev->mutex, RT_WAITING_FOREVER);
 
+#if defined(HC32F4A8)
+    SKE_StructInit(&stcSkeInit);
     switch (ctx->parent.type)
     {
     case HWCRYPTO_TYPE_AES_ECB:
         LOG_D("AES type is ECB.");
+        stcSkeInit.u32Mode = SKE_MD_ECB;
         break;
     case HWCRYPTO_TYPE_AES_CBC:
+        stcSkeInit.u32Mode = SKE_MD_CBC;
+        break;
     case HWCRYPTO_TYPE_AES_CTR:
-    case HWCRYPTO_TYPE_DES_ECB:
-    case HWCRYPTO_TYPE_DES_CBC:
-    default :
+        stcSkeInit.u32Mode = SKE_MD_CTR;
+        break;
+    case HWCRYPTO_TYPE_AES_CFB:
+        stcSkeInit.u32Mode = SKE_MD_CFB;
+        break;
+    case HWCRYPTO_TYPE_AES_OFB:
+        stcSkeInit.u32Mode = SKE_MD_OFB;
+        break;
+    default:
         LOG_E("not support cryp type: %x", ctx->parent.type);
         break;
     }
+    stcSkeInit.pu8Iv = ctx->iv;
+#endif
 
-#if defined (HC32F460)
+#if defined(HC32F460)
     if (ctx->key_bitlen != (AES_KEY_SIZE_16BYTE * 8U))
     {
         LOG_E("not support key bitlen: %d", ctx->key_bitlen);
         result = -RT_ERROR;
         goto _exit;
     }
-#elif defined (HC32F4A0) || defined (HC32F448) || defined (HC32F472)
-    if (ctx->key_bitlen != (AES_KEY_SIZE_16BYTE * 8U) && ctx->key_bitlen != (AES_KEY_SIZE_24BYTE * 8U) && \
-            ctx->key_bitlen != (AES_KEY_SIZE_32BYTE * 8U))
+#elif defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8) || \
+    defined(HC32F467)
+    if (ctx->key_bitlen != (AES_KEY_SIZE_16BYTE * 8U) && ctx->key_bitlen != (AES_KEY_SIZE_24BYTE * 8U) &&
+        ctx->key_bitlen != (AES_KEY_SIZE_32BYTE * 8U))
     {
         LOG_E("not support key bitlen: %d", ctx->key_bitlen);
         result = -RT_ERROR;
@@ -298,8 +405,7 @@ _exit:
     return result;
 }
 
-static const struct hwcrypto_symmetric_ops cryp_ops =
-{
+static const struct hwcrypto_symmetric_ops cryp_ops = {
     .crypt = _cryp_crypt
 };
 #endif
@@ -365,9 +471,14 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
     case HWCRYPTO_TYPE_RC4:
     case HWCRYPTO_TYPE_GCM:
     {
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F472) || \
+    defined(HC32F467)
         /* Enable AES peripheral clock. */
         FCG_Fcg0PeriphClockCmd(PWC_FCG0_AES, ENABLE);
-
+#elif defined(HC32F4A8)
+        /* Enable SKE peripheral clock */
+        FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SKE, ENABLE);
+#endif
         ((struct hwcrypto_symmetric *)ctx)->ops = &cryp_ops;
 
         break;
@@ -416,8 +527,14 @@ static void _crypto_destroy(struct rt_hwcrypto_ctx *ctx)
     case HWCRYPTO_TYPE_3DES:
     case HWCRYPTO_TYPE_RC4:
     case HWCRYPTO_TYPE_GCM:
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F448) || defined(HC32F472) || \
+    defined(HC32F467)
         AES_DeInit();
         FCG_Fcg0PeriphClockCmd(PWC_FCG0_AES, DISABLE);
+#elif defined(HC32F4A8)
+        SKE_DeInit();
+        FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SKE, DISABLE);
+#endif
         break;
 #endif /* BSP_USING_AES */
 
@@ -500,8 +617,7 @@ static void _crypto_reset(struct rt_hwcrypto_ctx *ctx)
     }
 }
 
-static const struct rt_hwcrypto_ops _ops =
-{
+static const struct rt_hwcrypto_ops _ops = {
     .create = _crypto_create,
     .destroy = _crypto_destroy,
     .copy = _crypto_clone,
@@ -514,7 +630,7 @@ static int rt_hw_crypto_device_init(void)
 
 #if defined(BSP_USING_UQID)
     stc_efm_unique_id_t pstcUID;
-    rt_uint32_t cpuid[3] = {0};
+    rt_uint32_t cpuid[3] = { 0 };
 
     EFM_GetUID(&pstcUID);
     cpuid[0] = pstcUID.u32UniqueID0;

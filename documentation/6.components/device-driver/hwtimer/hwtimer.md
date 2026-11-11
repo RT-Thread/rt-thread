@@ -2,6 +2,14 @@
 
 # Introduction to the Timer
 
+## Driver / BSP quick notes
+
+| Topic | Guidance |
+| --- | --- |
+| **Prescaler reload** | Some timers glitch if prescaler changes while counter running—stop, reload, restart. |
+| **Cascade / 32-bit** | Chaining 16-bit timers for long timeouts—handle overflow ISR race vs application read. |
+| **Power** | Timer clock domain may gate in sleep—wake source setup must re-enable bus clock. |
+
 Hardware timers generally have two modes of operation, timer mode and counter mode. No matter which mode is operated, it works by counting the pulse signal counted by the internal counter module. Here are some important concepts of timers.
 
 **Timer mode**: Counts the internal pulse. Timers are often used as timing clocks for timing detection, timing response, and timing control.

@@ -1,0 +1,24 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_NANENG_COMBO']):
+    src += ['phye-naneng-combphy.c']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_SNPS_PCIE3']):
+    src += ['phye-snps-pcie3.c']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_INNO_USB2']):
+    src += ['phye-rockchip-inno-usb2.c']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_MIPI_DCPHY']):
+    src += ['phye-rockchip-mipi-dcphy.c']
+
+if GetDepend(['RT_PHYE_ROCKCHIP_INNO_DSIDPHY']):
+    src += ['phye-rockchip-inno-dsidphy.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

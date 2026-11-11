@@ -220,9 +220,10 @@ static void fm33_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 rt_inline rt_int32_t pin2irqindex(rt_uint32_t pin)
 {
     rt_uint8_t irqindex;
-    for (irqindex = 4 * PIN_PORT(pin); irqindex <= ITEM_NUM(pin_irq_map); irqindex++)
+    for (irqindex = 4 * PIN_PORT(pin); irqindex < ITEM_NUM(pin_irq_map); irqindex++)
     {
-        if (pin_irq_map[irqindex].pin >= pin && pin_irq_map[irqindex - 1].pin < pin)
+        if (pin_irq_map[irqindex].pin >= pin &&
+            (irqindex == 0 || pin_irq_map[irqindex - 1].pin < pin))
         {
             return irqindex;
         }
@@ -291,7 +292,7 @@ static rt_err_t fm33_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
         return -RT_ENOSYS;
     }
 
-    irqindex = pin2irqindex(PIN_STPIN(pin));
+    irqindex = pin2irqindex(pin);
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return -RT_ENOSYS;
@@ -334,12 +335,12 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if (enabled == PIN_IRQ_ENABLE)
     {
+        irqindex = pin2irqindex(pin);
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
             return -RT_ENOSYS;
         }
 
-        irqindex = pin2irqindex(pin);
         irqmap = &pin_irq_map[irqindex];
 
         level = rt_hw_interrupt_disable();
@@ -384,7 +385,7 @@ static rt_err_t fm33_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
-        irqmap = get_pin_irq_map(PIN_STPIN(pin));
+        irqmap = get_pin_irq_map(pin);
         if (irqmap == RT_NULL)
         {
             return -RT_ENOSYS;

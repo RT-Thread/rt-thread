@@ -21,22 +21,9 @@ env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')
-rtconfig.CPU='virt64'
-rtconfig.ARCH='risc-v'
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
-
-stack_size = 4096
-
-if GetDepend('RT_USING_SMART'):
-    # use smart link.lds
-    env['LINKFLAGS'] = env['LINKFLAGS'].replace('link.lds', 'link_smart.lds')
-
-stack_lds = open('link_stacksize.lds', 'w')
-if GetDepend('__STACKSIZE__'): stack_size = GetDepend('__STACKSIZE__')
-stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
-stack_lds.close()
 
 # make a building
 DoBuilding(TARGET, objs)

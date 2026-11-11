@@ -11,9 +11,15 @@
 /*
  * 程序清单：这是 RTC 设备使用例程和 Alarm 使用示例。
  * 例程导出了 rtc_sample 命令到控制终端。
+ *  menuconfig:
+ *   1.Hardware Drivers Config--->On-Chip Peripheral Driver--->Enable RTC---> Select clock source(RTC USING XTAL32)
+ *   2.RT-Thread Components---> Device Drivers ---> [-*-] Using RTC device drivers ---> [*] Using RTC alarm
+ *                                                                                      (1024) stack size for alarm thread
+ *                                                                                      [*] Using local time for the alarm calculation
  * 命令调用格式：rtc_sample x
  * 命令解释：命令第二个参数是要使用的功能对应的编号，
  *           RTC 基本功能对应的编号为 0~3，Alarm 功能对应的编号为 4~9
+ * NOTE: 注意时间和日期格式，请严格按照提示位数输入！
 */
 
 #include <rtthread.h>
@@ -26,24 +32,23 @@
 #if defined(BSP_USING_RTC)
 
 /* macros define */
-#define SAMPLE_RTC_NAME         "rtc"
+#define SAMPLE_RTC_NAME "rtc"
 
 /* variables define */
 static rt_device_t rtc_dev;
 #if defined(RT_USING_ALARM)
-    extern void rt_alarm_dump(void);
+extern void rt_alarm_dump(void);
 
-    static rt_uint16_t callback_counter, alarm_idx = 0;
-    static struct rt_alarm *ptr_alarm = RT_NULL;
-    static struct rt_alarm_setup alarm_setup;
+static struct rt_alarm *ptr_alarm = RT_NULL;
+static struct rt_alarm_setup alarm_setup;
 #endif /* RT_USING_ALARM */
 
 /* command type */
 enum RTC_CMD
 {
-    CMD_OPEN_RTC        = 0x00,
-    CMD_SET_TIME        = 0x01,
-    CMD_SET_DATE        = 0x02,
+    CMD_OPEN_RTC = 0x00,
+    CMD_SET_TIME = 0x01,
+    CMD_SET_DATE = 0x02,
     CMD_GET_DATE_TIME,
 #if defined(RT_USING_ALARM)
     CMD_SET_ALARM,
@@ -56,18 +61,7 @@ enum RTC_CMD
 
 void alarm_callback_fun(rt_alarm_t alarm, time_t timestamp)
 {
-    rt_kprintf("\nuser alarm %d callback function.\n", alarm_idx);
-    if ((0 == (--callback_counter)) && (alarm_idx))
-    {
-        rt_kprintf("stop alarm %d \n", alarm_idx);
-        if (RT_EOK != rt_alarm_stop(alarm))
-        {
-            rt_kprintf("failed to stop alarm\n");
-        }
-        /* enter callback 2 times */
-        callback_counter = 2;
-        --alarm_idx;
-    }
+    rt_kprintf("User alarm callback function.\nNow time is: %s", ctime(&timestamp));
 }
 #else
 };
@@ -85,18 +79,20 @@ static int rtc_sample(int argc, char *argv[])
     if (argc < 2)
     {
         rt_kprintf("unkown rtc command, rtc [usage] as the following: \n");
-        rt_kprintf("\'0\': find and open rtc \n");
-        rt_kprintf("\'1 xx:xx:xx\': set time with \n");
-        rt_kprintf("\'2 xxxx-xx-xx\': set date with \n");
-        rt_kprintf("\'3\': get time and date \n");
+        rt_kprintf("\'rtc_sample 0\': find and open rtc \n");
+        rt_kprintf("\'rtc_sample 1 HH:MM:SS\': set time with \n");
+        rt_kprintf("\'rtc_sample 2 yyyy-mm-dd\': set date with \n");
+        rt_kprintf("\'rtc_sample 3\': get time and date \n");
 #if defined(RT_USING_ALARM)
-        rt_kprintf("\'4\': set current time + 10s as alarm \n");
-        rt_kprintf("\'5\': start alarm \n");
-        rt_kprintf("\'6\': stop alarm \n");
+        rt_kprintf("\'rtc_sample 4\': set current time + 1 Min as alarm \n");
+        rt_kprintf("\'rtc_sample 5\': start alarm \n");
+        rt_kprintf("\'rtc_sample 6\': stop alarm \n");
         rt_kprintf("cmd-7 based on cmd-4\n");
-        rt_kprintf("\'7\' o: oneshot,\n\'7\' s: second,\n\'7\' m: minute \n");
-        rt_kprintf("\'8\': dump all alarm \n");
-        rt_kprintf("\'9\': delete all alarm \n");
+        rt_kprintf("\'rtc_sample 7 o\': oneshot \n");
+        rt_kprintf("\'rtc_sample 7 s\': second  \n");
+        rt_kprintf("\'rtc_sample 7 m\': minute  \n");
+        rt_kprintf("\'rtc_sample 8\': dump all alarm \n");
+        rt_kprintf("\'rtc_sample 9\': delete all alarm \n");
 #endif /* RT_USING_ALARM */
         return -RT_ERROR;
     }
@@ -120,17 +116,17 @@ static int rtc_sample(int argc, char *argv[])
         rt_kprintf("rtc opened\n");
         break;
     case CMD_SET_TIME:
-        /* set time with xx:xx:xx format characters */
+        /* set time with hh:mm:ss format characters */
         if (argc < 3)
         {
             rt_kprintf("unsurpported command\n");
             return -RT_ERROR;
         }
-        temp1 = ((argv[2][0] - '0') * 10) + \
+        temp1 = ((argv[2][0] - '0') * 10) +
                 (argv[2][1] - '0');
-        temp2 = ((argv[2][3] - '0') * 10) + \
+        temp2 = ((argv[2][3] - '0') * 10) +
                 (argv[2][4] - '0');
-        temp3 = ((argv[2][6] - '0') * 10) + \
+        temp3 = ((argv[2][6] - '0') * 10) +
                 (argv[2][7] - '0');
         if (RT_EOK != set_time(temp1, temp2, temp3))
         {
@@ -140,21 +136,21 @@ static int rtc_sample(int argc, char *argv[])
         rt_kprintf("\nset RTC time as %2d:%2d:%2d\n", temp1, temp2, temp3);
         break;
     case CMD_SET_DATE:
-        /* set data xxxx-xx-xx format characters */
-        temp1 = ((argv[2][0] - '0') * 1000) + \
-                ((argv[2][1] - '0') * 100) + \
-                ((argv[2][2] - '0') * 10) + \
+        /* set data yyyy-mm-dd format characters */
+        temp1 = ((argv[2][0] - '0') * 1000) +
+                ((argv[2][1] - '0') * 100) +
+                ((argv[2][2] - '0') * 10) +
                 (argv[2][3] - '0');
-        temp2 = ((argv[2][5] - '0') * 10) + \
+        temp2 = ((argv[2][5] - '0') * 10) +
                 (argv[2][6] - '0');
-        temp3 = ((argv[2][8] - '0') * 10) + \
+        temp3 = ((argv[2][8] - '0') * 10) +
                 (argv[2][9] - '0');
         if (RT_EOK != set_date(temp1, temp2, temp3))
         {
             rt_kprintf("failed to set date for %s\n", SAMPLE_RTC_NAME);
             return -RT_ERROR;
         }
-        rt_kprintf("\nset RTC date as %4d-%2d-%2d\n", temp1, temp2, temp3);
+        rt_kprintf("\nset RTC date as %4d-%02d-%02d\n", temp1, temp2, temp3);
         break;
     case CMD_GET_DATE_TIME:
         /* get current time and print it */
@@ -166,9 +162,12 @@ static int rtc_sample(int argc, char *argv[])
         /* get current time (uint: second) from 1970-01-01 */
         now = time(NULL);
         rt_kprintf("GMT  time is: \n%s\n", ctime(&now));
-        now += 60;
+        /* converts the local time into the calendar time. */
+#ifdef RT_ALARM_USING_LOCAL_TIME
+        localtime_r(&now, &p_tm);
+#else
         gmtime_r(&now, &p_tm);
-        // localtime_r(&now, &p_tm);
+#endif
         alarm_setup.flag = RT_ALARM_MINUTE;
         alarm_setup.wktime.tm_year = p_tm.tm_year;
         alarm_setup.wktime.tm_mon = p_tm.tm_mon;
@@ -177,23 +176,31 @@ static int rtc_sample(int argc, char *argv[])
         alarm_setup.wktime.tm_wday = p_tm.tm_wday;
         alarm_setup.wktime.tm_hour = p_tm.tm_hour;
         alarm_setup.wktime.tm_min = p_tm.tm_min;
-        alarm_setup.wktime.tm_sec = p_tm.tm_sec;
+        alarm_setup.wktime.tm_sec = 0; //p_tm.tm_sec;
         alarm_setup.wktime.tm_isdst = -1;
+        alarm_setup.wktime.tm_min += 1;
+        if (alarm_setup.wktime.tm_min > 59)
+        {
+            alarm_setup.wktime.tm_min = 0;
+            alarm_setup.wktime.tm_hour += 1;
+            if (alarm_setup.wktime.tm_hour > 23)
+            {
+                alarm_setup.wktime.tm_hour = 0;
+            }
+        }
         rt_kprintf("UTC alarm Time: \n%d-%02d-%02d %02d:%02d:%02d\n\n",
-                   p_tm.tm_year + 1900,
-                   p_tm.tm_mon + 1,
-                   p_tm.tm_mday,
-                   p_tm.tm_hour,
-                   p_tm.tm_min,
-                   p_tm.tm_sec);
+                   alarm_setup.wktime.tm_year + 1900,
+                   alarm_setup.wktime.tm_mon + 1,
+                   alarm_setup.wktime.tm_mday,
+                   alarm_setup.wktime.tm_hour,
+                   alarm_setup.wktime.tm_min,
+                   alarm_setup.wktime.tm_sec);
         ptr_alarm = rt_alarm_create(alarm_callback_fun, &alarm_setup);
         if (RT_NULL == ptr_alarm)
         {
             rt_kprintf("failed to create rtc alarm\n");
             return -RT_ERROR;
         }
-        callback_counter = 2;
-        ++alarm_idx;
         rt_alarm_dump();
         break;
     case CMD_SET_START_ALARM:
@@ -245,7 +252,6 @@ static int rtc_sample(int argc, char *argv[])
         {
             rt_kprintf("failed to delete alarm\n");
         }
-        alarm_idx = 0;
         rt_kprintf("alarm deleted\n");
         break;
 #endif /* RT_USING_ALARM */

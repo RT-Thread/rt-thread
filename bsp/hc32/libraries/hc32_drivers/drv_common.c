@@ -10,20 +10,20 @@
 
 #include "board.h"
 
-#define DBG_TAG                         "drv_common"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "drv_common"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USING_PIN
-    #include <drv_gpio.h>
+#include <drv_gpio.h>
 #endif
 
 #ifdef RT_USING_SERIAL
-    #ifdef RT_USING_SERIAL_V2
-        #include <drv_usart_v2.h>
-    #else
-        #include <drv_usart.h>
-    #endif /* RT_USING_SERIAL */
+#ifdef RT_USING_SERIAL_V2
+#include <drv_usart_v2.h>
+#else
+#include <drv_usart.h>
+#endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
 #ifdef RT_USING_FINSH
@@ -61,7 +61,7 @@ void SysTick_Handler(void)
 /**
  * Configures the SysTick for OS tick.
  */
-void  SysTick_Configuration(void)
+void SysTick_Configuration(void)
 {
     rt_uint32_t cnts;
     stc_clock_freq_t stcClkFreq;
@@ -117,7 +117,6 @@ void rt_hw_us_delay(rt_uint32_t us)
     do
     {
         now = SysTick->VAL;
-        delta = start > now ?  start - now : reload + start - now;
-    }
-    while (delta < us_tick * us);
+        delta = start > now ? start - now : reload + start - now;
+    } while (delta < us_tick * us);
 }

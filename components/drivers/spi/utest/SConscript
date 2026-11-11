@@ -1,0 +1,20 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd, cwd + '/..', cwd + '/../../include', cwd + '/../sfud/inc',
+           cwd + '/../../../utilities/utest']
+
+if GetDepend(['RT_UTEST_SPI_LOOPBACK']):
+    src += ['spi_loopback_tc.c']
+
+if GetDepend(['RT_UTEST_SPI_VIRT_BUS']):
+    src += ['spi_virt_bus.c']
+
+if GetDepend(['RT_UTEST_SPI_FLASH']):
+    src += ['spi_flash_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_SPI'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -5,3 +5,5 @@
 **/**/makefile
 /libraries/tests/*
 /libraries/phytium_standalone_sdk/
+/aarch64/link_preprocessed.lds
+*.origin

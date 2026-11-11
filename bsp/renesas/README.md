@@ -19,7 +19,8 @@ RA 系列 BSP 目前支持情况如下表所示：
 | [ra8m1-ek](ra8m1-ek)                     | Renesas 官方 EK-RA8M1 开发板                     |
 | [ra8d1-ek](ra8d1-ek)                     | Renesas 官方 EK-RA8D1 开发板                     |
 | [ra8d1-vision-board](ra8d1-vision-board) | Renesas 联合 RT-Thread RA8D1-Vision-Board 开发板 |
-| **RZ 系列**                             |                                                  |
+| [ra8p1-titan-board](ra8p1-titan-board)   | Renesas 联合 RT-Thread RA8P1-Titan-Board 开发板  |
+| **RZ 系列**                              |                                                  |
 | [rzt2m_rsk](rzt2m_rsk)                   | Renesas 官方 RSK-RZT2M 开发板                    |
 | [rzn2l_rsk](rzn2l_rsk)                   | Renesas 官方 RSK-RZN2L 开发板                    |
 

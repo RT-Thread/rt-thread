@@ -1,5 +1,5 @@
  /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -270,6 +270,7 @@ static int _uart_getc(struct rt_serial_device *serial)
     {
         p_cb = (drv_uart_cb_t*)serial->parent.user_data;
     }
+
     if(p_cb->rx_length)
     {
         ch = p_cb->rx_buffer[0];
@@ -331,3 +332,4 @@ int rt_hw_uart_init(void)
 }
 #endif /* defined(BSP_USING_UART0) || defined(BSP_USING_UART1) */
 #endif /* BSP_USING_UART */
+

@@ -10,7 +10,7 @@ config DISP2_SUNXI
     ---help---
       Display driver for sunxi based boards.
 
-choice
+choice SUNXI_DISP2_FB_SEL
     prompt "DISP2 Framebuffer rotation support"
     default SUNXI_DISP2_FB_DISABLE_ROTATE
 

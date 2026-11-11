@@ -366,6 +366,9 @@ static void sender_timeout(void *parameter)
 
     rt_sched_lock(&slvl);
 
+    /* The timeout callback now owns this thread timer. */
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+
     ch = (rt_channel_t)(thread->wakeup_handle.user_data);
     if (ch->stat == RT_IPC_STAT_ACTIVE && ch->reply == thread)
     {
@@ -553,6 +556,7 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
                 rt_thread_wakeup_set(thread_send, wakeup_sender_wait_recv, (void *)ch);
                 if (time > 0)
                 {
+                    rt_tick_t time_tick = time;
                     rt_timer_control(&(thread_send->thread_timer),
                                      RT_TIMER_CTRL_GET_FUNC,
                                      &old_timeout_func);
@@ -562,7 +566,7 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread_send->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                                     &time_tick);
                     rt_timer_start(&(thread_send->thread_timer));
                 }
             }
@@ -597,6 +601,7 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
                 rt_thread_wakeup_set(thread_send, wakeup_sender_wait_reply, (void *)ch);
                 if (time > 0)
                 {
+                    rt_tick_t time_tick = time;
                     rt_timer_control(&(thread_send->thread_timer),
                                      RT_TIMER_CTRL_GET_FUNC,
                                      &old_timeout_func);
@@ -606,7 +611,7 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread_send->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                                     &time_tick);
                     rt_timer_start(&(thread_send->thread_timer));
                 }
             }
@@ -781,6 +786,9 @@ static void receiver_timeout(void *parameter)
 
     rt_sched_lock(&slvl);
 
+    /* The timeout callback now owns this thread timer. */
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+
     ch = (rt_channel_t)(thread->wakeup_handle.user_data);
 
     thread->error = -RT_ETIMEOUT;
@@ -870,6 +878,7 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
                 thread->error = RT_EOK;
                 if (time > 0)
                 {
+                    rt_tick_t time_tick = time;
                     rt_timer_control(&(thread->thread_timer),
                                      RT_TIMER_CTRL_GET_FUNC,
                                      &old_timeout_func);
@@ -879,7 +888,7 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                                     &time_tick);
                     rt_timer_start(&(thread->thread_timer));
                 }
                 rt_spin_unlock_irqrestore(&ch->slock, level);

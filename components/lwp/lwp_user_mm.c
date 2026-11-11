@@ -672,21 +672,46 @@ void *lwp_mremap(struct rt_lwp *lwp, void *old_address, size_t old_size,
     return rt_aspace_mremap_range(lwp->aspace, old_address, old_size, new_size, flags, new_address);
 }
 
+static rt_bool_t _lwp_user_range_is_valid(const void *addr, size_t size)
+{
+    uintptr_t start;
+    uintptr_t end;
+
+    if (addr == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
+    start = (uintptr_t)addr;
+    if (start < (uintptr_t)USER_VADDR_START)
+    {
+        return RT_FALSE;
+    }
+    if (start >= (uintptr_t)USER_VADDR_TOP)
+    {
+        return RT_FALSE;
+    }
+
+    end = start + size;
+    if (end < start)
+    {
+        return RT_FALSE;
+    }
+    if (end > (uintptr_t)USER_VADDR_TOP)
+    {
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+
 size_t lwp_get_from_user(void *dst, void *src, size_t size)
 {
     struct rt_lwp *lwp = RT_NULL;
 
     /* check src */
 
-    if (src < (void *)USER_VADDR_START)
-    {
-        return 0;
-    }
-    if (src >= (void *)USER_VADDR_TOP)
-    {
-        return 0;
-    }
-    if ((void *)((char *)src + size) > (void *)USER_VADDR_TOP)
+    if (!_lwp_user_range_is_valid(src, size))
     {
         return 0;
     }
@@ -705,15 +730,7 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     struct rt_lwp *lwp = RT_NULL;
 
     /* check dst */
-    if (dst < (void *)USER_VADDR_START)
-    {
-        return 0;
-    }
-    if (dst >= (void *)USER_VADDR_TOP)
-    {
-        return 0;
-    }
-    if ((void *)((char *)dst + size) > (void *)USER_VADDR_TOP)
+    if (!_lwp_user_range_is_valid(dst, size))
     {
         return 0;
     }

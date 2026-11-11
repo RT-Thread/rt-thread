@@ -22,8 +22,6 @@
 #define CONFIG_NR_CPUS 1
 #endif
 
-.globl  Reset_Handler
-
 .section .vectors
     .align  6
     .globl  __Vectors
@@ -63,6 +61,7 @@ __Vectors:
     .endr
     .long    Reset_Handler
 _start:
+    .globl  Reset_Handler
     .type   Reset_Handler, %function
 Reset_Handler:
 .option push
@@ -132,7 +131,7 @@ Reset_Handler:
 #endif
 #endif
 
-    la   a0, pre_main
+    la   a0, rtthread_startup
     jalr a0
 
 .size   Reset_Handler, . - Reset_Handler

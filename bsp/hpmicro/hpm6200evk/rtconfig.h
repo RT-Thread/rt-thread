@@ -7,6 +7,16 @@
 
 /* rt_vsnprintf options */
 
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -61,7 +71,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -75,6 +85,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -100,9 +112,12 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50301
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define ARCH_RISCV
+#define ARCH_RISCV32
 
 /* RT-Thread Components */
 
@@ -110,6 +125,7 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
+#define RT_USING_LEGACY
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -127,14 +143,6 @@
 
 /* DFS: device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define RT_USING_DFS_DEVFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -142,9 +150,9 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
+#define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -292,6 +300,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -307,6 +319,36 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+#define PKG_USING_HPM_SDK
+#define PKG_USING_HPM_SDK_V113
+/* end of HPMicro SDK */
+
+/* FM33 Drivers */
+
+/* end of FM33 Drivers */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
+
+/* N32 Drivers */
+
+/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -386,6 +428,7 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
+#define SOC_SERIES_HPM6000
 
 /* Hardware Drivers Config */
 
@@ -394,9 +437,36 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_GPIO_IRQ_PRIORITY 1
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_RX_BUFSIZE 128
+#define BSP_UART0_TX_BUFSIZE 0
+#define BSP_UART0_IRQ_PRIORITY 1
 /* end of On-chip Peripheral Drivers */
+
+/* HPMicro Interrupt Config */
+
+/* HPMicro RT-Thread Interrupt Framework */
+
+/* HPMicro Use Generic Startup Implementation */
+
+/* end of HPMicro Use Generic Startup Implementation */
+
+/* HPMicro RT-Thread backtrace configuration (experimental) */
+
+/* end of HPMicro RT-Thread backtrace configuration (experimental) */
 /* end of Hardware Drivers Config */
+
+/* Third-Party Add-ons */
+
+/* Segger SystemView Config */
+
+/* end of Segger SystemView Config */
+
+/* RT-Thread Insight Config */
+
+/* end of RT-Thread Insight Config */
+/* end of Third-Party Add-ons */
 
 #endif

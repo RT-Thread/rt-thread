@@ -29,7 +29,7 @@
  * 31      25    20    15      12   7        0
  */
 #define __OPC_INSN_FORMAT_R(opcode, func3, func7, rd, rs1, rs2) \
-    ".insn r "RT_STRINGIFY(opcode)","RT_STRINGIFY(func3)","RT_STRINGIFY(func7)","RT_STRINGIFY(rd)","RT_STRINGIFY(rs1)","RT_STRINGIFY(rs2)
+    ".insn r " RT_STRINGIFY(opcode) "," RT_STRINGIFY(func3) "," RT_STRINGIFY(func7) "," RT_STRINGIFY(rd) "," RT_STRINGIFY(rs1) "," RT_STRINGIFY(rs2)
 
 #ifdef _TOOLCHAIN_SUPP_ZIFENCEI_ISA_
 #define OPC_FENCE_I             "fence.i"

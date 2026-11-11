@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+if GetDepend('BSP_USING_QSPIFLASH'):
+    cwd = GetCurrentDir()
+    src = Glob('*.c')
+    CPPPATH = [cwd]
+    LINKFLAGS = ''
+
+    if rtconfig.PLATFORM in ['armcc', 'armclang']:   
+        LINKFLAGS += ' --predefine="-DXIP_BOOT_HEADER_ENABLE=1"'
+
+    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+    Return('group')

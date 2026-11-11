@@ -14,7 +14,7 @@
 
 #include <rtthread.h>
 /**
- * @defgroup    group_PWM PWM
+ * @defgroup    group_drivers_pwm PWM
  * @brief       PWM driver api
  * @ingroup     group_device_driver
  *
@@ -79,7 +79,7 @@
  */
 
 /*!
- * @addtogroup group_PWM
+ * @addtogroup group_drivers_pwm
  * @{
  */
 #define PWM_CMD_ENABLE      (RT_DEVICE_CTRL_BASE(PWM) + 0)
@@ -200,6 +200,14 @@ rt_err_t rt_pwm_set_dead_time(struct rt_device_pwm *device, int channel, rt_uint
  * @return rt_err_t error code
 */
 rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t phase);
+
+/**
+ * @brief get the PWM configuration
+ * @param device the PWM device
+ * @param cfg the configuration of PWM
+ * @return rt_err_t error code
+ */
+rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg);
 
 /*! @}*/
 

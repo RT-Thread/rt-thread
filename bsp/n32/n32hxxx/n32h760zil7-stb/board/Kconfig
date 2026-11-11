@@ -1,0 +1,2050 @@
+menu "Hardware Drivers Config"
+
+    config BSP_PERIPH_PIN_CFG_READY
+        bool "Optional peripheral AF pins are configured on this board"
+        default n
+        help
+            The peripheral clock and IO must be configured in
+            board/Cube_Config/USER/src/n32h7xx_cfg.c.
+
+menu "Onboard Peripheral Drivers"
+
+    menuconfig BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+        depends on BSP_PERIPH_PIN_CFG_READY
+        if BSP_USING_SDRAM
+            choice BSP_SDRAM_BANK_SEL
+                prompt "Select SDRAM Bank"
+                default BSP_SDRAM_BANK1
+
+                config BSP_SDRAM_BANK1
+                    bool "Select SDRAM Bank1"
+
+                config BSP_SDRAM_BANK2
+                    bool "Select SDRAM Bank2"
+            endchoice
+
+            choice BSP_SDRAM_DATA_WIDTH_SEL
+                prompt "Select SDRAM Data Width"
+                default BSP_SDRAM_DATA_WIDTH_32
+
+                config BSP_SDRAM_DATA_WIDTH_8
+                    bool "SDRAM Data Width 8-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_16
+                    bool "SDRAM Data Width 16-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_32
+                    bool "SDRAM Data Width 32-bits"
+            endchoice
+
+            choice BSP_SDRAM_COLUMN_BITS_SEL
+                prompt "Select SDRAM Column Bits"
+                default BSP_SDRAM_COLUMN_BIT_9
+
+                config BSP_SDRAM_COLUMN_BIT_8
+                    bool "SDRAM SDRAM Column Bits 8-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_9
+                    bool "SDRAM SDRAM Column Bits 9-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_10
+                    bool "SDRAM SDRAM Column Bits 10-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_11
+                    bool "SDRAM SDRAM Column Bits 11-bits"
+            endchoice
+
+            choice BSP_SDRAM_ROW_BITS_SEL
+                prompt "Select SDRAM Row Bits"
+                default BSP_SDRAM_ROW_BIT_12
+
+                config BSP_SDRAM_ROW_BIT_11
+                    bool "SDRAM SDRAM Row Bits 11-bits"
+
+                config BSP_SDRAM_ROW_BIT_12
+                    bool "SDRAM SDRAM Row Bits 12-bits"
+
+                config BSP_SDRAM_ROW_BIT_13
+                    bool "SDRAM SDRAM Row Bits 13-bits"
+            endchoice
+
+            choice BSP_SDRAM_CAS_LATENCY_SEL
+                prompt "Select SDRAM CAS Latency"
+                default BSP_SDRAM_CAS_LATENCY_3
+
+                config BSP_SDRAM_CAS_LATENCY_1
+                    bool "SDRAM SDRAM CAS Latency 1"
+
+                config BSP_SDRAM_CAS_LATENCY_2
+                    bool "SDRAM SDRAM CAS Latency 2"
+
+                config BSP_SDRAM_CAS_LATENCY_3
+                    bool "SDRAM SDRAM CAS Latency 3"
+            endchoice
+
+            config BSP_SDRAM_SIZE
+                int "SDRAM Size (MBytes)"
+                range 8 256
+                default 32
+        endif
+
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+        depends on BSP_PERIPH_PIN_CFG_READY
+        select BSP_USING_SDRAM
+        if BSP_USING_LCD
+            config BSP_BITS_PER_PIXEL
+                int "LCD Bits Per Pixel"
+                default 16
+
+            choice BSP_LCD_PIXEL_FORMAT_SEL
+                prompt "Select LCD PIXEL FORMAT"
+                default BSP_LCD_PIXEL_FORMAT_RGB565
+
+                config BSP_LCD_PIXEL_FORMAT_RGB565
+                    bool "SDRAM LCD Pixel Format RGB565"
+
+                config BSP_LCD_PIXEL_FORMAT_ARGB8888
+                    bool "SDRAM LCD Pixel Format ARGB8888"
+
+                config BSP_LCD_PIXEL_FORMAT_RGB888
+                    bool "SDRAM LCD Pixel Format RGB888"
+            endchoice
+
+            config BSP_LCD_WIDTH_PIXEL
+                int "LCD Width Pixel"
+                default 800
+
+            config BSP_LCD_HEIGHT_PIXEL
+                int "LCD Height Pixel"
+                default 480
+
+            config BSP_LCD_HSYNC_WIDTH_PIXEL
+                int "LCD Hsync Width Pixel"
+                default 34
+
+            config BSP_LCD_VSYNC_HEIGHT_PIXEL
+                int "LCD Vsync Height Pixel"
+                default 10
+
+            config BSP_LCD_HBP_PIXEL
+                int "LCD HBP Pixel"
+                default 46
+
+            config BSP_LCD_VBP_PIXEL
+                int "LCD VBP Pixel"
+                default 23
+
+            config BSP_LCD_HFP_PIXEL
+                int "LCD HFP Pixel"
+                default 210
+
+            config BSP_LCD_VFP_PIXEL
+                int "LCD VFP Pixel"
+                default 22
+
+            choice BSP_LCD_BACKLIGHT_SEL
+                prompt "Select LCD BACKLIGHT Control Type"
+                default BSP_LCD_BACKLIGHT_USING_GPIO
+
+                config BSP_LCD_BACKLIGHT_USING_GPIO
+                    bool "LCD BACKLIGHT Using GPIO Control"
+
+                config BSP_LCD_BACKLIGHT_USING_PWM
+                    bool "LCD BACKLIGHT Using PWM Control"
+                    select RT_USING_PWM
+                    select BSP_USING_PWM
+            endchoice
+
+            if BSP_LCD_BACKLIGHT_USING_GPIO
+                config BSP_LCD_BACKLIGHT_PIN
+                    int "Backlight GPIO Port"
+                    default 115
+
+                config BSP_LCD_DISPLAY_PIN
+                    int "Display GPIO Pin"
+                    default 26
+            endif
+
+            if BSP_LCD_BACKLIGHT_USING_PWM
+                config BSP_LCD_PWM_DEV_NAME
+                    string "PWM Device Name"
+                    default "pwm1"
+
+                config BSP_LCD_PWM_DEV_CHANNEL
+                    int "PWM Channel"
+                    default 1
+            endif
+        endif
+
+
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        depends on BSP_PERIPH_PIN_CFG_READY
+        select RT_USING_LWIP
+        if BSP_USING_ETH
+            choice BSP_ETH_SEL
+                prompt "Select ETH Instance"
+                default BSP_USING_ETH1
+
+                config BSP_USING_ETH1
+                    bool "ETH1 (GMII/MII/RMII, 10M/100M/1000M)"
+
+                config BSP_USING_ETH2
+                    bool "ETH2 (MII/RMII, 10M/100M)"
+            endchoice
+
+            choice BSP_ETH_INTERFACE_SEL
+                prompt "Select Media Interface"
+                default ETH_INTERFACE_USING_RMII
+
+                config ETH_INTERFACE_USING_GMII
+                    bool "GMII"
+                    depends on BSP_USING_ETH1
+
+                config ETH_INTERFACE_USING_MII
+                    bool "MII"
+
+                config ETH_INTERFACE_USING_RMII
+                    bool "RMII"
+            endchoice
+
+            choice BSP_ETH_PHY_SEL
+                prompt "Select PHY Chip"
+                default PHY_USING_DM9119INP
+
+                config PHY_USING_DM9119INP
+                    bool "DM9119INP (Gigabit, GMII/MII/RMII)"
+
+                config PHY_USING_YT8522H
+                    bool "YT8522H (100M, MII/RMII)"
+            endchoice
+
+            config BSP_ETH_USING_HW_CHECKSUM
+                bool "Enable Hardware Checksum"
+                select RT_LWIP_USING_HW_CHECKSUM
+                default n
+
+            config PHY_USING_INTERRUPT_MODE
+                bool "Enable PHY Link Change Interrupt Mode"
+                default n
+                if PHY_USING_INTERRUPT_MODE
+                    config PHY_INT_PIN
+                        int "PHY Interrupt Pin Number"
+                        range 0 255
+                        default 0
+                endif
+        endif
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART3_TX_USING_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART6_TX_USING_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+
+            config BSP_UART7_RX_USING_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART7_TX_USING_DMA
+                bool "Enable UART7 TX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+
+            config BSP_UART8_RX_USING_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART8_TX_USING_DMA
+                bool "Enable UART8 TX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART9
+                bool "Enable UART9"
+                default n
+
+            config BSP_UART9_RX_USING_DMA
+                bool "Enable UART9 RX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART9_TX_USING_DMA
+                bool "Enable UART9 TX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART10
+                bool "Enable UART10"
+                default n
+
+            config BSP_UART10_RX_USING_DMA
+                bool "Enable UART10 RX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART10_TX_USING_DMA
+                bool "Enable UART10 TX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART11
+                bool "Enable UART11"
+                default n
+
+            config BSP_UART11_RX_USING_DMA
+                bool "Enable UART11 RX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART11_TX_USING_DMA
+                bool "Enable UART11 TX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART12
+                bool "Enable UART12"
+                default n
+
+            config BSP_UART12_RX_USING_DMA
+                bool "Enable UART12 RX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART12_TX_USING_DMA
+                bool "Enable UART12 TX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART13
+                bool "Enable UART13"
+                default n
+
+            config BSP_UART13_RX_USING_DMA
+                bool "Enable UART13 RX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART13_TX_USING_DMA
+                bool "Enable UART13 TX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART14
+                bool "Enable UART14"
+                default n
+
+            config BSP_UART14_RX_USING_DMA
+                bool "Enable UART14 RX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART14_TX_USING_DMA
+                bool "Enable UART14 TX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART15
+                bool "Enable UART15"
+                default n
+
+            config BSP_UART15_RX_USING_DMA
+                bool "Enable UART15 RX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART15_TX_USING_DMA
+                bool "Enable UART15 TX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+
+            config BSP_SPI4_TX_USING_DMA
+                bool "Enable SPI4 TX DMA"
+                depends on BSP_USING_SPI4
+                default n
+
+            config BSP_SPI4_RX_USING_DMA
+                bool "Enable SPI4 RX DMA"
+                depends on BSP_USING_SPI4
+                select BSP_SPI4_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+
+            config BSP_SPI5_TX_USING_DMA
+                bool "Enable SPI5 TX DMA"
+                depends on BSP_USING_SPI5
+                default n
+
+            config BSP_SPI5_RX_USING_DMA
+                bool "Enable SPI5 RX DMA"
+                depends on BSP_USING_SPI5
+                select BSP_SPI5_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
+
+            config BSP_SPI6_TX_USING_DMA
+                bool "Enable SPI6 TX DMA"
+                depends on BSP_USING_SPI6
+                default n
+
+            config BSP_SPI6_RX_USING_DMA
+                bool "Enable SPI6 RX DMA"
+                depends on BSP_USING_SPI6
+                select BSP_SPI6_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI7
+                bool "Enable SPI7 BUS"
+                default n
+
+            config BSP_SPI7_TX_USING_DMA
+                bool "Enable SPI7 TX DMA"
+                depends on BSP_USING_SPI7
+                default n
+
+            config BSP_SPI7_RX_USING_DMA
+                bool "Enable SPI7 RX DMA"
+                depends on BSP_USING_SPI7
+                select BSP_SPI7_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 22
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 23
+            endif
+        endif
+
+    menuconfig BSP_USING_HARD_I2C
+        bool "Enable Hard I2C BUS"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HARD_I2C
+            config BSP_USING_HARD_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+
+            config BSP_I2C1_RX_USING_DMA
+                bool "Enable I2C1 RX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+
+            config BSP_I2C1_TX_USING_DMA
+                bool "Enable i2c1 TX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice BSP_RTC_LS_SEL
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI Quad SPI BUS"
+        default n
+        depends on BSP_PERIPH_PIN_CFG_READY
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        if BSP_USING_QSPI
+            config BSP_USING_QSPI2
+                bool "Enable QSPI2 BUS"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+		
+    menuconfig BSP_USING_SDIO
+        bool "Enable SD/MMC"
+        select RT_USING_SDIO
+        select RT_USING_BLK
+        default n
+        if BSP_USING_SDIO
+            choice BSP_SDIO_SEL
+                prompt "Select SDIO Instance"
+                default BSP_USING_SDIO1
+
+                config BSP_USING_SDIO1
+                    bool "SDIO1 (SDMMC1, AXI bus)"
+
+                config BSP_USING_SDIO2
+                    bool "SDIO2 (SDMMC2, AHB1 bus)"
+            endchoice
+
+            config BSP_USING_SDIO_SDMA
+                bool "Enable SDMA data transfer"
+                default n
+        endif
+        
+    menuconfig BSP_USING_FDCAN
+        bool "Enable FDCAN (CAN FD)"
+        default n
+        select RT_USING_CAN
+        select RT_CAN_USING_CANFD
+        select RT_CAN_USING_HDR
+        if BSP_USING_FDCAN
+            config BSP_USING_FDCAN1
+                bool "Enable FDCAN1"
+                default n
+                if BSP_USING_FDCAN1
+                    menu "FDCAN1 resource configuration"
+                        config BSP_FDCAN1_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN1_USING_TDC
+                            config BSP_FDCAN1_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN1_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN1_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN1_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN1_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN1_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN1_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN1_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN1_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN1_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN1_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN2
+                bool "Enable FDCAN2"
+                default n
+                if BSP_USING_FDCAN2
+                    menu "FDCAN2 resource configuration"
+                        config BSP_FDCAN2_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN2_USING_TDC
+                            config BSP_FDCAN2_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN2_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN2_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN2_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN2_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN2_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN2_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN2_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN2_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN2_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN2_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN3
+                bool "Enable FDCAN3"
+                default n
+                if BSP_USING_FDCAN3
+                    menu "FDCAN3 resource configuration"
+                        config BSP_FDCAN3_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN3_USING_TDC
+                            config BSP_FDCAN3_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN3_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN3_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN3_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN3_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN3_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN3_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN3_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN3_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN3_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN3_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN4
+                bool "Enable FDCAN4"
+                default n
+                if BSP_USING_FDCAN4
+                    menu "FDCAN4 resource configuration"
+                        config BSP_FDCAN4_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN4_USING_TDC
+                            config BSP_FDCAN4_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN4_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN4_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN4_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN4_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN4_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN4_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN4_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN4_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN4_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN4_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN4_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN4_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN4_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN4_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN5
+                bool "Enable FDCAN5"
+                default n
+                if BSP_USING_FDCAN5
+                    menu "FDCAN5 resource configuration"
+                        config BSP_FDCAN5_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN5_USING_TDC
+                            config BSP_FDCAN5_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN5_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN5_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN5_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN5_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN5_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN5_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN5_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN5_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN5_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN5_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN5_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN5_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN5_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN5_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN6
+                bool "Enable FDCAN6"
+                default n
+                if BSP_USING_FDCAN6
+                    menu "FDCAN6 resource configuration"
+                        config BSP_FDCAN6_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN6_USING_TDC
+                            config BSP_FDCAN6_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN6_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN6_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN6_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN6_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN6_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN6_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN6_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN6_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN6_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN6_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN6_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN6_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN6_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN6_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN7
+                bool "Enable FDCAN7"
+                default n
+                if BSP_USING_FDCAN7
+                    menu "FDCAN7 resource configuration"
+                        config BSP_FDCAN7_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN7_USING_TDC
+                            config BSP_FDCAN7_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN7_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN7_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN7_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN7_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN7_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN7_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN7_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN7_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN7_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN7_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN7_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN7_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN7_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN7_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN8
+                bool "Enable FDCAN8"
+                default n
+                if BSP_USING_FDCAN8
+                    menu "FDCAN8 resource configuration"
+                        config BSP_FDCAN8_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN8_USING_TDC
+                            config BSP_FDCAN8_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN8_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN8_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN8_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN8_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN8_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN8_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN8_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN8_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN8_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN8_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN8_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN8_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN8_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN8_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+
+            config BSP_USING_DAC2
+                bool "Enable DAC2"
+                default n
+        endif	
+        
+    menuconfig BSP_USING_CLOCK_TIMER
+        bool "Enable clock_timer"
+        default n
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_CLOCK_TIMER
+            config BSP_USING_ATIM1
+                bool "Enable ATIM1"
+                default n
+
+            config BSP_USING_ATIM2
+                bool "Enable ATIM2"
+                default n
+
+            config BSP_USING_ATIM3
+                bool "Enable ATIM3"
+                default n
+
+            config BSP_USING_ATIM4
+                bool "Enable ATIM4"
+                default n
+
+            config BSP_USING_GTIMA1
+                bool "Enable GTIMA1"
+                default n
+
+            config BSP_USING_GTIMA2
+                bool "Enable GTIMA2"
+                default n
+
+            config BSP_USING_GTIMA3
+                bool "Enable GTIMA3"
+                default n
+
+            config BSP_USING_GTIMA4
+                bool "Enable GTIMA4"
+                default n
+
+            config BSP_USING_GTIMA5
+                bool "Enable GTIMA5"
+                default n
+
+            config BSP_USING_GTIMA6
+                bool "Enable GTIMA6"
+                default n
+
+            config BSP_USING_GTIMA7
+                bool "Enable GTIMA7"
+                default n
+
+            config BSP_USING_GTIMB1
+                bool "Enable GTIMB1"
+                default n
+
+            config BSP_USING_GTIMB2
+                bool "Enable GTIMB2"
+                default n
+
+            config BSP_USING_GTIMB3
+                bool "Enable GTIMB3"
+                default n
+
+            config BSP_USING_BTIM1
+                bool "Enable BTIM1"
+                default n
+
+            config BSP_USING_BTIM2
+                bool "Enable BTIM2"
+                default n
+
+            config BSP_USING_BTIM3
+                bool "Enable BTIM3"
+                default n
+
+            config BSP_USING_BTIM4
+                bool "Enable BTIM4"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable ATIM1 output PWM"
+                depends on !BSP_USING_ATIM1
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+
+                    config BSP_USING_PWM1_CH2
+                        bool "Enable PWM1 channel2"
+                        default n
+
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable PWM1 channel3"
+                        default n
+
+                    config BSP_USING_PWM1_CH4
+                        bool "Enable PWM1 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM2
+                bool "Enable ATIM2 output PWM"
+                depends on !BSP_USING_ATIM2
+                default n
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH1
+                        bool "Enable PWM2 channel1"
+                        default n
+
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable PWM2 channel2"
+                        default n
+
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable PWM2 channel3"
+                        default n
+
+                    config BSP_USING_PWM2_CH4
+                        bool "Enable PWM2 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM3
+                bool "Enable ATIM3 output PWM"
+                depends on !BSP_USING_ATIM3
+                default n
+                if BSP_USING_PWM3
+                    config BSP_USING_PWM3_CH1
+                        bool "Enable PWM3 channel1"
+                        default n
+
+                    config BSP_USING_PWM3_CH2
+                        bool "Enable PWM3 channel2"
+                        default n
+
+                    config BSP_USING_PWM3_CH3
+                        bool "Enable PWM3 channel3"
+                        default n
+
+                    config BSP_USING_PWM3_CH4
+                        bool "Enable PWM3 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable ATIM4 output PWM"
+                depends on !BSP_USING_ATIM4
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
+                        default n
+
+                    config BSP_USING_PWM4_CH2
+                        bool "Enable PWM4 channel2"
+                        default n
+
+                    config BSP_USING_PWM4_CH3
+                        bool "Enable PWM4 channel3"
+                        default n
+
+                    config BSP_USING_PWM4_CH4
+                        bool "Enable PWM4 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM5
+                bool "Enable GTIMA1 output PWM"
+                depends on !BSP_USING_GTIMA1
+                default n
+                if BSP_USING_PWM5
+                    config BSP_USING_PWM5_CH1
+                        bool "Enable PWM5 channel1"
+                        default n
+
+                    config BSP_USING_PWM5_CH2
+                        bool "Enable PWM5 channel2"
+                        default n
+
+                    config BSP_USING_PWM5_CH3
+                        bool "Enable PWM5 channel3"
+                        default n
+
+                    config BSP_USING_PWM5_CH4
+                        bool "Enable PWM5 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM6
+                bool "Enable GTIMA2 output PWM"
+                depends on !BSP_USING_GTIMA2
+                default n
+                if BSP_USING_PWM6
+                    config BSP_USING_PWM6_CH1
+                        bool "Enable PWM6 channel1"
+                        default n
+
+                    config BSP_USING_PWM6_CH2
+                        bool "Enable PWM6 channel2"
+                        default n
+
+                    config BSP_USING_PWM6_CH3
+                        bool "Enable PWM6 channel3"
+                        default n
+
+                    config BSP_USING_PWM6_CH4
+                        bool "Enable PWM6 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM7
+                bool "Enable GTIMA3 output PWM"
+                depends on !BSP_USING_GTIMA3
+                default n
+                if BSP_USING_PWM7
+                    config BSP_USING_PWM7_CH1
+                        bool "Enable PWM7 channel1"
+                        default n
+
+                    config BSP_USING_PWM7_CH2
+                        bool "Enable PWM7 channel2"
+                        default n
+
+                    config BSP_USING_PWM7_CH3
+                        bool "Enable PWM7 channel3"
+                        default n
+
+                    config BSP_USING_PWM7_CH4
+                        bool "Enable PWM7 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM8
+                bool "Enable GTIMA4 output PWM"
+                depends on !BSP_USING_GTIMA4
+                default n
+                if BSP_USING_PWM8
+                    config BSP_USING_PWM8_CH1
+                        bool "Enable PWM8 channel1"
+                        default n
+
+                    config BSP_USING_PWM8_CH2
+                        bool "Enable PWM8 channel2"
+                        default n
+
+                    config BSP_USING_PWM8_CH3
+                        bool "Enable PWM8 channel3"
+                        default n
+
+                    config BSP_USING_PWM8_CH4
+                        bool "Enable PWM8 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM9
+                bool "Enable GTIMA5 output PWM"
+                depends on !BSP_USING_GTIMA5
+                default n
+                if BSP_USING_PWM9
+                    config BSP_USING_PWM9_CH1
+                        bool "Enable PWM9 channel1"
+                        default n
+
+                    config BSP_USING_PWM9_CH2
+                        bool "Enable PWM9 channel2"
+                        default n
+
+                    config BSP_USING_PWM9_CH3
+                        bool "Enable PWM9 channel3"
+                        default n
+
+                    config BSP_USING_PWM9_CH4
+                        bool "Enable PWM9 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM10
+                bool "Enable GTIMA6 output PWM"
+                depends on !BSP_USING_GTIMA6
+                default n
+                if BSP_USING_PWM10
+                    config BSP_USING_PWM10_CH1
+                        bool "Enable PWM10 channel1"
+                        default n
+
+                    config BSP_USING_PWM10_CH2
+                        bool "Enable PWM10 channel2"
+                        default n
+
+                    config BSP_USING_PWM10_CH3
+                        bool "Enable PWM10 channel3"
+                        default n
+
+                    config BSP_USING_PWM10_CH4
+                        bool "Enable PWM10 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM11
+                bool "Enable GTIMA7 output PWM"
+                depends on !BSP_USING_GTIMA7
+                default n
+                if BSP_USING_PWM11
+                    config BSP_USING_PWM11_CH1
+                        bool "Enable PWM11 channel1"
+                        default n
+
+                    config BSP_USING_PWM11_CH2
+                        bool "Enable PWM11 channel2"
+                        default n
+
+                    config BSP_USING_PWM11_CH3
+                        bool "Enable PWM11 channel3"
+                        default n
+
+                    config BSP_USING_PWM11_CH4
+                        bool "Enable PWM11 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM12
+                bool "Enable GTIMB1 output PWM"
+                depends on !BSP_USING_GTIMB1
+                default n
+                if BSP_USING_PWM12
+                    config BSP_USING_PWM12_CH1
+                        bool "Enable PWM12 channel1"
+                        default n
+
+                    config BSP_USING_PWM12_CH2
+                        bool "Enable PWM12 channel2"
+                        default n
+
+                    config BSP_USING_PWM12_CH3
+                        bool "Enable PWM12 channel3"
+                        default n
+
+                    config BSP_USING_PWM12_CH4
+                        bool "Enable PWM12 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM13
+                bool "Enable GTIMB2 output PWM"
+                depends on !BSP_USING_GTIMB2
+                default n
+                if BSP_USING_PWM13
+                    config BSP_USING_PWM13_CH1
+                        bool "Enable PWM13 channel1"
+                        default n
+
+                    config BSP_USING_PWM13_CH2
+                        bool "Enable PWM13 channel2"
+                        default n
+
+                    config BSP_USING_PWM13_CH3
+                        bool "Enable PWM13 channel3"
+                        default n
+
+                    config BSP_USING_PWM13_CH4
+                        bool "Enable PWM13 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM14
+                bool "Enable GTIMB3 output PWM"
+                depends on !BSP_USING_GTIMB3
+                default n
+                if BSP_USING_PWM14
+                    config BSP_USING_PWM14_CH1
+                        bool "Enable PWM14 channel1"
+                        default n
+
+                    config BSP_USING_PWM14_CH2
+                        bool "Enable PWM14 channel2"
+                        default n
+
+                    config BSP_USING_PWM14_CH3
+                        bool "Enable PWM14 channel3"
+                        default n
+
+                    config BSP_USING_PWM14_CH4
+                        bool "Enable PWM14 channel4"
+                        default n
+                endif
+        endif
+  
+        menuconfig BSP_USING_PULSE_ENCODER
+            bool "Enable Pulse Encoder"
+            default n
+            select RT_USING_PULSE_ENCODER
+            if BSP_USING_PULSE_ENCODER
+                config BSP_USING_PULSE_ENCODER1
+                    bool "Enable Pulse Encoder1"
+                    depends on !BSP_USING_ATIM1 && !BSP_USING_PWM1
+                    default n
+
+                config BSP_USING_PULSE_ENCODER2
+                    bool "Enable Pulse Encoder2"
+                    depends on !BSP_USING_ATIM2 && !BSP_USING_PWM2
+                    default n
+
+                config BSP_USING_PULSE_ENCODER3
+                    bool "Enable Pulse Encoder3"
+                    depends on !BSP_USING_ATIM3 && !BSP_USING_PWM3
+                    default n
+
+                config BSP_USING_PULSE_ENCODER4
+                    bool "Enable Pulse Encoder4"
+                    depends on !BSP_USING_ATIM4 && !BSP_USING_PWM4
+                    default n
+
+                config BSP_USING_PULSE_ENCODER5
+                    bool "Enable Pulse Encoder5"
+                    depends on !BSP_USING_GTIMA1 && !BSP_USING_PWM5
+                    default n
+
+                config BSP_USING_PULSE_ENCODER6
+                    bool "Enable Pulse Encoder6"
+                    depends on !BSP_USING_GTIMA2 && !BSP_USING_PWM6
+                    default n
+
+                config BSP_USING_PULSE_ENCODER7
+                    bool "Enable Pulse Encoder7"
+                    depends on !BSP_USING_GTIMA3 && !BSP_USING_PWM7
+                    default n
+
+                config BSP_USING_PULSE_ENCODER8
+                    bool "Enable Pulse Encoder8"
+                    depends on !BSP_USING_GTIMA4 && !BSP_USING_PWM8
+                    default n
+
+                config BSP_USING_PULSE_ENCODER9
+                    bool "Enable Pulse Encoder9"
+                    depends on !BSP_USING_GTIMA5 && !BSP_USING_PWM9
+                    default n
+
+                config BSP_USING_PULSE_ENCODER10
+                    bool "Enable Pulse Encoder10"
+                    depends on !BSP_USING_GTIMA6 && !BSP_USING_PWM10
+                    default n
+
+                config BSP_USING_PULSE_ENCODER11
+                    bool "Enable Pulse Encoder11"
+                    depends on !BSP_USING_GTIMA7 && !BSP_USING_PWM11
+                    default n
+
+                config BSP_USING_PULSE_ENCODER12
+                    bool "Enable Pulse Encoder12"
+                    depends on !BSP_USING_GTIMB1 && !BSP_USING_PWM12
+                    default n
+
+                config BSP_USING_PULSE_ENCODER13
+                    bool "Enable Pulse Encoder13"
+                    depends on !BSP_USING_GTIMB2 && !BSP_USING_PWM13
+                    default n
+
+                config BSP_USING_PULSE_ENCODER14
+                    bool "Enable Pulse Encoder14"
+                    depends on !BSP_USING_GTIMB3 && !BSP_USING_PWM14
+                    default n
+            endif
+
+    menuconfig BSP_USING_LPTIM
+        bool "Enable lptimer"
+        default n
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_LPTIM
+            config BSP_USING_LPTIM1
+                bool "Enable LPTIM1"
+                default n
+            config BSP_USING_LPTIM2
+                bool "Enable LPTIM2"
+                default n
+            config BSP_USING_LPTIM3
+                bool "Enable LPTIM3"
+                default n
+            config BSP_USING_LPTIM4
+                bool "Enable LPTIM4"
+                default n
+            config BSP_USING_LPTIM5
+                bool "Enable LPTIM5"
+                default n
+        endif
+	
+	
+    menuconfig BSP_USING_NAND
+        bool "Enable Nand"
+        default n
+        depends on BSP_PERIPH_PIN_CFG_READY
+        select RT_USING_MTD_NAND
+        if BSP_USING_NAND
+            choice BSP_NAND_BANK_SEL
+                prompt "Select Bank"
+                default BSP_USING_NAND_BANK2
+
+                config BSP_USING_NAND_BANK1
+                    bool "USING FEMC NAND BANK1"
+
+                config BSP_USING_NAND_BANK2
+                    bool "USING FEMC NAND BANK2"
+            endchoice
+
+            choice BSP_NAND_BUS_WIDTH_SEL
+                prompt "Select Nand Bus Width"
+                default BSP_USING_NAND_BUS_WIDTH_8B
+
+                config BSP_USING_NAND_BUS_WIDTH_8B
+                    bool "USING FEMC NAND BUS WIDTH 8BIT"
+
+                config BSP_USING_NAND_BUS_WIDTH_16B
+                    bool "USING FEMC NAND BUS WIDTH 16BIT"
+            endchoice
+
+            config BSP_NAND_PAGE_SIZE
+                int "Page Size (bytes)"
+                default 2048
+                help
+                    NAND flash page size in bytes, typically 2048 or 4096.
+
+            config BSP_NAND_OOB_SIZE
+                int "OOB (Spare Area) Size (bytes)"
+                default 64
+                help
+                    NAND flash spare area size per page, typically 64 or 128.
+
+            config BSP_NAND_PAGES_PER_BLOCK
+                int "Pages Per Block"
+                default 64
+                help
+                    Number of pages per erase block, typically 64 or 128.
+
+            config BSP_NAND_BLOCK_COUNT
+                int "Total Block Count"
+                default 1024
+                help
+                    Total number of blocks in the NAND flash chip.
+
+            config BSP_NAND_PLANE_NUM
+                int "Plane Number"
+                default 1
+                help
+                    Number of planes in the NAND flash chip, typically 1 or 2.
+        endif
+
+    source "$BSP_DIR/../libraries/N32_Drivers/drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if RT_USING_SOFT_I2C1
+
+endmenu

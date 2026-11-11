@@ -39,11 +39,19 @@
 #error "The system workqueue stack size must more than 1536 bytes"
 #endif
 
-#define DBG_TAG                        "sal.skt"
-#define DBG_LVL                        DBG_INFO
+#define DBG_TAG "sal.skt"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define SOCKET_TABLE_STEP_LEN          4
+#define VALID_PROTOCOL(protocol) ((protocol) >= 0 && (protocol) <= IPPROTO_RAW)
+#define VALID_COMBO(domain, type, protocol)                                                            \
+    (                                                                                                  \
+        (((domain) == AF_INET || (domain) == AF_INET6) &&                                              \
+         (((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) ||                 \
+          ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) ||                  \
+          ((type) == SOCK_RAW && VALID_PROTOCOL(protocol)))) ||                                        \
+        ((domain) == AF_UNIX && ((type) == SOCK_STREAM || (type) == SOCK_DGRAM) && (protocol) == 0) || \
+        ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0))
 
 /* the socket table used to dynamic allocate sockets */
 struct sal_socket_table
@@ -64,7 +72,7 @@ struct ifconf
     int ifc_len;            /* Size of buffer.  */
     union
     {
-        char* ifcu_buf;
+        char *ifcu_buf;
         struct sal_ifreq *ifcu_req;
     } ifc_ifcu;
 };
@@ -79,50 +87,78 @@ static struct sal_socket_table socket_table;
 static struct rt_mutex sal_core_lock;
 static rt_bool_t init_ok = RT_FALSE;
 static struct sal_netdev_res_table sal_dev_res_tbl[SAL_SOCKETS_NUM];
+static const struct sal_proto_family *local_proto_families[SAL_PROTO_FAMILIES_NUM];
 
-#define IS_SOCKET_PROTO_TLS(sock)                (((sock)->protocol == PROTOCOL_TLS) || \
+#define IS_SOCKET_PROTO_TLS(sock)               (((sock)->protocol == PROTOCOL_TLS) || \
                                                  ((sock)->protocol == PROTOCOL_DTLS))
-#define SAL_SOCKOPS_PROTO_TLS_VALID(sock, name)  (proto_tls && (proto_tls->ops->name) && IS_SOCKET_PROTO_TLS(sock))
+#define SAL_SOCKOPS_PROTO_TLS_VALID(sock, name) (proto_tls && (proto_tls->ops->name) && IS_SOCKET_PROTO_TLS(sock))
 
-#define SAL_SOCKOPT_PROTO_TLS_EXEC(sock, name, optval, optlen)                    \
-do {                                                                              \
-    if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, name)){                                 \
-        return proto_tls->ops->name((sock)->user_data_tls, (optval), (optlen));   \
-    }                                                                             \
-}while(0)                                                                         \
+#define SAL_SOCKOPT_PROTO_TLS_EXEC(sock, name, optval, optlen)                      \
+    do                                                                              \
+    {                                                                               \
+        if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, name))                                \
+        {                                                                           \
+            return proto_tls->ops->name((sock)->user_data_tls, (optval), (optlen)); \
+        }                                                                           \
+    } while (0)
 
-#define SAL_SOCKET_OBJ_GET(sock, socket)                                          \
-do {                                                                              \
-    (sock) = sal_get_socket(socket);                                              \
-    if ((sock) == RT_NULL) {                                                      \
-        return -1;                                                                \
-    }                                                                             \
-}while(0)                                                                         \
+#define SAL_SOCKET_OBJ_GET(sock, socket) \
+    do                                   \
+    {                                    \
+        (sock) = sal_get_socket(socket); \
+        if ((sock) == RT_NULL)           \
+        {                                \
+            return -1;                   \
+        }                                \
+    } while (0)
 
-#define SAL_NETDEV_IS_UP(netdev)                                                  \
-do {                                                                              \
-    if (!netdev_is_up(netdev)) {                                                  \
-        return -1;                                                                \
-    }                                                                             \
-}while(0)                                                                         \
+#define SAL_NETDEV_IS_UP(netdev)               \
+    do                                         \
+    {                                          \
+        if ((netdev) && !netdev_is_up(netdev)) \
+        {                                      \
+            return -1;                         \
+        }                                      \
+    } while (0)
 
-#define SAL_NETDEV_SOCKETOPS_VALID(netdev, pf, ops)                               \
-do {                                                                              \
-    (pf) = (struct sal_proto_family *) netdev->sal_user_data;                     \
-    if ((pf)->skt_ops->ops == RT_NULL){                                           \
-        return -1;                                                                \
-    }                                                                             \
-}while(0)                                                                         \
+#define SAL_SOCKETOPS_VALID(sock, pf, ops)                 \
+    do                                                     \
+    {                                                      \
+        (pf) = (sock)->protocol_family;                    \
+        if ((pf) == RT_NULL || (pf)->skt_ops == RT_NULL || \
+            (pf)->skt_ops->ops == RT_NULL)                 \
+        {                                                  \
+            rt_set_errno(EOPNOTSUPP);                      \
+            return -1;                                     \
+        }                                                  \
+    } while (0)
 
-#define SAL_NETDEV_NETDBOPS_VALID(netdev, pf, ops)                                \
-    ((netdev) && netdev_is_up(netdev) &&                                          \
-    ((pf) = (struct sal_proto_family *) (netdev)->sal_user_data) != RT_NULL &&    \
-    (pf)->netdb_ops->ops)                                                         \
+#define SAL_NETDEV_SOCKETOPS_VALID(netdev, pf, ops)                \
+    do                                                             \
+    {                                                              \
+        if ((netdev) == RT_NULL)                                   \
+        {                                                          \
+            rt_set_errno(EOPNOTSUPP);                              \
+            return -1;                                             \
+        }                                                          \
+        (pf) = (struct sal_proto_family *)(netdev)->sal_user_data; \
+        if ((pf) == RT_NULL || (pf)->skt_ops == RT_NULL ||         \
+            (pf)->skt_ops->ops == RT_NULL)                         \
+        {                                                          \
+            rt_set_errno(EOPNOTSUPP);                              \
+            return -1;                                             \
+        }                                                          \
+    } while (0)
 
-#define SAL_NETDBOPS_VALID(netdev, pf, ops)                                \
-    ((netdev) &&                                                                 \
-    ((pf) = (struct sal_proto_family *) (netdev)->sal_user_data) != RT_NULL &&    \
-    (pf)->netdb_ops->ops)                                                         \
+#define SAL_NETDEV_NETDBOPS_VALID(netdev, pf, ops)                             \
+    ((netdev) && netdev_is_up(netdev) &&                                       \
+     ((pf) = (struct sal_proto_family *)(netdev)->sal_user_data) != RT_NULL && \
+     (pf)->netdb_ops->ops)
+
+#define SAL_NETDBOPS_VALID(netdev, pf, ops)                                    \
+    ((netdev) &&                                                               \
+     ((pf) = (struct sal_proto_family *)(netdev)->sal_user_data) != RT_NULL && \
+     (pf)->netdb_ops->ops)
 
 /**
  * SAL (Socket Abstraction Layer) initialize.
@@ -151,7 +187,7 @@ int sal_init(void)
     }
 
     /*init the dev_res table */
-    rt_memset(sal_dev_res_tbl,  0, sizeof(sal_dev_res_tbl));
+    rt_memset(sal_dev_res_tbl, 0, sizeof(sal_dev_res_tbl));
 
     /* create sal socket lock */
     rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_PRIO);
@@ -163,16 +199,68 @@ int sal_init(void)
 }
 INIT_COMPONENT_EXPORT(sal_init);
 
+int sal_proto_family_register(const struct sal_proto_family *pf)
+{
+    int index;
+
+    if (pf == RT_NULL || pf->skt_ops == RT_NULL)
+    {
+        return -EINVAL;
+    }
+
+    for (index = 0; index < SAL_PROTO_FAMILIES_NUM; index++)
+    {
+        if (local_proto_families[index] == pf)
+        {
+            return RT_EOK;
+        }
+        if (local_proto_families[index] != RT_NULL &&
+            (local_proto_families[index]->family == pf->family ||
+             local_proto_families[index]->sec_family == pf->family))
+        {
+            return -EEXIST;
+        }
+    }
+
+    for (index = 0; index < SAL_PROTO_FAMILIES_NUM; index++)
+    {
+        if (local_proto_families[index] == RT_NULL)
+        {
+            local_proto_families[index] = pf;
+            return RT_EOK;
+        }
+    }
+
+    return -ENOMEM;
+}
+
+const struct sal_proto_family *sal_proto_family_find(int family)
+{
+    int index;
+
+    for (index = 0; index < SAL_PROTO_FAMILIES_NUM; index++)
+    {
+        const struct sal_proto_family *pf = local_proto_families[index];
+
+        if (pf != RT_NULL && (pf->family == family || pf->sec_family == family))
+        {
+            return pf;
+        }
+    }
+
+    return RT_NULL;
+}
+
 #ifdef SAL_INTERNET_CHECK
 /* check SAL network interface device internet status */
 static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 {
-#define SAL_INTERNET_VERSION   0x00
-#define SAL_INTERNET_BUFF_LEN  12
-#define SAL_INTERNET_TIMEOUT   (2)
+#define SAL_INTERNET_VERSION  0x00
+#define SAL_INTERNET_BUFF_LEN 12
+#define SAL_INTERNET_TIMEOUT  (2)
 
-#define SAL_INTERNET_HOST      "link.rt-thread.org"
-#define SAL_INTERNET_PORT      8101
+#define SAL_INTERNET_HOST "link.rt-thread.org"
+#define SAL_INTERNET_PORT 8101
 
 #define SAL_INTERNET_MONTH_LEN 4
 #define SAL_INTERNET_DATE_LEN  16
@@ -186,11 +274,11 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
     socklen_t addr_len = sizeof(struct sockaddr_in);
     char send_data[SAL_INTERNET_BUFF_LEN], recv_data = 0;
 
-    const char month[][SAL_INTERNET_MONTH_LEN] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    const char month[][SAL_INTERNET_MONTH_LEN] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
     char date[SAL_INTERNET_DATE_LEN];
     unsigned int moth_num = 0;
 
-    struct sal_proto_family *pf = (struct sal_proto_family *) netdev->sal_user_data;
+    struct sal_proto_family *pf = (struct sal_proto_family *)netdev->sal_user_data;
     const struct sal_socket_ops *skt_ops;
 
     if (work)
@@ -205,7 +293,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
         goto __exit;
     }
 
-    host = (struct hostent *) pf->netdb_ops->gethostbyname(SAL_INTERNET_HOST);
+    host = (struct hostent *)pf->netdb_ops->gethostbyname(SAL_INTERNET_HOST);
     if (host == RT_NULL)
     {
         result = -RT_ERROR;
@@ -228,8 +316,8 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
     timeout.tv_usec = 0;
 
     /* set receive and send timeout */
-    skt_ops->setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeout, sizeof(timeout));
-    skt_ops->setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (void *) &timeout, sizeof(timeout));
+    skt_ops->setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeout, sizeof(timeout));
+    skt_ops->setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (void *)&timeout, sizeof(timeout));
 
     /* get build moth value*/
     rt_memset(date, 0x00, SAL_INTERNET_DATE_LEN);
@@ -333,7 +421,7 @@ int sal_check_netdev_internet_up(struct netdev *netdev)
 int sal_proto_tls_register(const struct sal_proto_tls *pt)
 {
     RT_ASSERT(pt);
-    proto_tls = (struct sal_proto_tls *) pt;
+    proto_tls = (struct sal_proto_tls *)pt;
 
     return 0;
 }
@@ -352,7 +440,7 @@ struct sal_socket *sal_get_socket(int socket)
 
     socket = socket - SAL_SOCKET_OFFSET;
 
-    if (socket < 0 || socket >= (int) st->max_socket)
+    if (socket < 0 || socket >= (int)st->max_socket)
     {
         return RT_NULL;
     }
@@ -416,8 +504,7 @@ int sal_netdev_cleanup(struct netdev *netdev)
         {
             rt_thread_mdelay(100);
         }
-    }
-    while (find_dev);
+    } while (find_dev);
 
     return 0;
 }
@@ -434,24 +521,35 @@ int sal_netdev_cleanup(struct netdev *netdev)
  *         -1 : input the wrong family
  *         -2 : input the wrong socket type
  *         -3 : get network interface failed
+ *         -4 : invalid protocol or combo
  */
 static int socket_init(int family, int type, int protocol, struct sal_socket **res)
 {
-
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     struct netdev *netdv_def = netdev_default;
     struct netdev *netdev = RT_NULL;
     rt_bool_t flag = RT_FALSE;
 
+    /* Existing range checks for family and type */
     if (family < 0 || family > AF_MAX)
     {
+        LOG_E("Invalid family: %d (must be 0 ~ %d)", family, AF_MAX);
         return -1;
     }
 
     if (type < 0 || type > SOCK_MAX)
     {
+        LOG_E("Invalid type: %d (must be 0 ~ %d)", type, SOCK_MAX);
         return -2;
+    }
+
+    /* Range check for protocol */
+    if (!VALID_PROTOCOL(protocol))
+    {
+        LOG_E("Invalid protocol: %d (must be 0 ~ %d)", protocol, IPPROTO_RAW);
+        rt_set_errno(EINVAL);
+        return -4;
     }
 
     sock = *res;
@@ -459,13 +557,31 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     sock->type = type;
     sock->protocol = protocol;
 
+    /* Combo compatibility check */
+    if (!VALID_COMBO(family, type, protocol))
+    {
+        LOG_E("Invalid combo: domain=%d, type=%d, protocol=%d", family, type, protocol);
+        rt_set_errno(EINVAL);
+        return -4;
+    }
+
+    pf = sal_proto_family_find(family);
+    if (pf != RT_NULL)
+    {
+        sock->protocol_family = pf;
+        sock->netdev = RT_NULL;
+        return 0;
+    }
+
+    /* Existing netdev selection logic */
     if (netdv_def && netdev_is_up(netdv_def))
     {
         /* check default network interface device protocol family */
-        pf = (struct sal_proto_family *) netdv_def->sal_user_data;
+        pf = (struct sal_proto_family *)netdv_def->sal_user_data;
         if (pf != RT_NULL && pf->skt_ops && (pf->family == family || pf->sec_family == family))
         {
             sock->netdev = netdv_def;
+            sock->protocol_family = pf;
             flag = RT_TRUE;
         }
     }
@@ -481,8 +597,15 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
         }
 
         sock->netdev = netdev;
+        sock->protocol_family = (const struct sal_proto_family *)netdev->sal_user_data;
+        if (sock->protocol_family == RT_NULL || sock->protocol_family->skt_ops == RT_NULL)
+        {
+            return -3;
+        }
     }
 
+    LOG_D("Socket init success: domain=%d, type=%d, protocol=%d, netdev=%s",
+          family, type, protocol, sock->netdev ? sock->netdev->name : "default");
     return 0;
 }
 
@@ -491,7 +614,7 @@ static int socket_alloc(struct sal_socket_table *st, int f_socket)
     int idx;
 
     /* find an empty socket entry */
-    for (idx = f_socket; idx < (int) st->max_socket; idx++)
+    for (idx = f_socket; idx < (int)st->max_socket; idx++)
     {
         if (st->sockets[idx] == RT_NULL)
         {
@@ -500,7 +623,7 @@ static int socket_alloc(struct sal_socket_table *st, int f_socket)
     }
 
     /* allocate a larger sockte container */
-    if (idx == (int) st->max_socket &&  st->max_socket < SAL_SOCKETS_NUM)
+    if (idx == (int)st->max_socket && st->max_socket < SAL_SOCKETS_NUM)
     {
         int cnt, index;
         struct sal_socket **sockets;
@@ -524,7 +647,7 @@ static int socket_alloc(struct sal_socket_table *st, int f_socket)
     }
 
     /* allocate  'struct sal_socket' */
-    if (idx < (int) st->max_socket && st->sockets[idx] == RT_NULL)
+    if (idx < (int)st->max_socket && st->sockets[idx] == RT_NULL)
     {
         st->sockets[idx] = rt_calloc(1, sizeof(struct sal_socket));
         if (st->sockets[idx] == RT_NULL)
@@ -558,7 +681,7 @@ static int socket_new(void)
     idx = socket_alloc(st, 0);
 
     /* can't find an empty sal socket entry */
-    if (idx == (int) st->max_socket)
+    if (idx == (int)st->max_socket)
     {
         idx = -(1 + SAL_SOCKET_OFFSET);
         goto __result;
@@ -568,6 +691,7 @@ static int socket_new(void)
     sock->socket = idx + SAL_SOCKET_OFFSET;
     sock->magic = SAL_SOCKET_MAGIC;
     sock->netdev = RT_NULL;
+    sock->protocol_family = RT_NULL;
     sock->user_data = RT_NULL;
 #ifdef SAL_USING_TLS
     sock->user_data_tls = RT_NULL;
@@ -585,7 +709,7 @@ static void socket_delete(int socket)
     int idx;
 
     idx = socket - SAL_SOCKET_OFFSET;
-    if (idx < 0 || idx >= (int) st->max_socket)
+    if (idx < 0 || idx >= (int)st->max_socket)
     {
         return;
     }
@@ -594,6 +718,7 @@ static void socket_delete(int socket)
     RT_ASSERT(sock != RT_NULL);
     sock->magic = 0;
     sock->netdev = RT_NULL;
+    sock->protocol_family = RT_NULL;
     socket_free(st, idx);
     sal_unlock();
 }
@@ -602,7 +727,7 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
 {
     int new_socket;
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
@@ -611,12 +736,11 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     SAL_NETDEV_IS_UP(sock->netdev);
 
     /* check the network interface socket operations */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, accept);
+    SAL_SOCKETOPS_VALID(sock, pf, accept);
 
     new_socket = pf->skt_ops->accept((int)(size_t)sock->user_data, addr, addrlen);
     if (new_socket != -1)
     {
-        int retval;
         int new_sal_socket;
         struct sal_socket *new_sock;
 
@@ -629,19 +753,11 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
             return -1;
         }
 
-        retval = socket_init(sock->domain, sock->type, sock->protocol, &new_sock);
-        if (retval < 0)
-        {
-            pf->skt_ops->closesocket(new_socket);
-            rt_memset(new_sock, 0x00, sizeof(struct sal_socket));
-            /* socket init failed, delete socket */
-            socket_delete(new_sal_socket);
-            LOG_E("New socket registered failed, return error %d.", retval);
-            return -1;
-        }
-
-        /* new socket create by accept should have the same netdev with server*/
+        new_sock->domain = sock->domain;
+        new_sock->type = sock->type;
+        new_sock->protocol = sock->protocol;
         new_sock->netdev = sock->netdev;
+        new_sock->protocol_family = sock->protocol_family;
         /* socket structure user_data used to store the acquired new socket */
         new_sock->user_data = (void *)(size_t)new_socket;
 
@@ -653,7 +769,7 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
 
 static void sal_sockaddr_to_ipaddr(const struct sockaddr *name, ip_addr_t *local_ipaddr)
 {
-    const struct sockaddr_in *svr_addr = (const struct sockaddr_in *) name;
+    const struct sockaddr_in *svr_addr = (const struct sockaddr_in *)name;
 
 #if NETDEV_IPV4 && NETDEV_IPV6
     local_ipaddr->u_addr.ip4.addr = svr_addr->sin_addr.s_addr;
@@ -668,16 +784,13 @@ static void sal_sockaddr_to_ipaddr(const struct sockaddr *name, ip_addr_t *local
 int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
-    struct sockaddr_un *addr_un = RT_NULL;
+    const struct sal_proto_family *pf;
     ip_addr_t input_ipaddr;
 
     RT_ASSERT(name);
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
-
-    addr_un = (struct sockaddr_un *)name;
 
 #define IS_INET_ADDR_FAMILY(_af) ((_af) == AF_INET) || ((_af) == AF_INET6)
     if (IS_INET_ADDR_FAMILY(name->sa_family))
@@ -715,19 +828,20 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
                     return -1;
                 }
                 sock->netdev = new_netdev;
+                sock->protocol_family = input_pf;
                 sock->user_data = (void *)(size_t)new_socket;
             }
         }
     }
     /* check and get protocol families by the network interface device */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, bind);
+    SAL_SOCKETOPS_VALID(sock, pf, bind);
     return pf->skt_ops->bind((int)(size_t)sock->user_data, name, namelen);
 }
 
 int sal_shutdown(int socket, int how)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     int error = 0;
 
     /* get the socket object by socket descriptor */
@@ -735,7 +849,7 @@ int sal_shutdown(int socket, int how)
 
     /* shutdown operation not need to check network interface status */
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, shutdown);
+    SAL_SOCKETOPS_VALID(sock, pf, shutdown);
 
     if (pf->skt_ops->shutdown((int)(size_t)sock->user_data, how) == 0)
     {
@@ -762,13 +876,13 @@ int sal_shutdown(int socket, int how)
 int sal_getpeername(int socket, struct sockaddr *name, socklen_t *namelen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, getpeername);
+    SAL_SOCKETOPS_VALID(sock, pf, getpeername);
 
     return pf->skt_ops->getpeername((int)(size_t)sock->user_data, name, namelen);
 }
@@ -776,13 +890,13 @@ int sal_getpeername(int socket, struct sockaddr *name, socklen_t *namelen)
 int sal_getsockname(int socket, struct sockaddr *name, socklen_t *namelen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, getsockname);
+    SAL_SOCKETOPS_VALID(sock, pf, getsockname);
 
     return pf->skt_ops->getsockname((int)(size_t)sock->user_data, name, namelen);
 }
@@ -790,13 +904,13 @@ int sal_getsockname(int socket, struct sockaddr *name, socklen_t *namelen)
 int sal_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, getsockopt);
+    SAL_SOCKETOPS_VALID(sock, pf, getsockopt);
 
     return pf->skt_ops->getsockopt((int)(size_t)sock->user_data, level, optname, optval, optlen);
 }
@@ -804,13 +918,13 @@ int sal_getsockopt(int socket, int level, int optname, void *optval, socklen_t *
 int sal_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, setsockopt);
+    SAL_SOCKETOPS_VALID(sock, pf, setsockopt);
 
 #ifdef SAL_USING_TLS
     if (level == SOL_TLS)
@@ -841,7 +955,7 @@ int sal_setsockopt(int socket, int level, int optname, const void *optval, sockl
     }
     else
     {
-        return pf->skt_ops->setsockopt((int) sock->user_data, level, optname, optval, optlen);
+        return pf->skt_ops->setsockopt((int)sock->user_data, level, optname, optval, optlen);
     }
 #else
     return pf->skt_ops->setsockopt((int)(size_t)sock->user_data, level, optname, optval, optlen);
@@ -851,7 +965,7 @@ int sal_setsockopt(int socket, int level, int optname, const void *optval, sockl
 int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     int ret;
 
     /* get the socket object by socket descriptor */
@@ -860,7 +974,7 @@ int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     /* check the network interface is up status */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, connect);
+    SAL_SOCKETOPS_VALID(sock, pf, connect);
 
     ret = pf->skt_ops->connect((int)(size_t)sock->user_data, name, namelen);
 #ifdef SAL_USING_TLS
@@ -881,13 +995,13 @@ int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 int sal_listen(int socket, int backlog)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, listen);
+    SAL_SOCKETOPS_VALID(sock, pf, listen);
 
     return pf->skt_ops->listen((int)(size_t)sock->user_data, backlog);
 }
@@ -895,7 +1009,7 @@ int sal_listen(int socket, int backlog)
 int sal_sendmsg(int socket, const struct msghdr *message, int flags)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
@@ -903,7 +1017,7 @@ int sal_sendmsg(int socket, const struct msghdr *message, int flags)
     /* check the network interface is up status  */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, sendmsg);
+    SAL_SOCKETOPS_VALID(sock, pf, sendmsg);
 
 #ifdef SAL_USING_TLS
     if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, send))
@@ -928,7 +1042,7 @@ int sal_sendmsg(int socket, const struct msghdr *message, int flags)
 int sal_recvmsg(int socket, struct msghdr *message, int flags)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
@@ -936,7 +1050,7 @@ int sal_recvmsg(int socket, struct msghdr *message, int flags)
     /* check the network interface is up status  */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, recvmsg);
+    SAL_SOCKETOPS_VALID(sock, pf, recvmsg);
 
 #ifdef SAL_USING_TLS
     if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, recv))
@@ -962,7 +1076,7 @@ int sal_recvfrom(int socket, void *mem, size_t len, int flags,
                  struct sockaddr *from, socklen_t *fromlen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
@@ -970,7 +1084,7 @@ int sal_recvfrom(int socket, void *mem, size_t len, int flags,
     /* check the network interface is up status  */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, recvfrom);
+    SAL_SOCKETOPS_VALID(sock, pf, recvfrom);
 
 #ifdef SAL_USING_TLS
     if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, recv))
@@ -996,7 +1110,7 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
                const struct sockaddr *to, socklen_t tolen)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
@@ -1004,7 +1118,7 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
     /* check the network interface is up status  */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, sendto);
+    SAL_SOCKETOPS_VALID(sock, pf, sendto);
 
 #ifdef SAL_USING_TLS
     if (SAL_SOCKOPS_PROTO_TLS_VALID(sock, send))
@@ -1019,7 +1133,7 @@ int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
     }
     else
     {
-        return pf->skt_ops->sendto((int) sock->user_data, dataptr, size, flags, to, tolen);
+        return pf->skt_ops->sendto((int)sock->user_data, dataptr, size, flags, to, tolen);
     }
 #else
     return pf->skt_ops->sendto((int)(size_t)sock->user_data, dataptr, size, flags, to, tolen);
@@ -1031,7 +1145,7 @@ int sal_socket(int domain, int type, int protocol)
     int retval;
     int socket, proto_socket;
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     /* allocate a new socket and registered socket options */
     socket = socket_new();
@@ -1054,11 +1168,11 @@ int sal_socket(int domain, int type, int protocol)
     {
         LOG_E("SAL socket protocol family input failed, return error %d.", retval);
         socket_delete(socket);
-        return -1;
+        return retval;
     }
 
     /* valid the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, socket);
+    SAL_SOCKETOPS_VALID(sock, pf, socket);
 
     proto_socket = pf->skt_ops->socket(domain, type, protocol);
     if (proto_socket >= 0)
@@ -1086,7 +1200,7 @@ int sal_socketpair(int domain, int type, int protocol, int *fds)
     int unix_fd[2];
     struct sal_socket *socka;
     struct sal_socket *sockb;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
 
     if (domain == AF_UNIX)
     {
@@ -1095,15 +1209,17 @@ int sal_socketpair(int domain, int type, int protocol, int *fds)
         SAL_SOCKET_OBJ_GET(sockb, fds[1]);
 
         /* valid the network interface socket opreation */
-        SAL_NETDEV_SOCKETOPS_VALID(socka->netdev, pf, socket);
+        if (socka->protocol_family != sockb->protocol_family)
+        {
+            rt_set_errno(EINVAL);
+            return -1;
+        }
+        SAL_SOCKETOPS_VALID(socka, pf, socketpair);
 
         unix_fd[0] = (int)(size_t)socka->user_data;
         unix_fd[1] = (int)(size_t)sockb->user_data;
 
-        if (pf->skt_ops->socketpair)
-        {
-            return pf->skt_ops->socketpair(domain, type, protocol, unix_fd);
-        }
+        return pf->skt_ops->socketpair(domain, type, protocol, unix_fd);
     }
 
     rt_set_errno(EINVAL);
@@ -1114,7 +1230,7 @@ int sal_socketpair(int domain, int type, int protocol, int *fds)
 int sal_closesocket(int socket)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     int error = 0;
 
     /* get the socket object by socket descriptor */
@@ -1122,7 +1238,7 @@ int sal_closesocket(int socket)
 
     /* clsoesocket operation not need to vaild network interface status */
     /* valid the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, closesocket);
+    SAL_SOCKETOPS_VALID(sock, pf, closesocket);
 
     if (pf->skt_ops->closesocket((int)(size_t)sock->user_data) == 0)
     {
@@ -1150,22 +1266,28 @@ int sal_closesocket(int socket)
 
 #define ARPHRD_ETHER    1      /* Ethernet 10/100Mbps. */
 #define ARPHRD_LOOPBACK 772    /* Loopback device.  */
-#define IFF_UP  0x1
-#define IFF_RUNNING 0x40
-#define IFF_NOARP 0x80
+#define IFF_UP          0x1
+#define IFF_RUNNING     0x40
+#define IFF_NOARP       0x80
 
 int sal_ioctlsocket(int socket, long cmd, void *arg)
 {
-    rt_slist_t *node  = RT_NULL;
+    rt_slist_t *node = RT_NULL;
     struct netdev *netdev = RT_NULL;
     struct netdev *cur_netdev_list = netdev_list;
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     struct sockaddr_in *addr_in = RT_NULL;
     struct sockaddr *addr = RT_NULL;
     ip_addr_t input_ipaddr;
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
+
+    if (sock->netdev == RT_NULL)
+    {
+        SAL_SOCKETOPS_VALID(sock, pf, ioctlsocket);
+        return pf->skt_ops->ioctlsocket((int)(size_t)sock->user_data, cmd, arg);
+    }
 
     struct sal_ifreq *ifr = (struct sal_ifreq *)arg;
 
@@ -1177,13 +1299,13 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
-            #if NETDEV_IPV4 && NETDEV_IPV6
+#if NETDEV_IPV4 && NETDEV_IPV6
                 addr_in->sin_addr.s_addr = sock->netdev->ip_addr.u_addr.ip4.addr;
-            #elif NETDEV_IPV4
+#elif NETDEV_IPV4
                 addr_in->sin_addr.s_addr = sock->netdev->ip_addr.addr;
-            #elif NETDEV_IPV6
-            #error "not only support IPV6"
-            #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+#elif NETDEV_IPV6
+#error "not only support IPV6"
+#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
                 return 0;
             }
             else
@@ -1200,13 +1322,13 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
-                    #if NETDEV_IPV4 && NETDEV_IPV6
+#if NETDEV_IPV4 && NETDEV_IPV6
                         addr_in->sin_addr.s_addr = netdev->ip_addr.u_addr.ip4.addr;
-                    #elif NETDEV_IPV4
+#elif NETDEV_IPV4
                         addr_in->sin_addr.s_addr = netdev->ip_addr.addr;
-                    #elif NETDEV_IPV6
-                    #error "Do not only support IPV6"
-                    #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
+#elif NETDEV_IPV6
+#error "Do not only support IPV6"
+#endif /* NETDEV_IPV4 && NETDEV_IPV6 */
 
                         return 0;
                     }
@@ -1248,13 +1370,13 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
-            #if NETDEV_IPV4 && NETDEV_IPV6
+#if NETDEV_IPV4 && NETDEV_IPV6
                 addr_in->sin_addr.s_addr = sock->netdev->netmask.u_addr.ip4.addr;
-            #elif NETDEV_IPV4
+#elif NETDEV_IPV4
                 addr_in->sin_addr.s_addr = sock->netdev->netmask.addr;
-            #elif NETDEV_IPV6
-            #error "not only support IPV6"
-            #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+#elif NETDEV_IPV6
+#error "not only support IPV6"
+#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
                 return 0;
             }
             else
@@ -1271,13 +1393,13 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
-                    #if NETDEV_IPV4 && NETDEV_IPV6
+#if NETDEV_IPV4 && NETDEV_IPV6
                         addr_in->sin_addr.s_addr = netdev->netmask.u_addr.ip4.addr;
-                    #elif NETDEV_IPV4
+#elif NETDEV_IPV4
                         addr_in->sin_addr.s_addr = netdev->netmask.addr;
-                    #elif NETDEV_IPV6
-                    #error "not only support IPV6"
-                    #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+#elif NETDEV_IPV6
+#error "not only support IPV6"
+#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
                         return 0;
                     }
                 }
@@ -1315,18 +1437,18 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCGIFHWADDR:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name,sock->netdev->name))
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
 #ifdef RT_USING_LWP
                 if (!strcmp("lo", sock->netdev->name))
                 {
-                    struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                    struct musl_ifreq *musl_ifreq_tmp = (struct musl_ifreq *)arg;
                     musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
                 }
                 else
                 {
-                    struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                    struct musl_ifreq *musl_ifreq_tmp = (struct musl_ifreq *)arg;
                     musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
                 }
 #endif
@@ -1350,12 +1472,12 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 #ifdef RT_USING_LWP
                         if (!strcmp("lo", netdev->name))
                         {
-                            struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                            struct musl_ifreq *musl_ifreq_tmp = (struct musl_ifreq *)arg;
                             musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
                         }
                         else
                         {
-                            struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                            struct musl_ifreq *musl_ifreq_tmp = (struct musl_ifreq *)arg;
                             musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
                         }
 #endif
@@ -1450,21 +1572,41 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 
         case SIOCGIFCONF:
         {
-            struct ifconf *ifconf_tmp;
-            ifconf_tmp = (struct ifconf *)arg;
-            int count_size = 0;
+            const int sal_ifreq_size = (int)sizeof(struct sal_ifreq);
+            struct ifconf *ifconf_tmp = (struct ifconf *)arg;
+            char *ifc_buf = ifconf_tmp->ifc_ifcu.ifcu_buf;
+            int buffer_size = ifconf_tmp->ifc_len;
+            int copied_size = 0;
+
+            if (buffer_size < 0)
+            {
+                LOG_E("ifconfig: network interface device list buffer size error.\n");
+                rt_set_errno(EINVAL);
+                return -1;
+            }
 
             for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
             {
                 struct sal_ifreq sal_ifreq_temp;
-                count_size++;
+                if (ifc_buf == RT_NULL)
+                {
+                    copied_size += sal_ifreq_size;
+                    continue;
+                }
+
+                if (buffer_size - copied_size < sal_ifreq_size)
+                {
+                    break;
+                }
+
+                rt_memset(&sal_ifreq_temp, 0, sizeof(struct sal_ifreq));
                 netdev = rt_list_entry(node, struct netdev, list);
                 rt_strcpy(sal_ifreq_temp.ifr_ifrn.ifrn_name, netdev->name);
-                rt_memcpy(ifconf_tmp->ifc_ifcu.ifcu_buf, &sal_ifreq_temp, sizeof(struct sal_ifreq));
-                ifconf_tmp->ifc_ifcu.ifcu_buf += sizeof(struct sal_ifreq);
+                rt_memcpy(ifc_buf, &sal_ifreq_temp, sizeof(struct sal_ifreq));
+                copied_size += sal_ifreq_size;
+                ifc_buf += sizeof(struct sal_ifreq);
             }
-            ifconf_tmp->ifc_len = sizeof(struct sal_ifreq) * count_size;
-            ifconf_tmp->ifc_ifcu.ifcu_buf =  ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
+            ifconf_tmp->ifc_len = copied_size;
             return 0;
         }
         case SIOCGIFINDEX:
@@ -1492,7 +1634,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 int sal_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct sal_socket *sock;
-    struct sal_proto_family *pf;
+    const struct sal_proto_family *pf;
     int socket = (int)(size_t)file->vnode->data;
 
     /* get the socket object by socket descriptor */
@@ -1501,7 +1643,7 @@ int sal_poll(struct dfs_file *file, struct rt_pollreq *req)
     /* check the network interface is up status  */
     SAL_NETDEV_IS_UP(sock->netdev);
     /* check the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, poll);
+    SAL_SOCKETOPS_VALID(sock, pf, poll);
 
     return pf->skt_ops->poll(file, req);
 }
@@ -1559,7 +1701,7 @@ int sal_getaddrinfo(const char *nodename,
 {
     struct netdev *netdev = netdev_default;
     struct sal_proto_family *pf;
-    int     ret = 0;
+    int ret = 0;
     rt_uint32_t i = 0;
 
     if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, getaddrinfo))
@@ -1580,12 +1722,12 @@ int sal_getaddrinfo(const char *nodename,
         }
     }
 
-    if(ret == RT_EOK)
+    if (ret == RT_EOK)
     {
         /*record the netdev and res*/
-        for(i = 0; i < SAL_SOCKETS_NUM; i++)
+        for (i = 0; i < SAL_SOCKETS_NUM; i++)
         {
-            if(sal_dev_res_tbl[i].res == RT_NULL)
+            if (sal_dev_res_tbl[i].res == RT_NULL)
             {
                 sal_dev_res_tbl[i].res = *res;
                 sal_dev_res_tbl[i].netdev = netdev;
@@ -1594,7 +1736,6 @@ int sal_getaddrinfo(const char *nodename,
         }
 
         RT_ASSERT((i < SAL_SOCKETS_NUM));
-
     }
 
     return ret;
@@ -1604,12 +1745,12 @@ void sal_freeaddrinfo(struct addrinfo *ai)
 {
     struct netdev *netdev = RT_NULL;
     struct sal_proto_family *pf = RT_NULL;
-    rt_uint32_t  i = 0;
+    rt_uint32_t i = 0;
 
     /*when use the multi netdev, it must free the ai use the getaddrinfo netdev */
-    for(i = 0; i < SAL_SOCKETS_NUM; i++)
+    for (i = 0; i < SAL_SOCKETS_NUM; i++)
     {
-        if(sal_dev_res_tbl[i].res == ai)
+        if (sal_dev_res_tbl[i].res == ai)
         {
             netdev = sal_dev_res_tbl[i].netdev;
             sal_dev_res_tbl[i].res = RT_NULL;

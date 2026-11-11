@@ -15,7 +15,7 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-#define MPU6050_DEVICE_NAME  "i2c1"
+#define MPU6050_DEVICE_NAME "swi2c1"
 
 #ifdef BSP_USING_MQTT_HW_CLOUD
 #include "mqttclient.h"

@@ -116,7 +116,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_TIM
         bool "Enable timer"
         default n
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_TIM
             config BSP_USING_TIM15
                 bool "Enable TIM15"
@@ -153,7 +153,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_RTC_LS_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

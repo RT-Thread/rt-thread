@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2021-08-27     Jiao         first version
 */
 

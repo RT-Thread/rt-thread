@@ -51,13 +51,13 @@ ht32_library = 'HT32_STD_1xxxx_FWLib'
 rtconfig.BSP_LIBRARY_TYPE = ht32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, ht32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, ht32_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', ht32_library), duplicate=0))
 
 # include usb libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbd_library', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbd_library', 'SConscript'), variant_dir='build/libraries/usbd_library', duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ht32_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ht32_drivers', 'SConscript'), variant_dir='build/libraries/ht32_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

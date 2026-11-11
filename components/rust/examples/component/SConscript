@@ -1,0 +1,74 @@
+import os
+import sys
+from building import *
+
+cwd = GetCurrentDir()
+
+# Import component build module and build support
+sys.path.append(os.path.join(cwd, '../../tools'))
+from build_component import ComponentBuildError, build_example_component
+from build_support import clean_rust_build
+
+# Load feature configurations
+try:
+    from feature_config_component import setup_all_component_features
+    setup_all_component_features()
+except ImportError:
+    print("Warning: Could not load component feature configurations")
+
+
+def _has(sym: str) -> bool:
+    """Helper function to check if a configuration symbol is enabled."""
+    try:
+        return bool(GetDepend([sym]))
+    except Exception:
+        return bool(GetDepend(sym))
+
+
+if not _has('RT_USING_RUST') and not GetOption('clean'):
+    group = []
+    Return('group')
+
+if not (_has('RT_RUST_BUILD_COMPONENTS') or _has('RT_RUST_BUILD_ALL_EXAMPLES')) and not GetOption('clean'):
+    group = []
+    Return('group')
+
+# Source files – component glue code if needed
+src = []
+LIBS = []
+LIBPATH = []
+LINKFLAGS = ""
+
+# Handle clean operation
+if GetOption('clean'):
+    comp_build_dir = clean_rust_build(Dir('#').abspath, "example_component")
+    if os.path.exists(comp_build_dir):
+        print(f'Registering {comp_build_dir} for cleanup')
+        Clean('.', comp_build_dir)
+    else:
+        print('No example_component build artifacts to clean')
+else:
+    # Build the component using the extracted build module
+    import rtconfig
+    try:
+        LIBS, LIBPATH, LINKFLAGS = build_example_component(
+            cwd=cwd,
+            has_func=_has,
+            rtconfig=rtconfig,
+            build_root=os.path.join(Dir('#').abspath, "build", "example_component")
+        )
+    except ComponentBuildError as e:
+        print(f'Error: {e}')
+        sys.exit(1)
+
+# Define component group for SCons
+group = DefineGroup(
+    'example_component_log', 
+    src, 
+    depend=['RT_USING_RUST'], 
+    LIBS=LIBS, 
+    LIBPATH=LIBPATH, 
+    LINKFLAGS=LINKFLAGS
+)
+
+Return('group')

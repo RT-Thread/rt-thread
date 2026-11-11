@@ -84,7 +84,6 @@ void rt_hw_exit(void)
 
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
 MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
 #endif /* RT_USING_FINSH */
 
@@ -94,7 +93,7 @@ MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
 int rt_hw_board_init(void)
 {
     /* init system memory */
-    rt_hw_sram_init();
+    RT_UNUSED(rt_hw_sram_init());
 
     uart_console_init();
 

@@ -31,7 +31,7 @@ void rt_hw_rtc_get(struct tm *ti)
     rt_uint8_t sec, min, hour, mday, wday, mon, year;
 
     /* enable access to RTC registers */
-    RTCCON |= RTC_ENABLE;
+    RTC_ENABLE;
 
     /* read RTC registers */
     do
@@ -136,7 +136,7 @@ static rt_err_t rtc_control(rt_device_t dev, int cmd, void *args)
         case RT_DEVICE_CTRL_RTC_GET_TIME:
             /* read device */
             rt_hw_rtc_get(&tmp);
-            *((rt_time_t *)args) = timegm(&tmp);
+            *time = timegm(&tmp);
             break;
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:

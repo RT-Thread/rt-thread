@@ -1,24 +1,52 @@
+/* Copyright (c) 2023, Canaan Bright Sight Co., Ltd
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 1. Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 /*
- * Copyright (c) 2019-2020
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- *
  */
 
 #include <rthw.h>
 #include <rtdevice.h>
 #include <lwp_user_mm.h>
 #include <ioremap.h>
-
+#include <rtdbg.h>
 #include "board.h"
+#include "drv_pdma.h"
+#include <mmu.h>
 #include "drv_uart.h"
 #include "riscv_io.h"
 
 #define UART_DEFAULT_BAUDRATE       115200
 #define UART_CLK                    50000000
-#define UART_ADDR UART0_BASE_ADDR
-#define UART_IRQ 0x10
-
+#define PDMA_CH_INVALID             0xFF
+#define UART0_IRQ                   K230_IRQ_UART0
+#define UART1_IRQ                   K230_IRQ_UART1
+#define UART2_IRQ                   K230_IRQ_UART2
+#define UART3_IRQ                   K230_IRQ_UART3
+#define UART4_IRQ                   K230_IRQ_UART4
 
 #define UART_RBR (0x00)       /* receive buffer register */
 #define UART_THR (0x00)       /* transmit holding register */
@@ -96,24 +124,197 @@ struct device_uart
     void*  pa_base;
     rt_uint32_t irqno;
 };
-
-static rt_err_t  rt_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
-static rt_err_t  uart_control(struct rt_serial_device *serial, int cmd, void *arg);
-static int       drv_uart_putc(struct rt_serial_device *serial, char c);
-static int       drv_uart_getc(struct rt_serial_device *serial);
-
-const struct rt_uart_ops _uart_ops =
+struct k230_uart_dev
 {
-    rt_uart_configure,
-    uart_control,
-    drv_uart_putc,
-    drv_uart_getc,
-    //TODO: add DMA support
-    RT_NULL
+    struct rt_serial_device serial;
+    struct device_uart      uart;
+    const char *name;
+    rt_uint32_t pa_base;
+    rt_uint32_t uart_to_size;
+    rt_uint32_t irqno;
+
+#ifdef BSP_UART_USING_DMA
+    /* DMA info */
+    rt_uint8_t dma_ch;
+    usr_pdma_cfg_t pdma_cfg;
+    rt_event_t dma_event;
+#endif
 };
 
-struct rt_serial_device  serial1;
-struct device_uart       uart1;
+static struct k230_uart_dev uart_devs[] =
+{
+#ifdef BSP_USING_UART0
+    {
+        .name   = "uart0",
+        .pa_base = UART0_BASE_ADDR,
+        .uart_to_size = UART0_IO_SIZE,
+        .irqno   = UART0_IRQ,
+    },
+#endif
+#ifdef BSP_USING_UART1
+    {
+        .name   = "uart1",
+        .pa_base = UART1_BASE_ADDR,
+        .uart_to_size = UART1_IO_SIZE,
+        .irqno   = UART1_IRQ,
+    },
+#endif
+#ifdef BSP_USING_UART2
+    {
+        .name   = "uart2",
+        .pa_base = UART2_BASE_ADDR,
+        .uart_to_size = UART2_IO_SIZE,
+        .irqno   = UART2_IRQ,
+    },
+#endif
+#ifdef BSP_USING_UART3
+    {
+        .name   = "uart3",
+        .pa_base = UART3_BASE_ADDR,
+        .uart_to_size = UART3_IO_SIZE,
+        .irqno   = UART3_IRQ,
+    },
+#endif
+#ifdef BSP_USING_UART4
+    {
+        .name   = "uart4",
+        .pa_base = UART4_BASE_ADDR,
+        .uart_to_size = UART4_IO_SIZE,
+        .irqno   = UART4_IRQ,
+    },
+#endif
+#if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4)
+#error "No UART device defined!"
+#endif
+};
+
+static int _drv_uart_putc(struct rt_serial_device *serial, char c);
+
+#ifdef BSP_UART_USING_DMA
+typedef enum
+{
+    K230_UART_PDMA_EVENT_NONE,
+    K230_UART_PDMA_EVENT_COMPLETE,
+    K230_UART_PDMA_EVENT_TIMEOUT
+} uart_pdma_event_t;
+
+static void _k230_uart_pdma_call_back(rt_uint8_t ch, rt_bool_t is_done)
+{
+    uart_pdma_event_t event_type = is_done ? K230_UART_PDMA_EVENT_COMPLETE : K230_UART_PDMA_EVENT_TIMEOUT;
+    for (size_t i = 0; i < sizeof(uart_devs)/sizeof(uart_devs[0]); i++)
+    {
+        struct k230_uart_dev *d = &uart_devs[i];
+        if (d->dma_ch != PDMA_CH_INVALID && d->dma_ch == ch && d->dma_event != RT_NULL)
+        {
+            rt_event_send(d->dma_event, event_type);
+            return;
+        }
+    }
+}
+
+static rt_err_t _uart_dma_init(struct k230_uart_dev *dev)
+{
+    rt_err_t err;
+
+    usr_pdma_cfg_t *cfg = &dev->pdma_cfg;
+
+    if (!strcmp(dev->name, "uart0"))
+    {
+        cfg->device = UART0_TX;
+    }
+    else if (!strcmp(dev->name, "uart1"))
+    {
+        cfg->device = UART1_TX;
+    }
+    else if (!strcmp(dev->name, "uart2"))
+    {
+        cfg->device = UART2_TX;
+    }
+    else if (!strcmp(dev->name, "uart3"))
+    {
+        cfg->device = UART3_TX;
+    }
+    else if (!strcmp(dev->name, "uart4"))
+    {
+        cfg->device = UART4_TX;
+    }
+
+    cfg->dst_addr = (rt_uint8_t *)(uintptr_t)dev->pa_base;
+
+    cfg->pdma_ch_cfg.ch_src_type   = CONTINUE;
+    cfg->pdma_ch_cfg.ch_dev_hsize  = PSBYTE1;
+    cfg->pdma_ch_cfg.ch_dat_endian = PDEFAULT;
+    cfg->pdma_ch_cfg.ch_dev_blen   = PBURST_LEN_16;
+    cfg->pdma_ch_cfg.ch_priority   = 7;                   // channel priority
+    cfg->pdma_ch_cfg.ch_dev_tout   = 0xFFF;               // device timeout
+
+    return RT_EOK;
+}
+
+static rt_ssize_t _uart_dma_write(struct rt_serial_device *serial, const void *buffer, rt_size_t size)
+{
+    struct k230_uart_dev *uart_dev = rt_container_of(serial, struct k230_uart_dev, serial);
+    rt_uint32_t recv_event;
+    rt_err_t err;
+    rt_uint8_t ch;
+
+    err = k230_pdma_request_channel(&ch);
+    if (err != RT_EOK)
+    {
+        const char *ptr = buffer;
+        for (rt_size_t i = 0; i < size; i++)
+        {
+            _drv_uart_putc(serial, ptr[i]);
+        }
+        return size;
+    }
+
+    uint32_t len = RT_ALIGN(size, 64);
+    uint8_t *buf = rt_malloc_align(len, 64);
+    rt_memcpy(buf, buffer, size);
+    rt_hw_cpu_dcache_clean((void*)buf, len);
+    void *buf_pa = rt_kmem_v2p(buf);
+    uart_dev->dma_ch = ch;
+
+    err = k230_pdma_set_callback(ch, _k230_uart_pdma_call_back);
+    if (err != RT_EOK)
+    {
+        k230_pdma_release_channel(ch);
+        rt_free_align(buf);
+        return err;
+    }
+
+    uart_dev->pdma_cfg.src_addr  = buf_pa;
+    uart_dev->pdma_cfg.line_size = len;
+    rt_event_control(uart_dev->dma_event, RT_IPC_CMD_RESET, NULL);
+
+    err = k230_pdma_config(ch, &uart_dev->pdma_cfg);
+    err = k230_pdma_start(ch);
+
+    err = rt_event_recv(uart_dev->dma_event,
+                       K230_UART_PDMA_EVENT_COMPLETE | K230_UART_PDMA_EVENT_TIMEOUT,
+                       RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                       RT_WAITING_FOREVER,
+                       &recv_event);
+
+    k230_pdma_stop(ch);
+    k230_pdma_release_channel(ch);
+    uart_dev->dma_ch = PDMA_CH_INVALID;
+    rt_free_align(buf);
+    return size;
+}
+
+static rt_ssize_t _uart_dma_tran(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+{
+    rt_ssize_t len;
+    if (RT_SERIAL_DMA_TX == direction)
+    {
+        len = _uart_dma_write(serial, (void*)buf, size);
+    }
+    rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
+    return len;
+}
+#endif
 
 #define write32(addr, val) writel(val, (void*)(addr))
 #define read32(addr) readl((void*)(addr))
@@ -150,7 +351,8 @@ static void _uart_init(void *uart_base)
     write32(uart_base + UART_IER, 0x00);
     /* Enable DLAB */
     write32(uart_base + UART_LCR, 0x80);
-    if (bdiv) {
+    if (bdiv)
+    {
         /* Set divisor low byte */
         write32(uart_base + UART_DLL, dll);
         /* Set divisor high byte */
@@ -176,7 +378,7 @@ static void _uart_init(void *uart_base)
     // write32(uart_base + UART_IER, 0x01);
 }
 
-static void uart_set_isr(void *uart_base, uint8_t enable, uint32_t irq_type)
+static void _uart_set_isr(void *uart_base, uint8_t enable, uint32_t irq_type)
 {
     uint32_t value;
 
@@ -193,15 +395,7 @@ static void uart_set_isr(void *uart_base, uint8_t enable, uint32_t irq_type)
     write32(uart_base + UART_IER, value);
 }
 
-/*
- * UART interface
- */
-static rt_err_t rt_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
-{
-    return (RT_EOK);
-}
-
-static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct device_uart *uart = (struct device_uart*)serial->parent.user_data;
 
@@ -228,7 +422,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
         if ((size_t)arg == RT_DEVICE_FLAG_INT_RX)
 #endif
         {
-            uart_set_isr((void*)(uart->hw_base), 0, UART_IER_RDI);
+            _uart_set_isr((void*)(uart->hw_base), 0, UART_IER_RDI);
         }
         break;
 
@@ -239,14 +433,14 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
         if ((size_t)arg == RT_DEVICE_FLAG_INT_RX)
 #endif
         {
-            uart_set_isr((void*)(uart->hw_base), 1, UART_IER_RDI);
+            _uart_set_isr((void*)(uart->hw_base), 1, UART_IER_RDI);
         }
         break;
 #ifdef RT_USING_SERIAL_V2
     case RT_DEVICE_CTRL_CONFIG:
         if (ctrl_flag & RT_DEVICE_FLAG_INT_RX)
         {
-            uart_set_isr((void*)(uart->hw_base), 1, UART_IER_RDI);
+            _uart_set_isr((void*)(uart->hw_base), 1, UART_IER_RDI);
         }
         break;
 #endif
@@ -270,7 +464,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
     return (RT_EOK);
 }
 
-static int drv_uart_putc(struct rt_serial_device *serial, char c)
+static int _drv_uart_putc(struct rt_serial_device *serial, char c)
 {
     volatile uint32_t *sed_buf;
     volatile uint32_t *sta;
@@ -288,7 +482,7 @@ static int drv_uart_putc(struct rt_serial_device *serial, char c)
     return (1);
 }
 
-static int drv_uart_getc(struct rt_serial_device *serial)
+static int _drv_uart_getc(struct rt_serial_device *serial)
 {
     struct device_uart *uart = (struct device_uart*)serial->parent.user_data;
     volatile uint32_t *lsr = (uint32_t *)(uart->hw_base + UART_LSR);
@@ -301,7 +495,15 @@ static int drv_uart_getc(struct rt_serial_device *serial)
     return (int)*rbr;
 }
 
-static void rt_hw_uart_isr(int irq, void *param)
+/*
+ * UART interface
+ */
+static rt_err_t _rt_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+{
+    return (RT_EOK);
+}
+
+static void _rt_hw_uart_isr(int irq, void *param)
 {
     struct rt_serial_device *serial = (struct rt_serial_device*)param;
     struct device_uart *uart;
@@ -349,37 +551,78 @@ static void rt_hw_uart_isr(int irq, void *param)
     }
 }
 
-/*
- * UART Initiation
- */
+const struct rt_uart_ops _uart_ops =
+{
+    .configure    = _rt_uart_configure,
+    .control      = _uart_control,
+    .putc         = _drv_uart_putc,
+    .getc         = _drv_uart_getc,
+#ifdef BSP_UART_USING_DMA
+    .dma_transmit = _uart_dma_tran
+#else
+    .dma_transmit = RT_NULL
+#endif
+};
+
 int rt_hw_uart_init(void)
 {
-    struct rt_serial_device *serial;
-    struct device_uart      *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    rt_err_t ret;
 
+    for (int i = 0; i < sizeof(uart_devs)/sizeof(uart_devs[0]); i++)
     {
-        serial  = &serial1;
-        uart    = &uart1;
+        struct k230_uart_dev *dev = &uart_devs[i];
 
-        serial->ops              = &_uart_ops;
-        serial->config           = config;
-        serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
+        dev->serial.ops = &_uart_ops;
+        dev->serial.config = config;
+        dev->serial.config.baud_rate = UART_DEFAULT_BAUDRATE;
 
-        uart->pa_base = (void *)UART_ADDR;
-        uart->hw_base = (rt_base_t)rt_ioremap(uart->pa_base, 0x1000);
-        uart->irqno     = UART_IRQ;
+        dev->uart.pa_base = (void *)(uintptr_t)dev->pa_base;
+        dev->uart.hw_base = (rt_base_t)rt_ioremap(dev->uart.pa_base, dev->uart_to_size);
+        dev->uart.irqno   = dev->irqno;
 
-        _uart_init((void*)(uart->hw_base));
+#ifdef BSP_UART_USING_DMA
+        dev->dma_ch = PDMA_CH_INVALID;
+        dev->dma_event = (rt_event_t)rt_malloc(sizeof(struct rt_event));
+        if (dev->dma_event == RT_NULL)
+        {
+            LOG_E("Failed to allocate memory for %s pdma_event!", dev->name);
+            return -RT_ENOMEM;
+        }
 
-        rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart1");
-        rt_hw_interrupt_umask(uart->irqno);
+        ret = rt_event_init(dev->dma_event, dev->name, RT_IPC_FLAG_FIFO);
+        if (ret != RT_EOK)
+        {
+            LOG_E("Failed to init pdma_event for %s!", dev->name);
+            rt_free(dev->dma_event);
+            return ret;
+        }
 
-        rt_hw_serial_register(serial,
-                              RT_CONSOLE_DEVICE_NAME,
-                              RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                              uart);
+        ret = _uart_dma_init(dev);
+        if (ret != RT_EOK)
+        {
+            LOG_E("Failed to init DMA for %s, ret=%d\n", dev->name, ret);
+            return ret;
+        }
+#endif
+
+        _uart_init((void*)(dev->uart.hw_base));
+
+        rt_hw_interrupt_install(dev->uart.irqno, _rt_hw_uart_isr, &dev->serial, dev->name);
+        rt_hw_interrupt_umask(dev->uart.irqno);
+
+        rt_uint32_t flags;
+        flags = RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX;
+#ifdef BSP_UART_USING_DMA
+        flags = RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+        ret = rt_hw_serial_register(&dev->serial, dev->name, flags, &dev->uart);
+        if (ret != RT_EOK)
+        {
+            LOG_E("Failed to register %s, ret=%d\n", dev->name, ret);
+            return ret;
+        }
     }
-
-    return 0;
+    return RT_EOK;
 }

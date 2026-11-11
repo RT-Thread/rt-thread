@@ -2,7 +2,7 @@ mainmenu "RT-Thread Configuration"
 
 BSP_DIR := .
 
-RTT_DIR := ../../../..
+RTT_DIR := ../../../../
 
 PKGS_DIR := packages
 
@@ -13,6 +13,22 @@ config XUANTIAN_XIAOHUI_C906
     select RT_USING_USER_MAIN
     default y
 
+menu "CPU Architecture Features"
+
+    menuconfig ENABLE_FPU
+        bool "Enable FPU"
+        select ARCH_RISCV_FPU
+        select ARCH_RISCV_FPU_D
+        default y
+
+    menuconfig ENABLE_VECTOR
+        bool "Enable VECTOR"
+        select ARCH_RISCV_VECTOR
+        select ENABLE_FPU
+        default n
+
+endmenu
+
 source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
-rsource "board/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "$BSP_DIR/board/Kconfig"

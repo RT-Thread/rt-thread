@@ -39,7 +39,7 @@ rt_inline void *msix_vector_ctrl_base(struct rt_pci_msix_conf *msix)
 }
 
 rt_inline void msix_write_vector_ctrl(struct rt_pci_msix_conf *msix,
-        rt_uint32_t ctrl)
+                                      rt_uint32_t ctrl)
 {
     void *vc_addr = msix_vector_ctrl_base(msix);
 
@@ -56,7 +56,7 @@ rt_inline void msix_mask(struct rt_pci_msix_conf *msix)
 }
 
 static void msix_update_ctrl(struct rt_pci_device *pdev,
-        rt_uint16_t clear, rt_uint16_t set)
+                             rt_uint16_t clear, rt_uint16_t set)
 {
     rt_uint16_t msgctl;
 
@@ -83,7 +83,7 @@ rt_inline rt_uint32_t msi_multi_mask(struct rt_pci_msi_conf *msi)
 }
 
 static void msi_write_mask(struct rt_pci_msi_conf *msi,
-        rt_uint32_t clear, rt_uint32_t set, struct rt_pci_device *pdev)
+                           rt_uint32_t clear, rt_uint32_t set, struct rt_pci_device *pdev)
 {
     if (msi->cap.is_masking)
     {
@@ -98,13 +98,13 @@ static void msi_write_mask(struct rt_pci_msi_conf *msi,
 }
 
 rt_inline void msi_mask(struct rt_pci_msi_conf *msi,
-        rt_uint32_t mask, struct rt_pci_device *pdev)
+                        rt_uint32_t mask, struct rt_pci_device *pdev)
 {
     msi_write_mask(msi, 0, mask, pdev);
 }
 
 rt_inline void msi_unmask(struct rt_pci_msi_conf *msi,
-        rt_uint32_t mask, struct rt_pci_device *pdev)
+                          rt_uint32_t mask, struct rt_pci_device *pdev)
 {
     msi_write_mask(msi, mask, 0, pdev);
 }
@@ -126,14 +126,14 @@ static void msi_write_enable(struct rt_pci_device *pdev, rt_bool_t enable)
 }
 
 static void msi_affinity_init(struct rt_pci_msi_desc *desc, int msi_index,
-        rt_bitmap_t *cpumasks)
+                              rt_bitmap_t *cpumasks)
 {
     int irq;
     struct rt_pic_irq *pirq;
     struct rt_pci_device *pdev = desc->pdev;
     struct rt_pic *msi_pic = pdev->msi_pic;
 
-    irq = desc->irq + desc->is_msix ? 0 : msi_index;
+    irq = desc->is_msix ? desc->irq : desc->irq + msi_index;
     pirq = rt_pic_find_pirq(msi_pic, irq);
 
     /* Save affinity */
@@ -191,10 +191,11 @@ void rt_pci_msi_shutdown(struct rt_pci_device *pdev)
     if ((desc = rt_pci_msi_first_desc(pdev)))
     {
         msi_unmask(&desc->msi, msi_multi_mask(&desc->msi), pdev);
+
+        /* Restore pdev->irq to its default pin-assertion IRQ */
+        pdev->irq = desc->msi.default_irq;
     }
 
-    /* Restore pdev->irq to its default pin-assertion IRQ */
-    pdev->irq = desc->msi.default_irq;
     pdev->msi_enabled = RT_FALSE;
 }
 
@@ -232,6 +233,8 @@ void rt_pci_msi_free_irqs(struct rt_pci_device *pdev)
         rt_iounmap(pdev->msix_base);
         pdev->msix_base = RT_NULL;
     }
+
+    rt_pci_msi_cleanup_irqs(pdev);
 
     rt_pci_msi_for_each_desc(pdev, desc)
     {
@@ -363,7 +366,7 @@ void rt_pci_msi_unmask_irq(struct rt_pic_irq *pirq)
 }
 
 rt_ssize_t rt_pci_alloc_vector(struct rt_pci_device *pdev, int min, int max,
-        rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                               rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     rt_ssize_t res = -RT_ENOSYS;
 
@@ -456,9 +459,9 @@ static rt_err_t msi_verify_entries(struct rt_pci_device *pdev)
             if (desc->msg.address_hi)
             {
                 LOG_D("%s: Arch assigned 64-bit MSI address %08x%08x"
-                        "but device only supports 32 bits",
-                        rt_dm_dev_get_name(&pdev->parent),
-                        desc->msg.address_hi, desc->msg.address_lo);
+                      "but device only supports 32 bits",
+                      rt_dm_dev_get_name(&pdev->parent),
+                      desc->msg.address_hi, desc->msg.address_lo);
 
                 return -RT_EIO;
             }
@@ -469,7 +472,7 @@ static rt_err_t msi_verify_entries(struct rt_pci_device *pdev)
 }
 
 static rt_err_t msi_insert_desc(struct rt_pci_device *pdev,
-        struct rt_pci_msi_desc *init_desc)
+                                struct rt_pci_msi_desc *init_desc)
 {
     rt_size_t msi_affinity_ptr_size = 0;
     struct rt_pci_msi_desc *msi_desc;
@@ -589,7 +592,7 @@ static rt_err_t msi_setup_msi_desc(struct rt_pci_device *pdev, int nvec)
 }
 
 static rt_ssize_t msi_capability_init(struct rt_pci_device *pdev,
-        int nvec, RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                      int nvec, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     rt_err_t err;
     struct rt_pci_msi_desc *desc;
@@ -622,7 +625,7 @@ static rt_ssize_t msi_capability_init(struct rt_pci_device *pdev,
         rt_pci_msi_free_irqs(pdev);
 
         LOG_E("%s: Setup %s interrupts(%d) error = %s",
-                rt_dm_dev_get_name(&pdev->parent), "MSI", nvec, rt_strerror(err));
+              rt_dm_dev_get_name(&pdev->parent), "MSI", nvec, rt_strerror(err));
 
         return err;
     }
@@ -649,7 +652,7 @@ static rt_ssize_t msi_capability_init(struct rt_pci_device *pdev,
 }
 
 rt_ssize_t rt_pci_msi_enable_range_affinity(struct rt_pci_device *pdev,
-        int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                            int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     int nvec = max;
     rt_size_t entries_nr;
@@ -736,27 +739,57 @@ static void *msix_table_remap(struct rt_pci_device *pdev, rt_size_t entries_nr)
 {
     rt_uint8_t bir;
     rt_uint32_t table_offset;
-    rt_ubase_t table_base_phys;
+    rt_uint64_t table_base_phys, table_bytes;
+    struct rt_pci_bus_resource *res;
 
-    rt_pci_read_config_u32(pdev, pdev->msix_cap + PCIR_MSIX_TABLE, &table_offset);
+    if (rt_pci_read_config_u32(pdev, pdev->msix_cap + PCIR_MSIX_TABLE, &table_offset))
+    {
+        LOG_E("%s: Read MSI-X table offset fail", rt_dm_dev_get_name(&pdev->parent));
+
+        return RT_NULL;
+    }
+
+    /* The BIR field is device-controlled, never use it as a raw array index */
     bir = (rt_uint8_t)(table_offset & PCIM_MSIX_BIR_MASK);
 
-    if (pdev->resource[bir].flags & PCI_BUS_REGION_F_NONE)
+    if (bir >= RT_ARRAY_SIZE(pdev->resource))
+    {
+        LOG_E("%s: MSI-X table BIR %d is out of range", rt_dm_dev_get_name(&pdev->parent), bir);
+
+        return RT_NULL;
+    }
+
+    res = &pdev->resource[bir];
+
+    if (res->flags & PCI_BUS_REGION_F_NONE || res->size == 0)
     {
         LOG_E("%s: BAR[bir = %d] is invalid", rt_dm_dev_get_name(&pdev->parent), bir);
 
         return RT_NULL;
     }
 
-    table_base_phys = pdev->resource[bir].base + (table_offset & ~PCIM_MSIX_BIR_MASK);
+    table_offset &= PCIM_MSIX_TABLE_OFFSET;
+    table_bytes = (rt_uint64_t)entries_nr * PCIM_MSIX_ENTRY_SIZE;
 
-    return rt_ioremap((void *)table_base_phys, entries_nr * PCIM_MSIX_ENTRY_SIZE);
+    /* The whole MSI-X table must be contained in the assigned BAR */
+    if (table_offset > res->size || table_bytes > res->size - table_offset)
+    {
+        LOG_E("%s: MSI-X table(offset = 0x%x, size = %d) exceeds BAR[bir = %d] size 0x%lx",
+              rt_dm_dev_get_name(&pdev->parent), table_offset, (int)table_bytes,
+              bir, (unsigned long)res->size);
+
+        return RT_NULL;
+    }
+
+    table_base_phys = (rt_uint64_t)res->base + table_offset;
+
+    return rt_ioremap((void *)(rt_ubase_t)table_base_phys, table_bytes);
 }
 
 static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
-        void *table_base, struct rt_pci_msix_entry *entries, int nvec)
+                                     void *table_base, struct rt_pci_msix_entry *entries, int nvec)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     struct rt_pci_msi_desc desc;
 
     rt_memset(&desc, 0, sizeof(desc));
@@ -787,8 +820,8 @@ static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
 }
 
 static rt_ssize_t msix_capability_init(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int nvec,
-        RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                       struct rt_pci_msix_entry *entries, int nvec,
+                                       RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     rt_err_t err;
     rt_uint16_t msgctl;
@@ -808,6 +841,18 @@ static rt_ssize_t msix_capability_init(struct rt_pci_device *pdev,
     rt_pci_read_config_u16(pdev, pdev->msix_cap + PCIR_MSIX_CTRL, &msgctl);
     /* Request & Map MSI-X table region */
     table_size = rt_pci_msix_table_size(msgctl);
+
+    /* A device may report different table sizes on repeated reads, make sure
+     * the requested vectors can be covered by the table mapped below */
+    if ((rt_size_t)nvec > table_size)
+    {
+        LOG_E("%s: Requested %d vectors exceed MSI-X table size %d",
+              rt_dm_dev_get_name(&pdev->parent), nvec, (int)table_size);
+
+        err = -RT_EINVAL;
+        goto _out_disbale_msix;
+    }
+
     table_base = msix_table_remap(pdev, table_size);
 
     if (!table_base)
@@ -838,7 +883,7 @@ static rt_ssize_t msix_capability_init(struct rt_pci_device *pdev,
         rt_pci_msi_free_irqs(pdev);
 
         LOG_E("%s: Setup %s interrupts(%d) error = %s",
-                rt_dm_dev_get_name(&pdev->parent), "MSI-X", nvec, rt_strerror(err));
+              rt_dm_dev_get_name(&pdev->parent), "MSI-X", nvec, rt_strerror(err));
 
         goto _out_disbale_msix;
     }
@@ -877,8 +922,8 @@ _out_disbale_msix:
 }
 
 rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int min, int max,
-        RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                             struct rt_pci_msix_entry *entries, int min, int max,
+                                             RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     int nvec = max;
     rt_size_t entries_nr;
@@ -938,7 +983,7 @@ rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pdev,
             if (target->index == entries[j].index)
             {
                 LOG_E("%s: msix entry[%d].index = entry[%d].index",
-                        rt_dm_dev_get_name(&pdev->parent), i, j);
+                      rt_dm_dev_get_name(&pdev->parent), i, j);
 
                 return -RT_EINVAL;
             }

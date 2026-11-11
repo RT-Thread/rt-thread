@@ -36,10 +36,10 @@ Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
 
-if os.path.exists(SDK_ROOT + '/Libraries'):
-    libraries_path_prefix = SDK_ROOT + '/Libraries'
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
 else:
-    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/Libraries'
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
 
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
@@ -51,10 +51,10 @@ ch32_library = 'CH32F10x_StdPeriph_Driver'
 rtconfig.BSP_LIBRARY_TYPE = ch32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, ch32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, ch32_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', ch32_library), duplicate=0))
 
 # common include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers', 'SConscript'), variant_dir='build/libraries/ch32_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

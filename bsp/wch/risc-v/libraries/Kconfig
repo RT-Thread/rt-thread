@@ -1,0 +1,69 @@
+config SOC_RISCV_FAMILY_CH32
+    bool
+
+config SOC_RISCV_SERIES_CH32V1
+    bool
+    select ARCH_RISCV
+    select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
+    select WCH_QINGKE_V3A
+
+config SOC_RISCV_SERIES_CH32V2
+    bool
+    select ARCH_RISCV
+    select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
+    select PKG_USING_CH32V20x_SDK
+
+config SOC_RISCV_SERIES_CH32V20x_D6
+    bool
+    select WCH_QINGKE_V4B
+
+config SOC_RISCV_SERIES_CH32V20x_D8
+    bool
+    select WCH_QINGKE_V4B
+
+config SOC_RISCV_SERIES_CH32V20x_D8W
+    bool
+    select WCH_QINGKE_V4C
+
+config SOC_RISCV_SERIES_CH32V3
+    bool
+    select ARCH_RISCV
+    select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
+    select PKG_USING_CH32V307_SDK
+    select WCH_QINGKE_V4F
+
+config SOC_FAMILY_CH56X
+    bool
+    select ARCH_RISCV
+    select RT_USING_HW_ATOMIC
+
+config SOC_SERIES_CH569
+    bool
+    select SOC_FAMILY_CH56X
+    select RT_USING_HW_ATOMIC
+    select WCH_QINGKE_V3A
+
+config WCH_QINGKE_V3A
+    bool
+
+config WCH_QINGKE_V4B
+    bool
+
+config WCH_QINGKE_V4C
+    bool
+
+config WCH_QINGKE_V4F
+    bool
+
+config WCH_HAS_FAST_IRQ
+    bool
+    # Allow cores with at least three hardware stack levels.
+    default y if WCH_QINGKE_V4F || WCH_QINGKE_V5F
+
+config WCH_USING_FAST_IRQ
+    bool "Enable WCH fast interrupts"
+    depends on WCH_HAS_FAST_IRQ
+    default y

@@ -17,6 +17,10 @@ on:
           - '**/README_zh.md'
     workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
     change:
         uses: RT-Thread/pkgs-test/.github/workflows/pkgs-action.yml@main
@@ -26,4 +30,3 @@ jobs:
             test-specific-pkgs: true
             pkgs: |
                 hello
-

@@ -18,6 +18,24 @@
 
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
+
+/**
+ * @brief    Sets the disposition of a signal.
+ *
+ * @note     The signal() function chooses one of three ways to handle the signal @p sig.
+ *           The @p func argument specifies the action:
+ *               - SIG_DFL: default handling.
+ *               - SIG_IGN: ignore the signal.
+ *               - function pointer: user-defined handler.
+ *           This function is a simplified interface; the sigaction() function is recommended for portable applications.
+ *
+ * @param    sig is the signal number (e.g., SIGINT, SIGTERM).
+ * @param    func is the disposition or function to be called when the signal is received.
+ *
+ * @return   Upon successful completion, signal() returns the previous disposition of the signal.
+ *           On failure, SIG_ERR is returned and errno is set to indicate the error.
+ *
+ */
 void (*signal(int sig, void (*func)(int))) (int)
 {
     return rt_signal_install(sig, func);

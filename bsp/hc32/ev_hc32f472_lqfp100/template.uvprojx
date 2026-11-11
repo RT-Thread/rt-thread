@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F472.SFR</SFDFile>
+          <SFDFile>./packages/hc32-f4-cmsis-latest/Device/HDSC/hc32f472/Source/ARM/sfr/HC32F472.SFR</SFDFile>
           <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -326,7 +326,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>0</uGnu>
+            <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>0</v6Lang>
             <v6LangP>0</v6LangP>

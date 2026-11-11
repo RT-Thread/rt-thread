@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -114,10 +114,13 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -178,6 +181,8 @@
 #define FAL_PART_HAS_TABLE_CFG
 #define FAL_USING_SFUD_PORT
 #define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
+#define FAL_DEV_NAME_MAX 24
+#define FAL_DEV_BLK_MAX 6
 
 /* Device Drivers */
 
@@ -191,6 +196,11 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 512
 #define RT_USING_CAN
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PWM
@@ -205,6 +215,7 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_SDIO_DEBUG
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
@@ -255,7 +266,6 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -292,6 +302,7 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -385,6 +396,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 /* end of Utilities */
 
 /* Using USB legacy version */
@@ -534,8 +546,6 @@
 
 /* NUVOTON Drivers */
 
-#define PKG_USING_NUVOTON_CMSIS_DRIVER
-#define PKG_USING_NUVOTON_CMSIS_DRIVER_LATEST_VERSION
 #define PKG_USING_NUVOTON_SERIES_DRIVER
 #define PKG_USING_NUVOTON_SERIES_DRIVER_LATEST_VERSION
 /* end of NUVOTON Drivers */
@@ -543,6 +553,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

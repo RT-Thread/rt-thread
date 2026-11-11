@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,10 +31,10 @@
  */
 typedef struct
 {
-    nrf_saadc_mode_t    mode;           ///< SAADC mode. Single-ended or differential.
-    uint8_t             pin_p;          ///< Input positive pin selection.
-    uint8_t             pin_n;          ///< Input negative pin selection.
-    uint8_t             channel_num;    ///< Channel number.
+    nrf_saadc_mode_t    mode;           /* /< SAADC mode. Single-ended or differential. */
+    uint8_t             pin_p;          /* /< Input positive pin selection. */
+    uint8_t             pin_n;          /* /< Input negative pin selection. */
+    uint8_t             channel_num;    /* /< Channel number. */
 } drv_nrfx_saadc_channel_t;
 
 typedef struct
@@ -46,3 +46,4 @@ typedef struct
 } drv_nrfx_saadc_result_t;
 
 #endif /* __DRV_ADC_H__ */
+

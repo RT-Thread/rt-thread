@@ -64,6 +64,11 @@ int dfs_romfs_ioctl(struct dfs_file *file, int cmd, void *args)
     {
     case RT_FIOGETADDR:
         {
+            if (args == RT_NULL)
+            {
+                ret = -RT_EINVAL;
+                break;
+            }
             *(rt_ubase_t*)args = (rt_ubase_t)dirent->data;
             break;
         }

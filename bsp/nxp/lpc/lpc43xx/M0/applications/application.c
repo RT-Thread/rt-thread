@@ -18,10 +18,6 @@
 #include <shell.h>
 #endif
 
-#ifdef RT_USING_VBUS
-#include <vbus.h>
-#endif
-
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
@@ -32,10 +28,6 @@ void rt_init_thread_entry(void *parameter)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 #endif
-
-#ifdef RT_USING_VBUS
-    rt_vbus_do_init();
-#endif
 }
 
 /*the led thread*/
@@ -45,8 +37,6 @@ static struct rt_thread led_thread;
 static void led_thread_entry(void *parameter)
 {
     rt_device_t led_dev;
-    rt_device_t vbus_dev;
-    rt_err_t err;
 
     rt_led_hw_init();
 
@@ -57,32 +47,14 @@ static void led_thread_entry(void *parameter)
         return;
     }
 
-    vbus_dev = rt_device_find("vecho");
-    if (vbus_dev == RT_NULL)
-    {
-        rt_kprintf("can not find the vbus device\n");
-        return;
-    }
-
-    err = rt_device_open(vbus_dev, RT_DEVICE_OFLAG_RDWR);
-    if (err != RT_EOK)
-    {
-        rt_kprintf("open vbus failed: %d\n", err);
-        return;
-    }
-
     while (1)
     {
-        rt_uint8_t led_value;
-        int len;
-
-        len = rt_device_read(vbus_dev, 0, &led_value, sizeof(led_value));
-        if (len <= 0)
-        {
-            rt_kprintf("vbus read err: %d, %d\n", len, rt_get_errno());
-        }
-
+        rt_uint8_t led_value = 1;
         led_dev->write(led_dev, 1, &led_value, sizeof(led_value));
+        rt_thread_delay(500);
+        led_value = 0;
+        led_dev->write(led_dev, 1, &led_value, sizeof(led_value));
+        rt_thread_delay(500);
     }
 }
 

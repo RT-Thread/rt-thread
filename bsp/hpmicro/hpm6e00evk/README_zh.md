@@ -16,7 +16,7 @@
 
 ## 板级资源介绍
 
-HPM6800EVK 是由先楫半导体推出的一款基于RISCV内核的开发板，带有丰富的片上资源和板上资源，可用于网络互联、音频和电机控制等应用。
+HPM6E00EVK 是由先楫半导体推出的一款基于RISCV内核的开发板，带有丰富的片上资源和板上资源，可用于网络互联、音频和电机控制等应用。
 
 开发板外观如下图所示：
 
@@ -33,6 +33,7 @@ HPM6800EVK 是由先楫半导体推出的一款基于RISCV内核的开发板，�
 | USB                      | √           |                                       |
 | QSPI Flash               | √           |                                       |
 | 以太网                    | √           |                                       |
+| EtherCAT从站              | √           |                                       |
 | GPIO                     | √           |                                       |
 | SPI                      | √           |                                       |
 | I2C                      | √           |                                       |
@@ -73,14 +74,14 @@ HPM6800EVK 是由先楫半导体推出的一款基于RISCV内核的开发板，�
 
 - 通过如下命令完成下载:
   ```console
-  %OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm6e80-single-core.cfg -f boards\debug_scripts\boards\hpm6e00evk.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
+  %OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm6e80-single-core.cfg -f board\debug_scripts\openocd\boards\hpm6e00evk.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
   ```
 
 - 通过如下命令实现调试:
 
   - 通过 `OpenOCD` 来连接开发板:
 ```console
-%OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm6e80-single-core.cfg -f boards\debug_scripts\boards\hpm6e00evk.cfg
+%OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm6e80-single-core.cfg -f board\debug_scripts\openocd\boards\hpm6e00evk.cfg
 ```
   - 通过 `GDB` 实现调试:
 ```console

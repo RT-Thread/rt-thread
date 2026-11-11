@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>rtthread</TargetName>
+      <TargetName>GD32H759I_EVAL</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pCCUsed>6130001::V6.13.1::.\ARMCLANG</pCCUsed>
+      <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32H743IITx</Device>
-          <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32H7xx_DFP.2.1.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x24000000,0x00080000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
+          <Device>GD32H759IM</Device>
+          <Vendor>GigaDevice</Vendor>
+          <PackID>GigaDevice.GD32H7xx_DFP.0.1.0</PackID>
+          <PackURL>https://gd32mcu.com/data/documents/pack/</PackURL>
+          <Cpu>IRAM(0x24000000,0x000E0000) IRAM2(0x00000000,0x00010000) IROM(0x08000000,0x03C0000) XRAM(0x20000000,0x00010000) XRAM2(0x30000000,0x00004000) XRAM3(0x30004000,0x00004000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32H7x_2048 -FS08000000 -FL0200000 -FP0($$Device:STM32H743IITx$CMSIS\Flash\STM32H7x_2048.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD24000000 -FC2000 -FN1 -FF0GD32H7xx_3840KB -FS08000000 -FL03C0000 -FP0($$Device:GD32H759IM$Flash\GD32H7xx_3840KB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32H743IITx$Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h</RegisterFile>
+          <RegisterFile>$$Device:GD32H759IM$Device\Include\gd32h7xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32H743IITx$CMSIS\SVD\STM32H7x3.svd</SFDFile>
+          <SFDFile>$$Device:GD32H759IM$SVD\GD32H7xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -48,14 +48,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\build\keil\Obj\</OutputDirectory>
-          <OutputName>rt-thread</OutputName>
+          <OutputDirectory>.\Objects\</OutputDirectory>
+          <OutputName>Project</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\build\keil\List\</ListingPath>
+          <ListingPath>.\Listings\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -80,9 +80,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
+            <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -181,13 +181,14 @@
             <uocRam>0</uocRam>
             <hadIROM>1</hadIROM>
             <hadIRAM>1</hadIRAM>
-            <hadXRAM>0</hadXRAM>
+            <hadXRAM>1</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>3</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -243,18 +244,18 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x24000000</StartAddress>
+                <Size>0xe0000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x200000</Size>
+                <Size>0x3c0000</Size>
               </IROM>
               <XRAM>
-                <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <Type>1</Type>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x10000</Size>
               </XRAM>
               <OCR_RVCT1>
                 <Type>1</Type>
@@ -274,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x200000</Size>
+                <Size>0x3c0000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -283,28 +284,28 @@
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x30000000</StartAddress>
+                <Size>0x4000</Size>
               </OCR_RVCT7>
               <OCR_RVCT8>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x30004000</StartAddress>
+                <Size>0x4000</Size>
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x24000000</StartAddress>
+                <Size>0xe0000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x24000000</StartAddress>
-                <Size>0x80000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -320,13 +321,14 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>1</uC99>
-            <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <uC99>0</uC99>
+            <uGnu>0</uGnu>
+            <useXO>1</useXO>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -334,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>GD32H7XX</Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\;..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Include;..\..\..\..\GD32H7xx_Firmware_Library\CMSIS\GD\GD32H7xx\Include;..\..\..\Utilites</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -358,7 +360,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>0</umfTarg>
+            <umfTarg>1</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -367,7 +369,7 @@
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
+            <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -378,7 +380,332 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>Application</GroupName>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\gd32h7xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\systick.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>system_gd32h7xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\CMSIS\GD\GD32H7xx\Source\system_gd32h7xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>GD32H7xx_Peripherals</GroupName>
+          <Files>
+            <File>
+              <FileName>gd32h7xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cau.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cau.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cau_aes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cau_aes.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cau_des.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cau_des.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cau_tdes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cau_tdes.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_cpdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_cpdm.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_ctc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_ctc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_dbg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_dbg.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_dci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_dci.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_edout.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_edout.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_efuse.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_exmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_exmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_fac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_fac.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_fmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_fwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_fwdgt.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_hau.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_hau.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_hau_sha_md5.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_hau_sha_md5.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_hpdf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_hpdf.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_hwsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_hwsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_ipa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_ipa.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_lpdts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_lpdts.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_mdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_mdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_mdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_mdma.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_ospi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_ospi.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_ospim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_ospim.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_pmu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_rameccmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_rameccmu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_rcu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_rspdif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_rspdif.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_rtdec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_rtdec.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_sai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_sai.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_syscfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_tli.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_tli.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_tmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_tmu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_trigsel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_trigsel.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_trng.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_vref.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_vref.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32h7xx_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\GD32H7xx_standard_peripheral\Source\gd32h7xx_wwdgt.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>GD32H7xx_EVAL</GroupName>
+          <Files>
+            <File>
+              <FileName>gd32h759i_eval.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilites\gd32h759i_eval.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Startup</GroupName>
+          <Files>
+            <File>
+              <FileName>startup_gd32h7xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\GD32H7xx_Firmware_Library\CMSIS\GD\GD32H7xx\Source\ARM\startup_gd32h7xx.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Doc</GroupName>
+          <Files>
+            <File>
+              <FileName>readme.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>
@@ -386,7 +713,14 @@
 
   <RTE>
     <apis/>
-    <components/>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.2.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.5.1"/>
+        <targetInfos>
+          <targetInfo name="GD32H759I_EVAL"/>
+        </targetInfos>
+      </component>
+    </components>
     <files/>
   </RTE>
 

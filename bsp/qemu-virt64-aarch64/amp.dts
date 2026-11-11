@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-02-25     GuEe-GUI     the first version
+ */
+
+/dts-v1/;
+#define AMP_SLAVE
+#include "amp.dtsi"
+#include "amp.dt.h"
+
+/delete-node/ &amp_memory;
+
+&pic_mailbox1 {
+    interrupt-affinity = <&cpu0>;
+};
+
+/ {
+    #address-cells = <2>;
+    #size-cells = <2>;
+    model = "linux,dummy-virt";
+    interrupt-parent = <&gic>;
+
+    chosen {
+        bootargs = "rpmsg.mode=slave console=ttyAMA0 cma=8M coherent_pool=2M root=vda0 rootfstype=elm rw";
+        stdout-path = "/pl011@9040000";
+    };
+
+    memory {
+        reg = <0x0 (MEMORY_BASE + AMP_MEMORY_BASE) 0x0 AMP_MEMORY_SIZE>;
+        device_type = "memory";
+    };
+
+    cpus {
+        #size-cells = <0>;
+        #address-cells = <1>;
+
+        cpu0: cpu@CPU_ID {
+            compatible = "";    /* To be filled */
+            reg = <CPU_ID>;
+            device_type = "cpu";
+        };
+    };
+
+    timer {
+        compatible = "arm,armv8-timer","arm,armv7-timer";
+        always-on;
+        interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+                     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+                     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+                     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+    };
+
+    gic: interrupt-controller@8000000 {
+    #if GIC_VERSION != 2
+        compatible = "arm,gic-v3";
+        reg = <0x0 0x8000000 0x0 0x010000>, /* GICD */
+              <0x0 0x80a0000 0x0 0xf60000>; /* GICR */
+        #redistributor-regions = <0x01>;
+    #else
+        compatible = "arm,cortex-a15-gic";
+        reg = <0x0 0x8000000 0x0 0x010000>, /* GICD */
+              <0x0 0x8010000 0x0 0x010000>; /* GICC */
+    #endif
+        skip-init;
+        interrupt-controller;
+        #interrupt-cells = <3>;
+    };
+
+    clk24m: apb-pclk {
+        clock-output-names = "clk24mhz";
+        clock-frequency = <24000000>;
+        #clock-cells = <0>;
+        compatible = "fixed-clock";
+    };
+
+    pl011@9040000 {
+        clock-names = "uartclk", "apb_pclk";
+        clocks = <&clk24m &clk24m>;
+        interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+        interrupt-affinity = <&cpu0>;
+        reg = <0x00 0x9040000 0x00 0x1000>;
+        compatible = "arm,pl011", "arm,primecell";
+    };
+
+    virtio_blk {
+        compatible = "virtio,mmio";
+        reg = <0 0 0 0>;                                /* To be filled */
+        interrupts = <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>;  /* To be filled */
+        interrupt-affinity = <&cpu0>;
+        dma-coherent;
+        status = "disabled";
+    };
+
+    /delete-node/ soc;
+
+    amp_soc {
+        compatible = "simple-bus";
+        /delete-property/ memory-region;
+        /delete-property/ dtb-entry;
+        /delete-property/ kernel-entry;
+
+        virtio_rpmsg {
+            interrupt-affinity = <&cpu0>;
+        };
+    };
+};

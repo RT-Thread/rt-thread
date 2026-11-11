@@ -63,7 +63,7 @@
 /* end of klibc options */
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -78,6 +78,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -86,6 +88,7 @@
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_CRITICAL
 
 /* Inter-Thread communication */
 
@@ -108,14 +111,19 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50200
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
+#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
@@ -186,8 +194,14 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
@@ -202,6 +216,7 @@
 #define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_AUDIO
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
@@ -215,8 +230,6 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_PIN
-#define RT_USING_KTIME
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -262,6 +275,7 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -330,6 +344,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -535,39 +550,12 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DRIVERS_EXAMPLE
+#define BSP_USING_DRIVERS_AUTO_TEST
 #define BSP_USING_IOPAD
+#define BSP_USING_UART_LAYER
 #define BSP_USING_UART
-#define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SPI
-#define RT_USING_SPIM2
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_CAN0
-#define RT_USING_CAN1
-#define BSP_USING_GPIO
-#define BSP_USING_QSPI
-#define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
-#define BSP_USING_ETH
-#define BSP_USING_PWM
-#define RT_USING_PWM2
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
-#define USING_SDIF1
-#define USE_SDIF1_TF
-#define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
-#define RT_USING_DC_CHANNEL1
-#define BSP_USING_I2S
-#define RT_I2S_SAMPLERATE 8000
-#define RT_I2S_SAMPLEBITS 16
-#define RT_USING_I2S0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -582,22 +570,22 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000Q
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "q"
-#define SOC_CORE_NUM 4
+#define TARGET_PE2202
+#define SOC_NAME "pe220x"
+#define TARGET_TYPE_NAME "pe2202"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
 #define F64BIT_MEMORY_LENGTH 0x800000000
-#define TARGET_E2000
+#define TARGET_PE220X
 #define DEFAULT_DEBUG_PRINT_UART1
 /* end of Soc configuration */
 
 /* Board Configuration */
 
-#define BOARD_NAME "demo"
-#define E2000Q_DEMO_BOARD
+#define E2000D_DEMO_BOARD
+#define BOARD_NAME "pe2202_demo"
 
 /* IO mux configuration when board start up */
 
@@ -608,6 +596,7 @@
 
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_ERROR
+#define USE_PHYSICAL_GTIMER
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
 /* end of Sdk common configuration */

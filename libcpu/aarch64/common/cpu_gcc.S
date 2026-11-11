@@ -119,7 +119,10 @@ rt_hw_get_cntpct_val:
     ret
 
 /*
- *get gtimer frq value
+ * get gtimer frq value
+ * According to the document `Arm A-profile Architecture Registers:
+ * CNTFRQ_EL0, Counter-timer Frequency Register`
+ * Bits [63:32] are reserved, so only the lower 32 bits take effect.
  */
 .globl rt_hw_get_gtimer_frq
 rt_hw_get_gtimer_frq:

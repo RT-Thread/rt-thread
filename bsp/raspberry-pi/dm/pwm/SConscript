@@ -1,0 +1,19 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PWM_BCM2835']):
+    src += ['pwm-bcm2835.c']
+
+if GetDepend(['RT_PWM_BRCMSTB']):
+    src += ['pwm-brcmstb.c']
+
+if GetDepend(['RT_PWM_RP1']):
+    src += ['pwm-rp1.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

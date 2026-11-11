@@ -24,6 +24,116 @@ if BSP_USING_USBD
         # "ULPI: UTMI+ Low Pin Interface"
 endif
 
+menuconfig BSP_USING_ADC_V2
+    bool "Enable ADC V2"
+    select RT_USING_ADC
+    select RT_USING_ADC_V2
+    default n
+
+if BSP_USING_ADC_V2
+    config BSP_USING_ADC1
+        bool "Enable ADC1"
+        default n
+
+    config BSP_USING_ADC2
+        bool "Enable ADC2"
+        depends on (SOC_SERIES_STM32F1 || SOC_SERIES_STM32F2 || SOC_SERIES_STM32F3 || \
+                    SOC_SERIES_STM32F4 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32F7 || \
+                    SOC_SERIES_STM32H5 || SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS || \
+                    SOC_SERIES_STM32L4 || SOC_SERIES_STM32L5 || SOC_SERIES_STM32MP1 || \
+                    SOC_SERIES_STM32U5)
+        default n
+
+    config BSP_USING_ADC3
+        bool "Enable ADC3"
+        depends on (SOC_SERIES_STM32F1 || SOC_SERIES_STM32F2 || SOC_SERIES_STM32F3 || \
+                    SOC_SERIES_STM32F4 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32F7 || \
+                    SOC_SERIES_STM32H7 || SOC_SERIES_STM32L4 || SOC_SERIES_STM32MP1)
+        default n
+
+    config BSP_USING_ADC4
+        bool "Enable ADC4"
+        depends on (SOC_SERIES_STM32F3 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32U5)
+        default n
+
+    config BSP_ADC_USING_TRIGGER
+        bool "Enable ADC V2 trigger backend"
+        select RT_ADC_USING_TRIGGER
+        default n
+        help
+            Enable STM32 ADC V2 trigger selector validation and backend
+            encoding. The ADC backend maps the framework-cached trigger to STM32
+            HAL ADC selector fields. Trigger-source frequency and lifecycle are
+            owned by the ADC trigger framework and timer trigger backend.
+
+    config BSP_ADC_USING_TIMER_TRIGGER
+        bool "Enable ADC V2 timer trigger selector backend"
+        depends on BSP_ADC_USING_TRIGGER
+        depends on BSP_USING_TIM
+        depends on RT_USING_CLOCK_TIME
+        select RT_ADC_TRIGGER_USING_TIMER
+        select RT_USING_CLOCK_TIMER_TRIGGER
+        default n
+        help
+            Enable STM32 TIMx update/TRGO and compare event to ADC external
+            trigger selector mapping for ADC V2 stream pacing. Timer frequency,
+            TRGO/compare setup, and lifecycle are handled through the clock
+            timer trigger backend during ADC stream start and stop.
+
+    config BSP_ADC_USING_ANALOG_COMPARE_TRIGGER
+        bool "Enable ADC V2 analog comparator trigger selector backend"
+        depends on BSP_ADC_USING_TRIGGER
+        select RT_ADC_TRIGGER_USING_COMPARE
+        default n
+        help
+            Enable STM32 COMPx_OUT to ADC external trigger selector mapping for
+            ADC V2. Comparator input, threshold, polarity, and enable state are
+            owned by board code, application code, or a comparator driver.
+
+    config BSP_ADC_USING_STREAM_DMA
+        bool
+
+    config BSP_ADC1_USING_DMA
+        bool "Enable ADC1 stream DMA backend"
+        depends on BSP_USING_ADC1
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC1 DMA backend for ADC V2 stream sessions.
+
+            This option only enables the board-level DMA backend. The stream
+            framework and buffering policies are controlled by RT_ADC_USING_STREAM,
+            RT_ADC_STREAM_USING_LATEST, and RT_ADC_STREAM_USING_FIFO.
+
+    config BSP_ADC2_USING_DMA
+        bool "Enable ADC2 stream DMA backend"
+        depends on BSP_USING_ADC2
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC2 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC3_USING_DMA
+        bool "Enable ADC3 stream DMA backend"
+        depends on BSP_USING_ADC3
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC3 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC4_USING_DMA
+        bool "Enable ADC4 stream DMA backend"
+        depends on BSP_USING_ADC4
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC4 DMA backend for ADC V2 stream sessions.
+endif
+
 config BSP_USING_CRC
     bool "Enable CRC (CRC-32 0x04C11DB7 Polynomial)"
     select RT_USING_HWCRYPTO
@@ -60,3 +170,143 @@ config BSP_USING_UDID
     select RT_USING_HWCRYPTO
     default n
 
+if SOC_SERIES_STM32H7
+    config BSP_USING_BDMA
+        bool
+
+    config BSP_SPI6_TX_USING_BDMA
+        bool "Enable SPI6 TX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_TX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+
+    config BSP_SPI6_RX_USING_BDMA
+        bool "Enable SPI6 RX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_RX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+endif
+
+menu "STM32 Input Capture BSP"
+
+    config BSP_USING_INPUT_CAPTURE
+        bool "Enable STM32 timer Input Capture devices"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        help
+            Registers selected STM32 hardware timer Input Capture devices.
+            F1 and H7 have configuration headers; additional series need a
+            matching configuration header before enabling this option.
+            GPIO, clock and interrupt setup are owned by CubeMX HAL IC MSP.
+
+    if BSP_USING_INPUT_CAPTURE
+        config BSP_INPUT_CAPTURE_COUNTER_HZ
+            int "Capture timer counter frequency (Hz)"
+            range 100000 1000000
+            default 1000000
+
+        config BSP_USING_INPUT_CAPTURE_TIM1
+            bool "Enable TIM1 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM1
+            config BSP_INPUT_CAPTURE_TIM1_NAME
+                string "TIM1 Input Capture device name"
+                default "ic1"
+
+            config BSP_INPUT_CAPTURE_TIM1_CHANNEL
+                int "TIM1 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM1_FILTER
+                int "TIM1 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM1_INITIAL_RISING
+                int "TIM1 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM2
+            bool "Enable TIM2 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM2
+            config BSP_INPUT_CAPTURE_TIM2_NAME
+                string "TIM2 Input Capture device name"
+                default "ic2"
+
+            config BSP_INPUT_CAPTURE_TIM2_CHANNEL
+                int "TIM2 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM2_FILTER
+                int "TIM2 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM2_INITIAL_RISING
+                int "TIM2 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM3
+            bool "Enable TIM3 Input Capture"
+            default y
+
+        if BSP_USING_INPUT_CAPTURE_TIM3
+            config BSP_INPUT_CAPTURE_TIM3_NAME
+                string "TIM3 Input Capture device name"
+                default "ic3"
+
+            config BSP_INPUT_CAPTURE_TIM3_CHANNEL
+                int "TIM3 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM3_FILTER
+                int "TIM3 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM3_INITIAL_RISING
+                int "TIM3 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM4
+            bool "Enable TIM4 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM4
+            config BSP_INPUT_CAPTURE_TIM4_NAME
+                string "TIM4 Input Capture device name"
+                default "ic4"
+
+            config BSP_INPUT_CAPTURE_TIM4_CHANNEL
+                int "TIM4 Input Capture channel (1-4)"
+                range 1 4
+                default 1
+
+            config BSP_INPUT_CAPTURE_TIM4_FILTER
+                int "TIM4 Input Capture digital filter (0-15)"
+                range 0 15
+                default 0
+
+            config BSP_INPUT_CAPTURE_TIM4_INITIAL_RISING
+                int "TIM4 initial capture edge (1 rising, 0 falling)"
+                range 0 1
+                default 1
+        endif
+
+    endif
+
+endmenu

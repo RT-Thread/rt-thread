@@ -78,7 +78,7 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Slauncher\rasc_launcher.bat" "3.5.0" --gensecurebundle --compiler ARMv6 "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
+            <UserProg1Name />
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>board\ports;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;board;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\include;..\libraries\HAL_Drivers\config;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\finsh;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;.;ra\fsp\inc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\net\utest;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\phy;..\..\..\components\dfs\dfs_v1\include;ra\fsp\inc\api;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll;ra\fsp\inc\instances;ra_cfg\fsp_cfg\bsp;..\..\..\components\dfs\dfs_v1\filesystems\devfs;board\ports;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\drivers;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\finsh;ra_gen;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\include;ra\arm\CMSIS_5\CMSIS\Core\Include;board;ra_cfg\fsp_cfg;..\..\..\libcpu\arm\cortex-m4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,61 +378,50 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>hal_entry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>src\hal_entry.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstring.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -671,28 +660,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_gpio.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -711,7 +681,26 @@
             <File>
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_usart_v2.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -829,16 +818,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -850,9 +839,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1133,12 +1122,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1150,9 +1188,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1164,6 +1202,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1171,40 +1216,148 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>libcpu</GroupName>
+          <GroupName>ra</GroupName>
           <Files>
             <File>
-              <FileName>atomic_arm.c</FileName>
+              <FileName>bsp_clocks.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_clocks.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>bsp_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_common.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>bsp_delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_delay.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FileName>bsp_group_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_group_irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>bsp_guard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_guard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_register_protection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_register_protection.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_rom_registers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_rom_registers.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sbrk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sbrk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_security.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_security.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_ioport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_ioport\r_ioport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_sci_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_sci_uart\r_sci_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ra_gen</GroupName>
+          <Files>
+            <File>
+              <FileName>common_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\common_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hal_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\hal_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\main.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\pin_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vector_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\vector_data.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1212,13 +1365,6 @@
     </Target>
   </Targets>
   <RTE>
-    <gpdscs>
-      <gpdsc name="buildinfo.gpdsc">
-        <targetInfos>
-          <targetInfo name="Target 1" />
-        </targetInfos>
-      </gpdsc>
-    </gpdscs>
     <apis />
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

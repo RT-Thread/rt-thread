@@ -1,0 +1,18 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_ETHERNET_DWMAC']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include', cwd + '/../../phy']
+
+src = ['dwmac.c', 'dwmac-platform.c']
+
+if GetDepend(['RT_ETHERNET_DWMAC_PTP']):
+    src += ['dwmac_ptp.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

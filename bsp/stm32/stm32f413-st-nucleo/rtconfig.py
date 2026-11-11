@@ -73,7 +73,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M4.fp '
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
+    LFLAGS = DEVICE + r' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -175,3 +175,9 @@ elif PLATFORM == 'iccarm':
     
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

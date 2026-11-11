@@ -49,14 +49,14 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
             {
                 err = irq;
 
-                LOG_E("Setup %s[%d] IRQ error = %s", "MSI", i, rt_strerror(err));
+                LOG_E("Setup %s[%d] IRQ in %s error = %s", "MSI", i, msi_pic->ops->name, rt_strerror(err));
 
                 break;
             }
 
             if (last_irq >= 0 && last_irq + 1 != irq)
             {
-                for (int idx = 0; idx < i; ++i, --last_irq)
+                for (int idx = 0; idx < i; ++idx, --last_irq)
                 {
                     rt_bitmap_set_bit(msi_irq_map, last_irq);
                 }
@@ -88,7 +88,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
         {
             for (int idx = 0; idx < nvec; ++idx)
             {
-                pirq = rt_pic_find_pirq(msi_pic, irq + idx);
+                pirq = rt_pic_find_pirq(msi_pic, desc->irq + idx);
                 pirq->msi_desc = desc;
 
                 msi_pic->ops->irq_compose_msi_msg(pirq, &desc->msg);
@@ -105,8 +105,8 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
             {
                 err = irq;
 
-                LOG_E("Setup %s[%d] IRQ error = %s", "MSI-X",
-                        desc->msix.index, rt_strerror(err));
+                LOG_E("Setup %s[%d] IRQ in %s error = %s", "MSI-X",
+                      desc->msix.index, msi_pic->ops->name, rt_strerror(err));
 
                 break;
             }
@@ -143,4 +143,43 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
     }
 
     return err;
+}
+
+rt_err_t rt_pci_msi_cleanup_irqs(struct rt_pci_device *pdev)
+{
+    int type;
+    struct rt_pic *msi_pic;
+    struct rt_pci_msi_desc *desc;
+
+    if (!pdev)
+    {
+        return -RT_EINVAL;
+    }
+
+    msi_pic = pdev->msi_pic;
+
+    if (!msi_pic)
+    {
+        return -RT_EINVAL;
+    }
+
+    desc = rt_pci_msi_first_desc(pdev);
+    type = desc->is_msix ? PCIY_MSIX : PCIY_MSI;
+
+    if (type == PCIY_MSI)
+    {
+        for (int idx = 0; idx < desc->vector_used; ++idx)
+        {
+            msi_pic->ops->irq_free_msi(msi_pic, desc->irq + idx);
+        }
+    }
+    else if (type == PCIY_MSIX)
+    {
+        rt_pci_msi_for_each_desc(pdev, desc)
+        {
+            msi_pic->ops->irq_free_msi(msi_pic, desc->irq);
+        }
+    }
+
+    return RT_EOK;
 }

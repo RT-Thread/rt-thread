@@ -35,38 +35,26 @@
 #endif /* RT_USING_HOOK */
 
 #ifndef IDLE_THREAD_STACK_SIZE
-#if defined (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
-#define IDLE_THREAD_STACK_SIZE  256
+#if defined(RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
+#define IDLE_THREAD_STACK_SIZE 256
 #else
-#define IDLE_THREAD_STACK_SIZE  128
+#define IDLE_THREAD_STACK_SIZE 128
 #endif /* (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP) */
 #endif /* IDLE_THREAD_STACK_SIZE */
 
-#define _CPUS_NR                RT_CPUS_NR
+#define _CPUS_NR RT_CPUS_NR
 
 static struct rt_thread idle_thread[_CPUS_NR];
-rt_align(RT_ALIGN_SIZE)
-static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_IDLE_HOOK
 #ifndef RT_IDLE_HOOK_LIST_SIZE
-#define RT_IDLE_HOOK_LIST_SIZE  4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #endif /* RT_IDLE_HOOK_LIST_SIZE */
 
 static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 static struct rt_spinlock _hook_spinlock;
 
-/**
- * @brief This function sets a hook function to idle thread loop. When the system performs
- *        idle loop, this hook function should be invoked.
- *
- * @param hook the specified hook function.
- *
- * @return RT_EOK: set OK.
- *         -RT_EFULL: hook list is full.
- *
- * @note the hook function must be simple and never be blocked or suspend.
- */
 rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
@@ -91,12 +79,17 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 }
 
 /**
+ * @addtogroup group_thread_management
+ * @{
+ */
+
+/**
  * @brief delete the idle hook on hook list.
  *
  * @param hook the specified hook function.
  *
- * @return RT_EOK: delete OK.
- *         -RT_ENOSYS: hook was not found.
+ * @return `RT_EOK`: delete OK.
+ *         `-RT_ENOSYS`: hook was not found.
  */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
@@ -153,7 +146,7 @@ static void idle_thread_entry(void *parameter)
 #endif /* RT_USING_IDLE_HOOK */
 
 #if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
-    rt_defunct_execute();
+        rt_defunct_execute();
 #endif
 
 #ifdef RT_USING_PM
@@ -186,18 +179,18 @@ void rt_thread_idle_init(void)
 #endif /* RT_NAME_MAX > 0 */
         rt_thread_init(&idle_thread[i],
 #if RT_NAME_MAX > 0
-                idle_thread_name,
+                       idle_thread_name,
 #else
-                "tidle",
+                       "tidle",
 #endif /* RT_NAME_MAX > 0 */
-                idle_thread_entry,
-                RT_NULL,
-                &idle_thread_stack[i][0],
-                sizeof(idle_thread_stack[i]),
-                RT_THREAD_PRIORITY_MAX - 1,
-                32);
+                       idle_thread_entry,
+                       RT_NULL,
+                       &idle_thread_stack[i][0],
+                       sizeof(idle_thread_stack[i]),
+                       RT_THREAD_PRIORITY_MAX - 1,
+                       32);
 #ifdef RT_USING_SMP
-        rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
+        rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void *)i);
 #endif /* RT_USING_SMP */
 
         /* update */
@@ -217,3 +210,45 @@ rt_thread_t rt_thread_idle_gethandler(void)
 
     return (rt_thread_t)(&idle_thread[id]);
 }
+
+/**
+ * @brief Check whether the specified thread is one of the system idle threads.
+ *
+ * @details
+ * RT-Thread creates an idle thread for each CPU. These idle threads are special
+ * scheduler-owned threads that act as the fallback runnable threads when no
+ * other ready thread exists.
+ *
+ * This helper is mainly used for defensive checks in code paths that may block
+ * or suspend a thread, because an idle thread must never enter a blocking or
+ * suspended state. Suspending an idle thread may leave the system with no ready
+ * thread and break scheduling.
+ *
+ * @param thread The thread to test.
+ *
+ * @return RT_TRUE if @p thread is an idle thread of any CPU; otherwise RT_FALSE.
+ *
+ * @note
+ * - In SMP configurations, there is one idle thread per CPU, so this function
+ *   checks against all idle thread objects.
+ * - Passing RT_NULL returns RT_FALSE.
+ */
+rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread)
+{
+    rt_ubase_t i;
+
+    if (thread != RT_NULL)
+    {
+        for (i = 0; i < _CPUS_NR; i++)
+        {
+            if (thread == &idle_thread[i])
+            {
+                return RT_TRUE;
+            }
+        }
+    }
+
+    return RT_FALSE;
+}
+
+/** @} group_thread_management */

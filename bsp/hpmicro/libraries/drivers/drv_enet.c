@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date         Author      Notes
- * 2022-01-11   HPMicro     First version
- * 2022-07-10   HPMicro     Driver optimization for multiple instances
+ * 2022-01-11   Jiading     First version
+ * 2022-07-10   Jiading     Driver optimization for multiple instances
+ * 2025-04-15   Jiading     Fixed an issue that received data is probabilistically overwritten
+ * 2025-12-01   Jiading     Optimized the driver for PTP initialization
+ * 2026-07-18   Jiading     Align ENET HW checksum with RT_LWIP_USING_HW_CHECKSUM
+ * 2026-07-18   Jiading     Align ENET ISR and MMC interrupt init with hpm_sdk v1.12.0
+ * 2026-10-08   Jiading     Use enet_set_hw_checksum_config() instead of register poke
  */
 
 #include <rtdevice.h>
 
 #ifdef BSP_USING_ETH
+#ifdef LWIP_NO_RX_THREAD
+#error "LWIP_NO_RX_THREAD is not supported in current implementation!"
+#endif
 #include <rtdbg.h>
+#include "rtconfig.h"
 #include "drv_enet.h"
 #include "hpm_otp_drv.h"
+
+#if defined(LWIP_PTP) && LWIP_PTP
+#include "lwip_ptp_tx_ts.h"
+#include "hpm_soc.h"
+#endif
 
 #ifdef BSP_USING_ETH0
 
@@ -30,6 +44,9 @@ __RW uint8_t enet0_rx_buff[ENET0_RX_BUFF_COUNT][ENET0_RX_BUFF_SIZE]; /* Ethernet
 ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet0_tx_buff[ENET0_TX_BUFF_COUNT][ENET0_TX_BUFF_SIZE]; /* Ethernet0 Transmit Buffer */
 
+LWIP_MEMPOOL_DECLARE(enet0_rx_pool, ENET0_RX_BUFF_COUNT, sizeof(my_custom_pbuf_t), "Custom RX PBUF pool");
+static enet_frame_t enet0_frame[ENET0_RX_BUFF_COUNT] = {0};
+
 struct eth_device eth0_dev;
 static enet_device enet0_dev;
 static enet_buff_config_t enet0_rx_buff_cfg = {.buffer = (uint32_t)enet0_rx_buff,
@@ -42,16 +59,14 @@ static enet_buff_config_t enet0_tx_buff_cfg = {.buffer = (uint32_t)enet0_tx_buff
                                                .size   = ENET0_TX_BUFF_SIZE
                                               };
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
 static enet_ptp_ts_update_t ptp_timestamp0 = {0, 0};
-static enet_ptp_config_t ptp_config0 = {.timestamp_rollover_mode = enet_ts_dig_rollover_control,
-                                        .update_method = enet_ptp_time_fine_update,
-                                        .addend = 0xffffffff,
-                                       };
+static enet_ptp_config_t ptp_config0 = {.update_method = enet_ptp_time_fine_update};
 #endif
 
 static hpm_enet_t enet0 = {.name            = "E0",
                            .base            = HPM_ENET0,
+                           .clock_name      = clock_eth0,
                            .irq_num         = IRQn_ENET0,
                            .inf             = BOARD_ENET0_INF,
                            .eth_dev         = &eth0_dev,
@@ -60,6 +75,7 @@ static hpm_enet_t enet0 = {.name            = "E0",
                            .tx_buff_cfg     = &enet0_tx_buff_cfg,
                            .dma_rx_desc_tab = enet0_dma_rx_desc_tab,
                            .dma_tx_desc_tab = enet0_dma_tx_desc_tab,
+                           .frame           = enet0_frame,
 #if !BOARD_ENET0_INF
                            .int_refclk      = BOARD_ENET0_INT_REF_CLK,
 #else
@@ -67,7 +83,7 @@ static hpm_enet_t enet0 = {.name            = "E0",
                            .rx_delay        = BOARD_ENET0_RX_DLY,
 #endif
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
                            .ptp_clk_src     = BOARD_ENET0_PTP_CLOCK,
                            .ptp_config      = &ptp_config0,
                            .ptp_timestamp   = &ptp_timestamp0
@@ -94,6 +110,9 @@ __RW uint8_t enet1_rx_buff[ENET1_RX_BUFF_COUNT][ENET1_RX_BUFF_SIZE]; /* Ethernet
 ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet1_tx_buff[ENET1_TX_BUFF_COUNT][ENET1_TX_BUFF_SIZE]; /* Ethernet1 Transmit Buffer */
 
+LWIP_MEMPOOL_DECLARE(enet1_rx_pool, ENET1_RX_BUFF_COUNT, sizeof(my_custom_pbuf_t), "Custom RX PBUF pool");
+static enet_frame_t enet1_frame[ENET1_RX_BUFF_COUNT] = {0};
+
 struct eth_device eth1_dev;
 static enet_device enet1_dev;
 static enet_buff_config_t enet1_rx_buff_cfg = {.buffer = (uint32_t)enet1_rx_buff,
@@ -106,16 +125,14 @@ static enet_buff_config_t enet1_tx_buff_cfg = {.buffer = (uint32_t)enet1_tx_buff
                                                .size   = ENET1_TX_BUFF_SIZE
                                               };
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
 static enet_ptp_ts_update_t ptp_timestamp1 = {0, 0};
-static enet_ptp_config_t ptp_config1 = {.timestamp_rollover_mode = enet_ts_dig_rollover_control,
-                                        .update_method = enet_ptp_time_fine_update,
-                                        .addend = 0xffffffff,
-                                       };
+static enet_ptp_config_t ptp_config1 = {.update_method = enet_ptp_time_fine_update};
 #endif
 
 static hpm_enet_t enet1 = {.name            = "E1",
                            .base            = HPM_ENET1,
+                           .clock_name      = clock_eth1,
                            .irq_num         = IRQn_ENET1,
                            .inf             = BOARD_ENET1_INF,
                            .eth_dev         = &eth1_dev,
@@ -124,6 +141,8 @@ static hpm_enet_t enet1 = {.name            = "E1",
                            .tx_buff_cfg     = &enet1_tx_buff_cfg,
                            .dma_rx_desc_tab = enet1_dma_rx_desc_tab,
                            .dma_tx_desc_tab = enet1_dma_tx_desc_tab,
+                           .frame           = enet1_frame,
+
 #if !BOARD_ENET1_INF
                            .int_refclk      = BOARD_ENET1_INT_REF_CLK,
 #else
@@ -131,7 +150,7 @@ static hpm_enet_t enet1 = {.name            = "E1",
                            .rx_delay        = BOARD_ENET1_RX_DLY,
 #endif
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
                            .ptp_clk_src     = BOARD_ENET1_PTP_CLOCK,
                            .ptp_config      = &ptp_config1,
                            .ptp_timestamp   = &ptp_timestamp1
@@ -148,6 +167,54 @@ static hpm_enet_t *s_geths[] = {
        &enet1
 #endif
 };
+
+void free_rx_dma_descriptor(void *p)
+{
+    enet_frame_t *frame;
+
+    /* Release descriptors to DMA */
+    frame = (enet_frame_t *)p;
+
+    /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
+    enet_rx_desc_t *dma_rx_desc = frame->rx_desc;
+
+    for (uint32_t i = 0; i < frame->seg; i++) {
+        dma_rx_desc->rdes0_bm.own = 1;
+        dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
+    }
+
+    /* Clear Segment_Count */
+    frame->seg = 0;
+    frame->used = 0;
+}
+
+#ifdef BSP_USING_ETH0
+void enet0_pbuf_free_custom(struct pbuf *p)
+{
+    SYS_ARCH_DECL_PROTECT(old_level);
+    my_custom_pbuf_t *my_pbuf = (my_custom_pbuf_t *)p;
+
+    SYS_ARCH_PROTECT(old_level);
+    free_rx_dma_descriptor((void *)my_pbuf->dma_descriptor);
+
+    LWIP_MEMPOOL_FREE(enet0_rx_pool, my_pbuf);
+    SYS_ARCH_UNPROTECT(old_level);
+}
+#endif
+
+#ifdef BSP_USING_ETH1
+void enet1_pbuf_free_custom(struct pbuf *p)
+{
+    SYS_ARCH_DECL_PROTECT(old_level);
+    my_custom_pbuf_t *my_pbuf = (my_custom_pbuf_t *)p;
+
+    SYS_ARCH_PROTECT(old_level);
+    free_rx_dma_descriptor((void *)my_pbuf->dma_descriptor);
+
+    LWIP_MEMPOOL_FREE(enet1_rx_pool, my_pbuf);
+    SYS_ARCH_UNPROTECT(old_level);
+}
+#endif
 
 ATTR_WEAK uint8_t enet_get_mac_address(ENET_Type *ptr, uint8_t *mac)
 {
@@ -188,45 +255,51 @@ ATTR_WEAK uint8_t enet_get_mac_address(ENET_Type *ptr, uint8_t *mac)
         }
 
         /* load MAC address from MACRO definitions */
-        memcpy(mac, &mac_init[i], ENET_MAC);
+        memcpy(mac, &mac_init[i], ENET_MAC_SIZE);
         return ENET_MAC_ADDR_FROM_MACRO;
 }
 
 static rt_err_t hpm_enet_init(enet_device *init)
 {
+    enet_hw_checksum_config_t hw_cksum_cfg;
+
     if (init->media_interface == enet_inf_rmii)
     {
         /* Initialize reference clock */
         board_init_enet_rmii_reference_clock(init->instance, init->int_refclk);
     }
 
-#if ENET_SOC_RGMII_EN
     /* Set RGMII clock delay */
    if (init->media_interface == enet_inf_rgmii)
    {
-        enet_rgmii_enable_clock(init->instance);
+        clock_add_to_group(init->clock_name, BOARD_RUNNING_CORE & 0x1);
         enet_rgmii_set_clock_delay(init->instance, init->tx_delay, init->rx_delay);
    }
-#endif
+
     /* Get the default interrupt config */
     enet_get_default_interrupt_config(init->instance, &init->int_config);
 
     /* Initialize eth controller */
     enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
 
+    enet_get_default_tx_control_config(init->instance, &init->desc.tx_control_config);
+
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+    enet_get_default_hw_checksum_config(&hw_cksum_cfg, true);
+#else
+    enet_get_default_hw_checksum_config(&hw_cksum_cfg, false);
+#endif
+    enet_set_hw_checksum_config(init->instance, &init->desc.tx_control_config, &hw_cksum_cfg);
+
     /* Disable LPI interrupt */
     enet_disable_lpi_interrupt(init->instance);
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
    /* initialize PTP Clock */
    board_init_enet_ptp_clock(init->instance);
 
-   /* initialize Ethernet PTP Module */
-   init->ptp_config.ssinc = ENET_ONE_SEC_IN_NANOSEC / clock_get_frequency(init->ptp_clk_src);
+   /* initialize ptp timer, the config is prepared in rt_hw_eth_init() */
    enet_init_ptp(init->instance, &init->ptp_config);
-
-   /* set the initial timestamp */
-   enet_set_ptp_timestamp(init->instance, &init->ptp_timestamp);
 #endif
 
    /* enable irq */
@@ -237,7 +310,7 @@ static rt_err_t hpm_enet_init(enet_device *init)
 
 static rt_err_t rt_hpm_eth_init(rt_device_t dev)
 {
-    uint8_t mac[ENET_MAC];
+    uint8_t mac[ENET_MAC_SIZE];
 
     enet_device *enet_dev = (enet_device *)dev->user_data;
 
@@ -299,7 +372,7 @@ static rt_err_t rt_hpm_eth_control(rt_device_t dev, int cmd, void * args)
         if (args != NULL)
         {
             enet_get_mac_address(enet_dev->instance, (uint8_t *)mac);
-            SMEMCPY(args, mac, ENET_MAC);
+            SMEMCPY(args, mac, ENET_MAC_SIZE);
         }
         else
         {
@@ -365,7 +438,7 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
             if (dma_tx_desc->tdes0_bm.own != 0)
             {
                 LOG_E("DMA tx desc buffer is not valid\n");
-                return ERR_BUF;
+                return ERR_INPROGRESS;
             }
 
             buffer = (uint8_t *)(dma_tx_desc->tdes2_bm.buffer1);
@@ -387,7 +460,7 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
         }
 
         /* Copy the remaining bytes */
-        buffer = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
+        buffer = (void *)sys_address_to_core_local_mem(BOARD_RUNNING_CORE, (uint32_t)buffer);
         SMEMCPY((uint8_t *)((uint8_t *)buffer + buffer_offset),
                 (uint8_t *)((uint8_t *)q->payload + payload_offset),
                 bytes_left_to_copy);
@@ -400,7 +473,30 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
     LOG_D("The length of the transmitted frame: %d\n", frame_length);
 
     frame_length += 4;
-    status = enet_prepare_transmission_descriptors(enet_dev->instance, &enet_dev->desc.tx_desc_list_cur, frame_length, enet_dev->desc.tx_buff_cfg.size);
+#if defined(LWIP_PTP) && LWIP_PTP
+    {
+        enet_ptp_ts_system_t timestamp;
+        enet_tx_control_config_t tx_cfg = enet_dev->desc.tx_control_config;
+
+        tx_cfg.enable_ttse = lwip_ptp_frame_needs_tx_hw_timestamp(p);
+        status = enet_prepare_tx_desc_with_ts_record(enet_dev->instance,
+                                                     &enet_dev->desc.tx_desc_list_cur,
+                                                     &tx_cfg,
+                                                     frame_length,
+                                                     enet_dev->desc.tx_buff_cfg.size,
+                                                     &timestamp);
+        if (tx_cfg.enable_ttse) {
+            p->time_sec = timestamp.sec;
+            p->time_nsec = timestamp.nsec;
+        }
+    }
+#else
+    status = enet_prepare_tx_desc(enet_dev->instance,
+                                  &enet_dev->desc.tx_desc_list_cur,
+                                  &enet_dev->desc.tx_control_config,
+                                  frame_length,
+                                  enet_dev->desc.tx_buff_cfg.size);
+#endif
     if (status != ENET_SUCCESS)
     {
         LOG_E("Ethernet controller transmit unsuccessfully: %d\n", status);
@@ -416,7 +512,6 @@ static struct pbuf *rt_hpm_eth_rx(rt_device_t dev)
     uint32_t rx_buff_size = enet_dev->desc.rx_buff_cfg.size;
     uint16_t len = 0;
     uint8_t *buffer;
-    enet_frame_t frame = {0, 0, 0};
     enet_rx_desc_t *dma_rx_desc;
     uint32_t buffer_offset = 0;
     uint32_t payload_offset = 0;
@@ -424,71 +519,67 @@ static struct pbuf *rt_hpm_eth_rx(rt_device_t dev)
     uint32_t i = 0;
 
     /* Get a received frame */
-    frame = enet_get_received_frame_interrupt(&enet_dev->desc.rx_desc_list_cur,
-                                              &enet_dev->desc.rx_frame_info,
-                                              enet_dev->desc.rx_buff_cfg.count);
+    RT_ASSERT(!enet_dev->frame[enet_dev->cnt].used);
+    if (enet_dev->frame[enet_dev->cnt].used == 0) {
+        enet_dev->frame[enet_dev->cnt] = enet_get_received_frame_interrupt(&enet_dev->desc.rx_desc_list_cur, &enet_dev->desc.rx_frame_info, enet_dev->desc.rx_buff_cfg.count);
+    } else {
+        return p;
+    }
 
     /* Obtain the size of the packet and put it into the "len" variable. */
-    len = frame.length;
-    buffer = (uint8_t *)frame.buffer;
-
+    len = enet_dev->frame[enet_dev->cnt].length;
+    buffer = (uint8_t *)sys_address_to_core_local_mem(BOARD_RUNNING_CORE, enet_dev->frame[enet_dev->cnt].buffer);
     LOG_D("The current received frame length : %d\n", len);
 
     if (len > 0)
     {
-        /* allocate a pbuf chain of pbufs from the Lwip buffer pool */
-        p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
+        enet_dev->frame[enet_dev->cnt].used = 1;
 
-        if (p != NULL)
-        {
-            dma_rx_desc = frame.rx_desc;
-            buffer_offset = 0;
-            for (q = p; q != NULL; q = q->next)
-            {
-                bytes_left_to_copy = q->len;
-                payload_offset = 0;
+#ifdef BSP_USING_ETH0
+        if (enet_dev->instance == HPM_ENET0) {
+            my_custom_pbuf_t *my_pbuf = (my_custom_pbuf_t *)LWIP_MEMPOOL_ALLOC(enet0_rx_pool);
+            my_pbuf->p.custom_free_function = enet0_pbuf_free_custom;
+            my_pbuf->dma_descriptor = (void *)&enet_dev->frame[enet_dev->cnt];
+            p = pbuf_alloced_custom(PBUF_RAW, enet_dev->frame[enet_dev->cnt].length, PBUF_REF, &my_pbuf->p, buffer, enet_dev->desc.rx_buff_cfg.size);
+#if defined(LWIP_PTP) && LWIP_PTP
+            if (p != NULL) {
+                enet_rx_desc_t *rx_desc = enet_dev->frame[enet_dev->cnt].rx_desc;
 
-                /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size*/
-                while ((bytes_left_to_copy + buffer_offset) > rx_buff_size)
-                {
-                    /* Copy data to pbuf */
-                    SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), (rx_buff_size - buffer_offset));
-
-                    /* Point to next descriptor */
-                    dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
-                    buffer = (uint8_t *)(dma_rx_desc->rdes2_bm.buffer1);
-
-                    bytes_left_to_copy = bytes_left_to_copy - (rx_buff_size - buffer_offset);
-                    payload_offset = payload_offset + (rx_buff_size - buffer_offset);
-                    buffer_offset = 0;
+                if (rx_desc != NULL) {
+                    p->time_sec = rx_desc->rdes7_bm.rtsh;
+                    p->time_nsec = rx_desc->rdes6_bm.rtsl;
                 }
-                /* Copy remaining data in pbuf */
-                q->payload = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
-                buffer_offset = buffer_offset + bytes_left_to_copy;
             }
+#endif
+            enet_dev->cnt = ++enet_dev->cnt % enet_dev->desc.rx_buff_cfg.count;
         }
+#endif
 
-        /* Release descriptors to DMA */
-        /* Point to first descriptor */
-        dma_rx_desc = frame.rx_desc;
+#ifdef BSP_USING_ETH1
+        if (enet_dev->instance == HPM_ENET1) {
+            my_custom_pbuf_t *my_pbuf = (my_custom_pbuf_t *)LWIP_MEMPOOL_ALLOC(enet1_rx_pool);
+            my_pbuf->p.custom_free_function = enet1_pbuf_free_custom;
+            my_pbuf->dma_descriptor = (void *)&enet_dev->frame[enet_dev->cnt];
+            p = pbuf_alloced_custom(PBUF_RAW, enet_dev->frame[enet_dev->cnt].length, PBUF_REF, &my_pbuf->p, buffer, enet_dev->desc.rx_buff_cfg.size);
+#if defined(LWIP_PTP) && LWIP_PTP
+            if (p != NULL) {
+                enet_rx_desc_t *rx_desc = enet_dev->frame[enet_dev->cnt].rx_desc;
 
-        /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
-        for (i = 0; i < enet_dev->desc.rx_frame_info.seg_count; i++)
-        {
-            dma_rx_desc->rdes0_bm.own = 1;
-            dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
+                if (rx_desc != NULL) {
+                    p->time_sec = rx_desc->rdes7_bm.rtsh;
+                    p->time_nsec = rx_desc->rdes6_bm.rtsl;
+                }
+            }
+#endif
+            enet_dev->cnt = ++enet_dev->cnt % enet_dev->desc.rx_buff_cfg.count;
         }
-
+#endif
         /* Clear Segment_Count */
         enet_dev->desc.rx_frame_info.seg_count = 0;
     }
 
     /* Resume Rx Process */
-    if (ENET_DMA_STATUS_RU_GET(enet_dev->instance->DMA_STATUS))
-    {
-        enet_dev->instance->DMA_STATUS = ENET_DMA_STATUS_RU_MASK;
-        enet_dev->instance->DMA_RX_POLL_DEMAND = 1;
-    }
+    enet_rx_resume(enet_dev->instance);
 
     return p;
 }
@@ -503,41 +594,70 @@ static void eth_rx_callback(struct eth_device* dev)
     }
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void isr_enet(hpm_enet_t *obj)
+#else
+void isr_enet(int vector, hpm_enet_t *obj)
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 {
     uint32_t status;
+    uint32_t rxgbfrmis;
+    uint32_t intr_status;
+    ENET_Type *ptr = obj->base;
 
-    status = obj->base->DMA_STATUS;
+    status = ptr->DMA_STATUS;
+    rxgbfrmis = ptr->MMC_INTR_RX;
+    intr_status = ptr->INTR_STATUS;
 
     if (ENET_DMA_STATUS_GLPII_GET(status)) {
-        obj->base->LPI_CSR;
+        /* read LPI_CSR to clear interrupt status */
+        ptr->LPI_CSR;
+    }
+
+    if (ENET_INTR_STATUS_RGSMIIIS_GET(intr_status)) {
+        /* read XMII_CSR to clear interrupt status */
+        ptr->XMII_CSR;
     }
 
     if (ENET_DMA_STATUS_RI_GET(status)) {
-        obj->base->DMA_STATUS |= ENET_DMA_STATUS_RI_SET(ENET_DMA_STATUS_RI_GET(status));
         eth_rx_callback(obj->eth_dev);
+        ptr->DMA_STATUS |= ENET_DMA_STATUS_RI_MASK;
+    }
+
+    if (ENET_MMC_INTR_RX_RXCTRLFIS_GET(rxgbfrmis)) {
+        ptr->RXFRAMECOUNT_GB;
     }
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 #ifdef BSP_USING_ETH0
+SDK_DECLARE_EXT_ISR_M(IRQn_ENET0, isr_enet0)
 void isr_enet0(void)
 {
     isr_enet(&enet0);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_ENET0, isr_enet0)
 #endif
 
 #ifdef BSP_USING_ETH1
+SDK_DECLARE_EXT_ISR_M(IRQn_ENET1, isr_enet1)
 void isr_enet1(void)
 {
     isr_enet(&enet1);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_ENET1, isr_enet1)
 #endif
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
 int rt_hw_eth_init(void)
 {
     rt_err_t err = RT_ERROR;
+
+#ifdef BSP_USING_ETH0
+    LWIP_MEMPOOL_INIT(enet0_rx_pool);
+#endif
+
+#ifdef BSP_USING_ETH1
+    LWIP_MEMPOOL_INIT(enet1_rx_pool);
+#endif
 
     for (uint32_t i = 0; i < ARRAY_SIZE(s_geths); i++)
     {
@@ -566,6 +686,9 @@ int rt_hw_eth_init(void)
         /* Set instance */
         s_geths[i]->enet_dev->instance = s_geths[i]->base;
 
+        /* Set clock name */
+        s_geths[i]->enet_dev->clock_name = s_geths[i]->clock_name;
+
         /* Set media interface */
         s_geths[i]->enet_dev->media_interface = s_geths[i]->inf ? enet_inf_rgmii : enet_inf_rmii;
 
@@ -580,15 +703,27 @@ int rt_hw_eth_init(void)
         }
 
 
-#if __USE_ENET_PTP
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
         /* Set PTP function */
         s_geths[i]->enet_dev->ptp_clk_src   = s_geths[i]->ptp_clk_src;
-        s_geths[i]->enet_dev->ptp_config    = *s_geths[i]->ptp_config;
         s_geths[i]->enet_dev->ptp_timestamp = *s_geths[i]->ptp_timestamp;
+
+        /* Runtime defaults: ssinc is derived from the real PTP clock frequency */
+        enet_get_default_ptp_config(s_geths[i]->enet_dev->instance,
+                                    clock_get_frequency(s_geths[i]->ptp_clk_src),
+                                    &s_geths[i]->enet_dev->ptp_config);
+        /* Board config overrides the runtime default */
+        s_geths[i]->enet_dev->ptp_config.update_method = s_geths[i]->ptp_config->update_method;
+        /* enet_init_ptp() requires a valid timestamp pointer */
+        s_geths[i]->enet_dev->ptp_config.ptp_timestamp = &s_geths[i]->enet_dev->ptp_timestamp;
 #endif
 
         /* Set the irq number */
         s_geths[i]->enet_dev->irq_number = s_geths[i]->irq_num;
+
+        /* Set the frame buffer and counter */
+        s_geths[i]->enet_dev->frame = s_geths[i]->frame;
+        s_geths[i]->enet_dev->cnt = 0;
 
         /* Set the parent parameters */
         s_geths[i]->eth_dev->parent.init      = rt_hpm_eth_init;
@@ -602,6 +737,11 @@ int rt_hw_eth_init(void)
 
         s_geths[i]->eth_dev->eth_rx = rt_hpm_eth_rx;
         s_geths[i]->eth_dev->eth_tx = rt_hpm_eth_tx;
+
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register ENET device to irq table */
+        rt_hw_interrupt_install(s_geths[i]->irq_num, (rt_isr_handler_t)isr_enet, s_geths[i], s_geths[i]->name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
         err = eth_device_init(s_geths[i]->eth_dev, s_geths[i]->name);
 

@@ -7,6 +7,10 @@
 #include "stdint.h"
 #include "usb_dwc2_reg.h"
 
+#if 1
+#error you need to modify some usb register values then use this chip
+#endif
+
 #if CONFIG_USBDEV_EP_NUM != 4 && CONFIG_USBDEV_EP_NUM != 6
 #error "gd32 only has 4 endpoints for pa11/pa12 and 6 endpoints for pb14/pb15"
 #endif

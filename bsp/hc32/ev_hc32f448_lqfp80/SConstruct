@@ -69,15 +69,15 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 rtconfig.BSP_LIBRARY_TYPE = None
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hc32_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hc32_drivers', 'SConscript'), variant_dir='build/libraries/hc32_drivers', duplicate=0))
 
 # include platform
 platform_path_prefix = os.path.dirname(SDK_ROOT) + '/platform'
-objs.extend(SConscript(os.path.join(platform_path_prefix, 'SConscript')))
+objs.extend(SConscript(os.path.join(platform_path_prefix, 'SConscript'), variant_dir='build/platform', duplicate=0))
 
 # include tests
 test_path_prefix = os.path.dirname(SDK_ROOT) + '/tests'
-objs.extend(SConscript(os.path.join(test_path_prefix, 'SConscript')))
+objs.extend(SConscript(os.path.join(test_path_prefix, 'SConscript'), variant_dir='build/tests', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

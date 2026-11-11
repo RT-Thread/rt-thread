@@ -1,0 +1,4 @@
+config RT_UFS_ROCKCHIP
+    bool "Rockchip UFS"
+    depends on RT_USING_UFS
+    default n

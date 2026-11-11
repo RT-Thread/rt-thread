@@ -82,6 +82,8 @@ void dlmodule_exit(int ret_code);
 
 struct rt_dlmodule *dlmodule_find(const char *name);
 
+void dlmodule_extract_name(const char *path, char *name, int name_size);
+
 rt_ubase_t dlmodule_symbol_find(const char *sym_str);
 
 #endif

@@ -1,0 +1,11 @@
+config RT_SERIAL_8250_BCM2835AUX
+    bool "BCM2835 auxiliar mini UART"
+    depends on RT_SERIAL_8250
+    default n
+
+config RT_SERIAL_8250_BCM7271
+    bool "Broadcom 8250 based serial port"
+    depends on RT_SERIAL_8250
+    depends on RT_USING_DMA
+    depends on RT_SERIAL_USING_DMA
+    default n

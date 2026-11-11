@@ -1,0 +1,23 @@
+menu "SMP Test"
+
+config RT_UTEST_SMP_AFFFINITY
+    bool "SMP Affinity and Thread Priority Test"
+    default n
+
+config RT_UTEST_SMP_ASSIGNED_IDLE_CORE
+    bool "SMP Threads Auto Assign to Idle Cores Test"
+    default n
+
+config RT_UTEST_SMP_INTERRUPT_PRI
+    bool "SMP Interrupt Priority Test"
+    default n
+
+config RT_UTEST_SMP_SPINLOCK
+    bool "SMP Spinlock Test"
+    default n
+
+config RT_UTEST_SMP_THREAD_PREEMPTION
+    bool "SMP Threads Preemption Test"
+    default n
+
+endmenu

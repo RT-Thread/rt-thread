@@ -1,0 +1,15 @@
+config RT_SPI_BCM2835
+    bool "BCM2835 SPI controller"
+    depends on RT_USING_DM
+    depends on RT_USING_SPI
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    default n
+
+config RT_SPI_BCM2835AUX
+    bool "BCM2835 SPI auxiliary controller"
+    depends on RT_USING_DM
+    depends on RT_USING_SPI
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    default n

@@ -717,12 +717,12 @@ enum
     RT_NVME_CTRL_CTRATT_UUID_LIST               = 1 << 9,
 };
 
-struct rt_nvme_lba_format
+rt_packed(struct rt_nvme_lba_format
 {
     rt_le16_t   ms;         /* Metadata size */
     rt_uint8_t  ds;         /* Data size */
     rt_uint8_t  rp;         /* Relative performance */
-};
+});
 
 rt_packed(struct rt_nvme_id_ns
 {

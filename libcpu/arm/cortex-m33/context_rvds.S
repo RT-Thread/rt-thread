@@ -1,5 +1,5 @@
 ;/*
-;* Copyright (c) 2006-2018, RT-Thread Development Team
+;* Copyright (c) 2006-2026, RT-Thread Development Team
 ;*
 ;* SPDX-License-Identifier: Apache-2.0
 ;*
@@ -10,6 +10,7 @@
 ; * 2013-06-18     aozima       add restore MSP feature.
 ; * 2013-06-23     aozima       support lazy stack optimized.
 ; * 2018-07-24     aozima       enhancement hard fault exception handler.
+; * 2026-05-19     Evlers       allows rewrite to interrupt enable/disable api to support independent interrupts management
 ; */
 
 ;/**
@@ -39,7 +40,7 @@ NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV excep
 ; * rt_base_t rt_hw_interrupt_disable();
 ; */
 rt_hw_interrupt_disable    PROC
-    EXPORT  rt_hw_interrupt_disable
+    EXPORT  rt_hw_interrupt_disable [WEAK]
     MRS     r0, PRIMASK
     CPSID   I
     BX      LR
@@ -49,7 +50,7 @@ rt_hw_interrupt_disable    PROC
 ; * void rt_hw_interrupt_enable(rt_base_t level);
 ; */
 rt_hw_interrupt_enable    PROC
-    EXPORT  rt_hw_interrupt_enable
+    EXPORT  rt_hw_interrupt_enable [WEAK]
     MSR     PRIMASK, r0
     BX      LR
     ENDP
@@ -254,6 +255,10 @@ rt_hw_context_switch_to    PROC
     CPSIE   F
     CPSIE   I
 
+    ; clear the BASEPRI register to disable masking priority
+    MOV     r0, #0x00
+    MSR     BASEPRI, r0
+
     ; ensure PendSV exception taken place before subsequent operation
     DSB
     ISB
@@ -272,11 +277,16 @@ rt_hw_interrupt_thread_switch PROC
 HardFault_Handler    PROC
 
     ; get current context
-    MRS     r0, msp                 ;get fault context from handler
-    TST     lr, #0x04               ;if(!EXC_RETURN[2])
+    MRS     r0, msp                 ; get fault context from handler
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
     BEQ     get_sp_done
-    MRS     r0, psp                 ;get fault context from thread
+    MRS     r0, psp                 ; get fault context from thread
 get_sp_done
+
+    IF      {FPU} != "SoftVFP"
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    VSTMFDEQ r0!, {d8 - d15}        ; push FPU register s16~s31
+    ENDIF
 
     STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
 

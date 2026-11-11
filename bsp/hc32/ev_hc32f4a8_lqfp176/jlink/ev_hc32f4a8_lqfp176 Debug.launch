@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="ilg.gnumcueclipse.debug.gdbjtag.jlink.launchConfigurationType">
-    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.PERIPHERALS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;peripherals/&gt;&#13;&#10;"/>
+    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.PERIPHERALS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;peripherals&gt;&#13;&#10;    &lt;peripheral name=&quot;TMR42&quot;/&gt;&#13;&#10;&lt;/peripherals&gt;&#13;&#10;"/>
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.doConnectToRunning" value="false"/>
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.doContinue" value="true"/>
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.doDebugInRam" value="false"/>
@@ -41,7 +41,7 @@
     <intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetCpuFreq" value="0"/>
     <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetPortMask" value="0x1"/>
     <intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.jlink.swoEnableTargetSwoFreq" value="0"/>
-    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.svdPath" value="${project_loc}/./packages/hc32f4a8/cmsis/Device/HDSC/hc32f4xx/Source/GCC/svd/HC32F4A8.svd"/>
+    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.svdPath" value="${project_loc}/packages/hc32-f4-cmsis-latest/Device/HDSC/hc32f4a8/Source/GCC/svd/HC32F4A8.svd"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.ipAddress" value="localhost"/>
@@ -75,10 +75,6 @@
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="4"/>
     </listAttribute>
-    <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-        <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
-    </listAttribute>
     <stringAttribute key="org.eclipse.dsf.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList context=&quot;Context string&quot;/&gt;&#13;&#10;"/>
-    <stringAttribute key="org.eclipse.embedcdt.debug.gdbjtag.core.PERIPHERALS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;peripherals&gt;&#13;&#10;    &lt;peripheral name=&quot;GPIO&quot;/&gt;&#13;&#10;&lt;/peripherals&gt;&#13;&#10;"/>
     <stringAttribute key="process_factory_id" value="org.eclipse.cdt.dsf.gdb.GdbProcessFactory"/>
 </launchConfiguration>

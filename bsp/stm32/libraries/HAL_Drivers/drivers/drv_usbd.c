@@ -214,12 +214,22 @@ static rt_err_t _init(rt_device_t device)
 #if !defined(SOC_SERIES_STM32F1)
     pcd->Init.phy_itface = USBD_PCD_PHY_MODULE;
 #endif
+#if defined(SOC_SERIES_STM32G0)
+    pcd->Init.Host_channels = 8;
+    pcd->Init.Sof_enable = DISABLE;
+    pcd->Init.low_power_enable = DISABLE;
+    pcd->Init.lpm_enable = DISABLE;
+    pcd->Init.battery_charging_enable = DISABLE;
+    pcd->Init.vbus_sensing_enable = DISABLE;
+    pcd->Init.bulk_doublebuffer_enable = DISABLE;
+    pcd->Init.iso_singlebuffer_enable = DISABLE;
+#endif
     /* Initialize LL Driver */
     HAL_PCD_Init(pcd);
     /* USB interrupt Init */
     HAL_NVIC_SetPriority(USBD_IRQ_TYPE, 2, 0);
     HAL_NVIC_EnableIRQ(USBD_IRQ_TYPE);
-#if !defined(SOC_SERIES_STM32F1)
+#if !defined(SOC_SERIES_STM32F1) && !defined(SOC_SERIES_STM32G0)
     HAL_PCDEx_SetRxFiFo(pcd, 0x80);
     HAL_PCDEx_SetTxFiFo(pcd, 0, 0x40);
     HAL_PCDEx_SetTxFiFo(pcd, 1, 0x40);

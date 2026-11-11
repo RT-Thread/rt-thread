@@ -1,0 +1,20 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+RTT_DIR := ../../../..
+PKGS_DIR := packages
+
+config SOC_R7KA8P1KF
+    bool
+    select SOC_SERIES_R7KA8P1_CORE1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+source "$(RTT_DIR)/Kconfig"
+osource "$(PKGS_DIR)/Kconfig"
+rsource "../../libraries/Kconfig"
+
+if !RT_USING_NANO
+rsource "$(BSP_DIR)/board/Kconfig"
+endif

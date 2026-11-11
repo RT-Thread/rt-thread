@@ -15,6 +15,6 @@ if GetDepend(['RT_USING_POSIX_MESSAGE_QUEUE', 'RT_USING_DFS_MQUEUE']):
 if GetDepend('RT_USING_POSIX_MESSAGE_SEMAPHORE'):
     src += ['semaphore.c']
 
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = inc)
+group = DefineGroup('Libc', src, depend = [''], CPPPATH = inc)
 
 Return('group')

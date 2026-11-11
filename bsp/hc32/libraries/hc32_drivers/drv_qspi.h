@@ -28,28 +28,28 @@ struct hc32_hw_qspi_cs
 struct hc32_qspi_irq_config
 {
     struct hc32_irq_config irq_config;
-    func_ptr_t             irq_callback;
+    func_ptr_t irq_callback;
 };
 
 struct hc32_qspi_config
 {
-    CM_QSPI_TypeDef             *Instance;
-    rt_uint32_t                 clock;
-    rt_uint32_t                 timeout;
+    CM_QSPI_TypeDef *Instance;
+    rt_uint32_t clock;
+    rt_uint32_t timeout;
     struct hc32_qspi_irq_config err_irq;
 #ifdef BSP_QSPI_USING_DMA
-    struct dma_config           *dma_qspi;
-#if defined (HC32F448) || defined (HC32F4A8)
-    rt_uint16_t                 *dma_tx_buf;
-    rt_uint16_t                 dma_tx_buf_size;    /* unit: half-word, DMA data width of QSPI transmitting is 16bit */
+    struct dma_config *dma_qspi;
+#if defined(HC32F448) || defined(HC32F4A8)
+    rt_uint16_t *dma_tx_buf;
+    rt_uint16_t dma_tx_buf_size;    /* unit: half-word, DMA data width of QSPI transmitting is 16bit */
 #endif
 #endif
 };
 
 struct hc32_qspi_bus
 {
-    struct hc32_qspi_config     *config;
-    char                        *bus_name;
+    struct hc32_qspi_config *config;
+    char *bus_name;
 };
 
 rt_err_t rt_hw_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint32_t pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)());

@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __USE_YC_M0__, __STDC_LIMIT_MACROS</Define>
+              <Define>RT_USING_LIBC, __USE_YC_M0__, __RTTHREAD__, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\include;.;..\..\..\components\libc\posix\io\eventfd;drivers\ports;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\spi;drivers;applications;Libraries;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\common;Libraries\core;..\..\..\components\drivers\smp_call;Libraries\CMSIS\Device\YICHIP\YC3122\Include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;Libraries\CMSIS\Include;..\..\..\components\drivers\include;Libraries\sdk;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>drivers\ports;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;libraries\core;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\net\utest;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;applications;..\..\..\components\drivers\include;drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;libraries;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\finsh;.;..\..\..\components\drivers\spi\sfud\inc;libraries\CMSIS\Device\YICHIP\YC3122\Include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;libraries\sdk;libraries\CMSIS\Include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,61 +387,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -794,9 +766,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -808,9 +780,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1153,12 +1125,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1166,6 +1187,13 @@
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1191,92 +1219,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>yc_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>yc_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sdk_yc_qspi.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>Libraries\sdk\yc_qspi.lib</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_yc3122.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+              <FilePath>libraries\sdk\yc_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+              <FilePath>libraries\sdk\yc_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
+              <FilePath>libraries\sdk\yc_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\sdk\yc_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_yc3122.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\core\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sdk_yc_qspi.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>libraries\sdk\yc_qspi.lib</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_yc3122.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
+              <FilePath>libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
             </File>
           </Files>
         </Group>

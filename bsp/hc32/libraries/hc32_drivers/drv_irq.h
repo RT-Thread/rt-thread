@@ -19,8 +19,7 @@
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*******************************************************************************
@@ -28,9 +27,9 @@ extern "C"
  ******************************************************************************/
 struct hc32_irq_config
 {
-    IRQn_Type       irq_num;
-    uint32_t        irq_prio;
-    en_int_src_t    int_src;
+    IRQn_Type irq_num;
+    uint32_t irq_prio;
+    en_int_src_t int_src;
 };
 
 /*******************************************************************************

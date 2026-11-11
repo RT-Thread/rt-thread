@@ -24,13 +24,13 @@
  ******************************************************************************/
 MEMORY
 {
-    ISRAM : ORIGIN = 0x00000000 , LENGTH = 0x20000   /* ISRAM 128KB*/
-    DSRAM : ORIGIN = 0x20000000 , LENGTH = 0x80000   /* DSRAM 512KB*/
+    ISRAM : ORIGIN = 0x00000000 , LENGTH = 0x30000   /* ISRAM 192KB*/
+    DSRAM : ORIGIN = 0x20000000 , LENGTH = 0xC0000   /* DSRAM 768KB*/
     SRAM :  ORIGIN = 0x60000000 , LENGTH = 0x20000   /* SRAM 128KB, no cacheable*/
 }
 
 __min_heap_size = 0x200;
-PROVIDE (__ram_end  = 0x20080000);
+PROVIDE (__ram_end  = 0x200C0000);
 PROVIDE (__heap_end = __ram_end);
 
 REGION_ALIAS("REGION_TEXT",    ISRAM);
@@ -47,6 +47,7 @@ SECTIONS
   KEEP(*startup.o(*.text))
   KEEP(*startup.o(*.vectors))
   KEEP(*vectors.o(*.text))
+  KEEP(*whetstone.o(*.text))
   KEEP(*(.text.entry))
   *(.text*)
   *(.gnu.warning)
@@ -63,6 +64,12 @@ SECTIONS
   *(.call_table_text)
   . = ALIGN(0x10) ;
   __etext = . ;
+ } > REGION_TEXT
+ .eh_frame_hdr : {
+  *(.eh_frame_hdr)
+ } > REGION_TEXT
+ .eh_frame : ONLY_IF_RO {
+  KEEP (*(.eh_frame))
  } > REGION_TEXT
  .rodata : {
   . = ALIGN(0x4) ;
@@ -189,7 +196,7 @@ SECTIONS
   KEEP(*(*.post_driver_entry))
   __post_driver_end__ = .;
 /************** end of drivers *********/
-  . = ALIGN(0x4) ;
+  . = ALIGN(0x8) ;
   __erodata = .;
   __rodata_end__ = .;
  } > REGION_RODATA
@@ -231,10 +238,10 @@ SECTIONS
   . = ALIGN(0x4) ;
   __ram_code_end__ = .;
  } > REGION_DATA AT > REGION_RODATA
- .bss : {
-  . = ALIGN(0x4) ;
-  __sbss = ALIGN(0x4) ;
+ .bss : ALIGN(0x20) {
+  __sbss = . ;
   __bss_start__ = . ;
+  KEEP(*linpack.o(*.bss*))
   *(.dynsbss)
   *(.sbss)
   *(.sbss.*)

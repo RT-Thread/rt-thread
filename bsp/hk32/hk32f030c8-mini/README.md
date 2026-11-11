@@ -49,7 +49,7 @@ HK32F030C8T6-MINI板级包支持MDK5开发环境和GCC编译器，以下是具�
 | SPI     | 支持     |    SPI1     |
 | ADC     | 不支持   |             |
 | PWM     | 不支持   |             |
-| HWTIMER | 不支持   |             |
+| CLOCK_TIMER | 不支持   |             |
 | WDT     | 不支持   |             |
 | RTC     | 不支持   |             |
 | FLASH   | 不支持   |             |

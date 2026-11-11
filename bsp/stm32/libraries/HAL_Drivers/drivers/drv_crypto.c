@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-07-10     Ernest       1st version
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2020-11-26     thread-liu   add hash
  * 2020-11-26     thread-liu   add cryp
  * 2020-12-11     WKJay        fix build problem

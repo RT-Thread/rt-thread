@@ -1,8 +1,12 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c')
-CPPPATH = [cwd]
+CPPPATH = [cwd, cwd + '/../include']
+
+src = ['dev_audio.c', 'dev_audio_pipe.c']
+
+if GetDepend(['RT_AUDIO_INTEL_HDA']):
+    src += ['audio-hda.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_AUDIO'], CPPPATH = CPPPATH)
 

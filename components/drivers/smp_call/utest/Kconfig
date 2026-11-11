@@ -1,0 +1,8 @@
+menu "SMP-Call Test"
+
+config RT_UTEST_SMP_CALL_FUNC
+    bool "SMP-Call Smoke Test"
+    default n
+    depends on RT_USING_SMP
+
+endmenu

@@ -1,0 +1,48 @@
+menu "Pin Test"
+    depends on RT_USING_PIN
+
+config RT_UTEST_PIN
+    bool "Pin Loopback Test"
+    default n
+
+if RT_UTEST_PIN
+
+    config RT_UTEST_PIN_OUT_NAME
+        string "Output Pin Name for Pin Test"
+        default ""
+        help
+            Optional hardware pin name, such as PA.0 or P0.12. Leave empty to
+            use RT_UTEST_PIN_OUT_NUM.
+
+    config RT_UTEST_PIN_IN_NAME
+        string "Input Pin Name for Pin Test"
+        default ""
+        help
+            Optional hardware pin name, such as PA.1 or P0.13. Leave empty to
+            use RT_UTEST_PIN_IN_NUM.
+
+    config RT_UTEST_PIN_OUT_NUM
+        int "Output Pin Number for Pin Test"
+        default -1
+
+    config RT_UTEST_PIN_IN_NUM
+        int "Input Pin Number for Pin Test"
+        default -1
+
+    config RT_UTEST_PIN_SETTLE_MS
+        int "Settle Delay in Milliseconds"
+        range 0 1000
+        default 2
+
+    config RT_UTEST_PIN_IRQ_TIMEOUT_MS
+        int "IRQ Timeout in Milliseconds"
+        range 1 60000
+        default 500
+
+    config RT_UTEST_PIN_IRQ
+        bool "Pin IRQ Loopback Test"
+        default y
+
+endif
+
+endmenu

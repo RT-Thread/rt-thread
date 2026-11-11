@@ -23,6 +23,11 @@ extern "C" {
 #include "uart_config.h"
 #endif
 
+#if defined(SOC_SERIES_FT32F4)
+#include "dma_config.h"
+#include "uart_config.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif

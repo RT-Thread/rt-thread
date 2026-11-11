@@ -1,0 +1,5 @@
+config RT_INPUT_JOYSTICK_RPISENSE
+    bool "Raspberry Pi Sense HAT joystick"
+    depends on RT_INPUT_JOYSTICK
+    depends on RT_MFD_RPI_SENSE
+    default n

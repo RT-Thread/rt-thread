@@ -7,18 +7,24 @@ The development of embedded software is inseparable from the development board. 
 We need to type commands as following in the terminal:
 
 ```shell
-sudo apt install gcc
-sudo apt install python3
-sudo apt install python3-pip
-sudo apt install gcc-arm-none-eabi
-sudo apt install gdb-arm-none-eabi
-sudo apt install binutils-arm-none-eabi
-sudo apt install scons
-sudo apt install libncurses5-dev
-sudo apt install qemu
-sudo apt install qemu-system-arm
-sudo apt install git
+sudo apt install git gcc scons python3 python3-kconfiglib \
+    gcc-arm-none-eabi binutils-arm-none-eabi libstdc++-arm-none-eabi-newlib \
+    gdb-multiarch qemu-system-arm libncurses-dev
 ```
+
+> Note for users of older tutorials or older distributions: several package
+> names used to be different, and some no longer exist at all. If a package is
+> reported as not found, check the table below:
+>
+> | Old package name | Current package name | Reason |
+> | ---------------- | -------------------- | ------ |
+> | `gdb-arm-none-eabi` | `gdb-multiarch` | Dropped since Debian 11 / Ubuntu 22.04 |
+> | `qemu` | `qemu-system-arm` | The `qemu` meta-package has been split up; install only the ARM system emulator |
+> | `libncurses5-dev` | `libncurses-dev` | The `ncurses5` transitional package has been removed |
+>
+> `libstdc++-arm-none-eabi-newlib` is required at link time. Without it the
+> build fails with `cannot find -lsupc++`, which does not make the missing
+> package obvious.
 
 ## 2 Get RT-Thread source code
 
@@ -50,22 +56,21 @@ cd rt-thread/bsp/qemu-vexpress-a9/
 
 ### 3.2 Configure the environment of Env tool
 
-#### 3.2.1 Remap python command
+#### 3.2.1 Provide the python command
 
-We need to remap `python` command as python3 by default.
-
-Using `whereis` command to identify your python3's version:
-
-![python3-version](figures/python3-version.png)
-
-For instance, as you can see, in my computer, the python3's version is python 3.9. You need to identify python3's version in your computer. Then, we remap the `python` command as python3 by default:
+Some tools invoke `python` rather than `python3`. On distributions that
+ship only `python3`, install the package that provides the `python`
+command:
 
 ```shell
-sudo rm -rf /usr/bin/python3
-sudo rm -rf /usr/bin/python
-sudo ln -s /usr/bin/python3.9 /usr/bin/python3
-sudo ln -s /usr/bin/python3.9 /usr/bin/python
+sudo apt install python-is-python3
 ```
+
+> **Do not** remove `/usr/bin/python3` and re-create it by hand. On
+> Debian and Ubuntu, `apt` and a large part of the system tooling are
+> written in Python and resolve the interpreter through that path;
+> deleting it leaves the machine unable to install packages, including
+> the packages needed to put it back.
 
 ### 3.3 Install Env and Configure BSP
 
@@ -74,6 +79,11 @@ Type following the command under  `bsp/qemu-vexpress-a9` folder:
 ```
 scons --menuconfig
 ```
+
+`scons --menuconfig` requires `kconfiglib`. It is installed as
+`python3-kconfiglib` by the command in chapter 1. Installing it with
+`pip install kconfiglib` instead fails on recent Debian/Ubuntu releases,
+because PEP 668 marks the system Python environment as externally managed.
 
 The Env tool will be installed and initialized after using the `scons --menuconfig` command. Then it will enter the configuration interface, and you could configure the BSP:
 
@@ -141,6 +151,8 @@ The main files and directories of `qemu-vexpress-a9` BSP are described as follow
 | drivers          | The underlying driver provided by RT-Thread |
 | qemu.bat         | Script files running on Windows platform    |
 | qemu.sh          | Script files running on Linux platform      |
+| qemu-nographic.bat | Script files running on Windows platform, without a graphical window |
+| qemu-nographic.sh | Script files running on Linux platform, without a graphical window |
 | qemu-dbg.bat     | Debugging script files on Windows platform  |
 | qemu-dbg.sh      | Debugging script files on Linux platform    |
 | README.md        | Description document of BSP                 |
@@ -159,6 +171,16 @@ Switch to the QEMU BSP directory and enter the `scons` command to compile the pr
 After compiling, type `./qemu.sh` to start the virtual machine and BSP project. `qemu.sh` is a Linux batch file. This file is located in the BSP folder, mainly including the execution instructions of QEMU. The first run of the project will create a blank `sd.bin` file under the BSP folder, which is a virtual SD card with a size of 64M. The Env command interface displays the initialization information and version number information printed during the start-up of RT-Thread system, and the QEMU virtual machine is also running. As shown in the following picture:
 
 ![run the project](figures/ubuntu-qume-sh.png)
+
+`qemu.sh` opens a graphical window for the emulated CLCD display, so it
+needs a desktop session. Over SSH, or on a machine without a display, it
+fails with an error such as `gtk initialization failed`. Use
+`./qemu-nographic.sh` instead, which runs the same BSP with the console
+on the terminal:
+
+```shell
+./qemu-nographic.sh
+```
 
 ### 5.3 Run the Finsh Console
 

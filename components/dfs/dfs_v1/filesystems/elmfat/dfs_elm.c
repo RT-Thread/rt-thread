@@ -15,6 +15,7 @@
  * 2017-02-13     Hichard      Update Fatfs version to 0.12b, support exFAT.
  * 2017-04-11     Bernard      fix the st_blksize issue.
  * 2017-05-26     Urey         fix f_mount error when mount more fats
+ * 2025-10-29     wdfk-prog    Fixed a memory leak in dfs_elm_close
  */
 
 #include <rtthread.h>
@@ -116,8 +117,6 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         return -ENOENT;
     logic_nbr[0] = '0' + index;
 
-    /* save device */
-    disk[index] = fs->dev_id;
     /* check sector size */
     if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
     {
@@ -127,6 +126,8 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
             return -EINVAL;
         }
     }
+    /* save device */
+    disk[index] = fs->dev_id;
 
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
@@ -155,7 +156,10 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         fs->data = fat;
@@ -260,7 +264,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
             logic_nbr[0] = '0' + index;
-            f_mount(fat, logic_nbr, (BYTE)index);
+            f_mount(fat, logic_nbr, 0);  /* opt=0: delayed mount, just register FATFS object */
         }
     }
     else
@@ -280,7 +284,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        f_mount(RT_NULL, logic_nbr, 0);
         rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
@@ -468,10 +472,7 @@ int dfs_elm_close(struct dfs_file *file)
     FRESULT result;
 
     RT_ASSERT(file->vnode->ref_count > 0);
-    if (file->vnode->ref_count > 1)
-    {
-        return 0;
-    }
+    RT_ASSERT(file->data != RT_NULL);
     result = FR_OK;
     if (file->vnode->type == FT_DIRECTORY)
     {
@@ -480,6 +481,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -585,6 +587,11 @@ int dfs_elm_flush(struct dfs_file *file)
 {
     FIL *fd;
     FRESULT result;
+
+    if (file->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
 
     fd = (FIL *)(file->data);
     RT_ASSERT(fd != RT_NULL);
@@ -906,6 +913,9 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     rt_size_t result;
     rt_device_t device = disk[drv];
 
+    if (device == RT_NULL)
+        return RES_ERROR;
+
     result = rt_device_read(device, sector, buff, count);
     if (result == count)
     {
@@ -920,6 +930,9 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
+
+    if (device == RT_NULL)
+        return RES_ERROR;
 
     result = rt_device_write(device, sector, buff, count);
     if (result == count)
@@ -999,41 +1012,41 @@ DWORD get_fattime(void)
 }
 
 #if FF_FS_REENTRANT
-int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
+static rt_mutex_t Mutex[FF_VOLUMES + 1];
+
+int ff_mutex_create (int vol)
 {
     char name[8];
     rt_mutex_t mutex;
 
-    rt_snprintf(name, sizeof(name), "fat%d", drv);
+    rt_snprintf(name, sizeof(name), "fat%d", vol);
     mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
-        *m = mutex;
+        Mutex[vol] = mutex;
         return RT_TRUE;
     }
 
     return RT_FALSE;
 }
 
-int ff_del_syncobj(FF_SYNC_t m)
+void ff_mutex_delete (int vol)
 {
-    if (m != RT_NULL)
-        rt_mutex_delete(m);
-
-    return RT_TRUE;
+    if (Mutex[vol] != RT_NULL)
+        rt_mutex_delete(Mutex[vol]);
 }
 
-int ff_req_grant(FF_SYNC_t m)
+int ff_mutex_take (int vol)
 {
-    if (rt_mutex_take(m, FF_FS_TIMEOUT) == RT_EOK)
+    if (rt_mutex_take(Mutex[vol], FF_FS_TIMEOUT) == RT_EOK)
         return RT_TRUE;
 
     return RT_FALSE;
 }
 
-void ff_rel_grant(FF_SYNC_t m)
+void ff_mutex_give (int vol)
 {
-    rt_mutex_release(m);
+    rt_mutex_release(Mutex[vol]);
 }
 
 #endif

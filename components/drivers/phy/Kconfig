@@ -1,8 +1,15 @@
-config RT_USING_PHY
+menuconfig RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
 
-config RT_USING_PHY_V2
+menuconfig RT_USING_PHY_V2
     bool "Using phy device and mii bus v2"
     depends on !RT_USING_PHY
     default n
+
+if RT_USING_DM && RT_USING_PHY_V2
+    config RT_PHY_V2_REALTEK
+        bool "Realtek"
+
+    osource "$(SOC_DM_PHY_DIR)/Kconfig"
+endif

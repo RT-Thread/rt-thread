@@ -90,7 +90,7 @@ static rt_err_t ofw_append_gpio_led(struct rt_ofw_node *np)
     rt_err_t err;
     enum rt_led_state led_state = RT_LED_S_OFF;
     const char *propname, *state, *trigger;
-    struct gpio_led *gled = rt_malloc(sizeof(*gled));
+    struct gpio_led *gled = rt_calloc(1, sizeof(*gled));
 
     if (!gled)
     {

@@ -1,0 +1,111 @@
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_PINMUX
+        bool "Enable pinmux helper driver"
+        default y
+        help
+            Enable the S100 pinmux and pin configuration helper APIs.
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO/pin driver"
+        default y
+        select RT_USING_PIN
+        help
+            Register the RT-Thread pin device and GPIO interrupt dispatch.
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN (S100 FlexCAN)"
+        default y
+        select RT_USING_CAN
+        help
+            Enable the S100 FlexCAN driver using RT-Thread CAN framework.
+
+    if BSP_USING_CAN
+
+    config BSP_USING_CAN5
+        bool "Enable CAN5"
+        default y
+
+    config BSP_USING_CAN6
+        bool "Enable CAN6"
+        default y
+
+    config BSP_USING_CAN7
+        bool "Enable CAN7"
+        default y
+
+    config BSP_USING_CAN8
+        bool "Enable CAN8"
+        default y
+
+    config BSP_USING_CAN9
+        bool "Enable CAN9"
+        default y
+
+    endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        depends on RT_USING_SERIAL
+        depends on RT_USING_SERIAL_V2
+
+    if BSP_USING_UART
+
+    config BSP_USING_UART4
+        bool "Enable UART4 (Debugger)"
+        default y
+
+    if BSP_USING_UART4
+
+    config BSP_UART4_RX_BUFSIZE
+        int "Set UART4 RX buffer size"
+        range 64 65535
+        default 1024
+
+    config BSP_UART4_TX_BUFSIZE
+        int "Set UART4 TX buffer size"
+        range 0 65535
+        default 0
+
+    endif
+
+    config BSP_USING_UART5
+        bool "Enable UART5"
+        default n
+
+    if BSP_USING_UART5
+
+    config BSP_UART5_RX_BUFSIZE
+        int "Set UART5 RX buffer size"
+        range 64 65535
+        default 1024
+
+    config BSP_UART5_TX_BUFSIZE
+        int "Set UART5 TX buffer size"
+        range 0 65535
+        default 0
+
+    endif
+
+    config BSP_USING_UART6
+        bool "Enable UART6"
+        default n
+
+    if BSP_USING_UART6
+
+    config BSP_UART6_RX_BUFSIZE
+        int "Set UART6 RX buffer size"
+        range 64 65535
+        default 1024
+
+    config BSP_UART6_TX_BUFSIZE
+        int "Set UART6 TX buffer size"
+        range 0 65535
+        default 0
+
+    endif
+
+    endif
+
+endmenu

@@ -32,6 +32,7 @@ void system_init(void)
 
 __attribute__((weak)) void c_startup(void)
 {
+#ifndef __SES_RISCV
     uint32_t i, size;
 #ifdef FLASH_XIP
     extern uint8_t __vector_ram_start__[], __vector_ram_end__[], __vector_load_addr__[];
@@ -45,10 +46,16 @@ __attribute__((weak)) void c_startup(void)
     extern uint8_t __bss_start__[], __bss_end__[];
     extern uint8_t __tbss_start__[], __tbss_end__[];
     extern uint8_t __tdata_start__[], __tdata_end__[];
+    extern uint8_t __fast_load_addr__[];
+    extern uint8_t __noncacheable_init_load_addr__[];
+    extern uint8_t __data_load_addr__[];
+    extern uint8_t __tdata_load_addr__[];
     extern uint8_t __data_start__[], __data_end__[];
     extern uint8_t __noncacheable_bss_start__[], __noncacheable_bss_end__[];
     extern uint8_t __ramfunc_start__[], __ramfunc_end__[];
     extern uint8_t __noncacheable_init_start__[], __noncacheable_init_end__[];
+    extern uint8_t __fast_ram_bss_start__[], __fast_ram_bss_end__[];
+    extern uint8_t __fast_ram_init_start__[], __fast_ram_init_end__[], __fast_ram_init_load_addr__[];
 
     /* tbss section */
     size = __tbss_end__ - __tbss_start__;
@@ -71,26 +78,39 @@ __attribute__((weak)) void c_startup(void)
     /* tdata section LMA: etext */
     size = __tdata_end__ - __tdata_start__;
     for (i = 0; i < size; i++) {
-        *(__tdata_start__ + i) = *(__etext + i);
+        *(__tdata_start__ + i) = *(__tdata_load_addr__ + i);
     }
 
     /* data section LMA: etext */
     size = __data_end__ - __data_start__;
     for (i = 0; i < size; i++) {
-        *(__data_start__ + i) = *(__etext + (__tdata_end__ - __tdata_start__) + i);
+        *(__data_start__ + i) = *(__data_load_addr__ + i);
     }
 
     /* ramfunc section LMA: etext + data length */
     size = __ramfunc_end__ - __ramfunc_start__;
     for (i = 0; i < size; i++) {
-        *(__ramfunc_start__ + i) = *(__etext + (__data_end__ - __tdata_start__) + i);
+        *(__ramfunc_start__ + i) = *(__fast_load_addr__ + i);
     }
 
     /* noncacheable init section LMA: etext + data length + ramfunc length */
     size = __noncacheable_init_end__ - __noncacheable_init_start__;
     for (i = 0; i < size; i++) {
-        *(__noncacheable_init_start__ + i) = *(__etext + (__data_end__ - __tdata_start__) + (__ramfunc_end__ - __ramfunc_start__) + i);
+        *(__noncacheable_init_start__ + i) = *(__noncacheable_init_load_addr__ + i);
     }
+
+    /* fast_ram bss section */
+    size = __fast_ram_bss_end__ - __fast_ram_bss_start__;
+    for (i = 0; i < size; i++) {
+        *(__fast_ram_bss_start__ + i) = 0;
+    }
+
+    /* fast_ram init section LMA: etext + data length + ramfunc length + tdata length */
+    size = __fast_ram_init_end__ - __fast_ram_init_start__;
+    for (i = 0; i < size; i++) {
+        *(__fast_ram_init_start__ + i) = *(__fast_ram_init_load_addr__ + i);
+    }
+#endif
 }
 
 __attribute__((weak)) int main(void)
@@ -113,16 +133,16 @@ void reset_handler(void)
     /* Call platform specific hardware initialization */
     system_init();
 
+#ifndef __SES_RISCV
     /* Do global constructors */
     __libc_init_array();
-
-
+#endif
 
     /* Entry function */
     entry();
 }
 
 
-__attribute__((weak)) void _init()
+__attribute__((weak)) void _init(void)
 {
 }

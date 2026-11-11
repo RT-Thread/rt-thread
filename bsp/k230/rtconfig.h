@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 32
 #define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
@@ -90,6 +90,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -119,8 +120,9 @@
 #define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50201
+#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50400
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -130,9 +132,14 @@
 #define KERNEL_VADDR_START 0xffffffc000000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
-#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+#define ARCH_RISCV_XUANTIE
+
+/* RISC-V Architecture Configuration */
+
+/* end of RISC-V Architecture Configuration */
 #define ARCH_USING_NEW_CTX_SWITCH
+#define CONFIG_XUANTIE_SVPBMT 1
 #define ARCH_REMAP_KERNEL
 
 /* RT-Thread Components */
@@ -163,24 +170,9 @@
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_V2
-#define RT_USING_DFS_ELMFAT
-
-/* elm-chan's FatFs, Generic FAT Filesystem Module */
-
-#define RT_DFS_ELM_CODE_PAGE 437
-#define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_USE_LFN_3
-#define RT_DFS_ELM_USE_LFN 3
-#define RT_DFS_ELM_LFN_UNICODE_0
-#define RT_DFS_ELM_LFN_UNICODE 0
-#define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
-#define RT_DFS_ELM_REENTRANT
-#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
-/* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_PTYFS
+#define RT_USING_DFS_PROCFS
 #define RT_USING_DFS_CROMFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_PAGECACHE
@@ -208,13 +200,13 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
-#define RT_USING_CPUTIME
-#define RT_USING_CPUTIME_RISCV
-#define CPUTIME_TIMER_FREQ 25000000
+#define RT_USING_CLOCK_TIME
+#define CLOCK_TIMER_FREQ 25000000
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -229,7 +221,6 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_PIN
-#define RT_USING_KTIME
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -263,6 +254,8 @@
 
 /* Interprocess Communication (IPC) */
 
+#define RT_USING_POSIX_PIPE
+#define RT_USING_POSIX_PIPE_SIZE 2048
 
 /* Socket is in the 'Network' category */
 
@@ -274,12 +267,19 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
 /* end of Docking with protocol stacks */
 #define SAL_USING_POSIX
+#define RT_USING_AF_UNIX
+#define AF_UNIX_DGRAM_MAX_SIZE 4096
+#define AF_UNIX_DGRAM_QUEUE_LEN 16
+#define AF_UNIX_STREAM_BUFFER_SIZE 4096
+#define AF_UNIX_LISTEN_BACKLOG_MAX 16
+#define AF_UNIX_RIGHTS_MAX 16
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -329,7 +329,9 @@
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 #define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_NETIF_LOOPBACK
+#define RT_LWIP_USING_LOOPBACK
+#define LWIP_NETIF_LOOPBACK 1
 #define RT_LWIP_USING_PING
 /* end of Network */
 
@@ -358,7 +360,6 @@
 /* end of Memory management */
 #define RT_USING_LWP
 #define LWP_DEBUG
-#define LWP_DEBUG_INIT
 #define LWP_USING_RUNTIME
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
@@ -459,6 +460,9 @@
 /* Micrium: Micrium software products porting for RT-Thread */
 
 /* end of Micrium: Micrium software products porting for RT-Thread */
+#define PKG_USING_LWEXT4
+#define RT_USING_DFS_LWEXT4
+#define PKG_USING_LWEXT4_LATEST_VERSION
 /* end of system packages */
 
 /* peripheral libraries and drivers */
@@ -476,6 +480,46 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -560,13 +604,18 @@
 
 /* Drivers Configuration */
 
+#define BSP_USING_UART
+#define BSP_UART_USING_DMA
+#define BSP_USING_UART0
 #define BSP_USING_HARDLOCK
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
-#define BSP_SD_MNT_DEVNAME "sd0p1"
+#define BSP_SD_MNT_DEVNAME "sd0p0"
 /* end of Drivers Configuration */
-#define BOARD_fpgac908
+#define SOC_K230D
+#define BOARD_C908
 #define __STACKSIZE__ 65536
-#define BSP_ROOTFS_TYPE_ELMFAT
+#define BSP_ROOTFS_TYPE_EXT4
+#define BSP_RISCV_FPU_SOFT
 
 #endif

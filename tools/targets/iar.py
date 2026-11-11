@@ -77,7 +77,7 @@ def IARWorkspace(target):
     out.write(xml)
     out.close()
 
-def IARProject(target, script):
+def IARProject(env, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
     tree = etree.parse('template.ewp')
@@ -86,7 +86,7 @@ def IARProject(target, script):
     out = open(target, 'w')
 
     CPPPATH = []
-    CPPDEFINES = []
+    CPPDEFINES = env.get('CPPDEFINES', [])
     LOCAL_CPPDEFINES = []
     LINKFLAGS = ''
     CFLAGS = ''
@@ -112,9 +112,6 @@ def IARProject(target, script):
         if 'CPPPATH' in group and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
 
-        # get each group's definitions
-        if 'CPPDEFINES' in group and group['CPPDEFINES']:
-            CPPDEFINES += group['CPPDEFINES']
 
         if 'LOCAL_CPPDEFINES' in group and group['LOCAL_CPPDEFINES']:
             LOCAL_CPPDEFINES += group['LOCAL_CPPDEFINES']
@@ -134,10 +131,11 @@ def IARProject(target, script):
                     print('not found LIB: ' + item)
 
     # make relative path
-    paths = set()
+    paths = {}
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
+        paths[inc] = None  # 使用 dict 去重并保持插入顺序
+    paths = list(paths.keys())
 
     # setting options
     options = tree.findall('configuration/settings/data/option')

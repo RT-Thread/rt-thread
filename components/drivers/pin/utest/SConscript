@@ -1,0 +1,13 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend(['RT_UTEST_PIN']):
+    src += Glob('*.c')
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_PIN'], CPPPATH = CPPPATH)
+
+Return('group')

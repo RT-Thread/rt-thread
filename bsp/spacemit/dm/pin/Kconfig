@@ -1,0 +1,5 @@
+config RT_PIN_K1X
+    bool "Spacemit K1X GPIO GPIO support"
+    depends on RT_USING_OFW
+    depends on RT_USING_ADT_BITMAP
+    default y

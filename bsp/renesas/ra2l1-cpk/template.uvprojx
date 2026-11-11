@@ -406,13 +406,6 @@
   </Targets>
 
   <RTE>
-    <gpdscs>
-      <gpdsc name="buildinfo.gpdsc">
-        <targetInfos>
-          <targetInfo name="Target 1"/>
-        </targetInfos>
-      </gpdsc>
-    </gpdscs>
     <apis/>
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

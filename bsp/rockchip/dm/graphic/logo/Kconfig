@@ -1,0 +1,5 @@
+config RT_GRAPHIC_LOGO_RADXA_CLUT224
+    bool "Standard 224-color Radxa logo"
+
+config RT_GRAPHIC_LOGO_ROCKCHIP_CLUT224
+    bool "Standard 224-color Rockchip logo"

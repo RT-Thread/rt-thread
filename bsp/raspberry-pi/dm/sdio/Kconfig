@@ -1,0 +1,9 @@
+config RT_SDIO_SDHCI_BRCMSTB
+    bool "Broadcom SDIO/SD/MMC"
+    depends on RT_USING_SDIO
+    select RT_USING_SDHCI
+
+config RT_SDIO_SDHCI_IPROC
+    bool "BCM2835 & iProc SD/MMC Controller"
+    depends on RT_USING_SDIO
+    select RT_USING_SDHCI

@@ -11,6 +11,9 @@ else:
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
+import dtc
+
+dtc.dts_to_dtb(RTT_ROOT, ["zynqmp.dts"], include_paths = [os.getcwd()], ignore_warning = ["simple_bus_reg", "unit_address_vs_reg", "clocks_is_cell", "gpios_property"])
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 TRACE_CONFIG = ""

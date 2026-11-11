@@ -757,9 +757,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>

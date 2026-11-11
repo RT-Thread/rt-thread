@@ -13,10 +13,10 @@ def dist_do_building(BSP_ROOT, dist_dir):
     import rtconfig
 
     print("=> copy core-v bsp library")
-    library_dir = os.path.join(dist_dir, 'Libraries')
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
+    library_dir = os.path.join(dist_dir, 'libraries')
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
     bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
-    # library_dir = E:\rt-thread\bsp\core-v-mcu\Libraries
+    # library_dir = E:\rt-thread\bsp\core-v-mcu\libraries
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'core_v_drivers'), os.path.join(library_dir, 'core_v_drivers'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))

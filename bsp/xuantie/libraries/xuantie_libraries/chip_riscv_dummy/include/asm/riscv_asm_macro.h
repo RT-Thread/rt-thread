@@ -25,26 +25,14 @@
 #ifndef __RISCV_ASM_MACRO_H__
 #define __RISCV_ASM_MACRO_H__
 
-#if (!defined(__riscv_flen)) && (CONFIG_CHECK_FPU_DIRTY)
-#error "this cpu doesn't supprot FPU, but macro 'CONFIG_CHECK_FPU_DIRTY' is defined, please remove it."
-#endif
-
-#if (!defined(__riscv_vector)) && (CONFIG_CHECK_VECTOR_DIRTY)
-#error "this cpu doesn't supprot vector, but macro 'CONFIG_CHECK_VECTOR_DIRTY' is defined, please remove it."
-#endif
-
-#if (!defined(__riscv_matrix) && !defined(__riscv_xtheadmatrix)) && (CONFIG_CHECK_MATRIX_DIRTY)
-#error "this cpu doesn't supprot matrix, but macro 'CONFIG_CHECK_MATRIX_DIRTY' is defined, please remove it."
-#endif
-
+#include <rtconfig.h>
 #include "riscv_csr.h"
 
-#if CONFIG_CHECK_FPU_DIRTY || CONFIG_CHECK_VECTOR_DIRTY || CONFIG_CHECK_MATRIX_DIRTY
 .macro RESTORE_MSTATUS
     /* t0 and t1 are not restored before using */
     /* now, sp is at the top of the stack (the lowest address)*/
     li       t1, 0
-#if __riscv_matrix || __riscv_xtheadmatrix  /* matrix registers */
+#if (__riscv_matrix || __riscv_xtheadmatrix) && defined(ARCH_RISCV_MATRIX) /* matrix registers */
 #if __riscv_xlen == 64
     addi     t1, t1, (12 + 12)
 #else
@@ -55,7 +43,7 @@
     add      t1, t1, t0
 #endif /* __riscv_matrix || __riscv_xtheadmatrix */
 
-#ifdef __riscv_vector /* vector registers */
+#if __riscv_vector && defined(ARCH_RISCV_VECTOR) /* vector registers */
     csrr     t0, vlenb
     slli     t0, t0, 5
     add      t1, t1, t0
@@ -66,6 +54,7 @@
 #endif  /* __riscv_xlen */
 #endif  /* __riscv_vector */
 
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64 /* float registers */
 #if __riscv_xlen == 64
     addi     t1, t1, 168
@@ -76,8 +65,9 @@
 #elif __riscv_flen == 32
     addi     t1, t1, 84
 #endif /* __riscv_flen */
+#endif
 
-#ifdef __riscv_dsp  /* vxsat register, 32-bit cpu only */
+#if __riscv_dsp && defined(ARCH_RISCV_DSP) /* vxsat register, 32-bit cpu only */
     addi     t1, t1, 4
 #endif /* __riscv_dsp */
 
@@ -86,19 +76,18 @@
 #elif __riscv_xlen == 32
     addi     t1, t1, 72
 #endif
-    add      sp, sp, t1
+    add      t1, sp, t1
 
-    /* now, sp is the position of mstatus */
-    load_x   t3, (0)(sp)
+    /* now, t1 is the position of mstatus */
+    load_x   t3, (0)(t1)
     csrw     mstatus, t3
-    sub      sp, sp, t1
 .endm
 
 .macro RESTORE_SSTATUS
     /* t0 and t1 are not restored before using */
     /* now, sp is at the top of the stack (the lowest address)*/
     li       t1, 0
-#if __riscv_matrix || __riscv_xtheadmatrix /* matrix registers */
+#if (__riscv_matrix || __riscv_xtheadmatrix) && defined(ARCH_RISCV_MATRIX) /* matrix registers */
 #if __riscv_xlen == 64
     addi     t1, t1, (12 + 12)
 #else
@@ -109,7 +98,7 @@
     add      t1, t1, t0
 #endif /* __riscv_matrix || __riscv_xtheadmatrix */
 
-#ifdef __riscv_vector /* vector registers */
+#if __riscv_vector && defined(ARCH_RISCV_VECTOR) /* vector registers */
     csrr     t0, vlenb
     slli     t0, t0, 5
     add      t1, t1, t0
@@ -120,6 +109,7 @@
 #endif  /* __riscv_xlen */
 #endif  /* __riscv_vector */
 
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64 /* float registers */
 #if __riscv_xlen == 64
     addi     t1, t1, 168
@@ -130,26 +120,24 @@
 #elif __riscv_flen == 32
     addi     t1, t1, 84
 #endif /* __riscv_flen */
+#endif
 
 #if __riscv_xlen == 64  /*general purpose registers*/
     addi     t1, t1, (72 + 72)
 #elif __riscv_xlen == 32
     addi     t1, t1, 72
 #endif
-    add      sp, sp, t1
+    add      t1, sp, t1
 
-    /* now, sp is the position of mstatus */
-    load_x   t3, (0)(sp)
+    /* now, t1 is the position of mstatus */
+    load_x   t3, (0)(t1)
     csrw     sstatus, t3
-    sub      sp, sp, t1
 .endm
-
-#endif /* CONFIG_CHECK_FPU_DIRTY || CONFIG_CHECK_VECTOR_DIRTY || CONFIG_CHECK_MATRIX_DIRTY */
 
 .macro SAVE_VECTOR_REGISTERS
     /* t0,t1 saved before using */
     /* mstatus->t3 */
-#ifdef __riscv_vector
+#if __riscv_vector && defined(ARCH_RISCV_VECTOR)
 #if CONFIG_CHECK_VECTOR_DIRTY
     /* check if VS filed of MSTATUS is 'dirty' */
     li       t1, SR_VS_DIRTY
@@ -227,7 +215,7 @@
 
 .macro RESTORE_VECTOR_REGISTERS
     /* t0,t1,t2 not restored before using, mstatus has been restored before using */
-#ifdef __riscv_vector
+#if __riscv_vector && defined(ARCH_RISCV_VECTOR)
 #if CONFIG_CHECK_VECTOR_DIRTY
     /* check if VS filed of MSTATUS is 'dirty' */
     li       t1, SR_VS_DIRTY
@@ -304,6 +292,7 @@
 
 .macro SAVE_FLOAT_REGISTERS
     /* t0, t1 saved before using */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
 #if CONFIG_CHECK_FPU_DIRTY
     /* check if FS filed of MSTATUS is 'dirty' */
@@ -378,10 +367,12 @@
     fstore_x ft10,72(sp)
     fstore_x ft11,76(sp)
 #endif /*__riscv_flen */
+#endif
 #if CONFIG_CHECK_FPU_DIRTY
     j        2f
 1:
     /* don't store, move sp only */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
 #if __riscv_xlen == 64
     addi     sp, sp, -168
@@ -391,12 +382,14 @@
 #elif __riscv_flen == 32
     addi     sp, sp, -84
 #endif /* __riscv_xlen */
+#endif
 2:
 #endif
 .endm
 
 .macro RESTORE_FLOAT_REGISTERS
     /* t0 and t1 are not restored before using, mstatus has been restored before using */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
 #if CONFIG_CHECK_FPU_DIRTY
     /* check if FS filed of MSTATUS is 'dirty' */
@@ -472,10 +465,12 @@
     fscsr    t0
     addi     sp, sp, 4
 #endif /*__riscv_flen */
+#endif
 #if CONFIG_CHECK_FPU_DIRTY
     j        2f
 1:
     /* don't restore, move sp only */
+#if __riscv_flen && defined(ARCH_RISCV_FPU)
 #if __riscv_flen == 64
 #if __riscv_xlen == 64
     addi     sp, sp, 168
@@ -485,6 +480,7 @@
 #elif __riscv_flen == 32
     addi     sp, sp, 84
 #endif /* __riscv_flen */
+#endif
 2:
 #endif /* CONFIG_CHECK_FPU_DIRTY */
 .endm
@@ -492,7 +488,7 @@
 .macro SAVE_MATRIX_REGISTERS
     /* t0,t1 saved before using */
 
-#if __riscv_matrix || __riscv_xtheadmatrix
+#if (__riscv_matrix || __riscv_xtheadmatrix) && defined(ARCH_RISCV_MATRIX)
 #if CONFIG_CHECK_MATRIX_DIRTY
     /* check if FS filed of MSTATUS is 'dirty' */
     li       t1, SR_MS_DIRTY
@@ -544,7 +540,7 @@
 .macro RESTORE_MATRIX_REGISTERS
     /* t0 and t1 are not restored before using, mstatus has been restored before using */
 
-#if __riscv_matrix || __riscv_xtheadmatrix
+#if (__riscv_matrix || __riscv_xtheadmatrix) && defined(ARCH_RISCV_MATRIX)
 #if CONFIG_CHECK_MATRIX_DIRTY
     /* check if FS filed of MSTATUS is 'dirty' */
     li       t1, SR_MS_DIRTY

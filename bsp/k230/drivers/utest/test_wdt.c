@@ -143,4 +143,4 @@ static rt_err_t utest_init(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(test_wdt, "wdt", utest_init, NULL, 10);
+UTEST_TC_EXPORT(test_wdt, "bsp.k230.drivers.wdt", utest_init, NULL, 10);

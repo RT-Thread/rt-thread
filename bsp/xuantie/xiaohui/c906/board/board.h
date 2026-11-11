@@ -17,7 +17,7 @@
  */
 
 /*
-   This is an example board.h for Board Compment, New Board should flow the macro defines.
+   This is an example board.h for Board Component, New Board should follow the macro defines.
 */
 
 #ifndef __BOARD_H__
@@ -44,7 +44,7 @@ extern "C" {
      · WIFI
      · BT
      · AUDIO
-    BOARD_XXX Macro descripted below should be defined if the board support.
+    BOARD_XXX Macro described below should be defined if the board support.
 */
 
 /****************************************************************************/
@@ -120,8 +120,8 @@ extern "C" {
 // UART
 
 /*
-    The total supported uart numbers on this board, 0 meas No uart support.
-    the BOARD_UART<x>_XXX, x in rang of (0, BOARD_UART_NUM - 1)
+    The total supported uart numbers on this board, 0 means No uart support.
+    the BOARD_UART<x>_XXX, x in range of (0, BOARD_UART_NUM - 1)
 */
 #ifndef BOARD_UART_NUM
 #define BOARD_UART_NUM (1)

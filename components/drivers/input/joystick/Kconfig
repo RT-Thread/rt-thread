@@ -1,0 +1,14 @@
+menuconfig RT_INPUT_JOYSTICK
+    bool "Joystick"
+    default n
+
+config RT_INPUT_JOYSTICK_ADC
+    bool "Simple joystick connected over ADC"
+    depends on RT_INPUT_JOYSTICK
+    depends on RT_USING_ADC
+    depends on RT_USING_OFW
+    default n
+
+if RT_INPUT_JOYSTICK
+    osource "$(SOC_DM_INPUT_JOYSTICK_DIR)/Kconfig"
+endif

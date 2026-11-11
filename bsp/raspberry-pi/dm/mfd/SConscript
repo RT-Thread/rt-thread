@@ -1,0 +1,19 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_MFD_BCM2835_PM']):
+    src += ['bcm2835-pm.c']
+
+if GetDepend(['RT_MFD_RP1']):
+    src += ['rp1.c']
+
+if GetDepend(['RT_MFD_RPI_SENSE']):
+    src += ['rpi-sense.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

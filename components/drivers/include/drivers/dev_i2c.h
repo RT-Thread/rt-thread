@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2012-04-25     weety         first version
  * 2021-04-20     RiceChen      added support for bus control api
+ * 2024-06-23     wdfk-prog     Add the config struct
  */
 
 #ifndef __DEV_I2C_H__
@@ -14,7 +15,7 @@
 
 #include <rtthread.h>
 /**
- * @defgroup    group_I2C I2C
+ * @defgroup    group_drivers_i2c I2C
  * @brief       I2C driver api
  * @ingroup     group_device_driver
  *
@@ -170,7 +171,7 @@
  */
 
 /*!
- * @addtogroup group_I2C
+ * @addtogroup group_drivers_i2c
  * @{
  */
 #ifdef __cplusplus
@@ -184,6 +185,8 @@ extern "C" {
 #define RT_I2C_IGNORE_NACK      (1u << 5)  /*!< ignore NACK from slave */
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
 #define RT_I2C_NO_STOP          (1u << 7)  /*!< do not generate STOP condition */
+
+#define RT_I2C_CTRL_SET_MAX_HZ  0x20
 
 #define RT_I2C_DEV_CTRL_10BIT        (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
 #define RT_I2C_DEV_CTRL_ADDR         (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
@@ -234,6 +237,21 @@ struct rt_i2c_bus_device_ops
 };
 
 /**
+ * I2C configuration structure.
+ * mode : master: 0x00; slave: 0x01;
+ * max_hz: Maximum limit baud rate.
+ * usage_freq: Actual usage baud rate.
+ */
+struct rt_i2c_configuration
+{
+    rt_uint8_t  mode;
+    rt_uint8_t  reserved[3];
+
+    rt_uint32_t max_hz;
+    rt_uint32_t usage_freq;
+};
+
+/**
  * @brief I2C Bus Device
  */
 struct rt_i2c_bus_device
@@ -244,6 +262,7 @@ struct rt_i2c_bus_device
     struct rt_mutex lock;
     rt_uint32_t  timeout;
     rt_uint32_t  retries;
+    struct rt_i2c_configuration config;
     void *priv;
 };
 
@@ -286,6 +305,21 @@ rt_err_t rt_i2c_driver_register(struct rt_i2c_driver *driver);
 rt_err_t rt_i2c_device_register(struct rt_i2c_client *client);
 
 #define RT_I2C_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, i2c, BUILIN)
+
+/**
+ * @brief Get ID match data from I2C client
+ *
+ * This function retrieves the driver-specific data associated with the matched
+ * device ID or OFW node ID for the I2C client.
+ *
+ * @param client the I2C client device
+ *
+ * @return const void* pointer to the ID match data, or RT_NULL if no match data exists
+ */
+rt_inline const void *rt_i2c_client_id_data(struct rt_i2c_client *client)
+{
+    return client->id ? client->id->data : (client->ofw_id ? client->ofw_id->data : RT_NULL);
+}
 #endif /* RT_USING_DM */
 
 /**

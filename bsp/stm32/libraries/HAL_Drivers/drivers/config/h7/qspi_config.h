@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-22     zylx         first version
+ * 2026-04-13     wdfk-prog    Unify DMA config descriptors
  */
 
 #ifndef __QSPI_CONFIG_H__
@@ -30,19 +31,29 @@ extern "C" {
 #endif /* BSP_USING_QSPI */
 
 #ifdef BSP_QSPI_USING_DMA
+#ifndef QSPI_DMA_PRIORITY
+#define QSPI_DMA_PRIORITY                         DMA_PRIORITY_LOW
+#endif /* QSPI_DMA_PRIORITY */
+
+#ifndef QSPI_DMA_PREEMPT_PRIORITY
+#define QSPI_DMA_PREEMPT_PRIORITY                 0
+#endif /* QSPI_DMA_PREEMPT_PRIORITY */
+
+#ifndef QSPI_DMA_SUB_PRIORITY
+#define QSPI_DMA_SUB_PRIORITY                     0
+#endif /* QSPI_DMA_SUB_PRIORITY */
+
 #ifndef QSPI_DMA_CONFIG
-#define QSPI_DMA_CONFIG                                        \
-    {                                                          \
-        .Instance = QSPI_DMA_INSTANCE,                         \
-        .Init.Channel  = QSPI_DMA_CHANNEL,                     \
-        .Init.Direction = DMA_PERIPH_TO_MEMORY,                \
-        .Init.PeriphInc = DMA_PINC_DISABLE,                    \
-        .Init.MemInc = DMA_MINC_ENABLE,                        \
-        .Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE,       \
-        .Init.MemDataAlignment = DMA_MDATAALIGN_BYTE,          \
-        .Init.Mode = DMA_NORMAL,                               \
-        .Init.Priority = DMA_PRIORITY_LOW                      \
-    }
+#define QSPI_DMA_CONFIG               \
+    STM32_DMA_RX_BYTE_CONFIG_INIT_EX( \
+        QSPI_DMA_INSTANCE,            \
+        QSPI_DMA_RCC,                 \
+        QSPI_DMA_IRQ,                 \
+        0U,                           \
+        QSPI_DMA_REQUEST,             \
+        QSPI_DMA_PRIORITY,            \
+        QSPI_DMA_PREEMPT_PRIORITY,    \
+        QSPI_DMA_SUB_PRIORITY)
 #endif /* QSPI_DMA_CONFIG */
 #endif /* BSP_QSPI_USING_DMA */
 

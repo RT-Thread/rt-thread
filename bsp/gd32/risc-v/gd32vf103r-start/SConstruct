@@ -48,10 +48,10 @@ gd32_library = 'GD32VF103_Firmware_Library'
 rtconfig.BSP_LIBRARY_TYPE = gd32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', gd32_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript'), variant_dir='build/libraries/gd32_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

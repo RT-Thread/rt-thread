@@ -1,0 +1,12 @@
+
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+# 从 .ignore_format.yml 迁移的规则
+# 忽略所有 STM32 HAL 库目录
+/libraries/STM32*_HAL/
+
+# 忽略所有 STM32 BSP 的 CubeMX 配置目录
+/stm32*/board/CubeMX_Config/
+

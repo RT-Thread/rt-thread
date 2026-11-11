@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2022-05-03     BruceOu           optimization adc
+ * 2026-03-04     WangShun          support gd32vw553
  */
 
 #include "drv_adc.h"
@@ -16,6 +17,10 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_ADC
+
+#if defined(BSP_USING_ADC)
+struct rt_adc_device adc;
+#endif
 
 #if defined(BSP_USING_ADC0)
 struct rt_adc_device adc0;
@@ -32,6 +37,21 @@ struct rt_adc_device adc2;
 #define MAX_EXTERN_ADC_CHANNEL    16
 
 static const struct gd32_adc adc_obj[] = {
+#ifdef BSP_USING_ADC
+    {
+        ADC,
+        RCU_ADC,
+        {
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), RT_NULL, RT_NULL, RT_NULL,
+            RT_NULL, RT_NULL, RT_NULL, RT_NULL,
+        },
+        &adc,
+        "adc",
+    },
+#endif
+
 #ifdef BSP_USING_ADC0
     {
         ADC0,
@@ -89,7 +109,11 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
     rcu_periph_clock_enable(adc_clk);
 
     /* configure adc pin */
+#if defined(SOC_SERIES_GD32VW55x)
+    gpio_mode_set(PIN_GDPORT(pin), GPIO_MODE_ANALOG, GPIO_PUPD_NONE, PIN_GDPIN(pin));
+#else
     gpio_init(PIN_GDPORT(pin), GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, PIN_GDPIN(pin));
+#endif /* SOC_SERIES_GD32VW55x */
 
 }
 
@@ -99,7 +123,7 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
 * @param device, channel, enabled
 * @retval None
 */
-static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     uint32_t adc_periph;
     struct gd32_adc * adc = (struct gd32_adc *)device->parent.user_data;
@@ -116,6 +140,18 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     {
         gd32_adc_gpio_init(adc->adc_clk, adc->adc_pins[channel]);
 
+#if defined(SOC_SERIES_GD32VW55x)
+        adc_channel_length_config(ADC_ROUTINE_CHANNEL, 1);
+
+        adc_routine_channel_config(0, channel, ADC_SAMPLETIME_55POINT5);
+
+        adc_external_trigger_config(ADC_ROUTINE_CHANNEL, EXTERNAL_TRIGGER_RISING);
+        adc_external_trigger_source_config(ADC_ROUTINE_CHANNEL, ADC_EXTTRIG_ROUTINE_T0_CH0);
+
+        adc_data_alignment_config(ADC_DATAALIGN_RIGHT);
+
+        adc_enable();
+#else
         adc_channel_length_config(adc_periph, ADC_REGULAR_CHANNEL, 1);
         adc_data_alignment_config(adc_periph, ADC_DATAALIGN_RIGHT);
 
@@ -128,10 +164,15 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 
         /* ADC calibration and reset calibration */
         adc_calibration_enable(adc_periph);
+#endif /* SOC_SERIES_GD32VW55x */
     }
     else
     {
+#if defined(SOC_SERIES_GD32VW55x)
+        adc_disable();
+#else
         adc_disable(adc_periph);
+#endif /* SOC_SERIES_GD32VW55x */
     }
     return 0;
 }
@@ -142,7 +183,7 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 * @param device, channel, value
 * @retval None
 */
-static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     uint32_t adc_periph;
     struct gd32_adc * adc = (struct gd32_adc *)(device->parent.user_data);
@@ -152,16 +193,23 @@ static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t chann
         LOG_E("invalid param");
         return -RT_EINVAL;
     }
+#if defined(SOC_SERIES_GD32VW55x)
+    adc_software_trigger_enable(ADC_ROUTINE_CHANNEL);
 
+    while(!adc_flag_get(ADC_FLAG_EOC)){};
+    adc_flag_clear(ADC_FLAG_EOC);
+
+    *value = adc_routine_data_read();
+#else
     adc_periph = (uint32_t )(adc->adc_periph);
     adc_software_trigger_enable(adc_periph, ADC_REGULAR_CHANNEL);
 
     while(!adc_flag_get(adc_periph, ADC_FLAG_EOC)){};
-    // clear flag
+    /* clear flag */
     adc_flag_clear(adc_periph, ADC_FLAG_EOC);
 
     *value = adc_regular_data_read(adc_periph);
-
+#endif /* SOC_SERIES_GD32VW55x */
     return 0;
 }
 
@@ -190,3 +238,4 @@ static int rt_hw_adc_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_adc_init);
 #endif
+

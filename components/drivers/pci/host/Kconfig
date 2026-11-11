@@ -10,3 +10,5 @@ config RT_PCI_HOST_GENERIC
     default y
 
 rsource "dw/Kconfig"
+
+osource "$(SOC_DM_PCI_DIR)/Kconfig"

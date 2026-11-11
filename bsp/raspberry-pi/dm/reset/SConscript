@@ -1,0 +1,19 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_RESET_BRCMSTB_RESCAL']):
+    src += ['reset-brcmstb-rescal.c']
+
+if GetDepend(['RT_RESET_BRCMSTB']):
+    src += ['reset-brcmstb.c']
+
+if GetDepend(['RT_RESET_RASPBERRYPI']):
+    src += ['reset-raspberrypi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -59,7 +59,7 @@ int usbh_audio_open(struct usbh_audio *audio_class, const char *name, uint32_t s
     uint16_t mps;
     int ret;
     uint8_t intf = 0xff;
-    uint8_t altsetting = 1;
+    uint8_t altsetting = 0xff;
 
     if (!audio_class || !audio_class->hport) {
         return -USB_ERR_INVAL;
@@ -88,9 +88,11 @@ int usbh_audio_open(struct usbh_audio *audio_class, const char *name, uint32_t s
             }
         }
     }
-    return -USB_ERR_NODEV;
 
 freq_found:
+    if(altsetting == 0xff) {
+        return -USB_ERR_NODEV;
+    }
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = USB_REQUEST_SET_INTERFACE;
@@ -150,9 +152,11 @@ int usbh_audio_close(struct usbh_audio *audio_class, const char *name)
     for (uint8_t i = 0; i < audio_class->stream_intf_num; i++) {
         if (strcmp(name, audio_class->as_msg_table[i].stream_name) == 0) {
             intf = audio_class->as_msg_table[i].stream_intf;
+            goto intf_found;
         }
     }
 
+intf_found:
     if (intf == 0xff) {
         return -USB_ERR_NODEV;
     }
@@ -208,9 +212,11 @@ int usbh_audio_set_volume(struct usbh_audio *audio_class, const char *name, uint
         if (strcmp(name, audio_class->as_msg_table[i].stream_name) == 0) {
             feature_id = audio_class->as_msg_table[i].feature_terminal_id;
             intf = audio_class->as_msg_table[i].stream_intf;
+            goto feature_found;
         }
     }
 
+feature_found:
     if (feature_id == 0xff) {
         return -USB_ERR_NODEV;
     }
@@ -322,9 +328,11 @@ int usbh_audio_set_mute(struct usbh_audio *audio_class, const char *name, uint8_
         if (strcmp(name, audio_class->as_msg_table[i].stream_name) == 0) {
             feature_id = audio_class->as_msg_table[i].feature_terminal_id;
             intf = audio_class->as_msg_table[i].stream_intf;
+            goto feature_found;
         }
     }
 
+feature_found:
     if (feature_id == 0xff) {
         return -USB_ERR_NODEV;
     }
@@ -404,6 +412,7 @@ static int usbh_audio_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
         switch (p[DESC_bDescriptorType]) {
             case USB_DESCRIPTOR_TYPE_INTERFACE_ASSOCIATION:
                 cur_iface_count = p[3];
+                USB_ASSERT(cur_iface_count <= CONFIG_USBHOST_AUDIO_MAX_STREAMS);
                 break;
             case USB_DESCRIPTOR_TYPE_INTERFACE:
                 cur_iface = p[INTF_DESC_bInterfaceNumber];
@@ -422,17 +431,25 @@ static int usbh_audio_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                         case AUDIO_CONTROL_INPUT_TERMINAL: {
                             struct audio_cs_if_ac_input_terminal_descriptor *desc = (struct audio_cs_if_ac_input_terminal_descriptor *)p;
 
+                            USB_ASSERT(input_offset < CONFIG_USBHOST_AUDIO_MAX_STREAMS);
+
                             memcpy(&ac_msg_table[input_offset].ac_input, desc, sizeof(struct audio_cs_if_ac_input_terminal_descriptor));
                             input_offset++;
                         } break;
                         case AUDIO_CONTROL_OUTPUT_TERMINAL: {
                             struct audio_cs_if_ac_output_terminal_descriptor *desc = (struct audio_cs_if_ac_output_terminal_descriptor *)p;
 
+                            USB_ASSERT(output_offset < CONFIG_USBHOST_AUDIO_MAX_STREAMS);
+
                             memcpy(&ac_msg_table[output_offset].ac_output, desc, sizeof(struct audio_cs_if_ac_output_terminal_descriptor));
                             output_offset++;
                         } break;
                         case AUDIO_CONTROL_FEATURE_UNIT: {
                             struct audio_cs_if_ac_feature_unit_descriptor *desc = (struct audio_cs_if_ac_feature_unit_descriptor *)p;
+
+                            USB_ASSERT(feature_unit_offset < CONFIG_USBHOST_AUDIO_MAX_STREAMS);
+                            USB_ASSERT(desc->bControlSize == 1);
+                            USB_ASSERT(desc->bLength <= sizeof(struct audio_cs_if_ac_feature_unit_descriptor));
 
                             memcpy(&ac_msg_table[feature_unit_offset].ac_feature_unit, desc, desc->bLength);
                             feature_unit_offset++;
@@ -452,6 +469,9 @@ static int usbh_audio_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                         } break;
                         case AUDIO_STREAMING_FORMAT_TYPE: {
                             struct audio_cs_if_as_format_type_descriptor *desc = (struct audio_cs_if_as_format_type_descriptor *)p;
+
+                            USB_ASSERT(desc->bSamFreqType == 1);
+
                             audio_class->as_msg_table[cur_iface - audio_class->ctrl_intf - 1].num_of_altsetting = (cur_alt_setting + 1);
                             memcpy(&audio_class->as_msg_table[cur_iface - audio_class->ctrl_intf - 1].as_format[cur_alt_setting], desc, desc->bLength);
                         } break;
@@ -464,6 +484,7 @@ static int usbh_audio_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                 if ((cur_iface > audio_class->ctrl_intf) && (cur_iface < (audio_class->ctrl_intf + cur_iface_count))) {
                     if (p[DESC_bDescriptorSubType] == AUDIO_ENDPOINT_GENERAL) {
                         struct audio_cs_ep_ep_general_descriptor *desc = (struct audio_cs_ep_ep_general_descriptor *)p;
+
                         audio_class->as_msg_table[cur_iface - audio_class->ctrl_intf - 1].ep_attr = desc->bmAttributes;
                     }
                 }

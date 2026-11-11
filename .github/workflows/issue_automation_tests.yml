@@ -1,0 +1,50 @@
+name: Issue Automation Tests
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/ISSUE_TEMPLATE/bug_report.yml"
+      - ".github/ISSUE_TEMPLATE/feature_request.yml"
+      - ".github/workflows/issue_*.yml"
+      - ".github/workflows/similar_issues*.yml"
+      - "tools/ci/issue_*.py"
+      - "tools/ci/similar_issues.py"
+      - "tools/ci/test_issue_*.py"
+      - "tools/ci/test_similar_issues.py"
+  pull_request:
+    branches: [master]
+    paths:
+      - ".github/ISSUE_TEMPLATE/bug_report.yml"
+      - ".github/ISSUE_TEMPLATE/feature_request.yml"
+      - ".github/workflows/issue_*.yml"
+      - ".github/workflows/similar_issues*.yml"
+      - "tools/ci/issue_*.py"
+      - "tools/ci/similar_issues.py"
+      - "tools/ci/test_issue_*.py"
+      - "tools/ci/test_similar_issues.py"
+
+concurrency:
+  group: issue-automation-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Run issue automation tests
+        working-directory: tools/ci
+        run: >-
+          python3 -m unittest
+          test_issue_labeler.py
+          test_issue_claim.py
+          test_similar_issues.py

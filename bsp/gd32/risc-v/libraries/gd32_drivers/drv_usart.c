@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
+ * 2025-07-11     Wangshun     adapt to GD32VV553H
+ * 2026-01-22     HaitaoZhang  adapt to GD32VW553H UART1/2
  */
 
 #include "drv_usart.h"
@@ -44,6 +46,7 @@ void USART0_IRQHandler(void)
 #if defined(BSP_USING_UART1)
 struct rt_serial_device serial1;
 
+#if defined (SOC_SERIES_GD32VF103V)
 void USART1_IRQHandler(void)
 {
     /* enter interrupt */
@@ -54,12 +57,27 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#elif defined (SOC_SERIES_GD32VW55x)
+void UART1_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    GD32_UART_IRQHandler(&serial1);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#else
+#error "Uart1 ISR name not compatible with current MCU series"
+#endif
 
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
 struct rt_serial_device serial2;
 
+#if defined (SOC_SERIES_GD32VF103V)
 void USART2_IRQHandler(void)
 {
     /* enter interrupt */
@@ -70,6 +88,20 @@ void USART2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#elif defined (SOC_SERIES_GD32VW55x)
+void UART2_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    GD32_UART_IRQHandler(&serial2);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#else
+#error "Uart2 ISR name not compatible with current MCU series"
+#endif
 
 #endif /* BSP_USING_UART2 */
 
@@ -155,11 +187,14 @@ void UART7_IRQHandler(void)
 static const struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART0
     {
-        USART0,                                 // uart peripheral index
-        USART0_IRQn,                            // uart iqrn
-        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_9,           // tx port, tx pin
-        GPIOA, GPIO_PIN_10,          // rx port, rx pin
+        USART0,                                 /* uart peripheral index */
+        USART0_IRQn,                            /* uart iqrn */
+        RCU_USART0, RCU_GPIOB, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_15,           /* tx port, tx pin */
+        GPIOA, GPIO_PIN_8,          /* rx port, rx pin */
+#if defined (SOC_SERIES_GD32VW55x)
+        GPIO_AF_8, GPIO_AF_2,
+#endif
         &serial0,
         "uart0",
     },
@@ -167,11 +202,22 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART1
     {
-        USART1,                                 // uart peripheral index
-        USART1_IRQn,                            // uart iqrn
-        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+#if defined (SOC_SERIES_GD32VF103V)
+        USART1,                                 /* uart peripheral index */
+        USART1_IRQn,                            /* uart iqrn */
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
+#elif defined (SOC_SERIES_GD32VW55x)
+        UART1,                                 /* uart peripheral index */
+        UART1_IRQn,                            /* uart iqrn */
+        RCU_UART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
+        GPIO_AF_7, GPIO_AF_7,
+#else
+#error "UART1 peripheral config incompatible with current MCU series"
+#endif
         &serial1,
         "uart1",
     },
@@ -179,11 +225,22 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART2
     {
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,          // tx port, tx pin
-        GPIOB, GPIO_PIN_11,          // rx port, rx pin
+#if defined (SOC_SERIES_GD32VF103V)
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_10,          /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,          /* rx port, rx pin */
+#elif defined (SOC_SERIES_GD32VW55x)
+        UART2,                                 /* uart peripheral index */
+        UART2_IRQn,                            /* uart iqrn */
+        RCU_UART2, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_6,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_7,                      /* rx port, rx pin */
+        GPIO_AF_10, GPIO_AF_8,
+#else
+#error "UART2 peripheral config incompatible with current MCU series"
+#endif
         &serial2,
         "uart2",
     },
@@ -191,11 +248,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART3
     {
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,         // tx port, tx pin
-        GPIOC, GPIO_PIN_11,         // rx port, rx pin
+        UART3,                                 /* uart peripheral index */
+        UART3_IRQn,                            /* uart iqrn */
+        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_10,         /* tx port, tx pin */
+        GPIOC, GPIO_PIN_11,         /* rx port, rx pin */
         &serial3,
         "uart3",
     },
@@ -203,11 +260,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART4
     {
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_12,         // tx port, tx pin
-        GPIOD, GPIO_PIN_2,          // rx port, rx pin
+        UART4,                                 /* uart peripheral index */
+        UART4_IRQn,                            /* uart iqrn */
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_12,         /* tx port, tx pin */
+        GPIOD, GPIO_PIN_2,          /* rx port, rx pin */
         &serial4,
         "uart4",
     },
@@ -231,11 +288,21 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     rcu_periph_clock_enable(uart->rx_gpio_clk);
     rcu_periph_clock_enable(uart->per_clk);
 
-    /* connect port to USARTx_Tx */
+    /* connect port */
+#if defined (SOC_SERIES_GD32VF103V)
     gpio_init(uart->tx_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, uart->tx_pin);
-
-    /* connect port to USARTx_Rx */
     gpio_init(uart->rx_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, uart->rx_pin);
+#elif defined (SOC_SERIES_GD32VW55x)
+    gpio_af_set(uart->tx_port, uart->tx_alt, uart->tx_pin);
+    gpio_mode_set(uart->tx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->tx_pin);
+    gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, uart->tx_pin);
+
+    gpio_af_set(uart->rx_port, uart->rx_alt, uart->rx_pin);
+    gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->rx_pin);
+    gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, uart->rx_pin);
+#else
+#error "Uart GPIO config incompatible with current MCU series"
+#endif
 }
 
 /**
@@ -319,7 +386,9 @@ static rt_err_t gd32_uart_control(struct rt_serial_device *serial, int cmd, void
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
+#if defined (SOC_SERIES_GD32VF103V)
         eclic_set_nlbits(ECLIC_GROUP_LEVEL3_PRIO1);
+#endif /* SOC_SERIES_GD32VF103V */
         /* enable rx irq */
         eclic_irq_enable(uart->irqn, 1, 0);
         /* enable interrupt */
@@ -442,7 +511,5 @@ int rt_hw_usart_init(void)
 
     return result;
 }
-
-//INIT_BOARD_EXPORT(rt_hw_usart_init);
-
 #endif
+

@@ -24,6 +24,10 @@ typedef union {
         unsigned short next;
     } tickets;
 } rt_hw_spinlock_t;
+
+extern volatile unsigned long rt_riscv_online_mask;
+
+void rt_hw_cpu_mark_online(void);
 #endif
 
 #include <rtcompiler.h>
@@ -43,7 +47,9 @@ rt_inline void rt_hw_isb(void)
     __asm__ volatile(OPC_FENCE_I:::"memory");
 }
 
-int rt_hw_cpu_id(void);
+#ifdef ARCH_MM_MMU
+void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid);
+#endif
 
 #endif
 

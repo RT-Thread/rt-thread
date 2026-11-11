@@ -14,6 +14,11 @@
 #include "tick.h"
 #include "drv_uart.h"
 
+rt_uint64_t rt_hw_get_clock_timer_freq(void)
+{
+    return 25000000ULL;
+}
+
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_HEAP

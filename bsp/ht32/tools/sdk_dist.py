@@ -29,11 +29,14 @@ def dist_do_building(BSP_ROOT, dist_dir):
     print("=> copy ht32 bsp library")
     library_dir = os.path.join(dist_dir, 'libraries')
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-    bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
+    if rtconfig.BSP_LIBRARY_TYPE is not None:
+        bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'ht32_drivers'), os.path.join(library_dir, 'ht32_drivers'))
+    bsp_copy_files(os.path.join(library_path, 'usbd_library'), os.path.join(library_dir, 'usbd_library'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    shutil.copyfile(os.path.join(os.path.dirname(BSP_ROOT), 'tools', 'sdk_dist.py'), os.path.join(dist_dir, 'sdk_dist.py'))
     bsp_update_kconfig_library(dist_dir)
 
 

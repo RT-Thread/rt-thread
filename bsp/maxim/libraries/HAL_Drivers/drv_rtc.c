@@ -64,16 +64,16 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = get_rtc_timestamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+        *(time_t *)args = get_rtc_timestamp();
+        LOG_D("RTC: get rtc_time %x\n", *(time_t *)args);
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_time_stamp(*(rt_uint32_t *)args))
+        if (set_rtc_time_stamp(*(time_t *)args))
         {
             result = -RT_ERROR;
         }
-        LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+        LOG_D("RTC: set rtc_time %x\n", *(time_t *)args);
         break;
     }
 

@@ -73,7 +73,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M0 '
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
+    LFLAGS = DEVICE + r' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -145,7 +145,7 @@ elif PLATFORM == 'iccarm':
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
     cwd_path = os.getcwd()
-    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    sys.path.append(os.path.join(BSP_ROOT, 'tools'))
     from sdk_dist import dist_do_building
     dist_do_building(BSP_ROOT, dist_dir)
 

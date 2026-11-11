@@ -120,6 +120,11 @@ extern "C" {
 #define SPI3_RX_DMA_RCC                 RCC_AHBENR_DMA2EN
 #define SPI3_RX_DMA_INSTANCE            DMA2_Channel1
 #define SPI3_RX_DMA_IRQ                 DMA2_Channel1_IRQn
+#elif defined(BSP_UART5_TX_USING_DMA) && !defined(UART5_TX_DMA_INSTANCE)
+#define UART5_DMA_TX_IRQHandler         DMA2_Channel1_IRQHandler
+#define UART5_TX_DMA_RCC                RCC_AHBENR_DMA2EN
+#define UART5_TX_DMA_INSTANCE           DMA2_Channel1
+#define UART5_TX_DMA_IRQ                DMA2_Channel1_IRQn
 #endif
 
 /* DMA2 channel2 */
@@ -149,6 +154,18 @@ extern "C" {
 #define SDIO_RX_DMA_RCC                 RCC_AHBENR_DMA2EN
 #define SDIO_RX_DMA_INSTANCE            DMA2_Channel4
 #define SDIO_RX_DMA_IRQ                 DMA2_Channel4_5_IRQn
+#elif defined(BSP_UART5_RX_USING_DMA) && !defined(UART5_RX_DMA_INSTANCE)
+#if defined(DMA2_Channel4_5_IRQHandler) && defined(DMA2_Channel4_5_IRQn)
+#define UART5_DMA_RX_IRQHandler         DMA2_Channel4_5_IRQHandler
+#define UART5_RX_DMA_IRQ                DMA2_Channel4_5_IRQn
+#elif defined(DMA2_Channel4_IRQHandler) && defined(DMA2_Channel4_IRQn)
+#define UART5_DMA_RX_IRQHandler         DMA2_Channel4_IRQHandler
+#define UART5_RX_DMA_IRQ                DMA2_Channel4_IRQn
+#else
+#error "Unsupported STM32F1 UART5 RX DMA IRQ mapping"
+#endif
+#define UART5_RX_DMA_RCC                RCC_AHBENR_DMA2EN
+#define UART5_RX_DMA_INSTANCE           DMA2_Channel4
 #endif
 
 /* DMA2 channel5 */

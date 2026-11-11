@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,11 +21,25 @@
 
 struct rt_mutex _glob_futex;
 
+/**
+ * @brief Initialize the global futex lock
+ *
+ * @return rt_err_t Returns RT_EOK on success, error code on failure
+ */
 rt_err_t lwp_futex_init(void)
 {
     return rt_mutex_init(&_glob_futex, "glob_ftx", RT_IPC_FLAG_PRIO);
 }
 
+/**
+ * @brief Locks the global futex with specified operation flags
+ *
+ * @param[in] lwp Pointer to the lightweight process structure
+ * @param[in] op_flags Operation flags (e.g., FUTEX_PRIVATE)
+ *
+ * @note This function handles locking of futexes, either using process-local locking
+ *       (when FUTEX_PRIVATE flag is set) or global futex locking mechanism.
+ */
 static void _futex_lock(rt_lwp_t lwp, int op_flags)
 {
     rt_err_t error;
@@ -44,6 +58,15 @@ static void _futex_lock(rt_lwp_t lwp, int op_flags)
     }
 }
 
+/**
+ * @brief Unlocks the global futex with specified operation flags
+ *
+ * @param[in] lwp Pointer to the lightweight process structure
+ * @param[in] op_flags Operation flags (e.g., FUTEX_PRIVATE)
+ *
+ * @note This function handles unlocking of futexes, either using process-local unlocking
+ *       (when FUTEX_PRIVATE flag is set) or global futex unlocking mechanism.
+ */
 static void _futex_unlock(rt_lwp_t lwp, int op_flags)
 {
     rt_err_t error;
@@ -63,8 +86,14 @@ static void _futex_unlock(rt_lwp_t lwp, int op_flags)
 }
 
 /**
- * Destroy a Private FuTeX (pftx)
- * Note: must have futex address_search_head taken
+ * @brief Destroys a private futex and releases its resources
+ *
+ * @param[in] data Pointer to the futex to be destroyed (cast from void* to rt_futex_t)
+ *
+ * @return rt_err_t Returns 0 on success, -1 on failure
+ *
+ * @note This function removes the futex from the lwp address search tree,
+ *       deletes its mutex, and frees the futex memory.
  */
 static rt_err_t _pftx_destroy_locked(void *data)
 {
@@ -98,8 +127,16 @@ static rt_err_t _pftx_destroy_locked(void *data)
 }
 
 /**
- * Create a Private FuTeX (pftx)
- * Note: must have futex address_search_head taken
+ * @brief Creates and initializes a private futex
+ *
+ * @param[in] uaddr Pointer to the user-space address used as futex key
+ * @param[in] lwp Pointer to the lightweight process structure
+ *
+ * @return rt_futex_t Returns pointer to created futex on success, NULL on failure
+ *
+ * @note This function allocates memory, creates a custom object,
+ *       adds it to the lwp user object tree, and initializes the futex structure.
+ *       The created futex will be automatically destroyed when the lwp is freed.
  */
 static rt_futex_t _pftx_create_locked(int *uaddr, struct rt_lwp *lwp)
 {
@@ -167,7 +204,17 @@ static rt_futex_t _pftx_create_locked(int *uaddr, struct rt_lwp *lwp)
 }
 
 /**
- * Get a Private FuTeX (pftx) match the (lwp, uaddr, op)
+ * @brief Gets or creates a private futex for the given user address
+ *
+ * @param[in] uaddr User-space address used as futex key
+ * @param[in] lwp Pointer to the lightweight process structure
+ * @param[in] op Operation flags (unused in current implementation)
+ * @param[out] rc Pointer to store the operation result code
+ *
+ * @return rt_futex_t Returns pointer to existing or newly created futex on success,
+ *         NULL on failure (with error code stored in rc)
+ *
+ * @note If the futex doesn't exist, it creates a new one using _pftx_create_locked.
  */
 static rt_futex_t _pftx_get(void *uaddr, struct rt_lwp *lwp, int op,
                             rt_err_t *rc)
@@ -205,8 +252,16 @@ static rt_futex_t _pftx_get(void *uaddr, struct rt_lwp *lwp, int op,
 }
 
 /**
- * Destroy a Shared FuTeX (pftx)
- * Note: must have futex address_search_head taken
+ * @brief Destroy a Shared FuTeX (sftx)
+ *
+ * @param[in] data Pointer to the futex to be destroyed (cast from void* to rt_futex_t)
+ *
+ * @return RT_EOK (0) on success, -1 on failure
+ *
+ * @note This function:
+ *       - Deletes the futex from global table.
+ *       - Deletes and nullifies the futex mutex.
+ *       - Frees the futex memory.
  */
 static rt_err_t _sftx_destroy(void *data)
 {
@@ -229,7 +284,18 @@ static rt_err_t _sftx_destroy(void *data)
 }
 
 /**
- * Create a Shared FuTeX (sftx)
+ * @brief Create a Shared FuTeX (sftx)
+ *
+ * @param[in] key Pointer to shared futex key structure
+ * @param[in] lwp Pointer to lightweight process structure
+ *
+ * @return Pointer to created futex on success, NULL on failure
+ *
+ * @note This function:
+ *       - Allocates memory for new futex
+ *       - Creates custom object with _sftx_destroy as destructor
+ *       - Adds futex to global table
+ *       - Initializes futex members (mutex, waiting_thread list)
  */
 static rt_futex_t _sftx_create(struct shared_futex_key *key, struct rt_lwp *lwp)
 {
@@ -269,7 +335,22 @@ static rt_futex_t _sftx_create(struct shared_futex_key *key, struct rt_lwp *lwp)
 }
 
 /**
- * Get a Shared FuTeX (sftx) match the (lwp, uaddr, op)
+ * @brief Get or create a Shared FuTeX (sftx) for given user address
+ *
+ * @param[in] uaddr User-space address to lookup/create futex for
+ * @param[in] lwp Pointer to lightweight process structure
+ * @param[in] op Operation flags (e.g. FUTEX_PRIVATE)
+ * @param[out] rc Pointer to store result code (0 on success, error code on failure)
+ *
+ * @return Pointer to existing/new futex on success, NULL on failure
+ *
+ * @note This function:
+ *       - Queries address space for valid varea
+ *       - Constructs shared futex key from varea info
+ *       - Locks global futex table
+ *       - Looks up existing futex or creates new one if not found
+ *       - Unlocks global futex table
+ *       - Returns futex pointer and sets result code
  */
 static rt_futex_t _sftx_get(void *uaddr, struct rt_lwp *lwp, int op,
                             rt_err_t *rc)
@@ -311,7 +392,20 @@ static rt_futex_t _sftx_get(void *uaddr, struct rt_lwp *lwp, int op,
     return futex;
 }
 
-/* must have futex address_search_head taken */
+/**
+ * @brief Get a futex (private or shared) for given user address
+ *
+ * @param[in] uaddr User-space address to lookup futex for
+ * @param[in] lwp Pointer to lightweight process structure
+ * @param[in] op_flags Operation flags (FUTEX_PRIVATE for private futex)
+ * @param[out] rc Pointer to store result code (0 on success, error code on failure)
+ *
+ * @return Pointer to existing/new futex on success, NULL on failure
+ *
+ * @note This function routes the request to either:
+ *       - _pftx_get for private futexes (FUTEX_PRIVATE flag set)
+ *       - _sftx_get for shared futexes (FUTEX_PRIVATE flag not set)
+ */
 static rt_futex_t _futex_get(void *uaddr, struct rt_lwp *lwp, int op_flags,
                              rt_err_t *rc)
 {
@@ -329,6 +423,20 @@ static rt_futex_t _futex_get(void *uaddr, struct rt_lwp *lwp, int op_flags,
     return futex;
 }
 
+/**
+ * @brief Suspend a thread with timeout and add it to futex waiting list
+ *
+ * @param[in] thread Thread to suspend
+ * @param[in] futex Futex to add thread to waiting list
+ * @param[in] timeout Timeout value in ticks
+ *
+ * @return RT_EOK on success, error code on failure
+ *
+ * @note This function:
+ *       - Adds thread to futex's waiting_thread list (FIFO order)
+ *       - Sets thread timer with specified timeout
+ *       - Sets errno to ETIMEDOUT on success
+ */
 static rt_err_t _suspend_thread_timeout_locked(rt_thread_t thread,
                                                rt_futex_t futex,
                                                rt_tick_t timeout)
@@ -356,6 +464,14 @@ static rt_err_t _suspend_thread_timeout_locked(rt_thread_t thread,
     return rc;
 }
 
+/**
+ * @brief Add current thread into futex waiting thread list
+ *
+ * @param[in] thread The thread to be suspended
+ * @param[in] futex The futex to add thread to waiting list
+ *
+ * @return rt_err_t Returns RT_EOK on success or error code on failure
+ */
 static rt_err_t _suspend_thread_locked(rt_thread_t thread, rt_futex_t futex)
 {
     /**
@@ -368,6 +484,19 @@ static rt_err_t _suspend_thread_locked(rt_thread_t thread, rt_futex_t futex)
                                      RT_IPC_FLAG_FIFO, RT_INTERRUPTIBLE);
 }
 
+/**
+ * @brief Compare and exchange futex value atomically
+ *
+ * @param[out] curval Pointer to store the current value if exchange fails
+ * @param[in] uaddr User-space address of the futex value
+ * @param[in] uval Expected value to compare against
+ * @param[in] newval New value to set if comparison succeeds
+ *
+ * @return int Returns 0 on success, -EFAULT if address is inaccessible,
+ *         or -EAGAIN if comparison fails
+ *
+ * @note Checks user address accessibility before operation
+ */
 rt_inline int _futex_cmpxchg_value(int *curval, int *uaddr, int uval,
                                    int newval)
 {
@@ -389,6 +518,20 @@ exit:
     return err;
 }
 
+/**
+ * @brief Wait on a futex if its value matches the expected value.
+ *
+ * @param[in] futex The futex to wait on
+ * @param[in] lwp Lightweight process structure
+ * @param[in] uaddr User-space address of futex value
+ * @param[in] value Expected value to compare against
+ * @param[in] timeout Optional timeout specification
+ * @param[in] op_flags Operation flags (e.g. FUTEX_PRIVATE)
+ *
+ * @return int Returns 0 on success, negative error code on failure
+ *         - ETIMEDOUT if timeout expires
+ *         - EAGAIN if value does not match
+ */
 static int _futex_wait(rt_futex_t futex, struct rt_lwp *lwp, int *uaddr,
                        int value, const struct timespec *timeout, int op_flags)
 {
@@ -456,6 +599,20 @@ static int _futex_wait(rt_futex_t futex, struct rt_lwp *lwp, int *uaddr,
     return rc;
 }
 
+/**
+ * @brief Wake up suspended threads from futex waiting list
+ *
+ * @param[in] futex The futex containing waiting threads
+ * @param[in] lwp Lightweight process structure
+ * @param[in] number Maximum number of threads to wake up
+ * @param[in] op_flags Operation flags (e.g. FUTEX_PRIVATE)
+ *
+ * @return long Number of threads actually woken up
+ *
+ * @note The actual number of woken threads may be less than 'number'
+ *        (e.g., if fewer threads are waiting).
+ *       It performs a schedule after waking threads.
+ */
 static long _futex_wake(rt_futex_t futex, struct rt_lwp *lwp, int number,
                         int op_flags)
 {
@@ -490,10 +647,21 @@ static long _futex_wake(rt_futex_t futex, struct rt_lwp *lwp, int number,
 }
 
 /**
- *  Brief: Wake up to nr_wake futex1 threads.
- *      If there are more waiters waiting on futex1 than nr_wake,
- *      insert the remaining at most nr_requeue waiters waiting
- *      on futex1 into the waiting queue of futex2.
+ * @brief Requeue threads from one futex waiting list to another
+ *
+ * @param[in] futex1 Source futex containing threads to wake/requeue
+ * @param[in] futex2 Destination futex for requeued threads
+ * @param[in] lwp Lightweight process structure
+ * @param[in] nr_wake Maximum number of threads to wake from futex1
+ * @param[in] nr_requeue Maximum number of threads to requeue to futex2
+ * @param[in] opflags Operation flags (e.g. FUTEX_PRIVATE)
+ *
+ * @return long Number of threads actually woken and requeued
+ *
+ * @note Wake up to nr_wake futex1 threads.
+ *       If there are more waiters waiting on futex1 than nr_wake,
+ *       insert the remaining at most nr_requeue waiters waiting
+ *       on futex1 into the waiting queue of futex2.
  */
 static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
                            struct rt_lwp *lwp, int nr_wake, int nr_requeue,
@@ -562,7 +730,22 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
     return rtn;
 }
 
-/* timeout argument measured against the CLOCK_REALTIME clock. */
+/**
+ * @brief Lock a futex with priority inheritance (PI)
+ *
+ * @param[in] futex Futex object to lock
+ * @param[in] lwp Lightweight process structure
+ * @param[in] uaddr User-space address of futex value
+ * @param[in] timeout Optional timeout specification (CLOCK_REALTIME)
+ * @param[in] op_flags Operation flags (e.g. FUTEX_PRIVATE)
+ * @param[in] trylock If true, performs non-blocking trylock operation
+ *
+ * @return long 0 on success, negative error code on failure
+ *
+ * @note Critical sections:
+ *       - Accesses futex value atomically using cmpxchg
+ *       - Uses mutex with priority inheritance for waiting
+ */
 static long _futex_lock_pi(rt_futex_t futex, struct rt_lwp *lwp, int *uaddr,
                            const struct timespec *timeout, int op_flags,
                            rt_bool_t trylock)
@@ -660,6 +843,16 @@ static long _futex_lock_pi(rt_futex_t futex, struct rt_lwp *lwp, int *uaddr,
     return err;
 }
 
+/**
+ * @brief Releases a priority inheritance futex lock
+ *
+ * @param[in] futex The futex object to unlock
+ * @param[in] lwp The lightweight process structure
+ * @param[in] op_flags Operation flags for the futex
+ *
+ * @return Returns 0 on success, or negative error code on failure
+ *         -EPERM If the futex mutex is not initialized
+ */
 static long _futex_unlock_pi(rt_futex_t futex, struct rt_lwp *lwp, int op_flags)
 {
     rt_err_t err = 0;
@@ -691,6 +884,24 @@ rt_inline rt_bool_t _timeout_ignored(int op)
             (op & (FUTEX_TRYLOCK_PI)));
 }
 
+/**
+ * @brief System call interface for futex operations
+ *
+ * @param[in] uaddr Pointer to the futex word in user space
+ * @param[in] op Futex operation code
+ * @param[in] val Operation-specific value
+ * @param[in] timeout Pointer to timeout specification (can be NULL)
+ * @param[in] uaddr2 Second futex word pointer for certain operations
+ * @param[in] val3 Third operation-specific value
+ *
+ * @return System call return value
+ *         - 0 on success
+ *         -EFAULT if uaddr is not accessible
+ *         -EINVAL if timeout is invalid or not accessible
+ *
+ * @note This function provides the user-space interface for futex operations,
+ *        performing necessary access checks before delegating to the LWP futex handler.
+ */
 sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
                    int *uaddr2, int val3)
 {
@@ -716,6 +927,25 @@ sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
 }
 
 #define FUTEX_FLAGS (FUTEX_PRIVATE | FUTEX_CLOCK_REALTIME)
+/**
+ * @brief Main futex operation handler for lightweight processes
+ *
+ * @param[in] lwp The lightweight process structure
+ * @param[in] uaddr Pointer to the futex word in user space
+ * @param[in] op Futex operation code (type + flags)
+ * @param[in] val Operation-specific value
+ * @param[in] timeout Pointer to timeout specification (can be NULL)
+ * @param[in] uaddr2 Second futex word pointer for certain operations
+ * @param[in] val3 Third operation-specific value (used for comparison)
+ *
+ * @return Operation result
+ *         - 0 on success
+ *         - Negative error code on failure
+ *
+ * @note This function handles all futex operations by dispatching to appropriate
+ *       futex sub-functions based on the operation type. It performs basic validation
+ *       and manages futex objects.
+ */
 rt_err_t lwp_futex(struct rt_lwp *lwp, int *uaddr, int op, int val,
                    const struct timespec *timeout, int *uaddr2, int val3)
 {
@@ -729,60 +959,74 @@ rt_err_t lwp_futex(struct rt_lwp *lwp, int *uaddr, int op, int val,
     {
         switch (op_type)
         {
-            case FUTEX_WAIT:
-                rc = _futex_wait(futex, lwp, uaddr, val, timeout, op_flags);
-                break;
-            case FUTEX_WAKE:
-                rc = _futex_wake(futex, lwp, val, op_flags);
-                break;
-            case FUTEX_REQUEUE:
-                futex2 = _futex_get(uaddr2, lwp, op_flags, &rc);
-                if (!rc)
-                {
-                    _futex_lock(lwp, op_flags);
-                    rc = _futex_requeue(futex, futex2, lwp, val, (long)timeout,
-                                        op_flags);
-                    _futex_unlock(lwp, op_flags);
-                }
-                break;
-            case FUTEX_CMP_REQUEUE:
-                futex2 = _futex_get(uaddr2, lwp, op_flags, &rc);
+        case FUTEX_WAIT:
+            rc = _futex_wait(futex, lwp, uaddr, val, timeout, op_flags);
+            break;
+        case FUTEX_WAKE:
+            rc = _futex_wake(futex, lwp, val, op_flags);
+            break;
+        case FUTEX_REQUEUE:
+            futex2 = _futex_get(uaddr2, lwp, op_flags, &rc);
+            if (!rc)
+            {
                 _futex_lock(lwp, op_flags);
-                if (*uaddr == val3)
-                {
-                    rc = 0;
-                }
-                else
-                {
-                    rc = -EAGAIN;
-                }
-                if (rc == 0)
-                {
-                    rc = _futex_requeue(futex, futex2, lwp, val,
-                                        (long)timeout, op_flags);
-                }
+                rc = _futex_requeue(futex, futex2, lwp, val, (long)timeout,
+                                    op_flags);
                 _futex_unlock(lwp, op_flags);
-                break;
-            case FUTEX_LOCK_PI:
-                rc = _futex_lock_pi(futex, lwp, uaddr, timeout, op_flags,
-                                    RT_FALSE);
-                break;
-            case FUTEX_UNLOCK_PI:
-                rc = _futex_unlock_pi(futex, lwp, op_flags);
-                break;
-            case FUTEX_TRYLOCK_PI:
-                rc = _futex_lock_pi(futex, lwp, uaddr, 0, op_flags, RT_TRUE);
-                break;
-            default:
-                LOG_W("User require op=%d which is not implemented", op);
-                rc = -ENOSYS;
-                break;
+            }
+            break;
+        case FUTEX_CMP_REQUEUE:
+            futex2 = _futex_get(uaddr2, lwp, op_flags, &rc);
+            _futex_lock(lwp, op_flags);
+            if (*uaddr == val3)
+            {
+                rc = 0;
+            }
+            else
+            {
+                rc = -EAGAIN;
+            }
+            if (rc == 0)
+            {
+                rc = _futex_requeue(futex, futex2, lwp, val,
+                                    (long)timeout, op_flags);
+            }
+            _futex_unlock(lwp, op_flags);
+            break;
+        case FUTEX_LOCK_PI:
+            rc = _futex_lock_pi(futex, lwp, uaddr, timeout, op_flags,
+                                RT_FALSE);
+            break;
+        case FUTEX_UNLOCK_PI:
+            rc = _futex_unlock_pi(futex, lwp, op_flags);
+            break;
+        case FUTEX_TRYLOCK_PI:
+            rc = _futex_lock_pi(futex, lwp, uaddr, 0, op_flags, RT_TRUE);
+            break;
+        default:
+            LOG_W("User require op=%d which is not implemented", op);
+            rc = -ENOSYS;
+            break;
         }
     }
 
     return rc;
 }
 
+/**
+ * @brief Fetches a robust futex list entry from user space
+ *
+ * @param[out] entry Pointer to store the retrieved robust list entry
+ * @param[in] head Pointer to the head of the robust list in user space
+ * @param[out] is_pi Pointer to store the PI flag status
+ *
+ * @return Operation status
+ *         - 0 on success
+ *         - EFAULT if user space access fails
+ *
+ * @note This helper function safely retrieves a robust futex list entry pointer
+ *       from user space and extracts the PI (Priority Inheritance) flag.
+ */
 rt_inline int _fetch_robust_entry(struct robust_list **entry,
                                   struct robust_list **head, rt_bool_t *is_pi)
 {
@@ -805,6 +1049,22 @@ rt_inline int _fetch_robust_entry(struct robust_list **entry,
     return 0;
 }
 
+/**
+ * @brief Handles futex cleanup when a thread dies
+ *
+ * @param[in] uaddr Pointer to the futex word in user space
+ * @param[in] thread The thread that is terminating
+ * @param[in] is_pi Flag indicating if this is a priority inheritance futex
+ * @param[in] is_pending_op Flag indicating if there are pending operations
+ *
+ * @return Operation status
+ *         - 0 on success
+ *         - -1 on invalid address or access failure
+ *         - Other negative error codes for specific failures
+ *
+ * @note This function performs cleanup operations for futexes when a thread terminates,
+ *       including marking the owner as dead and waking any waiting threads if necessary.
+ */
 static int _handle_futex_death(int *uaddr, rt_thread_t thread, rt_bool_t is_pi,
                                rt_bool_t is_pending_op)
 {
@@ -847,14 +1107,14 @@ retry:
     {
         switch (rc)
         {
-            case -EFAULT:
-                return -1;
-            case -EAGAIN:
-                rt_schedule();
-                goto retry;
-            default:
-                LOG_W("unknown errno: %d in '%s'", rc, __FUNCTION__);
-                return rc;
+        case -EFAULT:
+            return -1;
+        case -EAGAIN:
+            rt_schedule();
+            goto retry;
+        default:
+            LOG_W("unknown errno: %d in '%s'", rc, __FUNCTION__);
+            return rc;
         }
     }
 
@@ -868,10 +1128,16 @@ retry:
 }
 
 /**
- *  Brief: Walk thread->robust_list mark
- *      any locks found there dead, and notify any waiters.
+ * @brief Handle thread exit cleanup for robust futex list and notify waiters.
  *
- *  note: very carefully, it's a userspace list!
+ * @param[in] thread The exiting thread containing the robust list
+ *
+ * @note This function is called during thread termination to ensure
+ *       proper cleanup of futexes owned by the exiting thread.
+ *       It implements the robust futex mechanism to prevent deadlocks
+ *       when threads terminate while holding futex locks.
+ *       It handles both the main robust list and any pending operations.
+ *       Do it very carefully, it's a userspace list!
  */
 void lwp_futex_exit_robust_list(rt_thread_t thread)
 {

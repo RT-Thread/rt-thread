@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_DVFS_SPACEMIT_CPUFREQ']):
+    src += ['dvfs-spacemit-cpufreq.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''])
+
+Return('group')

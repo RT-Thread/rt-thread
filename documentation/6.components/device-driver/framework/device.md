@@ -1,5 +1,17 @@
 @page page_device_framework I/O Device Framework
 
+## For driver authors (short guide)
+
+| Layer | Responsibility |
+| --- | --- |
+| **Driver** | Map hardware, implement `init/read/write/control`, register `rt_device` (directly or via a sub-framework). |
+| **Framework** | Share code across vendors (`serial`, `spi`, `pwm`, …)—override only deltas. |
+| **App** | Never touch registers—use `rt_device_find` + standard APIs so swapping BSP does not break apps. |
+
+**Lifecycle**: `rt_device_register` → app `open` → `oflag` decides exclusive vs shared access → `close` should drain TX and disable IRQ/DMA.
+
+**Thread safety**: assume concurrent `read`/`write` unless your driver serializes with a mutex; document if not thread-safe.
+
 Most embedded systems include some I/O (Input/Output) devices, data displays on instruments, serial communication on industrial devices, Flash or SD cards for saving data on data acquisition devices,as well as Ethernet interfaces for network devices, are examples of I/O devices that are commonly seen in embedded systems.
 
 This chapter describes how RT-Thread manages different I/O devices.
@@ -21,7 +33,7 @@ The device driver framework layer is an abstraction of the same kind of hardware
 The device driver layer is a set of programs that drive the hardware devices to work, enabling access to hardware devices. It is responsible for creating and registering I/O devices. For devices with simple operation logic, you can register devices directly into the I/O Device Manager without going through the device driver framework layer. The sequence diagram is as shown below. There are mainly two points:
 
 * The device driver creates a device instance with hardware access capabilities based on the device model definition and registers the device with the  `rt_device_register()` interface in the I/O Device Manager.
-* The application finds the device through the`rt_device_find()` interface and then uses the I/O device management interface to access the hardware.
+* The application finds the device through the `rt_device_find()` interface and then uses the I/O device management interface to access the hardware.
 
 ![Simple I/O Device Using Sequence Diagram](figures/io-call.png)
 

@@ -49,13 +49,13 @@ bsp_library_type = 'hal_libraries'
 rtconfig.BSP_LIBRARY_TYPE = bsp_library_type
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, bsp_library_type, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, bsp_library_type, 'SConscript'), variant_dir=os.path.join('build', 'libraries', bsp_library_type), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hal_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hal_drivers', 'SConscript'), variant_dir='build/libraries/hal_drivers', duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libcpu_path_prefix, 'cpu', 'SConscript')))
+objs.extend(SConscript(os.path.join(libcpu_path_prefix, 'cpu', 'SConscript'), variant_dir='build/libcpu/cpu', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

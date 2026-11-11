@@ -82,6 +82,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_HOOKLIST
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
@@ -89,6 +90,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -124,7 +127,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50400
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -161,7 +165,7 @@
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 16384
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 10
 #define FINSH_USING_SYMTAB
@@ -176,10 +180,8 @@
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
-#define DFS_FD_MAX 32
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 8
+#define DFS_FD_MAX 512
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -198,6 +200,7 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_TMPFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -213,6 +216,10 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_PL011
+#define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -220,20 +227,37 @@
 #define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
 #define RT_USING_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_MMIO_ALIGN
-#define RT_USING_VIRTIO_BLK
-#define RT_USING_VIRTIO_CONSOLE
-#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
-#define RT_USING_VIRTIO_GPU
-#define RT_USING_VIRTIO_INPUT
+#define RT_VIRTIO_TRANSPORT_MMIO
+#define RT_VIRTIO_NET
+#define RT_VIRTIO_BLK
+#define RT_VIRTIO_CONSOLE
+#define RT_USING_DMA
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PIC
+#define MAX_HANDLERS 512
+#define RT_PIC_ARM_GIC
+#define RT_PIC_ARM_GIC_V3
+#define RT_PIC_ARM_GIC_MAX_NR 1
 #define RT_USING_PIN
-#define RT_USING_KTIME
 #define RT_USING_CLK
+
+/* SoC (System on Chip) Drivers */
+
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -256,14 +280,17 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_SOCKET
 #define RT_USING_POSIX_TERMIOS
+#define RT_USING_POSIX_MMAN
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
 #define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
+#define RT_USING_POSIX_PIPE_SIZE 2048
 
 /* Socket is in the 'Network' category */
 
@@ -273,6 +300,69 @@
 
 /* Network */
 
+#define RT_USING_SAL
+#define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
+
+/* Docking with protocol stacks */
+
+#define SAL_USING_LWIP
+/* end of Docking with protocol stacks */
+#define SAL_USING_POSIX
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_IPV4 1
+#define NETDEV_IPV6 0
+#define RT_USING_LWIP
+#define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
+#define RT_LWIP_MEM_ALIGNMENT 8
+#define RT_LWIP_IGMP
+#define RT_LWIP_ICMP
+#define RT_LWIP_DNS
+#define RT_LWIP_DHCP
+#define IP_SOF_BROADCAST 1
+#define IP_SOF_BROADCAST_RECV 1
+
+/* Static IPv4 Address */
+
+#define RT_LWIP_IPADDR "192.168.1.30"
+#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
+/* end of Static IPv4 Address */
+#define RT_LWIP_UDP
+#define RT_LWIP_TCP
+#define RT_LWIP_RAW
+#define RT_MEMP_NUM_NETCONN 64
+#define RT_LWIP_PBUF_NUM 320
+#define RT_LWIP_RAW_PCB_NUM 32
+#define RT_LWIP_UDP_PCB_NUM 32
+#define RT_LWIP_TCP_PCB_NUM 32
+#define RT_LWIP_TCP_SEG_NUM 480
+#define RT_LWIP_TCP_SND_BUF 65535
+#define RT_LWIP_TCP_WND 49152
+#define RT_LWIP_TCPTHREAD_PRIORITY 10
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 8192
+#define LWIP_NO_TX_THREAD
+#define RT_LWIP_ETHTHREAD_PRIORITY 12
+#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
+#define SO_REUSE 1
+#define LWIP_SO_RCVTIMEO 1
+#define LWIP_SO_SNDTIMEO 1
+#define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
+#define RT_LWIP_NETIF_LOOPBACK
+#define RT_LWIP_USING_LOOPBACK
+#define LWIP_NETIF_LOOPBACK 1
+#define RT_LWIP_USING_PING
 /* end of Network */
 
 /* Memory protection */
@@ -408,6 +498,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -423,6 +517,26 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -503,20 +617,5 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_VIRT64_AARCH64
-
-/* AARCH64 qemu virt64 configs */
-
-#define BSP_SUPPORT_FPU
-#define BSP_USING_UART
-#define RT_USING_UART0
-#define BSP_USING_RTC
-#define BSP_USING_PIN
-#define BSP_USING_VIRTIO_BLK
-#define BSP_USING_VIRTIO_CONSOLE
-#define BSP_USING_VIRTIO_GPU
-#define BSP_USING_VIRTIO_INPUT
-#define BSP_USING_GIC
-#define BSP_USING_GICV2
-/* end of AARCH64 qemu virt64 configs */
 
 #endif

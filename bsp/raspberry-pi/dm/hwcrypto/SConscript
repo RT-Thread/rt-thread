@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_HWCRYPTO_RNG_BCM2835']):
+    src += ['hw-rng-bcm2835.c']
+
+if GetDepend(['RT_HWCRYPTO_RNG_IPROC_RNG200']):
+    src += ['hw-rng-iproc-rng200.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

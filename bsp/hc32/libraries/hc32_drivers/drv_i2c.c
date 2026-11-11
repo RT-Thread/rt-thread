@@ -29,15 +29,15 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 #ifndef HC32_I2C_DEBUG
-    #define I2C_PRINT_DBG(fmt, args...)
-    #define I2C_PRINT_ERR(fmt, args...) rt_kprintf(fmt, ##args);
+#define I2C_PRINT_DBG(fmt, args...)
+#define I2C_PRINT_ERR(fmt, args...) rt_kprintf(fmt, ##args);
 #else
-    #define I2C_PRINT_DBG(fmt, args...) rt_kprintf(fmt, ##args);
-    #define I2C_PRINT_ERR(fmt, args...) rt_kprintf(fmt, ##args);
+#define I2C_PRINT_DBG(fmt, args...) rt_kprintf(fmt, ##args);
+#define I2C_PRINT_ERR(fmt, args...) rt_kprintf(fmt, ##args);
 #endif
 
-#define I2C_TIMEOUT                 ((uint32_t)0x10000)
-#define FCG_I2C_CLK                 FCG_Fcg1PeriphClockCmd
+#define I2C_TIMEOUT ((uint32_t)0x10000)
+#define FCG_I2C_CLK FCG_Fcg1PeriphClockCmd
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -69,8 +69,7 @@ enum
 #endif
 };
 
-static struct hc32_i2c_config i2c_config[] =
-{
+static struct hc32_i2c_config i2c_config[] = {
 #ifdef BSP_USING_I2C1
     I2C1_CONFIG,
 #endif
@@ -92,7 +91,7 @@ static struct hc32_i2c_config i2c_config[] =
 };
 
 static void hc32_i2c_dma_configure(struct rt_i2c_bus_device *bus);
-static struct hc32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
+static struct hc32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = { 0 };
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -269,14 +268,14 @@ static void hc32_i2c_dma_configure(struct rt_i2c_bus_device *bus)
         FCG_Fcg0PeriphClockCmd(i2c_obj->config->i2c_tx_dma->clock, ENABLE);
 
         (void)DMA_StructInit(&stcDmaInit);
-        stcDmaInit.u32BlockSize  = 1UL;
+        stcDmaInit.u32BlockSize = 1UL;
         stcDmaInit.u32TransCount = 0UL;
-        stcDmaInit.u32DataWidth  = DMA_DATAWIDTH_8BIT;
+        stcDmaInit.u32DataWidth = DMA_DATAWIDTH_8BIT;
         /* Configure TX */
-        stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_INC;
+        stcDmaInit.u32SrcAddrInc = DMA_SRC_ADDR_INC;
         stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
-        stcDmaInit.u32SrcAddr     = (uint32_t)NULL;
-        stcDmaInit.u32DestAddr    = (uint32_t)(&i2c_obj->config->Instance->DTR);
+        stcDmaInit.u32SrcAddr = (uint32_t)NULL;
+        stcDmaInit.u32DestAddr = (uint32_t)(&i2c_obj->config->Instance->DTR);
         if (LL_OK != DMA_Init(i2c_obj->config->i2c_tx_dma->Instance, i2c_obj->config->i2c_tx_dma->channel, &stcDmaInit))
         {
             I2C_PRINT_ERR("[%s:%d]I2C TX DMA init error!\n", __func__, __LINE__);
@@ -291,14 +290,14 @@ static void hc32_i2c_dma_configure(struct rt_i2c_bus_device *bus)
         /* DMA/AOS FCG enable */
         FCG_Fcg0PeriphClockCmd(i2c_obj->config->i2c_rx_dma->clock, ENABLE);
         (void)DMA_StructInit(&stcDmaInit);
-        stcDmaInit.u32BlockSize  = 1UL;
+        stcDmaInit.u32BlockSize = 1UL;
         stcDmaInit.u32TransCount = 0UL;
-        stcDmaInit.u32DataWidth  = DMA_DATAWIDTH_8BIT;
+        stcDmaInit.u32DataWidth = DMA_DATAWIDTH_8BIT;
         /* Configure RX */
-        stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_FIX;
+        stcDmaInit.u32SrcAddrInc = DMA_SRC_ADDR_FIX;
         stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_INC;
-        stcDmaInit.u32SrcAddr     = (uint32_t)(&i2c_obj->config->Instance->DRR);
-        stcDmaInit.u32DestAddr    = (uint32_t)NULL;
+        stcDmaInit.u32SrcAddr = (uint32_t)(&i2c_obj->config->Instance->DRR);
+        stcDmaInit.u32DestAddr = (uint32_t)NULL;
         if (LL_OK != DMA_Init(i2c_obj->config->i2c_rx_dma->Instance, i2c_obj->config->i2c_rx_dma->channel, &stcDmaInit))
         {
             I2C_PRINT_ERR("[%s:%d]I2C RX DMA init error!\n", __func__, __LINE__);
@@ -546,8 +545,7 @@ out:
     return ret;
 }
 
-static const struct rt_i2c_bus_device_ops hc32_i2c_ops =
-{
+static const struct rt_i2c_bus_device_ops hc32_i2c_ops = {
     .master_xfer = hc32_i2c_master_xfer,
     RT_NULL,
     RT_NULL

@@ -6,24 +6,43 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-05-01     wumingzi     first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
  */
 
-/* The file can test the rt-thread audio driver framework including following api via memory
- *  simulation.
+/**
+ * Test Case Name: Audio Test
  *
- *  rt_audio_register
- *  rt_audio_rx_done
- *  rt_audio_tx_complete
+ * Test Objectives:
+ * - Validate RT-Thread audio driver framework registration and data flow mechanisms.
+ * - Verify audio playback (TX) and recording (RX) data transmission correctness.
+ * - Ensure proper buffer management and memory integrity during audio operations.
+ * - Test core APIs: rt_audio_register(), rt_audio_tx_complete(), rt_audio_rx_done()
  *
- *  When audio devices generate or receive new data, the corresponding buffer in device will
- *  receive date from kernel or surroundings. The same phenomenon will also happen at the
- *  application level. Thus we can fill memory to simulate the generation of data then track
- *  and check memory to ensure kernel processing audio data correctly. And this depends on
- *  implementations of audio drivers.
+ * Test Scenarios:
+ * - Locate audio devices using SOUND_PLAYER_DEVICE_NAME and SOUND_MIC_DEVICE_NAME macros.
+ * - Write known byte patterns (0xAA, 0x55) to simulate audio data flow through TX/RX buffers.
+ * - Synchronize player and microphone test execution using audio_fsm_step state machine.
+ * - Test two consecutive block transfers for both TX and RX paths.
  *
- *  Therefore, if the player_test testcase failed, it could mean rt_audio_register or
- *  rt_audio_tx_complete existing bugs. Similarly, if mic_test testcase failed, it could mean
- *  rt_audio_register or rt_audio_rx_done existing bugs.
+ * Verification Metrics:
+ * - Written audio data appears correctly in device TX buffers with exact byte patterns.
+ * - Data read from microphone device matches expected fill patterns (0xAA then 0x55) without corruption.
+ * - Buffer boundaries are respected with no overflow or underflow conditions.
+ * - Device open/close operations complete successfully without resource leaks.
+ *
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_USING_AUDIO must be enabled (enable via: RT-Thread Components -> Device Drivers -> Using Audio device drivers).
+ *     - RT_UTEST_USING_AUDIO_DRIVER must be enabled (enable via: RT-Thread Utestcases -> Kernel Components-> Drivers -> Audio Test).
+ * - Environmental Assumptions: Audio devices registered and functional, sufficient memory available.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.audio.tc_audio_main)"
+ * - No memory leaks detected during buffer allocation/deallocation.
+ * - No assertions triggered during test execution.
+ * - Buffer content verification passes for all test patterns.
  */
 
 #include "tc_audio_common.h"
@@ -306,4 +325,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(testcase, "audio.tc_audio_main", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "components.drivers.audio.tc_audio_main", utest_tc_init, utest_tc_cleanup, 10);

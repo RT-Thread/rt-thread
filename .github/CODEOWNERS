@@ -2,7 +2,7 @@
 
 # https://help.github.com/en/articles/about-code-owners#codeowners-syntax
 
-/.github                                  @supperthomas
+/.github                                  @supperthomas @kurisaW
 /.gitee                                   @supperthomas
 /.hooks                                   @supperthomas
 /.devcontainer                            @supperthomas
@@ -19,7 +19,8 @@
 /bsp/stm32/stm32h750-artpi/               @Rbb666
 /bsp/maxim                                @supperthomas
 /bsp/nxp                                  @Rbb666
-/bsp/renesas                              @Rbb666
+/bsp/renesas                              @Rbb666 @kurisaW
+/bsp/gd32/arm                             @kurisaW
 
 *arduino*                                 @mysterywolf
 *.attach                                  @mysterywolf

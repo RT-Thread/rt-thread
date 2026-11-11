@@ -1,0 +1,20 @@
+utest.rvv.vlen128:
+    scons_arg:
+      - '--strict'
+    kconfig:
+      - CONFIG_ENABLE_VECTOR=y
+      - CONFIG_RT_USING_HEAP=y
+      - CONFIG_RT_USING_UTEST=y
+      - CONFIG_ARCH_VECTOR_VLEN_128=y
+      - CONFIG_ARCH_VECTOR_VLEN_256=n
+      - CONFIG_RT_USING_SMP=n
+utest.rvv.vlen256:
+    scons_arg:
+      - '--strict'
+    kconfig:
+      - CONFIG_ENABLE_VECTOR=y
+      - CONFIG_RT_USING_HEAP=y
+      - CONFIG_RT_USING_UTEST=y
+      - CONFIG_ARCH_VECTOR_VLEN_128=n
+      - CONFIG_ARCH_VECTOR_VLEN_256=y
+      - CONFIG_RT_USING_SMP=n

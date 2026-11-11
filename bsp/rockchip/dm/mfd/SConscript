@@ -1,0 +1,18 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_MFD_RK8XX']):
+    src += ['rk8xx.c']
+
+    if GetDepend(['RT_MFD_RK8XX_I2C']):
+        src += ['rk8xx-i2c.c']
+
+    if GetDepend(['RT_MFD_RK8XX_SPI']):
+        src += ['rk8xx-spi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

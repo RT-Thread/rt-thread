@@ -9,6 +9,7 @@
 ### TI
 
 - MSP432E4x
+- TM4Cx
 
 ### Bekencorp
 
@@ -17,3 +18,7 @@
 ### AllwinnerTech
 
 - F1Cxxx, F2Cxxx
+
+### SIFLI
+
+- SF325X

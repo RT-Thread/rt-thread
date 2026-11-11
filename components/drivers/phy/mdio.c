@@ -35,7 +35,8 @@ struct mii_bus *rt_mdio_get_bus_by_name(const char *busname)
 struct mii_bus *rt_mdio_alloc(void)
 {
     struct mii_bus *mii;
-    mii = rt_malloc(sizeof(struct mii_bus));
+
+    mii = rt_calloc(1, sizeof(*mii));
     if (!mii)
         return RT_NULL;
 

@@ -1,5 +1,6 @@
 from building import *
 from gcc import *
+import os
 import rtconfig
 
 cwd = GetCurrentDir()
@@ -7,8 +8,10 @@ src = ['dev_spi_core.c', 'dev_spi.c']
 CPPPATH = [cwd, cwd + '/../include']
 LOCAL_CFLAGS = ''
 
-if GetDepend('RT_USING_SOFT_SPI'):
+if GetDepend('RT_USING_SPI_BITOPS'):
     src += ['dev_spi_bit_ops.c']
+
+if GetDepend('RT_USING_SOFT_SPI'):
     src += ['dev_soft_spi.c']
 
 if GetDepend('RT_USING_QSPI'):
@@ -31,10 +34,11 @@ if GetDepend('RT_USING_SFUD'):
     if GetDepend('RT_SFUD_USING_SFDP'):
         src_device += ['sfud/src/sfud_sfdp.c']
 
-    if rtconfig.PLATFORM in GetGCCLikePLATFORM():
-        LOCAL_CFLAGS += ' -std=c99'
-    elif rtconfig.PLATFORM in ['armcc']:
-        LOCAL_CFLAGS += ' --c99'
+    if not GetDepend('RT_USING_DM'):
+        if rtconfig.PLATFORM in GetGCCLikePLATFORM():
+            LOCAL_CFLAGS += ' -std=c99'
+        elif rtconfig.PLATFORM in ['armcc']:
+            LOCAL_CFLAGS += ' --c99'
 
 if GetDepend('RT_USING_DM'):
     src += ['dev_spi_dm.c', 'dev_spi_bus.c']
@@ -42,5 +46,10 @@ if GetDepend('RT_USING_DM'):
 src += src_device
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

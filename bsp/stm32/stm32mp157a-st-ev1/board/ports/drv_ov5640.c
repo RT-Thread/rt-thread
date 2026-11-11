@@ -26,7 +26,7 @@
 #include <drv_log.h>
 
 #define CHIP_ADDRESS    0x3C /* OV5640 address */
-#define I2C_NAME        "i2c2"
+#define I2C_NAME        "swi2c2"
 
 #define JPEG_BUF_SIZE   8 * 1024
 #define JPEG_LINE_SIZE  1 * 1024

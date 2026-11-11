@@ -37,6 +37,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     CXX = PREFIX + 'g++'
+    CPP = PREFIX + 'gcc'
     LINK = PREFIX + 'gcc'
     TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
@@ -46,6 +47,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    CPPFLAGS = ' -E -P -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
     CPATH = ''
@@ -75,7 +77,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M7.fp.sp'
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
+    LFLAGS = DEVICE + r' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 

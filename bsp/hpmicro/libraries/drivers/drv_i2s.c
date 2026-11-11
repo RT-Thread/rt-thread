@@ -28,6 +28,8 @@
 #include "drv_i2s.h"
 #include "drivers/dev_audio.h"
 
+extern uint32_t rtt_board_init_i2s_clock(I2S_Type *ptr);
+
 static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size);
 
 /**
@@ -89,7 +91,7 @@ static struct hpm_i2s hpm_i2s_set[] =
 #if defined(BSP_USING_I2S1) && defined(HPM_I2S1)
     {
         .dev_name = "i2s1",
-        .base = HPM_I2S1;
+        .base = HPM_I2S1,
         .clk_name =  clock_i2s1,
         .rx_dma_req = HPM_DMA_SRC_I2S1_RX,
         .tx_dma_req = HPM_DMA_SRC_I2S1_TX,
@@ -147,7 +149,7 @@ static rt_err_t hpm_i2s_init(struct rt_audio_device* audio)
     struct hpm_i2s* hpm_audio = (struct hpm_i2s*)audio->parent.user_data;
 
     init_i2s_pins(hpm_audio->base);
-    board_init_i2s_clock(hpm_audio->base);
+    rtt_board_init_i2s_clock(hpm_audio->base);
 
     /* enable dma request */
     i2s_enable_rx_dma_request(hpm_audio->base);
@@ -155,7 +157,10 @@ static rt_err_t hpm_i2s_init(struct rt_audio_device* audio)
 
     i2s_get_default_config(hpm_audio->base, &i2s_config);
     i2s_config.enable_mclk_out = true;
-    i2s_init(hpm_audio->base, &i2s_config);
+    if (status_success != i2s_init(hpm_audio->base, &i2s_config)) {
+        LOG_E("%s init failed.\n", hpm_audio->dev_name);
+        return -RT_ERROR;
+    }
 
     mclk_hz = clock_get_frequency(hpm_audio->clk_name);
     i2s_get_default_transfer_config(&transfer);
@@ -165,6 +170,7 @@ static rt_err_t hpm_i2s_init(struct rt_audio_device* audio)
     transfer.channel_slot_mask = I2S_CHANNEL_SLOT_MASK(0); /* one channel */
     transfer.audio_depth = i2s_audio_depth_16_bits;
     transfer.master_mode = true;
+    transfer.data_line = BOARD_APP_I2S_RX_DATA_LINE;
     hpm_audio->transfer = transfer;
     /* record i2s parameter to audio_config */
     hpm_audio->audio_config.samplerate = 48000U;
@@ -172,7 +178,7 @@ static rt_err_t hpm_i2s_init(struct rt_audio_device* audio)
     hpm_audio->audio_config.channels = 1;
     if (status_success != i2s_config_transfer(hpm_audio->base, mclk_hz, &transfer))
     {
-        LOG_E("dao_i2s configure transfer failed\n");
+        LOG_E("i2s configure transfer failed\n");
         return -RT_ERROR;
     }
 
@@ -410,15 +416,20 @@ static rt_err_t hpm_i2s_configure(struct rt_audio_device* audio, struct rt_audio
 
     /* Stop I2S transfer if the I2S needs to be re-configured */
     bool is_enabled = i2s_is_enabled(hpm_audio->base);
+    i2s_disable(hpm_audio->base);
+    if (status_success != i2s_reset_tx_rx(hpm_audio->base)) {
+        LOG_E("%s reset tx_rx failed.\n", hpm_audio->dev_name);
+        return -RT_ERROR;
+    }
     if (is_enabled)
     {
         if (hpm_audio->i2s_state == hpm_i2s_state_read)
         {
-            dma_abort_channel(hpm_audio->rx_dma_resource.base, hpm_audio->rx_dma_resource.channel);
+            dma_mgr_abort_chn_transfer(&(hpm_audio->rx_dma_resource));
         }
         if (hpm_audio->i2s_state == hpm_i2s_state_write)
         {
-            dma_abort_channel(hpm_audio->tx_dma_resource.base, hpm_audio->tx_dma_resource.channel);
+            dma_mgr_abort_chn_transfer(&(hpm_audio->tx_dma_resource));
         }
     }
     if (status_success != i2s_config_transfer(hpm_audio->base, clock_get_frequency(hpm_audio->clk_name), &hpm_audio->transfer))
@@ -429,6 +440,14 @@ static rt_err_t hpm_i2s_configure(struct rt_audio_device* audio, struct rt_audio
     /* Restore I2S to previous state */
     if (is_enabled)
     {
+        if (hpm_audio->i2s_state == hpm_i2s_state_read)
+        {
+            i2s_disable_rx_dma_request(hpm_audio->base);
+            if (I2S_FIFO_SIZE != hpm_i2s_transmit(&hpm_audio->audio, NULL, hpm_audio->rx_buff, I2S_FIFO_SIZE)) {
+                return -RT_ERROR;
+            }
+            i2s_enable_rx_dma_request(hpm_audio->base);
+        }
         i2s_enable(hpm_audio->base);
     }
 
@@ -456,9 +475,13 @@ static rt_err_t hpm_i2s_start(struct rt_audio_device* audio, int stream)
             LOG_E("no dma resource available for I2S TX transfer.\n");
             return -RT_ERROR;
         }
-        i2s_reset_tx(hpm_audio->base); /* disable and reset tx */
+        if (status_success != i2s_reset_tx(hpm_audio->base)) { /* disable and reset tx */
+            LOG_E("%s reset tx failed.\n", hpm_audio->dev_name);
+            return -RT_ERROR;
+        }
+        i2s_enable_tx_line(hpm_audio->base, hpm_audio->transfer.data_line);
         /* fill 2 dummy data, it is suitable for 1/2 channel of audio */
-        if (i2s_fill_tx_dummy_data(hpm_audio->base, hpm_audio->transfer.data_line , 2) != status_success) {
+        if (i2s_fill_tx_dummy_data(hpm_audio->base, hpm_audio->transfer.data_line, 2) != status_success) {
             return -RT_ERROR;
         }
         rt_audio_tx_complete(audio);
@@ -478,7 +501,11 @@ static rt_err_t hpm_i2s_start(struct rt_audio_device* audio, int stream)
             LOG_E("no dma resource available for I2S RX transfer.\n");
             return -RT_ERROR;
         }
-        i2s_reset_rx(hpm_audio->base); /* disable and reset rx */
+        if (status_success != i2s_reset_rx(hpm_audio->base)) { /* disable and reset rx */
+            LOG_E("%s reset rx failed.\n", hpm_audio->dev_name);
+            return -RT_ERROR;
+        }
+        i2s_enable_rx_line(hpm_audio->base, hpm_audio->transfer.data_line);
         if (I2S_FIFO_SIZE != hpm_i2s_transmit(&hpm_audio->audio, NULL, hpm_audio->rx_buff, I2S_FIFO_SIZE)) {
             return -RT_ERROR;
         }
@@ -500,12 +527,12 @@ static rt_err_t hpm_i2s_stop(struct rt_audio_device* audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY) {
         dma_resource_t *dma_resource = &hpm_audio->tx_dma_resource;
-        dma_abort_channel(dma_resource->base, dma_resource->channel);
+        dma_mgr_abort_chn_transfer(dma_resource);
         dma_mgr_release_resource(dma_resource);
     } else if (stream == AUDIO_STREAM_RECORD)
     {
         dma_resource_t *dma_resource = &hpm_audio->rx_dma_resource;
-        dma_abort_channel(dma_resource->base, dma_resource->channel);
+        dma_mgr_abort_chn_transfer(dma_resource);
         dma_mgr_release_resource(dma_resource);
     } else {
         return -RT_ERROR;
@@ -546,6 +573,7 @@ static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* wr
         ch_config.size_in_byte = size;
         ch_config.dst_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
         ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
+        ch_config.interrupt_mask = DMA_INTERRUPT_MASK_ABORT;
 
         if (l1c_dc_is_enabled()) {
             /* cache writeback for sent buff */
@@ -570,6 +598,7 @@ static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* wr
         ch_config.size_in_byte = size;
         ch_config.src_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
         ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
+        ch_config.interrupt_mask = DMA_INTERRUPT_MASK_ABORT;
 
         hpm_audio->i2s_state = hpm_i2s_state_read;
         if (status_success != dma_setup_channel(dma_resource->base, dma_resource->channel, &ch_config, true)) {

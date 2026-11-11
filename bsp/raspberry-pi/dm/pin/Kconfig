@@ -1,0 +1,15 @@
+config RT_PIN_BCM_VIRT
+    bool "Broadcom Virt GPIO support"
+    depends on RT_USING_PIN
+    default n
+
+config RT_PIN_BRCMSTB
+    bool "BRCMSTB GPIO support"
+    depends on RT_USING_PIN
+    default n
+
+config RT_PIN_RASPBERRYPI_EXP
+    bool "Raspberry Pi 3 GPIO Expander"
+    depends on RT_USING_PIN
+    depends on RT_FIRMWARE_RASPBERRYPI
+    default n

@@ -23,5 +23,5 @@ extern "C" {
 }
 #endif
 
-#endif /* __DRV_HWTIMER_H__ */
+#endif /* __DRV_CLOCK_TIMER_H__ */
 

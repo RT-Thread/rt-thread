@@ -3,6 +3,7 @@ from building import *
 cwd = GetCurrentDir()
 
 src = []
+src += ['drv_delay.c']
 
 if GetDepend('BSP_USING_GPIO'):
     src += ['drv_gpio.c']
@@ -32,8 +33,8 @@ if GetDepend('BSP_USING_SDXC'):
 if GetDepend('BSP_USING_PWM') or GetDepend('BSP_USING_PWMV2'):
     src += ['drv_pwm.c']
 
-if GetDepend('BSP_USING_GPTMR'):
-    src += ['drv_hwtimer.c']
+if GetDepend('BSP_USING_GPTMR') or GetDepend('BSP_USING_GPTMRV2'):
+    src += ['drv_timer.c']
 
 if GetDepend('BSP_USING_CAN'):
     src += ['drv_can.c']
@@ -68,6 +69,16 @@ if GetDepend('BSP_USING_MCAN'):
 if GetDepend(['BSP_USING_RTT_LCD_DRIVER']):
     src += ['drv_lcd.c']
 
+if GetDepend('BSP_USING_TSW'):
+    src += ['drv_tsw.c']
+    src += ['drv_tsw_phy.c']
+
+if GetDepend('BSP_USING_SOFT_I2C'):
+    src += ['drv_soft_i2c.c']
+
+if GetDepend('BSP_USING_SOFT_SPI'):
+    src += ['drv_soft_spi.c']
+    
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

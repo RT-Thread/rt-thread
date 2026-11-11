@@ -176,6 +176,8 @@
 #define PTE_A     0x040 // Accessed
 #define PTE_D     0x080 // Dirty
 #define PTE_SOFT  0x300 // Reserved for Software
+#define PTE_ATTR_RW         (PTE_R | PTE_W)
+#define PTE_ATTR_RWX        (PTE_ATTR_RW | PTE_X)
 
 #define PTE_PPN_SHIFT 10
 

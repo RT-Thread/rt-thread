@@ -1,0 +1,29 @@
+[package]
+name = "rt-rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rt_rust"
+crate-type = ["rlib", "staticlib"]
+
+[features]
+default = []
+smp = []
+fs = []
+libdl = []
+
+[package.metadata.rt-thread.features.smp]
+all = ["RT_USING_SMP"]
+
+[package.metadata.rt-thread.features.fs]
+all = ["RT_USING_DFS", "DFS_USING_POSIX"]
+
+[package.metadata.rt-thread.features.libdl]
+all = ["RT_USING_MODULE"]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

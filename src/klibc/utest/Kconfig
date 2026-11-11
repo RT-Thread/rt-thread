@@ -1,0 +1,4 @@
+config RT_UTEST_TC_USING_KLIBC
+    bool "Kernel Libc Test"
+    select RT_USING_UTEST
+    default n

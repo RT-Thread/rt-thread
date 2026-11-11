@@ -12,22 +12,34 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <rtatomic.h>
 
 #include "cpuport.h"
 #include "stack.h"
 #include <sbi.h>
 #include <encoding.h>
 
+#ifdef ARCH_MM_MMU
+#include "mmu.h"
+#endif
+
+#ifdef RT_USING_SMP
+#include "tick.h"
+#include "interrupt.h"
+
+volatile unsigned long rt_riscv_online_mask;
+#endif /* RT_USING_SMP */
+
 #ifdef ARCH_RISCV_FPU
-    #define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
+#define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
 #else
-    #define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
+#define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
 #endif
 
 #ifdef ARCH_RISCV_VECTOR
-    #define K_SSTATUS_DEFAULT (K_SSTATUS_DEFAULT_BASE | SSTATUS_VS)
+#define K_SSTATUS_DEFAULT (K_SSTATUS_DEFAULT_BASE | SSTATUS_VS)
 #else
-    #define K_SSTATUS_DEFAULT K_SSTATUS_DEFAULT_BASE
+#define K_SSTATUS_DEFAULT K_SSTATUS_DEFAULT_BASE
 #endif
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
@@ -49,10 +61,13 @@ volatile rt_ubase_t rt_interrupt_to_thread = 0;
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
+#ifdef ARCH_MM_MMU
+static rt_ubase_t *percpu_hartid;
+#endif
+
 void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 {
-    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)
-        ((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
+    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
 
     rt_memset(frame, 0, sizeof(struct rt_hw_switch_frame));
 
@@ -64,8 +79,56 @@ void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 
 int rt_hw_cpu_id(void)
 {
+#ifndef RT_USING_SMP
     return 0;
+#else
+    if (rt_kmem_pvoff() != 0)
+    {
+        return *percpu_hartid;
+    }
+    else
+    {
+        // if not enable MMU or pvoff==0, read hartid from satp register
+        rt_ubase_t hartid;
+        asm volatile("csrr %0, satp" : "=r"(hartid));
+        return hartid & 0xFFFF;  // Assuming hartid fits in lower 16 bits
+    }
+#endif /* RT_USING_SMP */
 }
+
+/**
+ * @brief Return the one-based position of the least significant set bit.
+ *
+ * Declared in rtthread.h and required by components such as smp_call and the
+ * RT_FIELD_PREP/RT_FIELD_GET helpers; only aarch64 used to provide it.
+ */
+unsigned long __rt_ffsl(unsigned long value)
+{
+#ifdef __GNUC__
+    return __builtin_ffsl(value);
+#else
+    unsigned long bit;
+
+    if (!value)
+    {
+        return 0;
+    }
+
+    for (bit = 1; (value & 1UL) == 0; bit++)
+    {
+        value >>= 1;
+    }
+
+    return bit;
+#endif /* __GNUC__ */
+}
+
+#ifdef RT_USING_SMP
+void rt_hw_cpu_mark_online(void)
+{
+    rt_hw_atomic_or((volatile rt_atomic_t *)&rt_riscv_online_mask, ((rt_atomic_t)1U << rt_hw_cpu_id()));
+}
+#endif /* RT_USING_SMP */
 
 /**
  * This function will initialize thread stack, we assuming
@@ -117,10 +180,22 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
 
     return;
 }
+#else
+void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread)
+{
+    /* Perform architecture-specific context switch. This call will
+     * restore the target thread context and should not return when a
+     * switch is performed. The caller (scheduler) invoked this function
+     * in a context where local IRQs are disabled. */
+    rt_uint32_t level;
+    level = rt_hw_local_irq_disable();
+    rt_hw_context_switch((rt_ubase_t)from, (rt_ubase_t)to, to_thread);
+    rt_hw_local_irq_enable(level);
+}
 #endif /* end of RT_USING_SMP */
 
 /** shutdown CPU */
-void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");
@@ -137,3 +212,80 @@ void rt_hw_set_process_id(int pid)
 {
     // TODO
 }
+
+#ifdef RT_USING_SMP
+extern void _start(void);
+extern int boot_hartid;
+/* Boot secondary harts using the SBI HSM hart_start call. */
+void rt_hw_secondary_cpu_up(void)
+{
+    rt_uint64_t entry_pa;
+    int hart, ret;
+
+    /* translate kernel virtual _start to physical address. */
+#ifdef ARCH_MM_MMU
+    if (rt_kmem_pvoff() != 0)
+    {
+        entry_pa = (rt_uint64_t)rt_kmem_v2p(&_start);
+    }
+    else
+    {
+        entry_pa = (rt_uint64_t)&_start;
+    }
+#else
+    entry_pa = (rt_uint64_t)&_start;
+#endif /* ARCH_MM_MMU */
+    /* Assumes hart IDs are in range [0, RT_CPUS_NR) */
+    RT_ASSERT(boot_hartid < RT_CPUS_NR);
+    for (hart = 0; hart < RT_CPUS_NR; hart++)
+    {
+        if (hart == boot_hartid)
+            continue;
+
+        ret = sbi_hsm_hart_start((unsigned long)hart,
+                                 (unsigned long)entry_pa,
+                                 0UL);
+        if (ret)
+        {
+            rt_kprintf("sbi_hsm_hart_start failed for hart %d: %d\n", hart, ret);
+        }
+    }
+}
+
+#ifdef ARCH_MM_MMU
+void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid)
+{
+    RT_ASSERT(hartid < RT_CPUS_NR);
+    rt_ubase_t *percpu_hartid_paddr;
+    rt_size_t percpu_size = (rt_size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
+
+    percpu_hartid = percpu_ptr;
+
+    // from virtual address to physical address
+    percpu_ptr = (rt_ubase_t *)((rt_ubase_t)percpu_ptr + (rt_ubase_t)rt_kmem_pvoff());
+    percpu_hartid_paddr = percpu_ptr;
+
+    /* Save to the real area */
+    *(rt_ubase_t *)((void *)percpu_hartid_paddr + hartid * percpu_size) = hartid;
+}
+#endif /* ARCH_MM_MMU */
+
+void secondary_cpu_entry(void)
+{
+
+#ifdef RT_USING_SMART
+    /* switch to kernel address space */
+    rt_hw_aspace_switch(&rt_kernel_space);
+#endif
+    /* The PLIC peripheral interrupts are currently handled by the boot_hart. */
+    /* Enable the Supervisor-Timer bit in SIE */
+    rt_hw_tick_init();
+
+    /* ipi init */
+    rt_hw_ipi_init();
+
+    rt_hw_spin_lock(&_cpus_lock);
+    /* invoke system scheduler start for secondary CPU */
+    rt_system_scheduler_start();
+}
+#endif /* RT_USING_SMP */

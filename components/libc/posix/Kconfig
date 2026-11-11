@@ -79,7 +79,7 @@ if RT_USING_POSIX_FS
 endif
 
 config RT_USING_POSIX_DELAY
-    select RT_USING_KTIME
+    select RT_USING_CLOCK_TIME
     bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
     default n
 
@@ -89,7 +89,7 @@ config RT_USING_POSIX_CLOCK
     default n
 
 config RT_USING_POSIX_TIMER
-    select RT_USING_KTIME
+    select RT_USING_CLOCK_TIME
     select RT_USING_RESOURCE_ID
     bool "Enable timer APIs, timer_create()/timer_gettime() etc"
     default n

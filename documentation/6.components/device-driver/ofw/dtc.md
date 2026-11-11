@@ -2,6 +2,8 @@
 
 # Introduction to the DTC
 
+Runtime driver APIs that consume the flattened device tree (**`rt_ofw_*`**, **`rt_fdt_*`**, MMIO and IRQ parsing) are documented under @ref page_device_ofw and @ref page_device_ofw_boot.
+
 Device Tree Compiler, dtc, takes as input a device-tree in a given format and outputs a device-tree in another format for booting kernels on embedded systems.
 Typically, the input format is "dts" (device-tree source), a human readable source format, and creates a "dtb" (device-tree binary), or binary format as output.
 
@@ -10,7 +12,7 @@ Typically, the input format is "dts" (device-tree source), a human readable sour
 ## Generate DTS
 
 When you have a DTB or FDT file from firmware or another runtime system, you might want to convert it into a DTS file for easier reading.
-You can do this in Python or your SConscript file. For example, assuming you have `dummpy.dtb`:
+You can do this in Python or your SConscript file. For example, assuming you have `dummy.dtb`:
 
 ```python
 import os, sys
@@ -21,18 +23,18 @@ sys.path.append(RTT_ROOT + '/tools')
 from building import *
 import dtc
 
-dtc.dtb_to_dts(RTT_ROOT, "dummpy.dtb")
+dtc.dtb_to_dts(RTT_ROOT, "dummy.dtb")
 ```
 
-This will generate a dummpy.dts in the current directory. If a file with the same name already exists, it will be replaced.
+This will generate a dummy.dts in the current directory. If a file with the same name already exists, it will be replaced.
 To avoid overwriting, you can specify a different output name:
 
 ```python
 [...]
 
-dtc.dtb_to_dts(RTT_ROOT, "dummpy.dtb", "dummpy-tmp.dts")
+dtc.dtb_to_dts(RTT_ROOT, "dummy.dtb", "dummy-tmp.dts")
 # or
-dtc.dtb_to_dts(RTT_ROOT, "dummpy.dtb", dts_name = "dummpy-tmp.dts")
+dtc.dtb_to_dts(RTT_ROOT, "dummy.dtb", dts_name = "dummy-tmp.dts")
 ```
 
 ## Generate DTB
@@ -120,7 +122,7 @@ sys.path.append(RTT_ROOT + '/tools')
 from building import *
 import dtc
 
-dtc.dts_to_dtb(RTT_ROOT, ["dummpy.dts"]
+dtc.dts_to_dtb(RTT_ROOT, ["dummy.dts"])
 ```
 
 To append more include paths, for example, SoC DM headers:
@@ -128,7 +130,7 @@ To append more include paths, for example, SoC DM headers:
 ```python
 [...]
 
-dtc.dts_to_dtb(RTT_ROOT, ["dummpy.dts"], include_paths = ['dm/include', 'firmware'])
+dtc.dts_to_dtb(RTT_ROOT, ["dummy.dts"], include_paths = ['dm/include', 'firmware'])
 ```
 
 ### Multiple DTB
@@ -244,10 +246,10 @@ Build all DTBs together:
 ```python
 [...]
 
-dtc.dts_to_dtb(RTT_ROOT, ["dummpy-vendorA.dts", "dummpy-vendorB.dts", "dummpy-vendorC.dts"])
+dtc.dts_to_dtb(RTT_ROOT, ["dummy-vendorA.dts", "dummy-vendorB.dts", "dummy-vendorC.dts"])
 ```
 
-This will produce `dummpy-vendorA.dtb`, `dummpy-vendorB.dtb`, and `dummpy-vendorC.dtb`
+This will produce `dummy-vendorA.dtb`, `dummy-vendorB.dtb`, and `dummy-vendorC.dtb`
 
 ## Warnings
 
@@ -257,7 +259,7 @@ To suppress specific warnings:
 ```python
 [...]
 
-dtc.dts_to_dtb(RTT_ROOT, ["dummpy.dts"], ignore_warning = ["simple_bus_reg", "unit_address_vs_reg", "clocks_is_cell", "gpios_property"])
+dtc.dts_to_dtb(RTT_ROOT, ["dummy.dts"], ignore_warning = ["simple_bus_reg", "unit_address_vs_reg", "clocks_is_cell", "gpios_property"])
 ```
 
 Make sure your DTS is valid!
@@ -269,6 +271,6 @@ DTC provides additional command-line options (see dtc --help). You can pass raw 
 ```python
 [...]
 
-dtc.dtb_to_dts(RTT_ROOT, "dummpy.dtb", options = "--quiet")
-dtc.dts_to_dtb(RTT_ROOT, ["dummpy.dts"], options = "--quiet")
+dtc.dtb_to_dts(RTT_ROOT, "dummy.dtb", options = "--quiet")
+dtc.dts_to_dtb(RTT_ROOT, ["dummy.dts"], options = "--quiet")
 ```

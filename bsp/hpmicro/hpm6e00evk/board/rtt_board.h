@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,8 +9,12 @@
 #define _RTT_BOARD_H
 #include "hpm_common.h"
 #include "hpm_soc.h"
+#include "board.h"
 
 /* gpio section */
+#define APP_LED0         (0U)
+#define APP_LED1         (1U)
+#define APP_LED2         (2U)
 #define APP_LED0_GPIO_CTRL HPM_GPIO0
 #define APP_LED0_GPIO_INDEX GPIO_DI_GPIOE
 #define APP_LED0_GPIO_PIN 14
@@ -27,6 +31,12 @@
 
 /* mchtimer section */
 #define BOARD_MCHTMR_FREQ_IN_HZ (24000000UL)
+
+/* gptmr as os_tick */
+#define BOARD_OS_TIMER HPM_GPTMR0
+#define BOARD_OS_TIMER_CH       1
+#define BOARD_OS_TIMER_IRQ      IRQn_GPTMR0
+#define BOARD_OS_TIMER_CLK_NAME (clock_gptmr0)
 
 /* CAN section */
 #define BOARD_CAN_NAME                        "can4"
@@ -45,7 +55,22 @@
 #define BOARD_PWM_NAME                        "pwm1"
 #define BOARD_PWM_CHANNEL                     (0U)
 
+/* ADC section */
+#define BOARD_ADC_NAME                        BOARD_APP_ADC16_NAME
+#define BOARD_ADC_CHANNEL                     BOARD_APP_ADC16_CH_1
+
 #define IRQn_PendSV IRQn_DEBUG0
+
+#define BOARD_ENET0_INF             (1U)  /* 0: RMII, 1: RGMII */
+#define BOARD_ENET0_INT_REF_CLK     (0U)
+#define BOARD_ENET0_PHY_RST_TIME    (30)
+#if BOARD_ENET0_INF
+#define BOARD_ENET0_TX_DLY          (0U)
+#define BOARD_ENET0_RX_DLY          (0U)
+#endif
+#if defined(__USE_ENET_PTP) && __USE_ENET_PTP
+#define BOARD_ENET0_PTP_CLOCK       (clock_ptp0)
+#endif
 
 /***************************************************************
  *

@@ -150,8 +150,6 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
     }
     logic_nbr[0] = '0' + index;
 
-    /* save device */
-    disk[index] = mnt->dev_id;
     /* check sector size */
     if (rt_device_control(mnt->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
     {
@@ -162,6 +160,8 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
             return -EINVAL;
         }
     }
+    /* save device */
+    disk[index] = mnt->dev_id;
 
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
@@ -192,7 +192,10 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         mnt->data = fat;
@@ -299,7 +302,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
             logic_nbr[0] = '0' + index;
-            f_mount(fat, logic_nbr, (BYTE)index);
+            f_mount(fat, logic_nbr, 0);  /* opt=0: delayed mount, just register FATFS object */
         }
     }
     else
@@ -319,7 +322,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        f_mount(RT_NULL, logic_nbr, 0);
         rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
@@ -444,7 +447,7 @@ int dfs_elm_open(struct dfs_file *file)
         }
 
         file->vnode->data = dir;
-        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+        dfs_vnode_lock_init(file->vnode, file->dentry);
         return RT_EOK;
     }
     else
@@ -485,7 +488,7 @@ int dfs_elm_open(struct dfs_file *file)
             file->vnode->size = f_size(fd);
             file->vnode->type = FT_REGULAR;
             file->vnode->data = fd;
-            rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+            dfs_vnode_lock_init(file->vnode, file->dentry);
 
             if (file->flags & O_APPEND)
             {
@@ -522,6 +525,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -619,6 +623,11 @@ int dfs_elm_flush(struct dfs_file *file)
     FIL *fd;
     FRESULT result;
 
+    if (file->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
+
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
 
@@ -629,7 +638,7 @@ int dfs_elm_flush(struct dfs_file *file)
 off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     FRESULT result = FR_OK;
-
+    off_t pos = 0;
     switch (wherece)
     {
     case SEEK_SET:
@@ -656,11 +665,12 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         RT_ASSERT(fd != RT_NULL);
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_lseek(fd, offset);
+        pos = fd->fptr;
         rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* return current position */
-            return fd->fptr;
+            return pos;
         }
     }
     else if (file->vnode->type == FT_DIRECTORY)
@@ -783,7 +793,7 @@ int dfs_elm_unlink(struct dfs_dentry *dentry)
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, dentry->pathname);
 #else
     const char *drivers_fn;
-    drivers_fn = path;
+    drivers_fn = dentry->pathname;
 #endif
 
     result = f_unlink(drivers_fn);
@@ -1013,10 +1023,19 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
 {
-    /* nothing to be freed */
-    if (vnode && vnode->ref_count <= 1)
+    if (vnode && vnode->ref_count <= 1 && vnode->data != RT_NULL)
     {
-        vnode->data = NULL;
+        if (vnode->type == FT_DIRECTORY)
+        {
+            f_closedir((DIR *)vnode->data);
+        }
+        else if (vnode->type == FT_REGULAR)
+        {
+            f_close((FIL *)vnode->data);
+        }
+        rt_free(vnode->data);
+        vnode->data = RT_NULL;
+        rt_mutex_detach(&vnode->lock);
     }
 
     return 0;
@@ -1132,6 +1151,9 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     rt_size_t result;
     rt_device_t device = disk[drv];
 
+    if (device == RT_NULL)
+        return RES_ERROR;
+
     result = rt_device_read(device, sector, buff, count);
     if (result == count)
     {
@@ -1146,6 +1168,9 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
+
+    if (device == RT_NULL)
+        return RES_ERROR;
 
     result = rt_device_write(device, sector, buff, count);
     if (result == count)

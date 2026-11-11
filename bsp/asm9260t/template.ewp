@@ -751,7 +751,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>D:\GitHub\rt-thread\bsp\asm9260t\link_scripts\sdram.icf</state>
+                    <state>$PROJ_DIR$\link_scripts\sdram.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

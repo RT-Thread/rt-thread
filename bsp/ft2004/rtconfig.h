@@ -109,11 +109,14 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 4096
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
@@ -179,6 +182,10 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_CAN
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 512
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -186,6 +193,7 @@
 #define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
@@ -437,6 +445,22 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

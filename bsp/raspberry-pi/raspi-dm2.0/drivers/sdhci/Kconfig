@@ -1,3 +1,0 @@
-menuconfig RT_USING_SDHCI
-    bool "Using sdhci for sd/mmc drivers"
-    default n

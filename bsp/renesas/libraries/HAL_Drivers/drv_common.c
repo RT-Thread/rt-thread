@@ -11,9 +11,17 @@
 #include <drv_common.h>
 #include <bsp_api.h>
 #include "board.h"
+#include <hal_data.h>
 
-#ifdef RT_USING_PIN
-    #include <drv_gpio.h>
+#ifdef RT_USING_BUILTIN_FDT
+#include <drivers/ofw_fdt.h>
+#include <drivers/pic.h>
+
+extern const unsigned char rt_hw_builtin_fdt[];
+#endif
+
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
+#include <drv_gpio.h>
 #endif
 
 #ifdef RT_USING_SERIAL
@@ -169,6 +177,12 @@ rt_weak void rt_hw_board_init()
     rt_hw_interrupt_init();
 #endif
 
+#if defined(BSP_CFG_CPU_CORE) && (BSP_CFG_CPU_CORE == CPU0) && defined(SOC_SERIES_R7KA8P1) && defined(BSP_START_SECONDARY_CORE)
+    #if !defined(BSP_USING_RPMSG_LITE_MCMGR)
+        R_BSP_SecondaryCoreStart();
+    #endif
+#endif
+
     rt_hw_systick_init();
 
     /* Heap initialization */
@@ -176,8 +190,25 @@ rt_weak void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
+#ifdef RT_USING_BUILTIN_FDT
+    if (rt_fdt_prefetch((void *)rt_hw_builtin_fdt) != RT_EOK ||
+        rt_fdt_unflatten() != RT_EOK)
+    {
+        rt_kprintf("Builtin FDT initialization failed\n");
+        RT_ASSERT(0);
+    }
+
+#ifdef RT_USING_PIC
+    if (rt_pic_init() != RT_EOK || rt_pic_irq_init() != RT_EOK)
+    {
+        rt_kprintf("PIC initialization failed\n");
+        RT_ASSERT(0);
+    }
+#endif
+#endif
+
     /* Pin driver initialization is open by default */
-#ifdef RT_USING_PIN
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
     rt_hw_pin_init();
 #endif
 
@@ -189,6 +220,11 @@ rt_weak void rt_hw_board_init()
     /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_NANO)
+    extern void rt_hw_console_init(void);
+    rt_hw_console_init();
 #endif
 
     /* Board underlying hardware initialization */

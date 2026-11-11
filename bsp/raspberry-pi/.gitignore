@@ -1,0 +1,8 @@
+kernel*.img
+rtthread.bin
+*.dtb
+*.qcow2
+flash.bin
+rtt.asm
+rtthread.map
+build/

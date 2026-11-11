@@ -411,15 +411,6 @@ help:
 MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
 #endif /* RT_USING_FINSH */
 
-#ifndef RT_USING_FINSH_ONLY
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_read, nand_read, read page in nand - nand_read(name, block, page));
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_readoob, nand_readoob, read spare data in nand - nand_readoob(name, block, page));
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_write, nand_write, write dump data to nand - nand_write(name, block, page));
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
-FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
-#endif /* RT_USING_FINSH_ONLY */
-
 #endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
 
 #endif /* RT_USING_MTD_NAND */

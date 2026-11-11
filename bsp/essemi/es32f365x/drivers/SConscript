@@ -48,12 +48,12 @@ if GetDepend(['BSP_USING_RTC']):
 if GetDepend('BSP_USING_SPI_FLASH'):
     src += [ES32F36XX_DRV_ROOT+'/drv_spiflash.c']
 
-# add hwtimer driver code
-if GetDepend('BSP_USING_AD16C4T0_HWTIMER') or GetDepend('BSP_USING_AD16C4T1_HWTIMER') or \
-    GetDepend('BSP_USING_GP32C4T0_HWTIMER') or GetDepend('BSP_USING_GP32C4T1_HWTIMER') or \
-    GetDepend('BSP_USING_GP16C4T0_HWTIMER') or GetDepend('BSP_USING_GP16C4T1_HWTIMER') or \
-    GetDepend('BSP_USING_BS16T0_HWTIMER') or GetDepend('BSP_USING_BS16T1_HWTIMER'):
-    src += [ES32F36XX_DRV_ROOT+'/drv_hwtimer.c']
+# add clock_timer driver code
+if GetDepend('BSP_USING_AD16C4T0_CLOCK_TIMER') or GetDepend('BSP_USING_AD16C4T1_CLOCK_TIMER') or \
+    GetDepend('BSP_USING_GP32C4T0_CLOCK_TIMER') or GetDepend('BSP_USING_GP32C4T1_CLOCK_TIMER') or \
+    GetDepend('BSP_USING_GP16C4T0_CLOCK_TIMER') or GetDepend('BSP_USING_GP16C4T1_CLOCK_TIMER') or \
+    GetDepend('BSP_USING_BS16T0_CLOCK_TIMER') or GetDepend('BSP_USING_BS16T1_CLOCK_TIMER'):
+    src += [ES32F36XX_DRV_ROOT+'/drv_timer.c']
 
 # add pwm driver code
 if GetDepend('BSP_USING_AD16C4T0_PWM') or GetDepend('BSP_USING_AD16C4T1_PWM') or \
@@ -76,8 +76,8 @@ include_path = [cwd + '/ES']
 if GetDepend('BSP_USING_EXAMPLE_ADC_VOL'):
     src += [ES32F36XX_DRV_ROOT+'/bsp_driver_example/adc_vol_sample.c']
 
-if GetDepend('BSP_USING_EXAMPLE_HWTIMER'):
-    src += [ES32F36XX_DRV_ROOT+'/bsp_driver_example/hwtimer_sample.c']
+if GetDepend('BSP_USING_EXAMPLE_CLOCK_TIMER'):
+    src += [ES32F36XX_DRV_ROOT+'/bsp_driver_example/clock_timer_sample.c']
 
 if GetDepend('BSP_USING_EXAMPLE_I2C'):
     src += [ES32F36XX_DRV_ROOT+'/bsp_driver_example/i2c_sample.c']

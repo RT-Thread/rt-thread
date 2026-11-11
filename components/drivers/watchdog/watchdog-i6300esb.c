@@ -111,6 +111,11 @@ static rt_err_t i6300esb_timer_set_heartbeat(struct i6300esb_wdt *esb, rt_uint32
 {
     rt_uint32_t val;
 
+    if ((time < ESB_HEARTBEAT_MIN) || (time > ESB_HEARTBEAT_MAX))
+    {
+        return -RT_EINVAL;
+    }
+
     /*
      * We shift by 9, so if we are passed a value of 1 sec,
      * val will be 1 << 9 = 512, then write that to two
@@ -152,6 +157,11 @@ static rt_err_t i6300esb_wdt_control(rt_watchdog_t *wdt, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
+        if (args == RT_NULL)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
         err = i6300esb_timer_set_heartbeat(esb, *(rt_uint32_t *)args);
         break;
 

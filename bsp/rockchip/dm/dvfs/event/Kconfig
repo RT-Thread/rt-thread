@@ -1,0 +1,4 @@
+config RT_DVFS_EVENT_ROCKCHIP_DFI
+    bool "Rockchip DFI Devfreq event driver"
+    depends on RT_USING_DVFS_EVENT
+    default n

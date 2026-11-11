@@ -17,7 +17,8 @@
  */
 
 #include <csi_config.h>
-.global __rt_rvstack 
+
+#if !CONFIG_SUPPORT_NON_VECTOR_IRQ
 .section .vectors, "aw", @progbits
     .align  6
     .globl  __Vectors
@@ -42,6 +43,11 @@ __Vectors:
 
     /* External interrupts */
     .long   Default_IRQHandler
+#if CONFIG_IRQ_LATENCY
+    .long   IRQ_LATENCY_IRQHandler
+#else
+    .long   Default_IRQHandler
+#endif
     .long   Default_IRQHandler
     .long   Default_IRQHandler
     .long   Default_IRQHandler
@@ -72,9 +78,63 @@ __Vectors:
     .long   Default_IRQHandler
     .long   Default_IRQHandler
     .long   Default_IRQHandler
-    .long   Default_IRQHandler
+#else
+.section .vectors, "aw", @progbits
+    .align  6
+    .globl  __Vectors
+    .type   __Vectors, @object
+__Vectors:
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   tspend_handler
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
 
-    .globl   Reset_Handler
+    /* External interrupts */
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+#endif
+
     .text
     .align   2
     j        Reset_Handler
@@ -84,7 +144,7 @@ __Vectors:
     .align   2
 _start:
     .text
-    .long    Reset_Handler
+    .globl   Reset_Handler
     .align  2
     .type   Reset_Handler, %function
 Reset_Handler:
@@ -116,14 +176,14 @@ Reset_Handler:
 __exit:
     j      __exit
 
-.section .stack
+.section .stack, "aw", @nobits
     .align  3
     .global g_base_irqstack
     .global g_top_irqstack
 g_base_irqstack:
     .space CONFIG_ARCH_INTERRUPTSTACK
 g_top_irqstack:
-__rt_rvstack:
+
 #ifdef CONFIG_KERNEL_NONE
     .align  3
     .global g_base_mainstack

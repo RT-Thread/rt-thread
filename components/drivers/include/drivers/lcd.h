@@ -11,6 +11,8 @@
 #ifndef RT_LCD_H__
 #define RT_LCD_H__
 
+#include <stdint.h>
+
 /* ioctls
    0x46 is 'F'                                                          */
 
@@ -37,6 +39,15 @@
 #define FBIOPUT_MODEINFO        0x4617
 #define FBIOGET_DISPINFO        0x4618
 #define FBIO_WAITFORVSYNC       0x4620
+
+/* fb_var_screeninfo.activate */
+#define FB_ACTIVATE_NOW     0
+#define FB_ACTIVATE_NXTOPEN 1
+#define FB_ACTIVATE_TEST    2
+#define FB_ACTIVATE_MASK    15
+#define FB_ACTIVATE_VBL     16
+#define FB_ACTIVATE_ALL     64
+#define FB_ACTIVATE_FORCE   128
 
 struct fb_bitfield
 {
@@ -107,6 +118,37 @@ struct fb_fix_screeninfo
     /*  specific chip/card we have  */
     uint16_t capabilities;     /* see FB_CAP_* */
     uint16_t reserved[2];      /* Reserved for future compatibility */
+};
+
+struct fb_cmap
+{
+    uint32_t start;             /* First entry  */
+    uint32_t len;               /* Number of entries */
+    uint16_t *red;              /* Red values   */
+    uint16_t *green;
+    uint16_t *blue;
+    uint16_t *transp;           /* transparency, can be NULL */
+};
+
+struct fb_con2fbmap
+{
+    uint32_t console;
+    uint32_t framebuffer;
+};
+
+/* VESA Blanking Levels */
+#define VESA_NO_BLANKING        0
+#define VESA_VSYNC_SUSPEND      1
+#define VESA_HSYNC_SUSPEND      2
+#define VESA_POWERDOWN          3
+
+enum
+{
+    FB_BLANK_UNBLANK       = VESA_NO_BLANKING,          /* screen: unblanked, hsync: on,  vsync: on */
+    FB_BLANK_NORMAL        = VESA_NO_BLANKING + 1,      /* screen: blanked,   hsync: on,  vsync: on */
+    FB_BLANK_VSYNC_SUSPEND = VESA_VSYNC_SUSPEND + 1,    /* screen: blanked,   hsync: on,  vsync: off */
+    FB_BLANK_HSYNC_SUSPEND = VESA_HSYNC_SUSPEND + 1,    /* screen: blanked,   hsync: off, vsync: on */
+    FB_BLANK_POWERDOWN     = VESA_POWERDOWN + 1,        /* screen: blanked,   hsync: off, vsync: off */
 };
 
 #endif

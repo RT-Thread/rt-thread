@@ -14,11 +14,31 @@
 #include "rtconfig.h"
 #include <rtthread.h>
 #include "gicv3.h"
-
-#include "fparameters.h"
 #include "fcpu_info.h"
-
 #include "phytium_cpu.h"
+
+rt_uint64_t rt_cpu_mpidr_table[] =
+{
+#if defined(TARGET_PE2202)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+#elif defined(TARGET_PE2204)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+    [2] = RT_CORE_AFF(2),
+    [3] = RT_CORE_AFF(3),
+#elif defined(TARGET_PD2408)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+    [2] = RT_CORE_AFF(2),
+    [3] = RT_CORE_AFF(3),
+    [4] = RT_CORE_AFF(4),
+    [5] = RT_CORE_AFF(5),
+    [6] = RT_CORE_AFF(6),
+    [7] = RT_CORE_AFF(7),
+#endif
+    [RT_CPUS_NR] = 0
+};
 
 /**
 @name: phytium_cpu_id_mapping
@@ -29,7 +49,7 @@
 */
 int phytium_cpu_id_mapping(int cpu_id)
 {
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+#if defined(TARGET_PE2204)
     switch (cpu_id)
     {
         case 0:
@@ -67,20 +87,18 @@ int rt_hw_cpu_id(void)
 
 rt_uint64_t get_main_cpu_affval(void)
 {
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+#if defined(TARGET_PE2204)
     return CORE2_AFF;
 #else
     return CORE0_AFF;
 #endif
 }
 
-
 extern u32 GetCpuMaskToAffval(u32 *cpu_mask, u32 *cluster_id, u32 *target_list);
 rt_uint32_t arm_gic_cpumask_to_affval(rt_uint32_t *cpu_mask, rt_uint32_t *cluster_id, rt_uint32_t *target_list)
 {
     return GetCpuMaskToAffval(cpu_mask, cluster_id, target_list);
 }
-
 
 #ifdef RT_USING_SMP
 
@@ -97,6 +115,5 @@ void send_core_isg(void)
 MSH_CMD_EXPORT(send_core_isg, send_core_isg);
 
 #endif
-
 
 #endif

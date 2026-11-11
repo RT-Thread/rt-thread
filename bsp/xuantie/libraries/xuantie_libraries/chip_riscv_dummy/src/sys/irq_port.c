@@ -55,27 +55,39 @@ void soc_irq_priority(uint32_t irq_num, uint32_t priority)
  */
 uint32_t soc_irq_get_irq_num(void)
 {
-#if CONFIG_CPU_XUANTIE_E9XX
-    return (__get_MCAUSE() & 0x3FFU);
+    int hartid = csi_get_cpu_id();
+#if CONFIG_INTC_CLIC || CONFIG_CPU_XUANTIE_E9XX
+    (void) hartid;
+#if CONFIG_RISCV_SMODE
+    return (__get_SCAUSE() & 0x3FFU);
 #else
+    return (__get_MCAUSE() & 0x3FFU);
+#endif /* CONFIG_RISCV_SMODE */
+#endif /* CONFIG_INTC_CLIC */
+
+#if CONFIG_INTC_PLIC || CONFIG_INTC_CLIC_PLIC
     uint32_t num;
-#if CONFIG_INTC_CLIC_PLIC
+#if CONFIG_RISCV_SMODE
+    uint32_t irqn = __get_SCAUSE() & 0x3FFU;
+#else
     uint32_t irqn = __get_MCAUSE() & 0x3FFU;
-    if (irqn == Machine_External_IRQn) {
-        num = PLIC_Hn_MSCLAIM_VAL(&PLIC->PLIC_H0_MCLAIM, csi_get_cpu_id());
+#endif /* CONFIG_RISCV_SMODE */
+    if (irqn == Machine_External_IRQn || irqn == Supervisor_External_IRQn) {
+#if CONFIG_RISCV_SMODE
+        num = PLIC_Hn_MSCLAIM_VAL(&PLIC->PLIC_H0_SCLAIM, hartid);
+#else
+        num = PLIC_Hn_MSCLAIM_VAL(&PLIC->PLIC_H0_MCLAIM, hartid);
+#endif
+#if CONFIG_INTC_CLIC_PLIC
         num += PLIC_IRQ_OFFSET;
+#endif
     } else {
         num = irqn;
     }
-#else
-#if defined(CONFIG_RISCV_SMODE) && CONFIG_RISCV_SMODE
-    num = PLIC_Hn_MSCLAIM_VAL(&PLIC->PLIC_H0_SCLAIM, csi_get_cpu_id());
-#else
-    num = PLIC_Hn_MSCLAIM_VAL(&PLIC->PLIC_H0_MCLAIM, csi_get_cpu_id());
-#endif
-#endif
     return num;
-#endif /* end exx */
+#endif /* CONFIG_INTC_PLIC || CONFIG_INTC_CLIC_PLIC */
+
+    return 0;
 }
 
 void soc_irq_end(uint32_t irq_num)

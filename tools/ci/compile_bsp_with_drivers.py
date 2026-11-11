@@ -8,9 +8,14 @@
 # 2023-06-27     dejavudwh    the first version
 #
 
-import subprocess
 import logging
 import os
+import sys
+
+try:
+    from git_utils import get_changed_files
+except ImportError:
+    from tools.ci.git_utils import get_changed_files
 
 CONFIG_BSP_USING_X = ["CONFIG_BSP_USING_UART", "CONFIG_BSP_USING_I2C", "CONFIG_BSP_USING_SPI", "CONFIG_BSP_USING_ADC", "CONFIG_BSP_USING_DAC"]
 
@@ -23,25 +28,35 @@ def init_logger():
                         )
 
 def diff():
-    result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
-    file_list = result.stdout.decode().strip().split('\n')
+    try:
+        file_list = get_changed_files(
+            "HEAD",
+            "origin/master",
+            diff_filter="ACMR",
+            no_renames=True,
+            full_index=True,
+        )
+    except RuntimeError as e:
+        logging.error(e)
+        return set()
+
     logging.info(file_list)
     bsp_paths = set()
     for file in file_list:
         if "bsp/" in file:
             logging.info("Modifed file: {}".format(file))
             bsp_paths.add(file)
-    
+
     dirs = set()
     for dir in bsp_paths:
-        dir = os.path.dirname(dir)    
+        dir = os.path.dirname(dir)
         while "bsp/" in dir:
             files = os.listdir(dir)
             if ".config" in files and "rt-thread.elf" not in files and not dir.endswith("bsp"):
                 logging.info("Found bsp path: {}".format(dir))
                 dirs.add(dir)
                 break
-            new_dir = os.path.dirname(dir)    
+            new_dir = os.path.dirname(dir)
             dir = new_dir
 
     return dirs
@@ -81,13 +96,32 @@ def modify_config(file_path, configs):
             file.write("#define " + define1 + "\n")
             file.write("#define " + define2 + "\n")
 
+def check_scons_build_files(dir):
+    missing = []
+    for filename in ["SConstruct", "SConscript"]:
+        if not os.path.isfile(os.path.join(dir, filename)):
+            missing.append(filename)
+
+    if missing:
+        logging.error("missing %s in %s", ", ".join(missing), dir)
+        return False
+
+    return True
+
 def recompile_bsp(dir):
     logging.info("recomplie bsp: {}".format(dir))
-    os.system("scons -C " + dir)
+    if not check_scons_build_files(dir):
+        return 1
+
+    result = subprocess.run(["scons", "-C", dir])
+    if result.returncode != 0:
+        logging.error("scons failed for %s", dir)
+    return result.returncode
 
 if __name__ == '__main__':
     init_logger()
     recompile_bsp_dirs = diff()
+    failed = 0
     for dir in recompile_bsp_dirs:
         dot_config_path = dir + "/" + ".config"
         configs = check_config_in_file(dot_config_path)
@@ -95,4 +129,7 @@ if __name__ == '__main__':
         logging.info(configs)
         logging.info("Add configurations and recompile!")
         modify_config(dir, configs)
-        recompile_bsp(dir)
+        if recompile_bsp(dir) != 0:
+            failed += 1
+
+    sys.exit(failed)

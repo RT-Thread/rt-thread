@@ -1,0 +1,94 @@
+config RT_GRAPHIC_FB_VOP2
+    bool "Rockchip VOP2 framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_CLK
+    default n
+    help
+        Rockchip VOP2 display driver with primary, overlay and cursor planes.
+        Supported compatibles: rk3568, rk3588, rk3528, rk3562, rk3576 (rockchip,rk3576-vop).
+
+        Requires connector output initialized by boot loader unless a full
+        display pipeline is added later.
+
+        Device tree optional properties on the vop node:
+          rockchip,fb-width / rockchip,fb-height
+          rockchip,active-vp
+
+config RT_GRAPHIC_FB_VOPL
+    bool "Rockchip VOPL framebuffer (rk3576-vop-lit)"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_CLK
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    default n
+    help
+        Lite VOP on RK3576 (EBC block, single primary plane, DSI/RGB/eDP/HDMI).
+
+config RT_GRAPHIC_FB_VOP1
+    bool "Rockchip VOP1 framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_CLK
+    default n
+    help
+        Rockchip legacy VOP display driver (Lite and Big variants).
+
+        Lite: rk3308, rk3506, px30-vop-lit (primary + cursor).
+        Big: rk3328, rk3288, rk3399, rk3368, rv1126/rv1126b, etc.
+        (primary + overlay + cursor).
+
+        Device tree optional properties:
+          rockchip,fb-width / rockchip,fb-height
+
+config RT_GRAPHIC_DISPLAY_ROCKCHIP
+    bool "Rockchip display subsystem (route + pipeline)"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_OFW
+    default n
+    help
+        Parse display-subsystem routes and enable VOP + connector + panel.
+
+        The rockchip.display= boot argument selects the active route:
+          auto   - enable connected outputs, then fixed panels on unused VPs
+          hdmi   - force the HDMI route
+          dsi0   - force the DSI0 route
+          dsi1   - force the DSI1 route
+          extend - enable independent framebuffers on all usable routes
+          mirror - deprecated alias for extend
+
+config RT_GRAPHIC_CONNECTOR_DSI
+    bool "Rockchip DW MIPI DSI connector (DSI1)"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    default y
+
+config RT_GRAPHIC_CONNECTOR_DSI2
+    bool "Rockchip DW MIPI DSI2 connector (rk3576)"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    depends on RT_PHYE_ROCKCHIP_MIPI_DCPHY
+    default y
+
+config RT_GRAPHIC_CONNECTOR_HDMI
+    bool "Rockchip DW HDMI connector"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    depends on RT_USING_CLK
+    default y
+
+config RT_GRAPHIC_BACKLIGHT_HINT
+    bool "Enable backlight Kconfig hint"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    default y
+    help
+        Panel backlight needs RT_GRAPHIC_BACKLIGHT + RT_GRAPHIC_BACKLIGHT_PWM
+        and a pwm-backlight node in device tree.
+
+config RT_GRAPHIC_PANEL_SIMPLE
+    bool "Simple panel driver"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    default y
+
+config RT_GRAPHIC_INPUT_TOUCH_HINT
+    bool "Enable touch hint in graphic Kconfig"
+    depends on RT_GRAPHIC_DISPLAY_ROCKCHIP
+    default y
+    help
+        MIPI DSI panels with touch need a separate I2C touch driver
+        (e.g. RT_INPUT_TOUCHSCREEN_GOODIX for GT911). Enable it under
+        RT-Thread Components -> Input device drivers -> Touchscreen.

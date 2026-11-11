@@ -74,14 +74,14 @@ HPM6750EVKMINI 是由先楫半导体推出的一款基于RISCV内核的开发板
 
 - 通过如下命令完成下载:
   ```console
-  %OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm6750-single-core.cfg -f boards\debug_scripts\boards\hpm6750evkmini.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
+  %OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm6750-single-core.cfg -f board\debug_scripts\openocd\boards\hpm6750evkmini.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
   ```
 
 - 通过如下命令实现调试:
 
   - 通过 `OpenOCD` 来连接开发板:
 ```console
-%OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm6750-single-core.cfg -f boards\debug_scripts\boards\hpm6750evkmini.cfg
+%OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm6750-single-core.cfg -f board\debug_scripts\openocd\boards\hpm6750evkmini.cfg
 ```
   - 通过 `GDB` 实现调试:
 ```console

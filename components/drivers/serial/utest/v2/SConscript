@@ -1,0 +1,18 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+
+path = [cwd]
+
+if GetDepend(['RT_UTEST_SERIAL_POSIX']):
+    src += Glob('posix/*.c')
+
+if GetDepend(['RT_UTEST_SERIAL_QEMU']):
+    src += Glob('qemu/*.c')
+
+group = DefineGroup('utestcases', src, depend = ['RT_UTEST_SERIAL_V2'], CPPPATH = path)
+
+Return('group')
+

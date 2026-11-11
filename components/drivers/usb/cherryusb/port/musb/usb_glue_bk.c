@@ -94,11 +94,11 @@
 #define NANENG_PHY_FC_REG1E (0x1E * 4)
 #define NANENG_PHY_FC_REG1F (0x1F * 4)
 
-#if CONFIG_USBDEV_EP_NUM != 8
+#if CONFIG_USB_MUSB_EP_NUM != 8
 #error beken chips only support 8 endpoints
 #endif
 
-#if CONFIG_USBHOST_PIPE_NUM != 8
+#if CONFIG_USB_MUSB_PIPE_NUM != 8
 #error beken chips only support 8 pipes
 #endif
 

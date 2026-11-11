@@ -42,8 +42,8 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
     
-    MCPU = ' -mcpu=e907fd ' # Modify here based on CPU architecture.
-    MCPU_DEFINE = ' -DCONFIG_CPU_XUANTIE_E907FD=1 ' # Modify here based on CPU architecture.
+    MCPU = ' -mcpu=e907fdp ' # Modify here based on CPU architecture.
+    MCPU_DEFINE = ' -DCONFIG_CPU_XUANTIE_E907FDP=1 ' # Modify here based on CPU architecture.
     DEVICE = MCPU + MCPU_DEFINE + ' -Wno-main -mcmodel=medlow'
 
     GLOBAL_DEFINES = (
@@ -51,7 +51,7 @@ if PLATFORM == 'gcc':
         '-D__RT_KERNEL_SOURCE__=1 '
         '-DCONFIG_CSI_V2=1 '
         '-DCONFIG_CSI="csi2" '
-        '-DCONFIG_SUPPORT_TSPEND=0 '
+        '-DCONFIG_INTC_CLIC=1 '
         '-DCONFIG_SUPPORT_IRQ_NESTED=0 '
         '-DCONFIG_XIP=1 '
         '-DCONFIG_ARCH_MAINSTACK=4096 '
@@ -60,14 +60,16 @@ if PLATFORM == 'gcc':
         '-DCLI_CONFIG_STACK_SIZE=4096 '
     )
 
+    GLOBAL_DEFINES += ' -DCONFIG_SYSTICK_HZ=RT_TICK_PER_SECOND '
+
     CFLAGS = DEVICE + ' -c -MP -MMD -Wno-unused-function -g -nostdlib -Wpointer-arith -Wno-undef -Wall -Wl,-EL  \
                         -ffunction-sections -fdata-sections -fno-inline-functions -fno-builtin -fno-strict-aliasing \
                         -fno-strength-reduce -Os -g -Wall -Wunused -Wformat -Wformat-security -Warray-bounds -Wuninitialized \
                         -Wreturn-type -Wcomment -Wswitch -Wparentheses -Wlogical-op ' + GLOBAL_DEFINES
     
-    AFLAGS = DEVICE + ' -MP -MMD -D"Default_IRQHandler=SW_handler" ' + GLOBAL_DEFINES
+    AFLAGS = DEVICE + ' -MP -MMD ' + GLOBAL_DEFINES
     
-    LFLAGS = DEVICE +  ' -MP -MMD  -Wl,-zmax-page-size=1024 -Wl,-Map=yoc.map -Wl,-zmax-page-size=1024 -Wl,-Map=yoc.map -Wl,--whole-archive -Wl,--no-whole-archive -nostartfiles -Wl,--gc-sections '
+    LFLAGS = DEVICE +  ' -MP -MMD -Wl,-zmax-page-size=1024 -Wl,-Map=' + MAP_FILE + ' -Wl,--whole-archive -Wl,--no-whole-archive -nostartfiles -Wl,--gc-sections '
     LFLAGS += ' -T ' + LINK_FILE
      
     CPATH = ''

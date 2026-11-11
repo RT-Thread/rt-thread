@@ -9,6 +9,9 @@ cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 src = []
 
+if GetDepend(['RT_MFD_EDU']):
+    src += ['mfd-edu.c']
+
 if GetDepend(['RT_MFD_SYSCON']):
     src += ['mfd-syscon.c']
 

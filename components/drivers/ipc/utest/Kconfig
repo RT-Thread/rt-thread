@@ -1,0 +1,12 @@
+menu "IPC Test"
+    depends on RT_USING_DEVICE_IPC
+
+config RT_UTEST_COMPLETION
+    bool "IPC Completion Test"
+    default n
+
+config RT_UTEST_WORKQUEUE
+    bool "IPC Workqueue Test"
+    default n
+
+endmenu

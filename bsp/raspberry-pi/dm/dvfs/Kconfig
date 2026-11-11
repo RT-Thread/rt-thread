@@ -1,0 +1,4 @@
+config RT_DVFS_RASPBERRY_CPUFREQ
+    bool "Raspberry firmware CPUfreq driver"
+    depends on RT_USING_DVFS
+    default n

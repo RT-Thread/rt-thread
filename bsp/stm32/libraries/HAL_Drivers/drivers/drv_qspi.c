@@ -1,15 +1,17 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2018-11-27     zylx         first version
+ * Date           Author         Notes
+ * 2018-11-27     zylx           first version
+ * 2025-12-14     LinuxMint-User resolve QSPI interface type mismatch
  */
 
 #include "board.h"
 #include "drv_qspi.h"
+#include "drv_dma.h"
 #include "drv_config.h"
 
 #ifdef RT_USING_QSPI
@@ -31,6 +33,9 @@ struct stm32_qspi_bus
 
 struct rt_spi_bus _qspi_bus1;
 struct stm32_qspi_bus _stm32_qspi_bus;
+#ifdef BSP_QSPI_USING_DMA
+static const struct stm32_dma_config qspi_dma_config = QSPI_DMA_CONFIG;
+#endif
 
 static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configuration *qspi_cfg)
 {
@@ -91,29 +96,12 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
     HAL_NVIC_SetPriority(QSPI_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(QSPI_IRQn);
-    HAL_NVIC_SetPriority(QSPI_DMA_IRQ, 0, 0);
-    HAL_NVIC_EnableIRQ(QSPI_DMA_IRQ);
-
     /* init QSPI DMA */
-    if(QSPI_DMA_RCC  == RCC_AHB1ENR_DMA1EN)
+    if (stm32_dma_setup(&qspi_bus->hdma_quadspi, &qspi_bus->QSPI_Handler, &qspi_bus->QSPI_Handler.hdma, &qspi_dma_config) != RT_EOK)
     {
-        __HAL_RCC_DMA1_CLK_ENABLE();
+        LOG_E("qspi dma init failed");
+        return -RT_ERROR;
     }
-    else
-    {
-        __HAL_RCC_DMA2_CLK_ENABLE();
-    }
-
-    HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
-    DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
-    qspi_bus->hdma_quadspi = hdma_quadspi_config;
-
-    if (HAL_DMA_Init(&qspi_bus->hdma_quadspi) != HAL_OK)
-    {
-        LOG_E("qspi dma init failed (%d)!", result);
-    }
-
-    __HAL_LINKDMA(&qspi_bus->QSPI_Handler, hdma, qspi_bus->hdma_quadspi);
 #endif /* BSP_QSPI_USING_DMA */
 
     return result;
@@ -146,6 +134,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.InstructionMode = QSPI_INSTRUCTION_4_LINES;
     }
+
     if (message->address.qspi_lines == 0)
     {
         Cmdhandler.AddressMode = QSPI_ADDRESS_NONE;
@@ -162,6 +151,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.AddressMode = QSPI_ADDRESS_4_LINES;
     }
+
     if (message->address.size == 24)
     {
         Cmdhandler.AddressSize = QSPI_ADDRESS_24_BITS;
@@ -170,6 +160,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.AddressSize = QSPI_ADDRESS_32_BITS;
     }
+
     if (message->qspi_data_lines == 0)
     {
         Cmdhandler.DataMode = QSPI_DATA_NONE;
@@ -323,8 +314,27 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
         goto __exit;
     }
 
-    qspi_device->enter_qspi_mode = enter_qspi_mode;
-    qspi_device->exit_qspi_mode = exit_qspi_mode;
+    /* Safe type conversion to resolve interface contract mismatch.
+     * Caller ensures the function pointer is compatible via adapter pattern.
+     */
+    if (enter_qspi_mode != RT_NULL)
+    {
+        qspi_device->enter_qspi_mode = (void (*)(struct rt_qspi_device *))enter_qspi_mode;
+    }
+    else
+    {
+        qspi_device->enter_qspi_mode = RT_NULL;
+    }
+
+    if (exit_qspi_mode != RT_NULL)
+    {
+        qspi_device->exit_qspi_mode = (void (*)(struct rt_qspi_device *))exit_qspi_mode;
+    }
+    else
+    {
+        qspi_device->exit_qspi_mode = RT_NULL;
+    }
+
     qspi_device->config.qspi_dl_width = data_line_width;
 
 #ifdef BSP_QSPI_USING_SOFTCS
@@ -377,3 +387,4 @@ INIT_BOARD_EXPORT(rt_hw_qspi_bus_init);
 
 #endif /* BSP_USING_QSPI */
 #endif /* RT_USING_QSPI */
+

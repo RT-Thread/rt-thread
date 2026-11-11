@@ -141,7 +141,7 @@ static void TC_rt_sscanf_suppression(void)
 static void TC_rt_sscanf_match_set(void)
 {
     const char str[] = "abc123";
-    char buffer[10] = {0};
+    char buffer[10] = { 0 };
     int result = rt_sscanf(str, "%[a-z]", buffer);
     uassert_int_equal(result, 1);
     uassert_str_equal(buffer, "abc");
@@ -247,4 +247,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_rt_sscanf_issue_9853);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_sscanf", RT_NULL, RT_NULL, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_sscanf", RT_NULL, RT_NULL, 1000);

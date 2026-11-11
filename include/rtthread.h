@@ -49,11 +49,6 @@ extern "C" {
 int entry(void);
 #endif
 
-/**
- * @addtogroup group_kernel_object
- * @{
- */
-
 /*
  * kernel object interface
  */
@@ -86,8 +81,6 @@ void rt_object_trytake_sethook(void (*hook)(struct rt_object *object));
 void rt_object_take_sethook(void (*hook)(struct rt_object *object));
 void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 #endif /* RT_USING_HOOK */
-
-/**@}*/
 
 /**
  * @addtogroup group_clock_management
@@ -138,11 +131,6 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer));
 
 /**@}*/
 
-/**
- * @addtogroup group_thread_management
- * @{
- */
-
 /*
  * thread interface
  */
@@ -181,6 +169,9 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread);
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);
 #endif /* RT_USING_SMART */
 rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size);
+#ifdef RT_USING_CPU_USAGE_TRACER
+rt_uint8_t rt_thread_get_usage(rt_thread_t thread);
+#endif /* RT_USING_CPU_USAGE_TRACER */
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
 void rt_thread_free_sig(rt_thread_t tid);
@@ -191,6 +182,8 @@ void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
 void rt_thread_resume_sethook (void (*hook)(rt_thread_t thread));
 
 /**
+ * @ingroup group_thread_management
+ *
  * @brief Sets a hook function when a thread is initialized.
  *
  * @param thread is the target thread that initializing
@@ -205,10 +198,27 @@ RT_OBJECT_HOOKLIST_DECLARE(rt_thread_inited_hookproto_t, rt_thread_inited);
  */
 void rt_thread_idle_init(void);
 #if defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK)
+// FIXME: Have to write doxygen comment here for rt_thread_idle_sethook
+//        but not in src/idle.c. Because the `rt_align(RT_ALIGN_SIZE)` in src/idle.c
+//        will make doxygen building failed.
+/**
+ * @ingroup group_thread_management
+ *
+ * @brief This function sets a hook function to idle thread loop. When the system performs
+ *        idle loop, this hook function should be invoked.
+ *
+ * @param hook the specified hook function.
+ *
+ * @return `RT_EOK`: set OK.
+ *         `-RT_EFULL`: hook list is full.
+ *
+ * @note the hook function must be simple and never be blocked or suspend.
+ */
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif /* defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK) */
 rt_thread_t rt_thread_idle_gethandler(void);
+rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread);
 
 /*
  * schedule service
@@ -236,6 +246,7 @@ void rt_exit_critical_safe(rt_base_t critical_level);
 rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
+void rt_scheduler_stack_overflow_sethook(rt_err_t (*hook)(struct rt_thread *thread));
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 #endif /* RT_USING_HOOK */
@@ -245,10 +256,8 @@ void rt_secondary_cpu_entry(void);
 void rt_scheduler_ipi_handler(int vector, void *param);
 #endif /* RT_USING_SMP */
 
-/**@}*/
-
 /**
- * @addtogroup group_Signal
+ * @addtogroup group_signal
  * @{
  */
 #ifdef RT_USING_SIGNALS
@@ -775,6 +784,13 @@ void rt_components_board_init(void);
 #else
 int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
+#ifdef RT_USING_CONSOLE_OUTPUT_CTL
+void rt_console_output_set_enabled(rt_bool_t enabled);
+rt_bool_t rt_console_output_get_enabled(void);
+#else
+#define rt_console_output_set_enabled(enabled) ((void)0)
+#define rt_console_output_get_enabled()        (RT_TRUE)
+#endif /* RT_USING_CONSOLE_OUTPUT_CTL */
 #endif /* RT_USING_CONSOLE */
 
 rt_err_t rt_backtrace(void);
@@ -794,6 +810,7 @@ rt_device_t rt_console_get_device(void);
 #endif /* RT_USING_THREADSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
+int __rt_fls(int val);
 int __rt_ffs(int value);
 unsigned long __rt_ffsl(unsigned long value);
 unsigned long __rt_clz(unsigned long value);
@@ -844,17 +861,37 @@ do                                                                            \
 }                                                                             \
 while (0)
 
+#if defined(RT_USING_SMP)
+/**
+ * @brief Check whether disabled interrupts make scheduler unavailable.
+ *
+ * In SMP builds, some kernel-internal lockless wait paths may disable local
+ * interrupts while still using scheduler-related operations legally. Keep this
+ * IRQ-disabled context assertion for UP builds only.
+ */
+#define RT_DEBUG_SCHEDULER_IRQ_DISABLED() (RT_FALSE)
+#else
+/**
+ * @brief Check whether disabled interrupts make scheduler unavailable.
+ *
+ * In UP builds, globally disabled interrupts prevent normal scheduling and
+ * timeout progress, so blocking scheduler paths must reject this context.
+ */
+#define RT_DEBUG_SCHEDULER_IRQ_DISABLED() rt_hw_interrupt_is_disabled()
+#endif /* defined(RT_USING_SMP) */
+
 /* "scheduler available" means:
  *     1) the scheduler has been started.
  *     2) not in interrupt context.
  *     3) scheduler is not locked.
+ *     4) interrupts are not disabled on UP.
  */
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
 do                                                                            \
 {                                                                             \
     if (need_check)                                                           \
     {                                                                         \
-        if (rt_critical_level() != 0)                                         \
+        if ((rt_critical_level() != 0) || RT_DEBUG_SCHEDULER_IRQ_DISABLED())  \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
                     __FUNCTION__);                                            \

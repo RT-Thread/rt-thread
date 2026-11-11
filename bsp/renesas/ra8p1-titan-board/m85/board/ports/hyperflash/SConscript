@@ -1,0 +1,13 @@
+import os
+from building import *
+
+src = []
+objs = []
+cwd  = GetCurrentDir()
+CPPPATH = [cwd]
+
+src = Glob('*.c')
+
+objs = DefineGroup('Drivers', src, depend = ['BSP_USING_OSPI_FLASH'], CPPPATH = CPPPATH)
+
+Return('objs')

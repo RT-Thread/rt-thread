@@ -1,0 +1,121 @@
+menuconfig RT_USING_ADC
+    bool "Using ADC device drivers"
+    default n
+
+if RT_USING_ADC
+    config RT_USING_ADC_V2
+        bool "Using ADC V2 device drivers"
+        default n
+        help
+            Enable the standalone ADC V2 framework. ADC V2 uses the legacy ADC
+            public namespace, so it cannot be enabled together with ADC V1.
+
+    config RT_USING_ADC_V1
+        bool
+        default y if !RT_USING_ADC_V2
+
+if RT_USING_DM && RT_USING_ADC_V1
+    osource "$(SOC_DM_ADC_DIR)/Kconfig"
+endif
+
+if RT_USING_ADC_V2
+
+
+config RT_ADC_USING_TRIGGER
+    bool "Enable ADC trigger framework"
+    default n
+    help
+        Enable device-level ADC trigger requests, framework validation, caching,
+        and stream lifecycle coordination. Timer trigger frequency and TRGO
+        start/stop are delegated to the timer trigger backend.
+
+config RT_ADC_TRIGGER_USING_TIMER
+    bool "Enable ADC timer trigger selector support"
+    depends on RT_ADC_USING_TRIGGER
+    default n
+    help
+        Enable timer update/TRGO and timer compare events as ADC stream
+        trigger sources.
+
+config RT_ADC_TRIGGER_USING_COMPARE
+    bool "Enable ADC analog comparator trigger selector support"
+    depends on RT_ADC_USING_TRIGGER
+    default n
+    help
+        Enable analog comparator output events as ADC stream trigger sources.
+
+
+config RT_ADC_USING_STREAM
+    bool "Enable ADC stream framework"
+    default n
+    help
+        Enable long-running ADC stream sessions.
+
+        Disable this option to remove ADC stream runtime state, stream APIs,
+        and stream backend hooks from the ADC V2 framework.
+
+if RT_ADC_USING_STREAM
+
+menu "ADC stream buffering policies"
+
+config RT_ADC_STREAM_USING_LATEST
+    bool "Enable ADC stream latest-frame policy"
+    default y
+    help
+        Enable the latest-frame ADC stream policy.
+
+        This mode is intended for slow-changing or status-like ADC values, such
+        as battery voltage, temperature, potentiometer input, resistor-divider
+        voltage, or board health monitoring.
+
+        The DMA buffer stores exactly one complete ADC scan frame. Old values
+        may be overwritten. This mode does not require DMA half-transfer or
+        transfer-complete data interrupts, and it does not allocate a framework
+        FIFO.
+
+        This option may be enabled together with RT_ADC_STREAM_USING_FIFO. The
+        active policy is selected per stream at runtime.
+
+config RT_ADC_STREAM_USING_FIFO
+    bool "Enable ADC stream FIFO policy"
+    default n
+    help
+        Enable the FIFO ADC stream policy.
+
+        This mode is intended for continuous and loss-sensitive sampling. The
+        DMA buffer is used as a staging buffer, and completed DMA data events
+        are copied into a ringbuffer for ordered blocking reads.
+
+        FIFO mode requires DMA data events. The default DMA event mode uses both
+        half-transfer and transfer-complete events to reduce read latency. A
+        stream configuration may select full-only events to reduce interrupt
+        frequency, at the cost of higher latency and larger data bursts.
+
+        This option may be enabled together with RT_ADC_STREAM_USING_LATEST. The
+        active policy is selected per stream at runtime.
+
+comment "At least one ADC stream buffering policy should be enabled"
+    depends on !RT_ADC_STREAM_USING_LATEST && !RT_ADC_STREAM_USING_FIFO
+
+endmenu
+
+endif
+
+config RT_ADC_V2_USING_MSH
+    bool "Enable ADC V2 MSH command"
+    depends on RT_USING_FINSH
+    default y
+    help
+        Enable the ADC V2 MSH command.
+
+        This option exports the "adc" shell command for probing ADC devices,
+        configuring channels, reading raw samples, reading voltage values, and
+        reading one ADC sequence. When RT_ADC_USING_STREAM is enabled, stream
+        subcommands are also available.
+
+        Disable this option to remove the ADC V2 shell command while keeping
+        the ADC V2 framework and driver APIs available.
+
+endif
+
+endif

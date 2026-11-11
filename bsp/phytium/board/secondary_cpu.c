@@ -38,20 +38,27 @@
 #endif
 
 #include "fpsci.h"
-
 rt_uint64_t rt_cpu_mpidr_early[] =
 {
-
-#if defined(TARGET_E2000D)
-    [0] = 0x80000200,
-    [1] = 0x80000201,
-#elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-    [0] = 0x80000200,
-    [1] = 0x80000201,
-    [2] = 0x80000000,
-    [3] = 0x80000100,
+#if defined(TARGET_PE2202)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+#elif defined(TARGET_PE2204)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+    [2] = RT_CORE_AFF(2),
+    [3] = RT_CORE_AFF(3),
+#elif defined(TARGET_PD2408)
+    [0] = RT_CORE_AFF(0),
+    [1] = RT_CORE_AFF(1),
+    [2] = RT_CORE_AFF(2),
+    [3] = RT_CORE_AFF(3),
+    [4] = RT_CORE_AFF(4),
+    [5] = RT_CORE_AFF(5),
+    [6] = RT_CORE_AFF(6),
+    [7] = RT_CORE_AFF(7),
 #endif
-
+    [RT_CPUS_NR] = 0
 };
 
 extern int rt_hw_timer_init(void);
@@ -69,11 +76,10 @@ void rt_hw_secondary_cpu_up(void)
         {
             continue;
         }
-        cpu_mask = 1<<phytium_cpu_id_mapping(i);
+        cpu_mask = (1 << phytium_cpu_id_mapping(i));
 
 #if defined(TARGET_ARMV8_AARCH64)
         /* code */
-        rt_kprintf("cpu_mask = 0x%x \n", cpu_mask);
         char *entry = (char *)_secondary_cpu_entry;
         entry += PV_OFFSET;
         FPsciCpuMaskOn(cpu_mask, (uintptr)entry);

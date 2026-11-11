@@ -48,6 +48,122 @@ Projects = []
 Rtt_Root = ''
 Env = None
 
+if not hasattr(rtconfig, 'CXXFLAGS') and hasattr(rtconfig, 'CFLAGS'):
+    rtconfig.CXXFLAGS = rtconfig.CFLAGS
+
+def _path_variants(path):
+    variants = set()
+    if not path:
+        return variants
+
+    normalized = path.replace('\\', '/').rstrip('/')
+    variants.add(normalized)
+    variants.add(normalized + '/')
+    variants.add(normalized.replace('/', '\\'))
+    variants.add((normalized + '/').replace('/', '\\'))
+
+    return variants
+
+def _split_exec_path(exec_path):
+    normalized = exec_path.replace('\\', '/').rstrip('/')
+    lower = normalized.lower()
+    for suffix in ('/arm/armclang/bin', '/arm/armcc/bin', '/arm/bin40', '/arm/bin', '/bin'):
+        if lower.endswith(suffix):
+            return normalized[:-len(suffix)], normalized[-len(suffix):]
+
+    return normalized, ''
+
+def _replace_exec_path(value, old_path, new_path):
+    if not isinstance(value, str):
+        return value
+
+    result = value
+    normalized_new_path = new_path.replace('\\', '/').rstrip('/')
+    for old in sorted(_path_variants(old_path), key=len, reverse=True):
+        replacement = normalized_new_path.replace('/', '\\') if '\\' in old else normalized_new_path
+        if old.endswith(('/', '\\')):
+            replacement += old[-1]
+        result = result.replace(old, replacement)
+
+    return result
+
+def _apply_exec_path_override(env, exec_path):
+    old_exec_path = getattr(rtconfig, 'EXEC_PATH', '')
+    old_root, suffix = _split_exec_path(old_exec_path)
+    new_root, new_suffix = _split_exec_path(exec_path)
+    new_exec_path = new_root + (new_suffix or suffix)
+
+    if old_root:
+        for name in ('CFLAGS', 'CXXFLAGS', 'AFLAGS', 'LFLAGS',
+                     'M_CFLAGS', 'M_CXXFLAGS', 'M_LFLAGS'):
+            if hasattr(rtconfig, name):
+                setattr(rtconfig, name, _replace_exec_path(getattr(rtconfig, name), old_root, new_root))
+
+    rtconfig.EXEC_PATH = new_exec_path
+    for key, name in (('CC', 'CC'), ('CXX', 'CXX'), ('AS', 'AS'), ('AR', 'AR'),
+                      ('LINK', 'LINK'), ('CFLAGS', 'CFLAGS'),
+                      ('CXXFLAGS', 'CXXFLAGS'), ('ASFLAGS', 'AFLAGS'),
+                      ('LINKFLAGS', 'LFLAGS')):
+        if hasattr(rtconfig, name):
+            env[key] = getattr(rtconfig, name)
+
+def _normalize_armclang_flags_for_host(env):
+    if rtconfig.PLATFORM == 'armclang' and env['PLATFORM'] != 'win32':
+        for name in ('LFLAGS', 'M_LFLAGS'):
+            if hasattr(rtconfig, name):
+                setattr(rtconfig, name, getattr(rtconfig, name).replace('\\', '/'))
+
+        if hasattr(rtconfig, 'LFLAGS'):
+            env['LINKFLAGS'] = rtconfig.LFLAGS
+
+def _as_unicode(value):
+    try:
+        unicode
+    except NameError:
+        return value if isinstance(value, str) else str(value)
+
+    if isinstance(value, unicode):
+        return value
+
+    for encoding in (sys.getfilesystemencoding(), 'utf-8'):
+        if not encoding:
+            continue
+        try:
+            return value.decode(encoding)
+        except (AttributeError, UnicodeDecodeError):
+            pass
+
+    return unicode(value)
+
+def _check_invalid_option_dashes():
+    # Reject command line options typed with Unicode dash lookalikes.
+    invalid_dashes = (
+        u'\u2010', u'\u2011', u'\u2012', u'\u2013', u'\u2014',
+        u'\u2015', u'\u2212', u'\ufe58', u'\ufe63', u'\uff0d',
+    )
+
+    entries = []
+    entries.extend((key, value) for key, value in ARGUMENTS.items())
+    entries.extend((target, None) for target in COMMAND_LINE_TARGETS)
+
+    for key, value in entries:
+        option = _as_unicode(key)
+        normalized = option
+        for dash in invalid_dashes:
+            normalized = normalized.replace(dash, u'-')
+
+        if option != normalized and normalized.startswith(u'-'):
+            if value is not None:
+                display = u'%s=%s' % (option, _as_unicode(value))
+                hint = u'%s=%s' % (normalized, _as_unicode(value))
+            else:
+                display = option
+                hint = normalized
+
+            print("Invalid command line option: %s" % display)
+            print("Please use ASCII '-' instead: %s" % hint)
+            sys.exit(1)
+
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
     global BuildOptions
@@ -56,6 +172,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     global Rtt_Root
 
     AddOptions()
+    _check_invalid_option_dashes()
 
     Env = env
     # export the default environment
@@ -159,6 +276,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_EXEC_PATH'] = exec_path
 
     utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
+    if exec_path:
+        _apply_exec_path_override(env, exec_path)
+    _normalize_armclang_flags_for_host(env)
 
     # some env variables have loaded in Environment() of SConstruct before re-load rtconfig.py;
     # after update rtconfig.py's variables, those env variables need to synchronize
@@ -170,8 +290,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-    env['ASCOM']= env['ASPPCOM']
-
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
         if rtconfig.PLATFORM in ['gcc']:
@@ -192,8 +310,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKPREFIX'] = ''
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
+        if rtconfig.PLATFORM == 'armclang' and rtconfig.AS == 'armasm':
+            env['ASCOM'] = '$AS $ASFLAGS -o $TARGET $SOURCES'
+            env['ASPPCOM'] = env['ASCOM']
+        else:
+            env['ASCOM'] = env['ASPPCOM']
 
-    elif rtconfig.PLATFORM == 'iccarm':
+    else:
+        env['ASCOM'] = env['ASPPCOM']
+
+    if rtconfig.PLATFORM == 'iccarm':
         env['LIBPREFIX'] = ''
         env['LIBSUFFIX'] = '.a'
         env['LIBLINKPREFIX'] = ''
@@ -318,7 +444,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if env['LINK'].find('gcc') != -1:
             env['LINK'] = env['LINK'].replace('gcc', 'g++')
 
-    # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
+    # we need to separate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
     bsp_vdir = 'build'
@@ -337,12 +463,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                            variant_dir=kernel_vdir + '/components',
                            duplicate=0,
                            exports='remove_components'))
-    # include testcases
-    if os.path.isfile(os.path.join(Rtt_Root, 'examples/utest/testcases/SConscript')):
-        objs.extend(SConscript(Rtt_Root + '/examples/utest/testcases/SConscript',
-                           variant_dir=kernel_vdir + '/examples/utest/testcases',
-                           duplicate=0))
-
     return objs
 
 def PrepareModuleBuilding(env, root_directory, bsp_directory):
@@ -579,8 +699,8 @@ def DefineGroup(name, src, depend, **parameters):
     group['name'] = name
     group['path'] = group_path
     if type(src) == type([]):
-        # remove duplicate elements from list
-        src = list(set(src))
+        # remove duplicate elements from list while preserving order
+        src = list(dict.fromkeys(src))
         group['src'] = File(src)
     else:
         group['src'] = src
@@ -792,7 +912,7 @@ def DoBuilding(target, objects):
         for group in Projects:
             local_group(group, objects_in_group)
 
-        # sort seperately, because the data type of
+        # sort separately, because the data type of
         # the members of the two lists are different
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
@@ -825,7 +945,7 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'iar':
         from targets.iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
-        IARProject(GetOption('project-name') + '.ewp', Projects)
+        IARProject(Env, GetOption('project-name') + '.ewp', Projects)
         print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
@@ -869,7 +989,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from targets.eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+        project_name = os.path.basename(Dir('#').abspath)
+        TargetEclipse(Env, GetOption('reset-project-config'), project_name)
 
     if GetOption('target') == 'codelite':
         from targets.codelite import TargetCodelite
@@ -934,7 +1055,7 @@ def EndBuilding(target, program = None):
             if not isinstance(project_path, str) or len(project_path) == 0:
                 project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
             MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-            child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), 
+            child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name),
                                    cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = child.communicate()
             need_exit = True
@@ -946,7 +1067,7 @@ def EndBuilding(target, program = None):
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
             print ("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
-            need_exit = True
+            sys.exit(1)
 
     if need_exit:
         exit(0)

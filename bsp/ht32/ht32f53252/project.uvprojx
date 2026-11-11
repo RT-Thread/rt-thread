@@ -329,9 +329,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--gnu</MiscControls>
-              <Define>USE_HT32_DRIVER, RT_USING_LIBC, USE_HT32F53252_SK, USE_HT32F53242_52, USE_MEM_HT32F53252, RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
+              <Define>USE_HT32_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, USE_HT32F53252_SK, USE_HT32F53242_52, USE_MEM_HT32F53252, RT_USING_ARMLIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\inc;..\..\..\components\libc\posix\io\epoll;..\libraries\usbd_library\inc;..\libraries\HT32_STD_5xxxx_FWLib\library\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;..\libraries\ht32_drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;board\inc;applications;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\eventfd;..\libraries\HT32_STD_5xxxx_FWLib\library\Device\Holtek\HT32F5xxxx\Include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\smp_call;..\..\..\components\finsh;..\..\..\components\libc\posix\io\eventfd;board\inc;..\..\..\components\drivers\include;..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\inc;..\..\..\libcpu\arm\cortex-m0;..\..\..\include;..\..\..\libcpu\arm\common;applications;.;..\..\..\components\libc\posix\io\poll;..\libraries\ht32_drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\libraries\HT32_STD_5xxxx_FWLib\library\CMSIS\Include;..\libraries\usbd_library\inc;..\libraries\HT32_STD_5xxxx_FWLib\library\Device\Holtek\HT32F5xxxx\Include;..\..\..\components\net\utest;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,61 +383,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -721,20 +693,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
@@ -745,6 +703,20 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1056,12 +1028,75 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1080,13 +1115,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1094,50 +1122,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_mctm.c</FileName>
+              <FileName>ht32_cm0plus_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_mctm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_usart.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32_cm0plus_misc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1149,9 +1139,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_ckcu.c</FileName>
+              <FileName>ht32f5xxxx_bftm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ckcu.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_bftm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1163,79 +1153,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_rstcu.c</FileName>
+              <FileName>ht32f5xxxx_ckcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_rstcu.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ckcu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_ebi.c</FileName>
+              <FileName>ht32f5xxxx_cmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ebi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_pdma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_pdma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_pwrcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_pwrcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_ledc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ledc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_ht32f5xxxx_15.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\Device\Holtek\HT32F5xxxx\Source\system_ht32f5xxxx_15.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32_cm0plus_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32_cm0plus_misc.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_cmp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1243,6 +1170,20 @@
               <FileName>ht32f5xxxx_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_div.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_div.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_ebi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ebi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1261,16 +1202,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_tm.c</FileName>
+              <FileName>ht32f5xxxx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_tm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ht32f5xxxx_div.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_div.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1282,16 +1216,79 @@
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_cmp.c</FileName>
+              <FileName>ht32f5xxxx_ledc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_cmp.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_ledc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ht32f5xxxx_bftm.c</FileName>
+              <FileName>ht32f5xxxx_mctm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_bftm.c</FilePath>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_mctm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_pdma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_pdma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_pwrcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_pwrcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_rstcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_rstcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_tm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ht32f5xxxx_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\HT32F5xxxx_Driver\src\ht32f5xxxx_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_ht32f5xxxx_15.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HT32_STD_5xxxx_FWLib\library\Device\Holtek\HT32F5xxxx\Source\system_ht32f5xxxx_15.c</FilePath>
             </File>
           </Files>
         </Group>

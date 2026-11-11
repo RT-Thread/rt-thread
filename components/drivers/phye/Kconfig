@@ -6,6 +6,15 @@ menuconfig RT_USING_PHYE
       This framework will be of use only to devices that use
       external PHY (PHY functionality is not embedded within the controller).
 
+config RT_PHYE_GENERIC_USB
+    bool "Generic USB"
+    depends on RT_USING_PHYE
+    help
+      Enable support for generic USB PHY devices that follow the
+      "usb-nop-xceiv" device tree binding. This driver provides basic
+      PHY operations including reset, power management, and clock control
+      for USB PHY hardware.
+
 if RT_USING_PHYE
     osource "$(SOC_DM_PHYE_DIR)/Kconfig"
 endif

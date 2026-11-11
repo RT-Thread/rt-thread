@@ -19,6 +19,10 @@ devices.spi:
     kconfig:
       - CONFIG_RT_USING_SPI=y
       - CONFIG_BSP_USING_SPI=y
+devices.spim:
+    kconfig:
+      - CONFIG_RT_USING_SPIM=y
+      - CONFIG_BSP_USING_SPIM=y
 devices.uart:
     kconfig:
       - CONFIG_BSP_USING_UART=y

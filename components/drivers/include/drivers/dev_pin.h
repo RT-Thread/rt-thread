@@ -15,7 +15,7 @@
 #include <rtthread.h>
 
 /**
- * @defgroup    group_Pin Pin
+ * @defgroup    group_drivers_pin Pin
  * @brief       Pin driver api
  * @ingroup     group_device_driver
  *
@@ -69,7 +69,7 @@
  */
 
 /*!
- * @addtogroup group_Pin
+ * @addtogroup group_drivers_pin
  * @{
  */
 #ifdef __cplusplus
@@ -224,6 +224,7 @@ struct rt_pin_ops
 #endif
 #ifdef RT_USING_PINCTRL
     rt_err_t (*pin_ctrl_confs_apply)(struct rt_device *device, void *fw_conf_np);
+    rt_err_t (*pin_ctrl_gpio_request)(struct rt_device *device, rt_base_t gpio, rt_uint32_t flags);
 #endif /* RT_USING_PINCTRL */
 };
 

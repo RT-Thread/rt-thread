@@ -294,13 +294,14 @@ void rt_hw_hard_fault_exception(struct exception_info * exception_info)
 #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     extern long list_thread(void);
 #endif
-    struct stack_frame* context = &exception_info->stack_frame;
+    struct exception_stack_frame *exception_stack = &exception_info->stack_frame.exception_stack_frame;
+    struct stack_frame *context = &exception_info->stack_frame;
 
     if (rt_exception_hook != RT_NULL)
     {
         rt_err_t result;
 
-        result = rt_exception_hook(exception_info);
+        result = rt_exception_hook(exception_stack);
         if (result == RT_EOK)
             return;
     }

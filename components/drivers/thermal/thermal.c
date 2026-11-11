@@ -199,6 +199,8 @@ _scan_cooling:
             }
 
             cdev_np = args.data;
+            cell->cooling_np = cdev_np;
+            rt_ofw_node_get(cdev_np);
 
             rt_spin_lock(&nodes_lock);
             device_foreach(cdev, &thermal_cooling_device_nodes)
@@ -218,15 +220,53 @@ _scan_cooling:
             {
                 thermal_bind(cell->cooling_devices, zdev);
             }
-
-            rt_ofw_node_put(cdev_np);
         }
     }
 _end:
+    ;
+}
+void thermal_cooling_device_bind_zones(struct rt_thermal_cooling_device *cdev)
+{
+    struct rt_thermal_zone_device *zdev;
+
+    if (!cdev || !cdev->parent.ofw_node)
+    {
+        return;
+    }
+
+    rt_spin_lock(&nodes_lock);
+
+    device_foreach(zdev, &thermal_zone_device_nodes)
+    {
+        for (int i = 0; i < zdev->cooling_maps_nr; ++i)
+        {
+            struct rt_thermal_cooling_map *map = &zdev->cooling_maps[i];
+
+            for (int c = 0; c < map->cells_nr; ++c)
+            {
+                struct rt_thermal_cooling_cell *cell = &map->cells[c];
+
+                if (cell->cooling_devices || cell->cooling_np != cdev->parent.ofw_node)
+                {
+                    continue;
+                }
+
+                cell->cooling_devices = cdev;
+                thermal_bind(cdev, zdev);
+            }
+        }
+    }
+
+    rt_spin_unlock(&nodes_lock);
 }
 #else
 rt_inline void thermal_ofw_setup(struct rt_ofw_node *np, struct rt_thermal_zone_device *zdev)
 {
+}
+
+rt_inline void thermal_cooling_device_bind_zones(struct rt_thermal_cooling_device *cdev)
+{
+    RT_UNUSED(cdev);
 }
 #endif /* RT_USING_OFW */
 
@@ -310,17 +350,24 @@ rt_err_t rt_thermal_zone_device_unregister(struct rt_thermal_zone_device *zdev)
     {
         for (int i = 0; i < zdev->cooling_maps_nr; ++i)
         {
-            struct rt_thermal_cooling_device *cdev;
             struct rt_thermal_cooling_map *map = &zdev->cooling_maps[i];
 
             for (int c = 0; c < map->cells_nr; ++c)
             {
-                cdev = map->cells[i].cooling_devices;
+                struct rt_thermal_cooling_cell *cell = &map->cells[c];
 
-                if (cdev)
+                if (cell->cooling_devices)
                 {
-                    thermal_unbind(cdev, zdev);
+                    thermal_unbind(cell->cooling_devices, zdev);
                 }
+
+#ifdef RT_USING_OFW
+                if (cell->cooling_np)
+                {
+                    rt_ofw_node_put(cell->cooling_np);
+                    cell->cooling_np = RT_NULL;
+                }
+#endif
             }
 
             rt_free(map->cells);
@@ -357,6 +404,10 @@ rt_err_t rt_thermal_cooling_device_register(struct rt_thermal_cooling_device *cd
     rt_spin_unlock(&nodes_lock);
 
     err = rt_thermal_cooling_device_change_governor(cdev, RT_NULL);
+    if (!err)
+    {
+        thermal_cooling_device_bind_zones(cdev);
+    }
 
     return err;
 }
@@ -623,6 +674,7 @@ void rt_thermal_zone_device_update(struct rt_thermal_zone_device *zdev, rt_ubase
 
     if (!need_cool && zdev->cooling)
     {
+        zdev->cooling = RT_FALSE;
         rt_thermal_cooling_device_kick(zdev);
     }
 
@@ -720,6 +772,8 @@ void rt_thermal_cooling_device_kick(struct rt_thermal_zone_device *zdev)
     for (int i = 0; i < zdev->cooling_maps_nr; ++i)
     {
         rt_ubase_t level;
+        rt_ubase_t max_level;
+        rt_ubase_t cur_level;
         struct rt_thermal_cooling_device *cdev;
         struct rt_thermal_cooling_cell *cell;
         struct rt_thermal_cooling_map *map = &zdev->cooling_maps[i];
@@ -735,27 +789,44 @@ void rt_thermal_cooling_device_kick(struct rt_thermal_zone_device *zdev)
             }
 
             /* Update status */
-            if (cdev->ops->get_max_level(cdev, &cdev->max_level))
+            if (cdev->ops->get_max_level(cdev, &max_level))
             {
                 continue;
             }
 
-            if (cdev->ops->get_cur_level(cdev, &level) || level > cdev->max_level)
+            cdev->max_level = max_level;
+
+            level = 0;
+
+            if (zdev->cooling)
             {
-                continue;
+                for (int m = 0; m < zdev->cooling_maps_nr; ++m)
+                {
+                    struct rt_thermal_cooling_map *scan_map = &zdev->cooling_maps[m];
+
+                    if (zdev->temperature <= scan_map->trips->temperature)
+                    {
+                        continue;
+                    }
+
+                    for (int sc = 0; sc < scan_map->cells_nr; ++sc)
+                    {
+                        struct rt_thermal_cooling_cell *scan_cell = &scan_map->cells[sc];
+
+                        if (scan_cell->cooling_devices == cdev)
+                        {
+                            level = rt_max_t(rt_ubase_t, level, scan_cell->level_range[1]);
+                        }
+                    }
+                }
             }
 
-            /* Check if cooling is required */
-            if (level >= cell->level_range[0] && level <= cell->level_range[1])
+            level = rt_min_t(rt_ubase_t, level, max_level);
+
+            if (!cdev->ops->get_cur_level(cdev, &cur_level) && cur_level != level)
             {
-                /* Is cooling, not call */
-                continue;
+                cdev->ops->set_cur_level(cdev, level);
             }
-
-            cdev->gov->tuning(zdev, i, c, &level);
-            level = rt_min_t(rt_ubase_t, level, cdev->max_level);
-
-            cdev->ops->set_cur_level(cdev, level);
         }
     }
 }

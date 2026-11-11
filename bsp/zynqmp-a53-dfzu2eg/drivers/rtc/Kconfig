@@ -1,0 +1,5 @@
+config RT_RTC_ZYNQMP
+    bool "Xilinx Zynq Ultrascale+ MPSoC RTC"
+    depends on RT_USING_RTC
+    select RT_USING_ALARM
+    default y

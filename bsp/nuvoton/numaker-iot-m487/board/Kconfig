@@ -60,7 +60,7 @@ menu "Hardware Drivers Config"
                 Choose this option if you need USB function.
 
         if BOARD_USING_USB_D_H
-            choice
+            choice BOARD_HS_SEL
                 prompt "Select FS/HS USB Ports"
 
                 config BOARD_USING_HSUSBD

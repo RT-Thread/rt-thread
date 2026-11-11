@@ -71,12 +71,12 @@ rt_bool_t rt_hw_mpu_region_valid(rt_mem_region_t *region)
         LOG_E("Region size is too small");
         return RT_FALSE;
     }
-    if (region->size & (region->size - 1U) != 0U)
+    if ((region->size & (region->size - 1U)) != 0U)
     {
         LOG_E("Region size is not power of 2");
         return RT_FALSE;
     }
-    if ((rt_uint32_t)region->start & (region->size - 1U) != 0U)
+    if (((rt_uint32_t)region->start & (region->size - 1U)) != 0U)
     {
         LOG_E("Region is not naturally aligned");
         return RT_FALSE;

@@ -1,0 +1,31 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+# ------ kernel CI ------
+
+# ------ online-packages CI ------
+
+# ------ peripheral CI ------
+peripheral.uartv2:
+    kconfig:
+      - CONFIG_RT_USING_SERIAL_V1=n
+      - CONFIG_RT_USING_SERIAL_V2=y
+      - CONFIG_RT_SERIAL_USING_DMA=y
+      - CONFIG_BSP_USART1_AFIO_MODE_PA9_PA10=y
+      - CONFIG_BSP_UART1_RX_BUFSIZE=1024
+      - CONFIG_BSP_UART1_TX_BUFSIZE=1024
+      - CONFIG_BSP_USART2_AFIO_MODE_PD5_PD6=y
+      - CONFIG_BSP_UART2_RX_USING_DMA=y
+      - CONFIG_BSP_UART2_TX_USING_DMA=y
+      - CONFIG_BSP_UART2_RX_BUFSIZE=1024
+      - CONFIG_BSP_UART2_TX_BUFSIZE=1024
+
+devices.soft_i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C1=y
+    - CONFIG_RT_SOFT_I2C1_SCL_PIN=22
+    - CONFIG_RT_SOFT_I2C1_SDA_PIN=23
+    - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"

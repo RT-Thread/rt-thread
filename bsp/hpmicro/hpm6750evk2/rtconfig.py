@@ -1,8 +1,16 @@
-# Copyright 2021-2024 HPMicro
+# Copyright 2021-2025 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 
 import os
 import sys
+
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+
+sys.path.insert(0, os.path.join(RTT_ROOT, 'tools'))
 
 # toolchains options
 ARCH='risc-v'
@@ -45,12 +53,18 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     if os.getenv('RTT_RISCV_TOOLCHAIN'):
         EXEC_PATH = os.getenv('RTT_RISCV_TOOLCHAIN')
+    elif RTT_EXEC_PATH:
+        EXEC_PATH = RTT_EXEC_PATH
     else:
         EXEC_PATH   = r'/opt/riscv-gnu-gcc/bin'
 else:
-    print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
+    print("CROSS_TOOL = {} not yet supported, only gcc is supported".format(CROSS_TOOL))
+    exit(-1)
 
-BUILD = 'flash_debug'
+if os.getenv('RTT_BUILD_TYPE'):
+    BUILD = os.getenv('RTT_BUILD_TYPE')
+else:
+    BUILD = 'flash_debug'
 
 if PLATFORM == 'gcc':
     PREFIX = 'riscv32-unknown-elf-'
@@ -70,7 +84,7 @@ if PLATFORM == 'gcc':
     DEVICE = ARCH_ABI  + ' -DUSE_NONVECTOR_MODE=1 ' + ' -ffunction-sections -fdata-sections -fno-common '
     CFLAGS = DEVICE
     AFLAGS = CFLAGS
-    LFLAGS  = ARCH_ABI + '  --specs=nano.specs --specs=nosys.specs  -u _printf_float -u _scanf_float -nostartfiles -Wl,--gc-sections '
+    LFLAGS  = ARCH_ABI + '  --specs=nano.specs --specs=nosys.specs -nostartfiles -Wl,--gc-sections '
 
     CPATH = ''
     LPATH = ''
@@ -78,29 +92,29 @@ if PLATFORM == 'gcc':
     if BUILD == 'ram_debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
-        CFLAGS += ' -O0'
-        LFLAGS += ' -O0'
-        LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
+        CFLAGS += ' -Og'
+        LFLAGS += ' -Og'
+        LINKER_FILE = 'board/linker_scripts/gcc/ram_rtt.ld'
     elif BUILD == 'ram_release':
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
-        LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/ram_rtt.ld'
     elif BUILD == 'flash_debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
-        CFLAGS += ' -O0'
-        LFLAGS += ' -O0'
+        CFLAGS += ' -Og'
+        LFLAGS += ' -Og'
         CFLAGS += ' -DFLASH_XIP=1'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     elif BUILD == 'flash_release':
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
         CFLAGS += ' -DFLASH_XIP=1'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     else:
         CFLAGS += ' -O2'
         LFLAGS += ' -O2'
-        LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
+        LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     LFLAGS += ' -T ' + LINKER_FILE
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

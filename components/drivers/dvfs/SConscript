@@ -1,0 +1,38 @@
+from building import *
+
+group = []
+objs = []
+
+if not GetDepend(['RT_USING_DVFS']):
+    Return('group')
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+CPPPATH = [cwd + '/../include']
+
+src = ['dvfs.c', 'dvfs_cpu.c', 'dvfs_governor.c', 'dvfs_idle.c', 'dvfs_opp.c']
+
+if GetDepend(['RT_USING_CONSOLE', 'RT_USING_MSH']):
+    src += ['dvfs_cmd.c']
+
+if GetDepend(['RT_USING_DVFS_EVENT']):
+    src += ['dvfs_event.c']
+
+if GetDepend(['RT_USING_PM']):
+    src += ['dvfs_pm.c']
+
+if GetDepend(['RT_USING_OFW']):
+    src += ['dvfs-ofw.c']
+
+if GetDepend(['RT_DVFS_SCMI_CPUFREQ']):
+    src += ['dvfs-scmi-cpufreq.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+objs = objs + group
+
+Return('group')

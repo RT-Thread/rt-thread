@@ -65,8 +65,8 @@ int fal_flash_init(void)
 
             if(offset > device_table[i]->len)
             {
-                LOG_I("Flash device %*.*s: add block failed, offset %d > len %d.",
-                FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, offset, device_table[i]->len);
+                LOG_E("Flash device %*.*s: add block failed, offset %d > len %d.",
+                FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, offset, device_table[i]->len);
                 break;
             }
 

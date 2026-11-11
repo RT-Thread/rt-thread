@@ -11,7 +11,14 @@
 #include "drv_common.h"
 #include <board.h>
 
-#ifdef RT_USING_PIN
+#ifdef RT_USING_BUILTIN_FDT
+#include <drivers/ofw_fdt.h>
+#include <drivers/pic.h>
+
+extern const unsigned char rt_hw_builtin_fdt[];
+#endif
+
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
 #include <drv_gpio.h>
 #endif
 
@@ -51,7 +58,9 @@ void rt_hw_systick_init(void)
 
     _systick_ms = 1000u / RT_TICK_PER_SECOND;
     if (_systick_ms == 0)
+    {
         _systick_ms = 1;
+    }
 }
 
 /**
@@ -64,7 +73,9 @@ void SysTick_Handler(void)
     rt_interrupt_enter();
 
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         HAL_IncTick();
+    }
 
     rt_tick_increase();
 
@@ -75,7 +86,9 @@ void SysTick_Handler(void)
 uint32_t HAL_GetTick(void)
 {
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         HAL_IncTick();
+    }
 
     return uwTick;
 }
@@ -111,9 +124,9 @@ void HAL_Delay(__IO uint32_t Delay)
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-    #ifndef SOC_SERIES_STM32MP1
-        rt_hw_systick_init();
-    #endif
+#ifndef SOC_SERIES_STM32MP1
+    rt_hw_systick_init();
+#endif
 
     /* Return function status */
     return HAL_OK;
@@ -170,6 +183,8 @@ void rt_hw_us_delay(rt_uint32_t us)
     }
 }
 
+void MPU_Config(void);
+
 /**
  * This function will initial STM32 board.
  */
@@ -196,7 +211,24 @@ rt_weak void rt_hw_board_init(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-#ifdef RT_USING_PIN
+#ifdef RT_USING_BUILTIN_FDT
+    if (rt_fdt_prefetch((void *)rt_hw_builtin_fdt) != RT_EOK ||
+        rt_fdt_unflatten() != RT_EOK)
+    {
+        LOG_E("Builtin FDT initialization failed");
+        RT_ASSERT(0);
+    }
+
+#ifdef RT_USING_PIC
+    if (rt_pic_init() != RT_EOK || rt_pic_irq_init() != RT_EOK)
+    {
+        LOG_E("PIC initialization failed");
+        RT_ASSERT(0);
+    }
+#endif
+#endif
+
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
     rt_hw_pin_init();
 #endif
 

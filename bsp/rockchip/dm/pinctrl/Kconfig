@@ -1,0 +1,11 @@
+config RT_PINCTRL_ROCKCHIP_RK8XX
+    bool "Pinctrl and GPIO driver for RK805/RK806 PMIC"
+    depends on RT_USING_PINCTRL
+    depends on RT_MFD_RK8XX
+    default n
+
+config RT_PINCTRL_ROCKCHIP
+    bool "Rockchip gpio and pinctrl driver"
+    depends on RT_USING_PINCTRL
+    depends on RT_MFD_SYSCON
+    default y

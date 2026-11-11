@@ -12,19 +12,14 @@ src     = Glob('kernel/*.c') + Glob('kernel/*.S')
 if not GetDepend(['RT_USING_VDSO']):
     Return('group')
 
-if rtconfig.ARCH != "aarch64" and rtconfig.ARCH != "risc-v":
+if rtconfig.ARCH != "aarch64" and rtconfig.ARCH != "risc-v" and rtconfig.ARCH != "arm":
+    # not supported arch
+    src = []
+elif rtconfig.ARCH == "arm" and rtconfig.CPU != "cortex-a":
     # not supported arch
     src = []
 else:
-    if not hasattr(rtconfig, 'CPP') or rtconfig.CPP is None:
-        rtconfig.CPP = rtconfig.PREFIX + 'cpp'
-    if not hasattr(rtconfig, 'CPPFLAGS') or rtconfig.CPPFLAGS is None:
-        rtconfig.CPPFLAGS = ' -E -P -x assembler-with-cpp'
-
-    if not os.path.exists(cwd + "/user" + "/arch" +"/" + rtconfig.ARCH + "/vdso.lds"):
-        Preprocessing("user/arch/" + rtconfig.ARCH + "/vdso.lds.S", ".lds", CPPPATH=[cwd])
-
-    vdso_arch = os.path.join(cwd, 'user',"arch", rtconfig.ARCH)
+    vdso_user = os.path.join(cwd, 'user')
 
     process_env = os.environ.copy()
     if hasattr(rtconfig, 'EXEC_PATH') and rtconfig.EXEC_PATH is not None:
@@ -34,9 +29,9 @@ else:
     if hasattr(rtconfig, 'DEVICE') and rtconfig.DEVICE is not None:
         process_env['RTT_DEVICE'] = rtconfig.DEVICE
 
-    command = ["scons", "-C", vdso_arch]
+    command = ["scons", "-C", vdso_user, "RTT_VDSO_ARCH=%s" % rtconfig.ARCH]
     if GetOption('clean'):
-        command = ["scons", "-C", vdso_arch, "--clean"] 
+        command = ["scons", "-C", vdso_user, "RTT_VDSO_ARCH=%s" % rtconfig.ARCH, "--clean"]
 
     try:
         result = subprocess.run(command, env=process_env, check=True)

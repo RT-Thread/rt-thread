@@ -193,6 +193,12 @@ extern "C" {
 #define UART1_RX_DMA_INSTANCE           DMA2_Stream2
 #define UART1_RX_DMA_CHANNEL            DMA_CHANNEL_4
 #define UART1_RX_DMA_IRQ                DMA2_Stream2_IRQn
+#elif defined(BSP_QSPI_USING_DMA) && !defined(QSPI_DMA_INSTANCE)
+#define QSPI_DMA_IRQHandler             DMA2_Stream2_IRQHandler
+#define QSPI_DMA_RCC                    RCC_AHB1ENR_DMA2EN
+#define QSPI_DMA_INSTANCE               DMA2_Stream2
+#define QSPI_DMA_CHANNEL                DMA_CHANNEL_11
+#define QSPI_DMA_IRQ                    DMA2_Stream2_IRQn
 #endif
 
 /* DMA2 stream3 */
@@ -274,6 +280,12 @@ extern "C" {
 #define UART1_TX_DMA_INSTANCE           DMA2_Stream7
 #define UART1_TX_DMA_CHANNEL            DMA_CHANNEL_4
 #define UART1_TX_DMA_IRQ                DMA2_Stream7_IRQn
+#elif defined(BSP_QSPI_USING_DMA) && !defined(QSPI_DMA_INSTANCE)
+#define QSPI_DMA_IRQHandler             DMA2_Stream7_IRQHandler
+#define QSPI_DMA_RCC                    RCC_AHB1ENR_DMA2EN
+#define QSPI_DMA_INSTANCE               DMA2_Stream7
+#define QSPI_DMA_CHANNEL                DMA_CHANNEL_3
+#define QSPI_DMA_IRQ                    DMA2_Stream7_IRQn
 #endif
 
 #ifdef __cplusplus

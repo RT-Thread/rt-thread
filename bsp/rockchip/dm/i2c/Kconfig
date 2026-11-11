@@ -1,0 +1,5 @@
+config RT_I2C_RK3X
+    bool "Rockchip RK3xxx I2C adapter"
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_PINCTRL
+    default n

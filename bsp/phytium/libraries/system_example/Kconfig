@@ -1,0 +1,10 @@
+menu "System Example"
+    config BSP_USING_SYSTEM_EXAMPLE
+        bool "Enable system example"
+        default n
+        if BSP_USING_SYSTEM_EXAMPLE
+            config BSP_USING_OPENAMP_EXAMPLE
+                bool "Enable OpenAMP Example"
+                default n
+        endif
+endmenu

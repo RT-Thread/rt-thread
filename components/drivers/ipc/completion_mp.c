@@ -242,10 +242,11 @@ static rt_err_t _comp_susp_thread(struct rt_completion *completion,
         /* start timer */
         if (timeout > 0)
         {
+            rt_tick_t timeout_tick = timeout;
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
                              RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
+                             &timeout_tick);
             rt_timer_start(&(thread->thread_timer));
         }
 

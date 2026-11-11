@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('src/*.c')
+CPPPATH = [cwd + '/include', cwd + '/src']
+
+if GetDepend('RT_AF_UNIX_USING_TESTCASES'):
+    src += Glob('testcases/*.c')
+
+group = DefineGroup('AF_UNIX', src, depend=['RT_USING_AF_UNIX'], CPPPATH=CPPPATH)
+
+Return('group')

@@ -1,0 +1,19 @@
+[package]
+name = "em_component_registry"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "em_component_registry"
+crate-type = ["staticlib"]
+
+[dependencies]
+rt-rust = { path = "../../../core" }
+rt_macros = { path = "../../../rt_macros" }
+
+# Optional dependencies - only included when features are enabled
+em_component_log = { path = "../log", optional = true }
+
+[features]
+default = []
+enable-log = ["em_component_log", "em_component_log/enable-log"]

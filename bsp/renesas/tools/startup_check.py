@@ -60,5 +60,11 @@ def startup_check():
     # else:
     #     print "File {file_path} is unchanged."
 
+    # rm bsp_linker_info.h
+    file_to_remove = "bsp_linker_info.h"
+    if os.path.exists(file_to_remove):
+        print(f"Removing {file_to_remove} before build...")
+        os.remove(file_to_remove)
+
 if __name__ == "__main__":
     startup_check()

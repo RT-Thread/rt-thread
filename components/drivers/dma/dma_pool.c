@@ -8,6 +8,21 @@
  * 2023-02-25     GuEe-GUI     the first version
  */
 
+/**
+ * @file dma_pool.c
+ * @brief DMA memory pool and buffer allocation framework
+ *
+ * Manages DMA-capable memory regions (coherent pool and CMA) for
+ * allocating DMA buffers. Provides coherent and non-coherent buffer
+ * allocation with optional device tree "memory-region" integration,
+ * cache synchronization via the rt_dma_map_ops interface, and a
+ * bitmap-based page allocator within DMA pools.
+ *
+ * Pools are organized as:
+ * - coherent-pool: smaller pool for cache-coherent DMA (ioremap_cached)
+ * - CMA (Contiguous Memory Allocator): larger pool for general DMA
+ */
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -16,31 +31,50 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#include <mmu.h>
 #include <mm_aspace.h>
+#include <mm_memblock.h>
 #include <dt-bindings/size.h>
 
 static RT_DEFINE_SPINLOCK(dma_pools_lock);
 static rt_list_t dma_pool_nodes = RT_LIST_OBJECT_INIT(dma_pool_nodes);
 
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region);
+static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool);
 
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags);
+                       rt_ubase_t *dma_handle, rt_ubase_t flags);
 static void dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
+                     void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
 
+/** @brief Acquire the DMA pool spinlock */
 rt_inline void region_pool_lock(void)
 {
     rt_hw_spin_lock(&dma_pools_lock.lock);
 }
 
+/** @brief Release the DMA pool spinlock */
 rt_inline void region_pool_unlock(void)
 {
     rt_hw_spin_unlock(&dma_pools_lock.lock);
 }
 
+/**
+ * @brief Synchronize output data for a coherent DMA device
+ *
+ * Converts the virtual address to a physical DMA handle and flushes
+ * the CPU data cache to ensure the DMA engine sees the latest data.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  data       Virtual address of the data buffer
+ * @param[in]  size       Buffer size in bytes
+ * @param[out] dma_handle Physical DMA address (filled if non-NULL)
+ * @param[in]  flags      Allocation flags (unused)
+ *
+ * @return RT_EOK
+ */
 static rt_err_t dma_map_coherent_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                               void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     if (dma_handle)
     {
@@ -51,22 +85,50 @@ static rt_err_t dma_map_coherent_sync_out_data(struct rt_device *dev,
     return RT_EOK;
 }
 
+/**
+ * @brief Synchronize input data for a coherent DMA device
+ *
+ * Invalidates the CPU data cache so the CPU sees the data written
+ * by the DMA engine.
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] out_data   Virtual address of the data buffer
+ * @param[in] size       Buffer size in bytes
+ * @param[in] dma_handle Physical DMA address (unused)
+ * @param[in] flags      Allocation flags (unused)
+ *
+ * @return RT_EOK
+ */
 static rt_err_t dma_map_coherent_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
+                                              void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, out_data, size);
 
     return RT_EOK;
 }
 
-static const struct rt_dma_map_ops dma_map_coherent_ops =
-{
+/** @brief DMA map operations for cache-coherent devices */
+static const struct rt_dma_map_ops dma_map_coherent_ops = {
     .sync_out_data = dma_map_coherent_sync_out_data,
     .sync_in_data = dma_map_coherent_sync_in_data,
 };
 
+/**
+ * @brief Synchronize output data for a non-coherent DMA device
+ *
+ * Converts virtual address to physical DMA handle. No cache flush
+ * is performed since the memory is non-cacheable.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  data       Virtual address of the data buffer
+ * @param[in]  size       Buffer size in bytes
+ * @param[out] dma_handle Physical DMA address (filled if non-NULL)
+ * @param[in]  flags      Allocation flags (unused)
+ *
+ * @return RT_EOK
+ */
 static rt_err_t dma_map_nocoherent_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                                 void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     if (dma_handle)
     {
@@ -76,33 +138,76 @@ static rt_err_t dma_map_nocoherent_sync_out_data(struct rt_device *dev,
     return RT_EOK;
 }
 
+/**
+ * @brief Synchronize input data for a non-coherent DMA device
+ *
+ * No cache operations needed for non-cacheable memory.
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] out_data   Virtual address of the data buffer
+ * @param[in] size       Buffer size in bytes
+ * @param[in] dma_handle Physical DMA address (unused)
+ * @param[in] flags      Allocation flags (unused)
+ *
+ * @return RT_EOK
+ */
 static rt_err_t dma_map_nocoherent_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
+                                                void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     return RT_EOK;
 }
 
-static const struct rt_dma_map_ops dma_map_nocoherent_ops =
-{
+/** @brief DMA map operations for non-cache-coherent devices */
+static const struct rt_dma_map_ops dma_map_nocoherent_ops = {
     .sync_out_data = dma_map_nocoherent_sync_out_data,
     .sync_in_data = dma_map_nocoherent_sync_in_data,
 };
 
 #ifdef RT_USING_OFW
+
+/**
+ * @brief Translate a CPU address to a DMA address via device tree
+ *
+ * @param[in] dev  Device with an ofw_node
+ * @param[in] addr CPU physical address
+ *
+ * @return DMA address
+ */
 rt_inline rt_ubase_t ofw_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
 {
     return (rt_ubase_t)rt_ofw_translate_cpu2dma(dev->ofw_node, addr);
 }
 
+/**
+ * @brief Translate a DMA address to a CPU address via device tree
+ *
+ * @param[in] dev  Device with an ofw_node
+ * @param[in] addr DMA address
+ *
+ * @return CPU physical address
+ */
 rt_inline rt_ubase_t ofw_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
 {
     return (rt_ubase_t)rt_ofw_translate_dma2cpu(dev->ofw_node, addr);
 }
 
+/**
+ * @brief Allocate a DMA buffer and translate to DMA address space
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  size       Requested size in bytes
+ * @param[out] dma_handle DMA address (device tree translated)
+ * @param[in]  flags      Allocation flags
+ *
+ * @return Virtual address of the buffer, or RT_NULL on failure
+ */
 static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                               rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
-    void *cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+    void *cpu_addr;
+
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -112,17 +217,40 @@ static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
     return cpu_addr;
 }
 
+/**
+ * @brief Free a DMA buffer, translating DMA address back to CPU space
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] size       Buffer size in bytes
+ * @param[in] cpu_addr   Virtual address of the buffer
+ * @param[in] dma_handle DMA address (will be translated back to CPU)
+ * @param[in] flags      Allocation flags
+ */
 static void ofw_dma_map_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                             void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     dma_handle = ofw_addr_dma2cpu(dev, dma_handle);
 
     dma_free(dev, size, cpu_addr, dma_handle, flags);
 }
 
+/**
+ * @brief Sync output data with device tree DMA address translation
+ *
+ * Chooses coherent or non-coherent sync based on RT_DMA_F_NOCACHE flag,
+ * then translates the DMA handle to device bus address space.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  data       Virtual address of the data buffer
+ * @param[in]  size       Buffer size in bytes
+ * @param[out] dma_handle DMA address (translated)
+ * @param[in]  flags      Sync flags
+ *
+ * @return RT_EOK on success
+ */
 static rt_err_t ofw_dma_map_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                          void *data, rt_size_t size,
+                                          rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
 
@@ -143,9 +271,23 @@ static rt_err_t ofw_dma_map_sync_out_data(struct rt_device *dev,
     return err;
 }
 
+/**
+ * @brief Sync input data with device tree DMA address back-translation
+ *
+ * Translates the DMA handle from bus address space back to CPU space,
+ * then performs coherent or non-coherent cache invalidation.
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] out_data   Virtual address of the data buffer
+ * @param[in] size       Buffer size in bytes
+ * @param[in] dma_handle DMA address (translated back from bus space)
+ * @param[in] flags      Sync flags
+ *
+ * @return RT_EOK on success
+ */
 static rt_err_t ofw_dma_map_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size,
-        rt_ubase_t dma_handle, rt_ubase_t flags)
+                                         void *out_data, rt_size_t size,
+                                         rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     dma_handle = ofw_addr_dma2cpu(dev, dma_handle);
 
@@ -157,14 +299,46 @@ static rt_err_t ofw_dma_map_sync_in_data(struct rt_device *dev,
     return dma_map_coherent_sync_in_data(dev, out_data, size, dma_handle, flags);
 }
 
-static const struct rt_dma_map_ops ofw_dma_map_ops =
-{
+/** @brief DMA map operations with device tree address translation */
+static const struct rt_dma_map_ops ofw_dma_map_ops = {
     .alloc = ofw_dma_map_alloc,
     .free = ofw_dma_map_free,
     .sync_out_data = ofw_dma_map_sync_out_data,
     .sync_in_data = ofw_dma_map_sync_in_data,
 };
 
+static rt_bool_t ofw_node_has_dma_ranges(struct rt_ofw_node *np)
+{
+    struct rt_ofw_node *bus;
+
+    for (bus = np ? np->parent : RT_NULL; bus; bus = bus->parent)
+    {
+        rt_ssize_t len;
+
+        if (rt_ofw_get_prop(bus, "dma-ranges", &len) && len)
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
+/**
+ * @brief Determine DMA operations for a device tree device
+ *
+ * Parses the "memory-region" property to install DMA pools from
+ * reserved-memory nodes. Sets RT_DMA_F_NOMAP if "no-map" is set,
+ * and RT_DMA_F_NOCACHE if the device is not DMA-coherent.
+ *
+ * Also installs ofw_dma_map_ops when the parent bus chain provides
+ * "dma-ranges", so CPU physical addresses are translated for DMA.
+ *
+ * @param[in] dev  Device to configure DMA operations for
+ *
+ * @return Pointer to DMA map ops (ofw_dma_map_ops) when translation
+ *         or memory-region pools apply, RT_NULL otherwise
+ */
 static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 {
     rt_err_t err;
@@ -183,18 +357,13 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 
         if (!(mem_np = rt_ofw_find_node_by_phandle(phandle)))
         {
-            if (region_nr == 0)
-            {
-                return RT_NULL;
-            }
-
-            break;
+            continue;
         }
 
         if ((err = rt_ofw_get_address(mem_np, 0, &addr, &size)))
         {
             LOG_E("%s: Read '%s' error = %s", rt_ofw_node_full_name(mem_np),
-                    "memory-region", rt_strerror(err));
+                  "memory-region", rt_strerror(err));
 
             rt_ofw_node_put(mem_np);
             continue;
@@ -225,7 +394,7 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
         ++region_nr;
     }
 
-    if (region_nr)
+    if (region_nr || ofw_node_has_dma_ranges(np))
     {
         ops = &ofw_dma_map_ops;
     }
@@ -234,6 +403,203 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 }
 #endif /* RT_USING_OFW */
 
+#ifdef RT_USING_PCI
+static struct rt_pci_host_bridge *pci_device_host_bridge(struct rt_device *dev)
+{
+    struct rt_pci_device *pdev = rt_container_of(dev, struct rt_pci_device, parent);
+
+    return rt_pci_find_host_bridge(pdev->bus);
+}
+
+static rt_uint64_t pci_host_cpu_to_bus(struct rt_pci_host_bridge *host_bridge, rt_uint64_t cpu_addr)
+{
+    if (!host_bridge || !host_bridge->dma_regions)
+    {
+        return ~0ULL;
+    }
+
+    for (int i = 0; i < host_bridge->dma_regions_nr; ++i)
+    {
+        struct rt_pci_bus_region *region = &host_bridge->dma_regions[i];
+
+        if (cpu_addr >= region->cpu_addr &&
+            cpu_addr < region->cpu_addr + region->size)
+        {
+            return region->phy_addr + (cpu_addr - region->cpu_addr);
+        }
+    }
+
+    return ~0ULL;
+}
+
+static rt_uint64_t pci_host_bus_to_cpu(struct rt_pci_host_bridge *host_bridge, rt_uint64_t pci_addr)
+{
+    if (!host_bridge || !host_bridge->dma_regions)
+    {
+        return ~0ULL;
+    }
+
+    for (int i = 0; i < host_bridge->dma_regions_nr; ++i)
+    {
+        struct rt_pci_bus_region *region = &host_bridge->dma_regions[i];
+
+        if (pci_addr >= region->phy_addr && pci_addr < region->phy_addr + region->size)
+        {
+            return region->cpu_addr + (pci_addr - region->phy_addr);
+        }
+    }
+
+    return ~0ULL;
+}
+
+static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
+{
+    rt_uint64_t pci_dma;
+    struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge)
+    {
+        return addr;
+    }
+
+    pci_dma = pci_host_cpu_to_bus(host_bridge, addr);
+
+    return pci_dma == ~0ULL ? addr : (rt_ubase_t)pci_dma;
+}
+
+static rt_ubase_t pci_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
+{
+    rt_uint64_t cpu_addr;
+    struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge)
+    {
+        return addr;
+    }
+
+    cpu_addr = pci_host_bus_to_cpu(host_bridge, addr);
+
+    return cpu_addr == ~0ULL ? addr : (rt_ubase_t)cpu_addr;
+}
+
+static void *pci_dma_map_alloc(struct rt_device *dev, rt_size_t size,
+                               rt_ubase_t *dma_handle, rt_ubase_t flags)
+{
+    void *cpu_addr;
+
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+
+    if (cpu_addr && dma_handle)
+    {
+        *dma_handle = pci_addr_cpu2dma(dev, *dma_handle);
+    }
+
+    return cpu_addr;
+}
+
+static void pci_dma_map_free(struct rt_device *dev, rt_size_t size,
+                             void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+{
+    dma_handle = pci_addr_dma2cpu(dev, dma_handle);
+
+    dma_free(dev, size, cpu_addr, dma_handle, flags);
+}
+
+static rt_err_t pci_dma_map_sync_out_data(struct rt_device *dev,
+                                          void *data, rt_size_t size,
+                                          rt_ubase_t *dma_handle, rt_ubase_t flags)
+{
+    rt_err_t err;
+
+    if (flags & RT_DMA_F_NOCACHE)
+    {
+        err = dma_map_nocoherent_sync_out_data(dev, data, size, dma_handle, flags);
+    }
+    else
+    {
+        err = dma_map_coherent_sync_out_data(dev, data, size, dma_handle, flags);
+    }
+
+    if (!err && dma_handle)
+    {
+        *dma_handle = pci_addr_cpu2dma(dev, *dma_handle);
+    }
+
+    return err;
+}
+
+static rt_err_t pci_dma_map_sync_in_data(struct rt_device *dev,
+                                         void *out_data, rt_size_t size,
+                                         rt_ubase_t dma_handle, rt_ubase_t flags)
+{
+    dma_handle = pci_addr_dma2cpu(dev, dma_handle);
+
+    if (flags & RT_DMA_F_NOCACHE)
+    {
+        return dma_map_nocoherent_sync_in_data(dev, out_data, size, dma_handle, flags);
+    }
+
+    return dma_map_coherent_sync_in_data(dev, out_data, size, dma_handle, flags);
+}
+
+static const struct rt_dma_map_ops pci_dma_map_ops = {
+    .alloc = pci_dma_map_alloc,
+    .free = pci_dma_map_free,
+    .sync_out_data = pci_dma_map_sync_out_data,
+    .sync_in_data = pci_dma_map_sync_in_data,
+};
+
+static const struct rt_dma_map_ops *pci_device_dma_ops(struct rt_device *dev)
+{
+    struct rt_bus *bus = dev->bus;
+    struct rt_pci_host_bridge *host_bridge;
+
+    if (!bus || rt_strcmp(bus->name, "pci"))
+    {
+        return RT_NULL;
+    }
+
+    host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge || !host_bridge->dma_regions_nr)
+    {
+        return RT_NULL;
+    }
+
+    return &pci_dma_map_ops;
+}
+#endif /* RT_USING_PCI */
+
+#ifdef RT_USING_OFW
+const struct rt_dma_map_ops *rt_dma_ofw_device_map_ops(struct rt_device *dev)
+{
+    if (!dev || !dev->ofw_node)
+    {
+        return RT_NULL;
+    }
+
+    return ofw_device_dma_ops(dev);
+}
+#endif /* RT_USING_OFW */
+
+/**
+ * @brief Select DMA operations for a device
+ *
+ * Priority:
+ * 1. Device-specific dma_ops (if already set)
+ * 2. Device tree ops (memory-region pools and/or dma-ranges translation)
+ * 3. Coherent or non-coherent fallback based on device property
+ *
+ * PCI devices with OFW bind dma_ops early in rt_pci_ofw_device_init();
+ * other PCI devices fall back to pci_device_dma_ops() here.
+ *
+ * The result is cached in dev->dma_ops for subsequent calls.
+ *
+ * @param[in] dev  Device to query
+ *
+ * @return DMA map operations for this device
+ */
 static const struct rt_dma_map_ops *device_dma_ops(struct rt_device *dev)
 {
     const struct rt_dma_map_ops *ops = dev->dma_ops;
@@ -246,6 +612,15 @@ static const struct rt_dma_map_ops *device_dma_ops(struct rt_device *dev)
 #ifdef RT_USING_OFW
     if (dev->ofw_node && (ops = ofw_device_dma_ops(dev)))
     {
+        dev->dma_ops = ops;
+        return ops;
+    }
+#endif
+
+#ifdef RT_USING_PCI
+    if ((ops = pci_device_dma_ops(dev)))
+    {
+        dev->dma_ops = ops;
         return ops;
     }
 #endif
@@ -264,11 +639,31 @@ static const struct rt_dma_map_ops *device_dma_ops(struct rt_device *dev)
     return ops;
 }
 
+/**
+ * @brief Allocate a contiguous range of pages from a DMA pool
+ *
+ * Uses a first-fit bitmap scan to find a contiguous block of free pages.
+ * Pages are tracked by individual bits; ARCH_PAGE_SIZE is the granularity.
+ *
+ * @param[in] pool  DMA memory pool
+ * @param[in] size  Requested size in bytes
+ *
+ * @return Physical offset within the pool, or RT_NULL on failure
+ */
 static rt_ubase_t dma_pool_alloc(struct rt_dma_pool *pool, rt_size_t size)
 {
     rt_size_t bit, next_bit, end_bit, max_bits;
 
     size = RT_DIV_ROUND_UP(size, ARCH_PAGE_SIZE);
+
+    if (!size || size > pool->bits)
+    {
+        LOG_W("%s: request %u page(s) exceeds pool capacity %u page(s)",
+              pool->region.name ? pool->region.name : "<anon>",
+              (unsigned)size, (unsigned)pool->bits);
+        return RT_NULL;
+    }
+
     max_bits = pool->bits - size;
 
     rt_bitmap_for_each_clear_bit(pool->map, bit, max_bits)
@@ -286,19 +681,29 @@ static rt_ubase_t dma_pool_alloc(struct rt_dma_pool *pool, rt_size_t size)
 
         if (next_bit == end_bit)
         {
-            while (next_bit --> bit)
+            while (next_bit-- > bit)
             {
                 rt_bitmap_set_bit(pool->map, next_bit);
             }
 
+            LOG_D("%s offset = %p, pages = %d", "Alloc",
+                  pool->start + bit * ARCH_PAGE_SIZE, size);
+
             return pool->start + bit * ARCH_PAGE_SIZE;
         }
-    _next:
+    _next:;
     }
 
     return RT_NULL;
 }
 
+/**
+ * @brief Free a range of pages back to the DMA pool
+ *
+ * @param[in] pool   DMA memory pool
+ * @param[in] offset Physical offset within the pool (from dma_pool_alloc)
+ * @param[in] size   Size in bytes
+ */
 static void dma_pool_free(struct rt_dma_pool *pool, rt_ubase_t offset, rt_size_t size)
 {
     rt_size_t bit = (offset - pool->start) / ARCH_PAGE_SIZE, end_bit;
@@ -310,10 +715,27 @@ static void dma_pool_free(struct rt_dma_pool *pool, rt_ubase_t offset, rt_size_t
     {
         rt_bitmap_clear_bit(pool->map, bit);
     }
+
+    LOG_D("%s offset = %p, pages = %d", "Free", offset, size);
 }
 
+/**
+ * @brief Internal DMA buffer allocator (page-based from pools)
+ *
+ * Iterates through all registered DMA pools, matching the requested flags
+ * against pool capabilities (RT_DMA_F_DEVICE, RT_DMA_F_NOMAP, RT_DMA_F_32BITS).
+ * On success, remaps the physical pages to a virtual address with the
+ * appropriate cache attributes.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  size       Requested size in bytes
+ * @param[out] dma_handle Physical DMA address of the allocation
+ * @param[in]  flags      Allocation flags (RT_DMA_F_*)
+ *
+ * @return Kernel virtual address, or RT_NULL on failure
+ */
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                       rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     void *dma_buffer = RT_NULL;
     struct rt_dma_pool *pool;
@@ -344,18 +766,26 @@ static void *dma_alloc(struct rt_device *dev, rt_size_t size,
             continue;
         }
 
-        if ((flags & RT_DMA_F_LINEAR) && !((pool->flags & RT_DMA_F_LINEAR)))
-        {
-            continue;
-        }
-
         *dma_handle = dma_pool_alloc(pool, size);
 
         if (*dma_handle && !(flags & RT_DMA_F_NOMAP))
         {
-            if (flags & RT_DMA_F_NOCACHE)
+            if (pool->flags & RT_DMA_F_NOCACHE)
             {
                 dma_buffer = rt_ioremap_nocache((void *)*dma_handle, size);
+            }
+            else if (flags & RT_DMA_F_NOCACHE)
+            {
+                /* Honor caller NOCACHE before LINEAR pool shortcut. */
+                dma_buffer = rt_ioremap_nocache((void *)*dma_handle, size);
+            }
+            else if (pool->flags & RT_DMA_F_LINEAR)
+            {
+                dma_buffer = (void *)(*dma_handle - PV_OFFSET);
+            }
+            else if (flags & RT_DMA_F_WT)
+            {
+                dma_buffer = rt_ioremap_wt((void *)*dma_handle, size);
             }
             else
             {
@@ -384,8 +814,19 @@ static void *dma_alloc(struct rt_device *dev, rt_size_t size,
     return dma_buffer;
 }
 
+/**
+ * @brief Internal DMA buffer free (returns pages to the pool)
+ *
+ * Finds the pool containing the DMA handle and frees the pages.
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] size       Buffer size in bytes
+ * @param[in] cpu_addr   Kernel virtual address (unmapped)
+ * @param[in] dma_handle Physical DMA address
+ * @param[in] flags      Allocation flags
+ */
 static void dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                     void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     struct rt_dma_pool *pool;
 
@@ -396,7 +837,10 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
         if (dma_handle >= pool->region.start &&
             dma_handle <= pool->region.end)
         {
-            rt_iounmap(cpu_addr);
+            if (pool->flags & RT_DMA_F_NOCACHE || !(pool->flags & RT_DMA_F_LINEAR))
+            {
+                rt_iounmap(cpu_addr);
+            }
 
             dma_pool_free(pool, dma_handle, size);
 
@@ -407,8 +851,21 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
     region_pool_unlock();
 }
 
+/**
+ * @brief Allocate a DMA-capable buffer
+ *
+ * Public API for allocating memory suitable for DMA transfers.
+ * Uses device-specific DMA operations when available.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  size       Requested buffer size in bytes
+ * @param[out] dma_handle Physical DMA address (can be NULL if not needed)
+ * @param[in]  flags      Allocation flags (RT_DMA_F_NOCACHE, RT_DMA_F_NOMAP, etc.)
+ *
+ * @return Kernel virtual address of the buffer, or RT_NULL on failure
+ */
 void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                   rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     void *dma_buffer = RT_NULL;
     rt_ubase_t dma_handle_s = 0;
@@ -443,8 +900,17 @@ void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
     return dma_buffer;
 }
 
+/**
+ * @brief Free a DMA buffer previously allocated with rt_dma_alloc()
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] size       Buffer size in bytes
+ * @param[in] cpu_addr   Kernel virtual address of the buffer
+ * @param[in] dma_handle Physical DMA address from rt_dma_alloc()
+ * @param[in] flags      Allocation flags used when allocating
+ */
 void rt_dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                 void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     const struct rt_dma_map_ops *ops;
 
@@ -465,8 +931,22 @@ void rt_dma_free(struct rt_device *dev, rt_size_t size,
     }
 }
 
+/**
+ * @brief Synchronize data for a DMA output transfer (CPU→device)
+ *
+ * Ensures the DMA engine sees the latest CPU-written data by performing
+ * any necessary cache flushes and returning the DMA bus address.
+ *
+ * @param[in]  dev        DMA-capable device
+ * @param[in]  data       Virtual address of the data buffer
+ * @param[in]  size       Buffer size in bytes
+ * @param[out] dma_handle DMA bus address (can be NULL)
+ * @param[in]  flags      Sync flags (RT_DMA_F_NOCACHE, etc.)
+ *
+ * @return RT_EOK on success, -RT_EINVAL if data or size is 0
+ */
 rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                              rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
     rt_ubase_t dma_handle_s = 0;
@@ -488,8 +968,22 @@ rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
     return err;
 }
 
+/**
+ * @brief Synchronize data for a DMA input transfer (device→CPU)
+ *
+ * Ensures the CPU sees the latest DMA engine data by performing
+ * any necessary cache invalidations.
+ *
+ * @param[in] dev        DMA-capable device
+ * @param[in] out_data   Virtual address of the data buffer
+ * @param[in] size       Buffer size in bytes
+ * @param[in] dma_handle DMA bus address from the transfer
+ * @param[in] flags      Sync flags
+ *
+ * @return RT_EOK on success, -RT_EINVAL if out_data or size is 0
+ */
 rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t size,
-        rt_ubase_t dma_handle, rt_ubase_t flags)
+                             rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
     const struct rt_dma_map_ops *ops;
@@ -505,6 +999,60 @@ rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t si
     return err;
 }
 
+/**
+ * @brief Map a linear DMA pool into the kernel address space
+ *
+ * Reserved pool memory is excluded from rt_memblock_setup_memory_environment().
+ * Install a cached linear mapping so RT_DMA_F_LINEAR pools are CPU-accessible.
+ */
+static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
+{
+#ifdef ARCH_MM_MMU
+    rt_region_t *region = &pool->region;
+    rt_size_t start = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
+    rt_size_t end = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
+    void *va;
+
+    if (!(pool->flags & RT_DMA_F_LINEAR) || start >= end)
+    {
+        return RT_EOK;
+    }
+
+    struct rt_mm_va_hint hint = {
+        .flags = MMF_MAP_FIXED,
+        .limit_start = rt_kernel_space.start,
+        .limit_range_size = rt_kernel_space.size,
+        .map_size = end - start,
+        .prefer = (void *)(start - PV_OFFSET),
+    };
+
+    if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
+                          start >> MM_PAGE_SHIFT, &va))
+    {
+        LOG_E("map %s [0x%lx, 0x%lx] failed", region->name,
+              (unsigned long)start, (unsigned long)end);
+        return -RT_ERROR;
+    }
+#else
+    RT_UNUSED(pool);
+#endif /* ARCH_MM_MMU */
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Install a DMA memory pool from a region descriptor
+ *
+ * Creates a new DMA pool covering the given memory region. Allocates
+ * a bitmap for page tracking. Pools under 4GB are marked RT_DMA_F_32BITS.
+ * Pools are automatically marked RT_DMA_F_LINEAR and mapped into kernel VA.
+ *
+ * Must be called with the DMA pools lock NOT held.
+ *
+ * @param[in] region  Memory region descriptor (start, end, name)
+ *
+ * @return New DMA pool pointer, or RT_NULL on failure
+ */
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
 {
     rt_err_t err;
@@ -513,7 +1061,7 @@ static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
     if (!(pool = rt_calloc(1, sizeof(*pool))))
     {
         LOG_E("Install pool[%p, %p] error = %s",
-                region->start, region->end, rt_strerror(-RT_ENOMEM));
+              region->start, region->end, rt_strerror(-RT_ENOMEM));
 
         return RT_NULL;
     }
@@ -550,17 +1098,31 @@ static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
     rt_list_insert_before(&dma_pool_nodes, &pool->list);
     region_pool_unlock();
 
+    if (dma_pool_map_linear(pool))
+    {
+        LOG_W("linear map failed for pool %s", region->name);
+    }
+
     return pool;
 
 _fail:
     rt_free(pool);
 
     LOG_E("Install pool[%p, %p] error = %s",
-            region->start, region->end, rt_strerror(err));
+          region->start, region->end, rt_strerror(err));
 
     return RT_NULL;
 }
 
+/**
+ * @brief Public API: install a DMA memory pool
+ *
+ * Wrapper around dma_pool_install() with logging of the reserved region.
+ *
+ * @param[in] region  Memory region descriptor
+ *
+ * @return New DMA pool pointer, or RT_NULL on failure
+ */
 struct rt_dma_pool *rt_dma_pool_install(rt_region_t *region)
 {
     struct rt_dma_pool *pool;
@@ -575,29 +1137,59 @@ struct rt_dma_pool *rt_dma_pool_install(rt_region_t *region)
         region = &pool->region;
 
         LOG_I("%s: Reserved %u.%u MiB at %p",
-                region->name,
-                (region->end - region->start) / SIZE_MB,
-                (region->end - region->start) / SIZE_KB & (SIZE_KB - 1),
-                region->start);
+              region->name,
+              (region->end - region->start) / SIZE_MB,
+              (region->end - region->start) / SIZE_KB & (SIZE_KB - 1),
+              region->start);
     }
 
     return pool;
 }
 
-rt_err_t rt_dma_pool_extract(rt_region_t *region_list, rt_size_t list_len,
-        rt_size_t cma_size, rt_size_t coherent_pool_size)
+/**
+ * @brief Extract DMA pools from memblock reserved memory
+ *
+ * Creates two pools from the "dma-pool" reserved memory region:
+ * 1. coherent-pool: for coherent DMA allocations
+ * 2. CMA (Contiguous Memory Allocator): remaining space for general DMA
+ *
+ * Prefers regions below 4GB for 32-bit DMA compatibility.
+ *
+ * @param[in] cma_size           Total CMA region size in bytes
+ * @param[in] coherent_pool_size Size of the coherent pool in bytes (must
+ *                               be <= cma_size)
+ *
+ * @return RT_EOK on success, -RT_EINVAL if sizes are invalid,
+ *         -RT_ENOSYS if memblock is not available,
+ *         -RT_EEMPTY if no suitable dma-pool region found
+ */
+rt_err_t rt_dma_pool_extract(rt_size_t cma_size, rt_size_t coherent_pool_size)
 {
     struct rt_dma_pool *pool;
-    rt_region_t *region = region_list, *region_high = RT_NULL, cma, coherent_pool;
+    struct rt_mmblk_reg *reg, *reg_high;
+    struct rt_memblock *memblock = rt_memblock_get_reserved();
+    rt_region_t *region, *region_high = RT_NULL, cma, coherent_pool;
 
-    if (!region_list || !list_len || cma_size < coherent_pool_size)
+    if (!memblock)
+    {
+        return -RT_ENOSYS;
+    }
+
+    /* Coherent pool is included in CMA */
+    if (cma_size < coherent_pool_size)
     {
         return -RT_EINVAL;
     }
 
-    for (rt_size_t i = 0; i < list_len; ++i, ++region)
+    rt_slist_for_each_entry(reg, &memblock->reg_list, node)
     {
-        if (!region->name)
+        if (!reg->alloc || (reg->flags & MEMBLOCK_HOTPLUG))
+        {
+            continue;
+        }
+
+        region = &reg->memreg;
+        if (rt_strcmp(region->name, "dma-pool") || !reg->memreg.name)
         {
             continue;
         }
@@ -608,6 +1200,7 @@ rt_err_t rt_dma_pool_extract(rt_region_t *region_list, rt_size_t list_len,
             if ((rt_ssize_t)((4UL * SIZE_GB) - region->start) < cma_size)
             {
                 region_high = region;
+                reg_high = reg;
                 continue;
             }
 
@@ -618,6 +1211,7 @@ rt_err_t rt_dma_pool_extract(rt_region_t *region_list, rt_size_t list_len,
     if (region_high)
     {
         region = region_high;
+        reg = reg_high;
         LOG_W("No available DMA zone in 4G");
 
         goto _found;
@@ -630,9 +1224,6 @@ _found:
     {
         cma.start = region->start;
         cma.end = cma.start + cma_size;
-
-        /* Update input region */
-        region->start += cma_size;
     }
     else
     {
@@ -657,11 +1248,23 @@ _found:
         return -RT_ENOMEM;
     }
 
+    reg->alloc = RT_FALSE;
+
     return RT_EOK;
 }
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
-static int list_dma_pool(int argc, char**argv)
+/**
+ * @brief MSH command: list all DMA memory pools
+ *
+ * Displays each pool's name, start, and end address.
+ *
+ * @param[in] argc  Argument count (unused)
+ * @param[in] argv  Argument values (unused)
+ *
+ * @return 0
+ */
+static int list_dma_pool(int argc, char **argv)
 {
     int count = 0;
     rt_region_t *region;
@@ -676,7 +1279,7 @@ static int list_dma_pool(int argc, char**argv)
         region = &pool->region;
 
         rt_kprintf("%-*.s [%p, %p]\n", RT_NAME_MAX, region->name,
-                region->start, region->end);
+                   region->start, region->end);
 
         ++count;
     }

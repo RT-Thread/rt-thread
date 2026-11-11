@@ -18,6 +18,8 @@
  */
 /*@{*/
 
+#include <rtconfig.h>
+
 .cpu cortex-m4
 .syntax unified
 .thumb
@@ -155,6 +157,13 @@ switch_to_thread:
     BICNE   lr, lr, #0x10       /* lr &= ~(1 << 4), set FPCA. */
 #endif
 
+#if defined (RT_USING_MEM_PROTECTION)
+    PUSH    {r0-r3, r12, lr}
+    BL      rt_thread_self
+    BL      rt_hw_mpu_table_switch
+    POP     {r0-r3, r12, lr}
+#endif
+
 pendsv_exit:
     /* restore interrupt */
     MSR PRIMASK, r2
@@ -238,10 +247,23 @@ HardFault_Handler:
     MRS     r0, psp                 /* get fault context from thread. */
 _get_sp_done:
 
-    STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    STMFD   r0!, {lr}               /* push dummy for flag */
+    TST     lr, #0x10               /* if(!EXC_RETURN[4]) */
+    IT      EQ
+    VSTMDBEQ r0!, {d8 - d15}        /* push FPU register s16~s31 */
 #endif
+
+    STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    MOV     r4, #0x00               /* flag = 0 */
+
+    TST     lr, #0x10               /* if(!EXC_RETURN[4]) */
+    IT      EQ
+    MOVEQ   r4, #0x01               /* flag = 1 */
+    STMFD   r0!, {r4}               /* push flag */
+#endif
+
     STMFD   r0!, {lr}               /* push exec_return register */
 
     TST     lr, #0x04               /* if(!EXC_RETURN[2]) */

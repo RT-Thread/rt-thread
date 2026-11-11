@@ -72,9 +72,9 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 32
 #define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -117,11 +117,11 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50200
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -173,7 +173,9 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V2
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -191,6 +193,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_RAMFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -206,27 +209,24 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
-#define RT_CAN_USING_HDR
-#define RT_CAN_USING_CANFD
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PWM
 #define RT_USING_RTC
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 8192
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 8192
-#define RT_MMCSD_THREAD_PRIORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_AUDIO
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
 #define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_RECORD_PIPE_SIZE 4096
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -235,8 +235,6 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_PIN
-#define RT_USING_KTIME
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -273,63 +271,6 @@
 
 /* Network */
 
-#define RT_USING_SAL
-#define SAL_INTERNET_CHECK
-
-/* Docking with protocol stacks */
-
-#define SAL_USING_LWIP
-/* end of Docking with protocol stacks */
-#define SAL_USING_POSIX
-#define RT_USING_NETDEV
-#define NETDEV_USING_IFCONFIG
-#define NETDEV_USING_PING
-#define NETDEV_USING_NETSTAT
-#define NETDEV_USING_AUTO_DEFAULT
-#define NETDEV_IPV4 1
-#define NETDEV_IPV6 0
-#define RT_USING_LWIP
-#define RT_USING_LWIP212
-#define RT_USING_LWIP_VER_NUM 0x20102
-#define RT_LWIP_MEM_ALIGNMENT 64
-#define RT_LWIP_IGMP
-#define RT_LWIP_ICMP
-#define RT_LWIP_DNS
-
-/* Static IPv4 Address */
-
-#define RT_LWIP_IPADDR "192.168.4.10"
-#define RT_LWIP_GWADDR "192.168.4.1"
-#define RT_LWIP_MSKADDR "255.255.255.0"
-/* end of Static IPv4 Address */
-#define RT_LWIP_UDP
-#define RT_LWIP_TCP
-#define RT_LWIP_RAW
-#define RT_MEMP_NUM_NETCONN 8
-#define RT_LWIP_PBUF_NUM 512
-#define RT_LWIP_RAW_PCB_NUM 4
-#define RT_LWIP_UDP_PCB_NUM 4
-#define RT_LWIP_TCP_PCB_NUM 4
-#define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8196
-#define RT_LWIP_TCP_WND 8196
-#define RT_LWIP_TCPTHREAD_PRIORITY 16
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
-#define RT_LWIP_TCPTHREAD_STACKSIZE 16184
-#define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
-#define RT_LWIP_REASSEMBLY_FRAG
-#define LWIP_NETIF_STATUS_CALLBACK 1
-#define LWIP_NETIF_LINK_CALLBACK 1
-#define RT_LWIP_NETIF_NAMESIZE 6
-#define SO_REUSE 1
-#define LWIP_SO_RCVTIMEO 1
-#define LWIP_SO_SNDTIMEO 1
-#define LWIP_SO_RCVBUF 1
-#define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
-#define RT_LWIP_USING_PING
 /* end of Network */
 
 /* Memory protection */
@@ -487,9 +428,6 @@
 
 /* samples: kernel and components samples */
 
-#define PKG_USING_KERNEL_SAMPLES
-#define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
-#define PKG_USING_KERNEL_SAMPLES_EN
 /* end of samples: kernel and components samples */
 
 /* entertainment: terminal games and other interesting software packages */
@@ -549,47 +487,21 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_IOPAD
+#define BSP_USING_UART_LAYER
 #define BSP_USING_UART
-#define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SPI
-#define RT_USING_SPIM2
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_CAN0
-#define RT_USING_CAN1
-#define BSP_USING_GPIO
-#define BSP_USING_QSPI
-#define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
-#define BSP_USING_ETH
-#define BSP_USING_PWM
-#define RT_USING_PWM2
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
-#define USING_SDIF1
-#define USE_SDIF1_TF
-#define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
-#define RT_USING_DC_CHANNEL1
-#define BSP_USING_I2S
-#define RT_I2S_SAMPLERATE 8000
-#define RT_I2S_SAMPLEBITS 16
-#define RT_USING_I2S0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
 
 /* end of Hardware Drivers */
+
+/* System Example */
+
+/* end of System Example */
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
-#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 
@@ -597,22 +509,22 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000Q
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "q"
-#define SOC_CORE_NUM 4
+#define TARGET_PE2202
+#define SOC_NAME "pe220x"
+#define TARGET_TYPE_NAME "pe2202"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
 #define F64BIT_MEMORY_LENGTH 0x800000000
-#define TARGET_E2000
+#define TARGET_PE220X
 #define DEFAULT_DEBUG_PRINT_UART1
 /* end of Soc configuration */
 
 /* Board Configuration */
 
-#define BOARD_NAME "demo"
-#define E2000Q_DEMO_BOARD
+#define E2000D_DEMO_BOARD
+#define BOARD_NAME "pe2202_demo"
 
 /* IO mux configuration when board start up */
 
@@ -622,8 +534,14 @@
 /* Sdk common configuration */
 
 #define ELOG_LINE_BUF_SIZE 0x100
-#define LOG_DEBUG
+#define LOG_INFO
+#define USE_PHYSICAL_GTIMER
 /* end of Sdk common configuration */
+
+/* OpenAmp */
+
+/* end of OpenAmp */
 /* end of Standalone Setting */
+#define KERNEL_ASPACE_START 0x1000
 
 #endif

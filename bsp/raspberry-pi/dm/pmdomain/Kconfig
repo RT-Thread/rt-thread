@@ -1,0 +1,8 @@
+config RT_PMDOMAIN_BCM2835
+    bool "BCM2835"
+    depends on RT_USING_RESET
+    default n
+
+config RT_PMDOMAIN_RASPBERRYPI
+    bool "Raspberrypi"
+    default n

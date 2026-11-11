@@ -12,6 +12,11 @@ config SOC_STM32H750XB
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select RT_USING_CACHE
+    select RT_USING_OFW if RT_USING_DM
+    select RT_USING_BUILTIN_FDT if RT_USING_DM
+    select RT_USING_PIC if RT_USING_DM
+    select RT_PIC_ARM_NVIC if RT_USING_DM
+    select RT_USING_PIN if RT_USING_DM
     default y
 
 config BOARD_STM32H750_ARTPI
@@ -19,7 +24,12 @@ config BOARD_STM32H750_ARTPI
     select SOC_STM32H750XB
     default y
 
+config RT_BUILTIN_FDT_PATH
+    string
+    default "board/dts/stm32h750-artpi.dtb" if RT_USING_DM
+
 source "$(RTT_DIR)/Kconfig"
+
 osource "$PKGS_DIR/Kconfig"
 rsource "../libraries/Kconfig"
 

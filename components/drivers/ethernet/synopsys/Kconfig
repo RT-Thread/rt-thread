@@ -1,0 +1,11 @@
+config RT_ETHERNET_DWMAC
+    bool "Synopsys DesignWare Ethernet MAC (GMAC4)"
+    depends on RT_USING_PHY_V2
+    depends on RT_USING_DMA
+    depends on RT_USING_PIN
+    default n
+
+config RT_ETHERNET_DWMAC_PTP
+    bool "PTP supported"
+    depends on RT_ETHERNET_DWMAC
+    depends on RT_USING_PTP

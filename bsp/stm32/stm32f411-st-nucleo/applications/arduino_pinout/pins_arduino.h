@@ -44,12 +44,12 @@
 
 #define LED_BUILTIN     D13  /* Default Built-in LED */
 
-/* i2c1 : PB9-SDA PB8-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME     "i2c1"
+/* swi2c1 : PB9-SDA PB8-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 #define SS          D10
 #define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi1"
 
-#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer9"
+#define RTDUINO_TONE_CLOCK_TIMER_DEVICE_NAME "timer9"
 
 #endif /* Pins_Arduino_h */

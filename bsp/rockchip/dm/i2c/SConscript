@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend('RT_I2C_RK3X'):
+    src += ['i2c-rk3x.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

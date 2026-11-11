@@ -36,6 +36,9 @@ struct usbd_interface *usbd_mtp_init_intf(struct usbd_interface *intf,
                                           const uint8_t in_ep,
                                           const uint8_t int_ep);
 
+int usbd_mtp_notify_object_add(const char *path);
+int usbd_mtp_notify_object_remove(const char *path);
+
 const char *usbd_mtp_fs_root_path(void);
 const char *usbd_mtp_fs_description(void);
 

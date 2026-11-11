@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC</Define>
+              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS;applications;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;.;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\include;board;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\include;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\io\epoll;..\Libraries\ch32_drivers\config;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\Libraries\ch32_drivers;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\net\utest;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;.;..\..\..\..\components\drivers\phy;..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;board;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;applications;..\libraries\CH32F20x_StdPeriph_Driver\CMSIS;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\ch32_drivers;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\ch32_drivers\config;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\include;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,208 +390,187 @@
           <GroupName>ch32f20x_lib</GroupName>
           <Files>
             <File>
-              <FileName>ch32f20x_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ch32f20x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_dbgmcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dbgmcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_ch32f20x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Source\ARM\startup_ch32f20x.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ch32f20x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_misc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_bkp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_bkp.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_bkp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ch32f20x_i2c.c</FileName>
+              <FileName>ch32f20x_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_i2c.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_dbgmcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dbgmcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_exti.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_misc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_pwr.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_spi.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_tim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ch32f20x_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_wwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_ch32f20x.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Source\ARM\startup_ch32f20x.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstring.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -602,25 +581,6 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hwtimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1017,56 +977,49 @@
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_common.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_gpio_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_gpio_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_gpio_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_hwi2c_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_hwi2c_ch32f20x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_hwtimer_ch32f20x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_hwtimer_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_hwi2c_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_iwdt_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_iwdt_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_iwdt_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_rtc_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_rtc_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_rtc_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_spi_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_spi_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_spi_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_uart_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_uart_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_uart_ch32f20x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1074,16 +1027,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1095,9 +1048,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1390,19 +1343,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1421,47 +1416,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
           <Files>
             <File>
-              <FileName>atomic_arm.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>

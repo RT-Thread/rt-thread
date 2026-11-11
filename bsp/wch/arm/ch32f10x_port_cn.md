@@ -1,9 +1,9 @@
 # CH32F10X系列BSP移植
 ## 1 工程结构
 + wch\arm\ch32f103c8-core
-+ wch\arm\Libraries
-+ wch\arm\Libraries\ch32_drivers
-+ wch\arm\Libraries\CH32F10x_StdPeriph_Driver
++ wch\arm\libraries
++ wch\arm\libraries\ch32_drivers
++ wch\arm\libraries\CH32F10x_StdPeriph_Driver
 + wch\arm\tools
 
 ch32f103c8-core为移植到具体芯片的BSP, Libraries存放的是厂商的驱动库(CH32F10x_StdPeriph_Driver等)和适配rt-thread的驱动(ch32_drivers),
@@ -49,19 +49,19 @@ void ch32f1_i2c_config(I2C_TypeDef* i2cx);
    + BSP_USING_RTC
       + BSP_USING_RTC_LSI
       + LSI_VALUE
-+ HWTIMER 1/2/3/4
-   + RT_USING_HWTIMER
-   + BSP_USING_HWTIMER
-      + BSP_USING_TIM1_HWTIMER
-      + BSP_USING_TIM2_HWTIMER
-      + BSP_USING_TIM3_HWTIMER
-      + BSP_USING_TIM4_HWTIMER
++ CLOCK_TIMER 1/2/3/4
+   + RT_USING_CLOCK_TIME
+   + BSP_USING_CLOCK_TIMER
+      + BSP_USING_TIM1_CLOCK_TIMER
+      + BSP_USING_TIM2_CLOCK_TIMER
+      + BSP_USING_TIM3_CLOCK_TIMER
+      + BSP_USING_TIM4_CLOCK_TIMER
 ~~~c
 void ch32f1_tim_clock_init(TIM_TypeDef *timx);
 rt_uint32_t ch32f1_tim_clock_get(TIM_TypeDef *timx);
 ~~~
 ~~~c
-struct rt_hwtimer_info* ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx);
+struct rt_clock_timer_info* ch32f1_clock_timer_info_config_get(TIM_TypeDef *timx);
 ~~~
 + PWM  4(timer) x 4 (channel)
    + RT_USING_PWM
@@ -136,7 +136,7 @@ config SOC_CH32F103C8
         select RT_USING_USER_MAIN
         default y
 ~~~
-SOC_CH32F103C8为具体的芯片，SOC_ARM_SERIES_CH32F103在Libraries\Kconfig下已定义。
+SOC_CH32F103C8为具体的芯片，SOC_ARM_SERIES_CH32F103在libraries\Kconfig下已定义。
 RT_USING_COMPONENTS_INIT，RT_USING_USER_MAIN为rt-thread设备框架默认选项。
 
 
@@ -189,8 +189,8 @@ void ch32f1_usart_clock_and_io_init(USART_TypeDef* usartx);
 void ch32f1_tim_clock_init(TIM_TypeDef *timx);
 rt_uint32_t ch32f1_tim_clock_get(TIM_TypeDef *timx);
 
-#ifdef BSP_USING_HWTIMER
-struct rt_hwtimer_info* ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx);
+#ifdef BSP_USING_CLOCK_TIMER
+struct rt_clock_timer_info* ch32f1_clock_timer_info_config_get(TIM_TypeDef *timx);
 #endif
 
 #ifdef BSP_USING_PWM

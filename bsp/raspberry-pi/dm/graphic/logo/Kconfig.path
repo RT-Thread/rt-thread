@@ -1,0 +1,5 @@
+if RT_GRAPHIC_LOGO_RASPI_CLUT224
+    config RT_GRAPHIC_LOGO_RASPI_CLUT224_PATH
+        string
+        default "../dm/graphic/logo/logo-raspi-clut224.ppm"
+endif

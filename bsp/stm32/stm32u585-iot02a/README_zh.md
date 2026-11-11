@@ -1,4 +1,4 @@
-# 第一部分：NUCLEO-U575ZI-Q 开发板 BSP 说明
+# 第一部分：STM32 B-U585I-IOT02A 开发板 BSP 说明
 
 [English](README.md) | **中文**
 

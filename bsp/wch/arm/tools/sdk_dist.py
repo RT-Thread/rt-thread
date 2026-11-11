@@ -12,12 +12,13 @@ def dist_do_building(BSP_ROOT, dist_dir):
     import rtconfig
 
     print("=> copy ch32 bsp library")
-    library_dir = os.path.join(dist_dir, 'Libraries')
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-    bsp_copy_files(
-        os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
-        os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE),
-    )
+    library_dir = os.path.join(dist_dir, 'libraries')
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+    if rtconfig.BSP_LIBRARY_TYPE is not None:
+        bsp_copy_files(
+            os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
+            os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE),
+        )
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'ch32_drivers'), os.path.join(library_dir, 'ch32_drivers'))
@@ -31,5 +32,5 @@ def dist_do_building(BSP_ROOT, dist_dir):
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
             if line.find('source') != -1 and line.find('../libraries') != -1:
-                line = line.replace('../Libraries', 'Libraries')
+                line = line.replace('../libraries', 'libraries')
             f.write(line)

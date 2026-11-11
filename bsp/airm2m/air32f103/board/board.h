@@ -58,7 +58,7 @@ rt_uint32_t air32_tim_clock_get(TIM_TypeDef *timx);
 #endif
 
 #ifdef BSP_USING_TIM
-struct rt_hwtimer_info* air32_hwtimer_info_config_get(TIM_TypeDef *timx);
+struct rt_clock_timer_info* air32_clock_timer_info_config_get(TIM_TypeDef *timx);
 #endif
 
 #ifdef BSP_USING_PWM

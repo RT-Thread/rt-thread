@@ -1,0 +1,18 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_INPUT_MISC']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = []
+
+if GetDepend(['RT_INPUT_MISC_BUTTON_E3X0']):
+    src += ['button-e3x0.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

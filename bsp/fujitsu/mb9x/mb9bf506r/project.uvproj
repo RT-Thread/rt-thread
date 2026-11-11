@@ -341,9 +341,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__</Define>
+              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension;drivers;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;libraries\Device\FUJISTU\MB9BF50x\Include;libraries\CMSIS\Include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\phy;..\..\..\..\components\finsh;applications;.;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\CMSIS\Include;.;..\..\..\..\include;..\..\..\..\components\net\utest;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\libcpu\arm\common;drivers;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\drivers\include;libraries\Device\FUJISTU\MB9BF50x\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\epoll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -415,61 +415,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -708,16 +680,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nand.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\nand.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,9 +694,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nand.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\nand.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -894,16 +866,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1236,7 +1208,63 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>kerrno.c</FileName>
@@ -1253,13 +1281,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
@@ -1267,40 +1288,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>

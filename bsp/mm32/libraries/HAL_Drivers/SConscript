@@ -1,24 +1,22 @@
 Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
+import os
 
 cwd = GetCurrentDir()
+group = []
 
 # add the general drivers.
 src = Split("""
 """)
 
-if GetDepend(['RT_USING_PIN']):
-    src += ['drv_gpio.c']
-
-if GetDepend(['RT_USING_SERIAL']):
-        src += ['drv_uart.c']
-
-src += ['drv_common.c']
+if GetDepend('SOC_SERIES_MM32F3277') or os.path.basename(Dir('#').abspath).lower().startswith('mm32f3270'):
+    src += ['drv_common.c']
 
 path =  [cwd]
-path += [cwd + '/config']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group = group + SConscript(os.path.join(cwd, 'drivers', 'SConscript'),
+                           variant_dir='drivers', duplicate=0)
+group = group + DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

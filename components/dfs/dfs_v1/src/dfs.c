@@ -35,7 +35,9 @@ char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
+#ifdef DFS_USING_POSIX
 static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
+#endif /* DFS_USING_POSIX */
 
 /**
  * @addtogroup group_device_virtual_file_system
@@ -297,7 +299,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  * This function will allocate a file descriptor.
  *
  * @return -1 on failed or the allocated file descriptor.
@@ -331,7 +333,7 @@ int fd_new(void)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  *
  * This function will return a file descriptor structure according to file
  * descriptor.
@@ -373,7 +375,7 @@ struct dfs_file *fd_get(int fd)
 }
 
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  *
  * @brief This function will release the file descriptor.
  *
@@ -412,13 +414,16 @@ void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
     if (fd_slot->ref_count == 0)
     {
         struct dfs_vnode *vnode = fd_slot->vnode;
+        fd_slot->vnode = RT_NULL;
         if (vnode)
         {
-            vnode->ref_count--;
+            if (vnode->ref_count > 0)
+            {
+                vnode->ref_count--;
+            }
             if(vnode->ref_count == 0)
             {
                 rt_free(vnode);
-                fd_slot->vnode = RT_NULL;
             }
         }
         rt_free(fd_slot);
@@ -477,10 +482,8 @@ exit:
     return newfd;
 }
 
-#endif /* DFS_USING_POSIX */
-
 /**
- * @ingroup group_Fd
+ * @ingroup group_fs_file_descriptor
  *
  * This function will return whether this file has been opend.
  *
@@ -696,6 +699,7 @@ exit:
     dfs_file_unlock();
     return retfd;
 }
+#endif  /* DFS_USING_POSIX */
 
 /**
  * @brief initialize a dfs file object.
@@ -1082,6 +1086,6 @@ int lsof(int argc, char *argv[])
 MSH_CMD_EXPORT(lsof, list open files);
 #endif /* RT_USING_SMART */
 
-#endif
+#endif  /* RT_USING_FINSH */
 /**@}*/
 

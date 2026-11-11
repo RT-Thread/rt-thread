@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_MFD_SPACEMIT_PMIC']):
+    src += ['spacemit-pmic.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

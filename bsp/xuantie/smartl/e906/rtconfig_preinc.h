@@ -1,0 +1,27 @@
+
+#ifndef RTCONFIG_PREINC_H__
+#define RTCONFIG_PREINC_H__
+
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread pre-include file */
+
+#define CLI_CONFIG_STACK_SIZE 4096
+#define CONFIG_ARCH_INTERRUPTSTACK 4096
+#define CONFIG_ARCH_MAINSTACK 4096
+#define CONFIG_BOARD_SMARTL_EVB 1
+#define CONFIG_CPU_XUANTIE_E906FD 1
+#define CONFIG_CSI "csi2"
+#define CONFIG_CSI_V2 1
+#define CONFIG_KERNEL_RTTHREAD 1
+#define CONFIG_SUPPORT_IRQ_NESTED 0
+#define CONFIG_SUPPORT_TSPEND 0
+#define CONFIG_XIP 1
+#define RT_USING_LIBC
+#define RT_USING_NEWLIBC
+#define _POSIX_C_SOURCE 1
+#define __RTTHREAD__
+#define __RT_KERNEL_SOURCE__ 1
+#define _REENT_SMALL
+
+#endif /*RTCONFIG_PREINC_H__*/
+

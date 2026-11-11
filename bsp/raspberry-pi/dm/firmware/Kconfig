@@ -1,0 +1,6 @@
+config RT_FIRMWARE_RASPBERRYPI
+    bool "Raspberrypi Firmware"
+    depends on RT_USING_OFW
+    depends on RT_USING_MBOX
+    depends on RT_USING_DMA
+    default n

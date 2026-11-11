@@ -1,0 +1,317 @@
+name: Code Format with Clang-Format
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "PR 分支名称\nPR branch name"
+        required: true
+        type: string
+      exclude_patterns:
+        description: "排除文件/目录 (以逗号间隔)\n Files/Directories to exclude(comma-separated)"
+        required: false
+        default: ''
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.branch || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  format-code:
+    if: |
+      github.repository_owner != 'RT-Thread'
+    runs-on: ubuntu-latest
+    env:
+      HEAD_OWNER: ${{ github.repository_owner }}
+      SOURCE_REPOSITORY: ${{ github.repository }}
+      TARGET_BRANCH: ${{ inputs.branch }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          lfs: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: Install clang-format
+        run: python -m pip install -r tools/ci/requirements-format.txt
+
+      - name: Check clang-format version
+        run: |
+          echo "📋 clang-format version information:"
+          clang-format --version
+          echo "📋 Detailed version info:"
+          clang-format -version
+          # 检查支持的功能
+          echo "📋 Checking supported features..."
+          clang-format --help | grep -i "align\|consecutive" || echo "No align/consecutive options found"
+
+      - name: Get PR info and changed files
+        id: get-pr-info
+        run: |
+          max_retries=3
+          retry_count=0
+          changed_files=""
+          api_response=""
+
+          # fork 查询父仓库中的 PR，独立镜像则查询当前仓库
+          repository=$(curl -sS \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${SOURCE_REPOSITORY}")
+          UPSTREAM_REPOSITORY=$(jq -r '.parent.full_name // .full_name // empty' <<<"$repository")
+
+          if [ -z "$UPSTREAM_REPOSITORY" ]; then
+            echo "Error: Failed to determine the pull request repository"
+            echo "API response: $repository"
+            exit 1
+          fi
+
+          echo "Using PR repository: $UPSTREAM_REPOSITORY"
+          echo "upstream_repository=$UPSTREAM_REPOSITORY" >> "$GITHUB_OUTPUT"
+
+          # 根据当前仓库所有者和所选分支自动查找上游 PR
+          pull_requests=$(curl -sS -G \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            --data-urlencode "state=open" \
+            --data-urlencode "head=${HEAD_OWNER}:${TARGET_BRANCH}" \
+            "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/pulls")
+
+          if ! jq -e 'type == "array"' <<<"$pull_requests" >/dev/null; then
+            echo "Error: Failed to query the upstream pull request"
+            echo "API response: $pull_requests"
+            exit 1
+          fi
+
+          pr_count=$(jq 'length' <<<"$pull_requests")
+          if [ "$pr_count" -ne 1 ]; then
+            echo "Error: Expected exactly one open PR for ${HEAD_OWNER}:${TARGET_BRANCH}, found $pr_count"
+            jq -r '.[] | "PR #\(.number): \(.html_url)"' <<<"$pull_requests"
+            exit 1
+          fi
+
+          PR_NUMBER=$(jq -r '.[0].number' <<<"$pull_requests")
+          PR_AUTHOR=$(jq -r '.[0].user.login' <<<"$pull_requests")
+          PR_AUTHOR_ID=$(jq -r '.[0].user.id' <<<"$pull_requests")
+          PR_AUTHOR_EMAIL="${PR_AUTHOR_ID}+${PR_AUTHOR}@users.noreply.github.com"
+          echo "Matched upstream PR #$PR_NUMBER"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "pr_author=$PR_AUTHOR" >> "$GITHUB_OUTPUT"
+          echo "pr_author_email=$PR_AUTHOR_EMAIL" >> "$GITHUB_OUTPUT"
+
+          echo "Fetching changed files for PR #$PR_NUMBER..."
+
+          while [ $retry_count -lt $max_retries ]; do
+            # 使用一个curl调用同时获取响应内容和状态码
+            api_response=$(curl -s -w "\n%{http_code}" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/pulls/$PR_NUMBER/files")
+
+            # 分离HTTP状态码和响应内容
+            http_status=$(echo "$api_response" | tail -1)
+            api_response=$(echo "$api_response" | sed '$d')
+
+            echo "HTTP Status: $http_status"
+
+            # 检查HTTP状态码
+            if [ "$http_status" -ne 200 ]; then
+              echo "Retry $((retry_count+1)): HTTP $http_status - API response error"
+              echo "API Response: $api_response"
+              sleep 5
+              ((retry_count++))
+              continue
+            fi
+
+            # 验证响应是否为有效JSON且包含文件数组
+            if jq -e 'if type=="array" then .[0].filename else empty end' <<<"$api_response" >/dev/null 2>&1; then
+              changed_files=$(jq -r '.[].filename' <<<"$api_response")
+              break
+            else
+              echo "Retry $((retry_count+1)): API response not ready or invalid format"
+              echo "API Response: $api_response"
+              sleep 5
+              ((retry_count++))
+            fi
+          done
+
+          if [ -z "$changed_files" ]; then
+            echo "Error: Failed to get changed files after $max_retries attempts"
+            echo "Final API Response: $api_response"
+            exit 1
+          fi
+
+          # 将文件列表转换为逗号分隔格式
+          changed_files_comma=$(echo "$changed_files" | tr '\n' ',' | sed 's/,$//')
+
+          echo "Successfully fetched $(echo "$changed_files" | wc -l) changed files"
+
+          # 设置输出
+          echo "all_changed_files=$changed_files_comma" >> $GITHUB_OUTPUT
+          echo "changed_files_count=$(echo "$changed_files" | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Find source files to format
+        id: find-files
+        run: |
+          # 获取PR中修改的文件
+          CHANGED_FILES="${{ steps.get-pr-info.outputs.all_changed_files }}"
+          
+          # 将逗号分隔的文件列表转换为换行分隔
+          CHANGED_FILES_LINES=$(echo "$CHANGED_FILES" | tr ',' '\n')
+          
+          # 美化打印PR中修改的文件
+          echo "📋 PR中修改的文件列表:"
+          echo "┌───────────────────────────────────────────────────────"
+          count=1
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              echo "│ $count. $file"
+              ((count++))
+            fi
+          done <<< "$CHANGED_FILES_LINES"
+          echo "└───────────────────────────────────────────────────────"
+          echo "总共修改了 $((count-1)) 个文件"
+          
+          # 如果没有修改的文件，退出
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "❌ PR中没有修改的文件"
+            echo "files_count=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # 继续使用CHANGED_FILES进行后续处理
+          CHANGED_FILES="$CHANGED_FILES_LINES"
+          
+          # 过滤出需要格式化的源文件（扩展clang-format支持的文件类型）
+          FILES=""
+          while IFS= read -r file; do
+            if [ -n "$file" ] && [[ "$file" =~ \.(cpp|h|c|hpp|cc|hh|C|H|cp|cxx|hxx|inc|inl|ipp|tpp|txx)$ ]]; then
+              FILES="$FILES$file"$'\n'
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          FILES=$(echo "$FILES" | sort | uniq)
+          
+          # 处理排除模式
+          EXCLUDE_PATTERNS="${{ github.event.inputs.exclude_patterns }}"
+          if [ -n "$EXCLUDE_PATTERNS" ] && [ -n "$FILES" ]; then
+            IFS=',' read -ra PATTERNS <<< "$EXCLUDE_PATTERNS"
+            for pattern in "${PATTERNS[@]}"; do
+              pattern=$(echo "$pattern" | xargs)  # 去除空格
+              if [ -n "$pattern" ]; then
+                # 去除末尾的斜杠（如果有）
+                pattern=${pattern%/}
+                echo "排除模式: $pattern"
+                # 使用 grep 过滤排除模式
+                FILES=$(echo "$FILES" | grep -v "$pattern" || echo "$FILES")
+              fi
+            done
+          fi
+          
+          if [ -z "$FILES" ]; then
+            echo "❌ 没有需要格式化的文件（可能都被排除了）"
+            echo "files_count=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # 显示找到的文件用于调试
+          echo "🎯 需要格式化的文件:"
+          echo "┌───────────────────────────────────────────────────────"
+          count=1
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              echo "│ $count. $file"
+              ((count++))
+            fi
+          done <<< "$FILES"
+          echo "└───────────────────────────────────────────────────────"
+          
+          FILE_COUNT=$(echo "$FILES" | wc -l)
+          echo "找到 $FILE_COUNT 个需要格式化的文件"
+          echo "files_count=$FILE_COUNT" >> $GITHUB_OUTPUT
+          
+          # 将文件列表保存为多行输出
+          echo "files_list<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Clean up temporary files
+        run: |
+          rm -f changed_files.txt
+          rm -f format_files.sh
+          echo "✅ 临时文件清理完成"
+          
+      - name: Format code with clang-format
+        if: steps.find-files.outputs.files_count != '0'
+        run: |
+          echo "开始格式化代码..."
+          FILES="${{ steps.find-files.outputs.files_list }}"
+          
+          # 使用clang-format批量格式化文件
+          echo "$FILES" | xargs -I {} sh -c '
+            file="{}"
+            if [ -f "$file" ]; then
+              echo "📝 格式化: $file"
+              clang-format -style=file -i "$file"
+              if [ $? -eq 0 ]; then
+                echo "✅ 格式化成功: $file"
+              else
+                echo "❌ 格式化失败: $file"
+                exit 1
+              fi
+            else
+              echo "⚠️  文件不存在: $file"
+            fi
+          '
+          
+          echo "✅ 代码格式化完成"
+          
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet; then
+            echo "✅ 代码无需格式化"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "📋 检测到格式化更改:"
+            git diff --name-only
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          PR_AUTHOR="${{ steps.get-pr-info.outputs.pr_author }}"
+          PR_AUTHOR_EMAIL="${{ steps.get-pr-info.outputs.pr_author_email }}"
+
+          git config --local user.name "$PR_AUTHOR"
+          git config --local user.email "$PR_AUTHOR_EMAIL"
+
+          git add -A
+          git commit -m "style: format code with clang-format"
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
+
+          echo "✅ 格式化结果已作为独立提交推送到分支 ${TARGET_BRANCH}"
+          
+      - name: Summary
+        run: |
+          echo "=== 格式化总结 ==="
+          echo "分支: ${TARGET_BRANCH}"
+          echo "PR 仓库: ${{ steps.get-pr-info.outputs.upstream_repository }}"
+          echo "上游 PR: #${{ steps.get-pr-info.outputs.pr_number }}"
+          echo "排除模式: ${{ github.event.inputs.exclude_patterns || '无' }}"
+          echo "处理文件数: ${{ steps.find-files.outputs.files_count }}"
+          echo "有更改: ${{ steps.check-changes.outputs.has_changes }}"
+          echo "clang-format 版本: $(clang-format --version | head -1)"

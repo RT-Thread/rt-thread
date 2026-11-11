@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-01-08     bernard      first version.
  * 2014-07-12     bernard      Add workqueue implementation.
+ * 2026-03-27     Evlers       reorder regulator/power supply headers after DM deps
  */
 
 #ifndef __RT_DEVICE_H__
@@ -37,13 +38,21 @@
 extern "C" {
 #endif
 
-#define RT_DEVICE(device)            ((rt_device_t)device)
+#define RT_DEVICE(device) ((rt_device_t)device)
 
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
 #include "drivers/core/numa.h"
+#include "drivers/core/power.h"
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
+
+#ifdef RT_USING_GRAPHIC
+#include "drivers/graphic.h"
+#ifdef RT_GRAPHIC_BACKLIGHT
+#include "drivers/backlight.h"
+#endif /* RT_GRAPHIC_BACKLIGHT */
+#endif /* RT_USING_GRAPHIC */
 
 #ifdef RT_USING_ATA
 #ifdef RT_ATA_AHCI
@@ -53,11 +62,30 @@ extern "C" {
 
 #ifdef RT_USING_LED
 #include "drivers/led.h"
+#endif /* RT_USING_LED */
+
+#ifdef RT_USING_PTP
+#include "drivers/ptp.h"
+#endif /* RT_USING_PTP */
+
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#ifdef RT_INPUT_UAPI
+#include "drivers/input_uapi.h"
 #endif
+#endif /* RT_USING_INPUT */
 
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
 #endif /* RT_USING_MBOX */
+
+#ifdef RT_USING_HWSPINLOCK
+#include "drivers/hwspinlock.h"
+#endif /* RT_USING_HWSPINLOCK */
+
+#ifdef RT_USING_RPMSG
+#include "drivers/rpmsg.h"
+#endif /* RT_USING_RPMSG */
 
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
@@ -83,6 +111,7 @@ extern "C" {
 
 #ifdef RT_USING_PHYE
 #include "drivers/phye.h"
+#include "drivers/phye-mipi-dphy.h"
 #endif /* RT_USING_PHYE */
 
 #ifdef RT_USING_PIC
@@ -99,10 +128,6 @@ extern "C" {
 #endif /* RT_PCI_ENDPOINT */
 #endif /* RT_USING_PCI */
 
-#ifdef RT_USING_REGULATOR
-#include "drivers/regulator.h"
-#endif /* RT_USING_REGULATOR */
-
 #ifdef RT_USING_RESET
 #include "drivers/reset.h"
 #endif /* RT_USING_RESET */
@@ -118,7 +143,46 @@ extern "C" {
 #ifdef RT_USING_THERMAL
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
+
+#ifdef RT_USING_UFS
+#include "drivers/ufs.h"
+#endif /* RT_USING_UFS */
+
+#ifdef RT_USING_FIRMWARE
+#ifdef RT_FIRMWARE_ARM_SCMI
+#include "drivers/scmi.h"
+#endif /* RT_FIRMWARE_ARM_SCMI */
+#endif /* RT_USING_FIRMWARE */
+
+#ifdef RT_USING_TEE
+#include "drivers/tee.h"
+#endif /* RT_USING_TEE */
+
+#ifdef RT_USING_HWCACHE
+#include "drivers/hwcache.h"
+#endif /* RT_USING_HWCACHE */
+
+#ifdef RT_USING_DVFS
+#include "drivers/dvfs.h"
+#endif /* RT_USING_DVFS */
+
+#ifdef RT_USING_NVMEM
+#include "drivers/nvmem.h"
+#endif /* RT_USING_NVMEM */
+
+#ifdef RT_USING_VIRTIO
+#include "drivers/virtio.h"
+#include "drivers/virtq.h"
+#endif
 #endif /* RT_USING_DM */
+
+#ifdef RT_USING_REGULATOR
+#include "drivers/regulator.h"
+#endif /* RT_USING_REGULATOR */
+
+#ifdef RT_USING_POWER_SUPPLY
+#include "drivers/power_supply.h"
+#endif /* RT_USING_POWER_SUPPLY */
 
 #ifdef RT_USING_RTC
 #include "drivers/dev_rtc.h"
@@ -152,10 +216,10 @@ extern "C" {
 #include "drivers/dev_serial_v2.h"
 #else
 #include "drivers/dev_serial.h"
+#endif /* RT_USING_SERIAL_V2 */
 #ifdef RT_USING_SERIAL_BYPASS
 #include "drivers/serial_bypass.h"
 #endif /* RT_USING_SERIAL_BYPASS */
-#endif
 #endif /* RT_USING_SERIAL */
 
 #ifdef RT_USING_I2C
@@ -170,16 +234,19 @@ extern "C" {
 #endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
-#ifdef RT_USING_PHY
+#if defined(RT_USING_PHY) || defined(RT_USING_PHY_V2)
 #include "drivers/phy.h"
-#endif /* RT_USING_PHY */
+#endif /* RT_USING_PHY || RT_USING_PHY_V2 */
 
 #ifdef RT_USING_SDIO
 #include "drivers/dev_mmcsd_core.h"
 #include "drivers/dev_sd.h"
 #include "drivers/dev_sdio.h"
+#if defined(RT_USING_DM) && defined(RT_USING_SDHCI)
+#include "drivers/dev_sdhci.h"
+#include "drivers/dev_sdhci_host.h"
+#endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
-
 
 #ifdef RT_USING_WDT
 #include "drivers/dev_watchdog.h"
@@ -201,21 +268,19 @@ extern "C" {
 #include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
-#ifdef RT_USING_HWTIMER
-#include "drivers/hwtimer.h"
-#endif /* RT_USING_HWTIMER */
+#ifdef RT_USING_CLOCK_TIME
+#include "drivers/clock_time.h"
+#endif /* RT_USING_CLOCK_TIME */
 
 #ifdef RT_USING_AUDIO
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
-#ifdef RT_USING_CPUTIME
-#include "drivers/cputime.h"
-#endif /* RT_USING_CPUTIME */
-
-#ifdef RT_USING_ADC
+#ifdef RT_USING_ADC_V2
+#include "drivers/adc_v2.h"
+#elif defined(RT_USING_ADC)
 #include "drivers/adc.h"
-#endif /* RT_USING_ADC */
+#endif /* RT_USING_ADC_V2 */
 
 #ifdef RT_USING_DAC
 #include "drivers/dac.h"

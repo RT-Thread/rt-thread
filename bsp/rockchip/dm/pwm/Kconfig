@@ -1,0 +1,5 @@
+config RT_PWM_ROCKCHIP
+    bool "Rockchip PWM support"
+    depends on RT_USING_PWM
+    depends on RT_USING_PINCTRL
+    default n

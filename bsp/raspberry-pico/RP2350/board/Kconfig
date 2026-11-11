@@ -1,0 +1,864 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_UART1
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC0
+        select BSP_USING_ADC1
+        select BSP_USING_ADC2
+        select BSP_USING_PWM
+        select BSP_USING_PWM0
+        select BSP_USING_PWM1
+        select BSP_USING_PWM2
+        select BSP_USING_PWM3
+        select BSP_USING_PWM4
+        select BSP_USING_PWM5
+        select BSP_USING_PWM6
+        select BSP_USING_PWM7
+        select BSP_USING_I2C
+        select BSP_USING_I2C0
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
+        imply RTDUINO_USING_SERVO
+        default n
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        select BSP_USING_SPI_LCD
+        default n
+
+    config BSP_USING_LVGL_DEMO
+        depends on BSP_USING_LVGL
+        bool "Enable LVGL demo"
+        select PKG_USING_LV_MUSIC_DEMO
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+            if BSP_USING_UART0
+                choice BSP_UART0_TX_PIN_SEL
+                    prompt "uart0 tx pin number (GP)"
+                    depends on BSP_USING_UART0
+                    default BSP_UART0_TX_PIN_0
+                    config BSP_UART0_TX_PIN_0
+                        bool "0"
+                    config BSP_UART0_TX_PIN_12
+                        bool "12"
+                    config BSP_UART0_TX_PIN_16
+                        bool "16"
+                endchoice
+                config BSP_UART0_TX_PIN
+                    int
+                    default 0 if BSP_UART0_TX_PIN_0
+                    default 12 if BSP_UART0_TX_PIN_12
+                    default 16 if BSP_UART0_TX_PIN_16
+
+                choice BSP_UART0_RX_PIN_1_SEL
+                    prompt "uart0 rx pin number (GP)"
+                    depends on BSP_USING_UART0
+                    default BSP_UART0_RX_PIN_1
+                    config BSP_UART0_RX_PIN_1
+                        bool "1"
+                    config BSP_UART0_RX_PIN_13
+                        bool "13"
+                    config BSP_UART0_RX_PIN_17
+                        bool "17"
+                endchoice
+                config BSP_UART0_RX_PIN
+                    int
+                    default 1 if BSP_UART0_RX_PIN_1
+                    default 13 if BSP_UART0_RX_PIN_13
+                    default 17 if BSP_UART0_RX_PIN_17
+            endif
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+            if BSP_USING_UART1
+                choice BSP_UART1_TX_PIN_SEL
+                    prompt "uart1 tx pin number (GP)"
+                    depends on BSP_USING_UART1
+                    default BSP_UART1_TX_PIN_8
+                    config BSP_UART1_TX_PIN_4
+                        bool "4"
+                    config BSP_UART1_TX_PIN_8
+                        bool "8"
+                endchoice
+                config BSP_UART1_TX_PIN
+                    int
+                    default 4 if BSP_UART1_TX_PIN_4
+                    default 8 if BSP_UART1_TX_PIN_8
+
+                choice BSP_UART1_RX_PIN_SEL
+                    prompt "uart1 rx pin number (GP)"
+                    depends on BSP_USING_UART1
+                    default BSP_UART1_RX_PIN_9
+                    config BSP_UART1_RX_PIN_5
+                        bool "5"
+                    config BSP_UART1_RX_PIN_9
+                        bool "9"
+                endchoice
+                config BSP_UART1_RX_PIN
+                    int
+                    default 5 if BSP_UART1_RX_PIN_5
+                    default 9 if BSP_UART1_RX_PIN_9
+            endif
+        endif
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 2
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 3
+            endif
+        endif
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable software SPI (swspi)"
+        default n
+        select RT_USING_SPI
+        select RT_USING_SOFT_SPI
+        if BSP_USING_SOFT_SPI
+        menuconfig BSP_USING_SOFT_SPI0
+            bool "Enable software SPI0 Bus (swspi0)"
+            default n
+            select RT_USING_SOFT_SPI0
+            if BSP_USING_SOFT_SPI0
+                config RT_SOFT_SPI0_SCK_PIN
+                    int "swspi0 SCK pin number"
+                    default 6
+                config RT_SOFT_SPI0_MISO_PIN
+                    int "swspi0 MISO pin number"
+                    default 4
+                config RT_SOFT_SPI0_MOSI_PIN
+                    int "swspi0 MOSI pin number"
+                    default 7
+            endif
+
+        menuconfig BSP_USING_SOFT_SPI1
+            bool "Enable software SPI1 Bus (swspi1)"
+            default n
+            select RT_USING_SOFT_SPI1
+            if BSP_USING_SOFT_SPI1
+                config RT_SOFT_SPI1_SCK_PIN
+                    int "swspi1 SCK pin number"
+                    default 10
+                config RT_SOFT_SPI1_MISO_PIN
+                    int "swspi1 MISO pin number"
+                    default 12
+                config RT_SOFT_SPI1_MOSI_PIN
+                    int "swspi1 MOSI pin number"
+                    default 11
+            endif
+        endif
+    config RT_SOFT_SPI0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_SCK_PIN_DEFAULT
+        int
+        default 6 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_MISO_PIN_DEFAULT
+        int
+        default 4 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_MOSI_PIN_DEFAULT
+        int
+        default 7 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_BUS_NAME_DEFAULT
+        string
+        default "swspi0" if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_SCK_PIN_DEFAULT
+        int
+        default 10 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MISO_PIN_DEFAULT
+        int
+        default 12 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MOSI_PIN_DEFAULT
+        int
+        default 11 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_BUS_NAME_DEFAULT
+        string
+        default "swspi1" if RT_USING_SOFT_SPI1
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0 (GP26)"
+                default n
+            config BSP_USING_ADC1
+                bool "Enable ADC1 (GP27)"
+                default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2 (GP28)"
+                default n
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0"
+                default n
+            if BSP_USING_SPI0
+                choice BSP_SPI0_MOSI_PIN_SEL
+                    prompt "spi0 MOSI pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_MOSI_PIN_19 if BSP_USING_ARDUINO
+                    config BSP_SPI0_MOSI_PIN_19
+                        bool "19"
+                    config BSP_SPI0_MOSI_PIN_3
+                        bool "3"
+                    config BSP_SPI0_MOSI_PIN_7
+                        bool "7"
+                endchoice
+                config BSP_SPI0_MOSI_PIN
+                    int
+                    default 3 if BSP_SPI0_MOSI_PIN_3
+                    default 7 if BSP_SPI0_MOSI_PIN_7
+                    default 19 if BSP_SPI0_MOSI_PIN_19
+
+                choice BSP_SPI0_MISO_PIN_SEL
+                    prompt "spi0 MISO pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_MISO_PIN_16 if BSP_USING_ARDUINO
+                    config BSP_SPI0_MISO_PIN_16
+                        bool "16"
+                    config BSP_SPI0_MISO_PIN_0
+                        bool "0"
+                    config BSP_SPI0_MISO_PIN_4
+                        bool "4"
+                endchoice
+                config BSP_SPI0_MISO_PIN
+                    int
+                    default 0 if BSP_SPI0_MISO_PIN_0
+                    default 4 if BSP_SPI0_MISO_PIN_4
+                    default 16 if BSP_SPI0_MISO_PIN_16
+
+                choice BSP_SPI0_SCK_PIN_SEL
+                    prompt "spi0 SCK pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_SCK_PIN_18 if BSP_USING_ARDUINO
+                    config BSP_SPI0_SCK_PIN_18
+                        bool "18"
+                    config BSP_SPI0_SCK_PIN_2
+                        bool "2"
+                    config BSP_SPI0_SCK_PIN_6
+                        bool "6"
+                endchoice
+                config BSP_SPI0_SCK_PIN
+                    int
+                    default 2 if BSP_SPI0_SCK_PIN_2
+                    default 6 if BSP_SPI0_SCK_PIN_6
+                    default 18 if BSP_SPI0_SCK_PIN_18
+
+                choice BSP_SPI0_CS_PIN_SEL
+                    prompt "spi0 CS pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_CS_PIN_17 if BSP_USING_ARDUINO
+                    config BSP_SPI0_CS_PIN_17
+                        bool "17"
+                    config BSP_SPI0_CS_PIN_1
+                        bool "1"
+                    config BSP_SPI0_CS_PIN_5
+                        bool "5"
+                endchoice
+                config BSP_SPI0_CS_PIN
+                    int
+                    default 1 if BSP_SPI0_CS_PIN_1
+                    default 5 if BSP_SPI0_CS_PIN_5
+                    default 17 if BSP_SPI0_CS_PIN_17
+            endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            if BSP_USING_SPI1
+                choice BSP_SPI1_MOSI_PIN_1_SEL
+                    prompt "spi1 MOSI pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_MOSI_PIN_15 if BSP_USING_ARDUINO
+                    config BSP_SPI1_MOSI_PIN_15
+                        bool "15"
+                    config BSP_SPI1_MOSI_PIN_11
+                        bool "11"
+                endchoice
+                config BSP_SPI1_MOSI_PIN
+                    int
+                    default 11 if BSP_SPI1_MOSI_PIN_11
+                    default 15 if BSP_SPI1_MOSI_PIN_15
+
+                choice BSP_SPI1_MISO_PIN_SEL
+                    prompt "spi1 MISO pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_MISO_PIN_12 if BSP_USING_ARDUINO
+                    config BSP_SPI1_MISO_PIN_12
+                        bool "12"
+                    config BSP_SPI1_MISO_PIN_8
+                        bool "8"
+                endchoice
+                config BSP_SPI1_MISO_PIN
+                    int
+                    default 8 if BSP_SPI1_MISO_PIN_8
+                    default 12 if BSP_SPI1_MISO_PIN_12
+
+                choice BSP_SPI1_SCK_PIN_1_SEL
+                    prompt "spi1 SCK pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_SCK_PIN_14 if BSP_USING_ARDUINO
+                    config BSP_SPI1_SCK_PIN_14
+                        bool "14"
+                    config BSP_SPI1_SCK_PIN_10
+                        bool "10"
+                endchoice
+                config BSP_SPI1_SCK_PIN
+                    int
+                    default 10 if BSP_SPI1_SCK_PIN_10
+                    default 14 if BSP_SPI1_SCK_PIN_14
+
+                choice BSP_SPI1_CS_PIN_SEL
+                    prompt "spi1 CS pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
+                    config BSP_SPI1_CS_PIN_13
+                        bool "13"
+                    config BSP_SPI1_CS_PIN_9
+                        bool "9"
+                endchoice
+                config BSP_SPI1_CS_PIN
+                    int
+                    default 9 if BSP_SPI1_CS_PIN_9
+                    default 13 if BSP_SPI1_CS_PIN_13
+            endif
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM(A:CH_0 B:CH_1)"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+                if BSP_USING_PWM0
+                    choice BSP_PWM0_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM0
+                        default BSP_PWM0_A_PIN_16
+                        config BSP_PWM0_A_PIN_0
+                            bool "0"
+                        config BSP_PWM0_A_PIN_16
+                            bool "16"
+                    endchoice
+                    config BSP_PWM0_A_PIN
+                        int
+                        default 0 if BSP_PWM0_A_PIN_0
+                        default 16 if BSP_PWM0_A_PIN_16
+                    choice BSP_PWM0_B_PIN_1_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM0
+                        default BSP_PWM0_B_PIN_17
+                        config BSP_PWM0_B_PIN_1
+                            bool "1"
+                        config BSP_PWM0_B_PIN_17
+                            bool "17"
+                    endchoice
+                    config BSP_PWM0_B_PIN
+                        int
+                        default 1 if BSP_PWM0_B_PIN_1
+                        default 17 if BSP_PWM0_B_PIN_17
+                    config BSP_PWM0_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM0_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+                if BSP_USING_PWM1
+                    choice BSP_PWM1_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM1
+                        default BSP_PWM1_A_PIN_18
+                        config BSP_PWM1_A_PIN_2
+                            bool "2"
+                        config BSP_PWM1_A_PIN_18
+                            bool "18"
+                    endchoice
+                    config BSP_PWM1_A_PIN
+                        int
+                        default 2 if BSP_PWM1_A_PIN_2
+                        default 18 if BSP_PWM1_A_PIN_18
+                    choice BSP_PWM1_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM1
+                        default BSP_PWM1_B_PIN_19
+                        config BSP_PWM1_B_PIN_3
+                            bool "3"
+                        config BSP_PWM1_B_PIN_19
+                            bool "19"
+                    endchoice
+                    config BSP_PWM1_B_PIN
+                        int
+                        default 3 if BSP_PWM1_B_PIN_3
+                        default 19 if BSP_PWM1_B_PIN_19
+                    config BSP_PWM1_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM1_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+                if BSP_USING_PWM2
+                    choice BSP_PWM2_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM2
+                        default BSP_PWM2_A_PIN_20
+                        config BSP_PWM2_A_PIN_4
+                            bool "4"
+                        config BSP_PWM2_A_PIN_20
+                            bool "20"
+                    endchoice
+                    config BSP_PWM2_A_PIN
+                        int
+                        default 4 if BSP_PWM2_A_PIN_4
+                        default 20 if BSP_PWM2_A_PIN_20
+                    choice BSP_PWM2_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM2
+                        default BSP_PWM2_B_PIN_21
+                        config BSP_PWM2_B_PIN_5
+                            bool "5"
+                        config BSP_PWM2_B_PIN_21
+                            bool "21"
+                    endchoice
+                    config BSP_PWM2_B_PIN
+                        int
+                        default 5 if BSP_PWM2_B_PIN_5
+                        default 21 if BSP_PWM2_B_PIN_21
+                    config BSP_PWM2_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM2_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM3
+                bool "Enable PWM3"
+                default n
+                if BSP_USING_PWM3
+                    choice BSP_PWM3_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM3
+                        default BSP_PWM3_A_PIN_22
+                        config BSP_PWM3_A_PIN_6
+                            bool "6"
+                        config BSP_PWM3_A_PIN_22
+                            bool "22"
+                    endchoice
+                    config BSP_PWM3_A_PIN
+                        int
+                        default 6 if BSP_PWM3_A_PIN_6
+                        default 22 if BSP_PWM3_A_PIN_22
+                    choice BSP_PWM3_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM3
+                        default BSP_PWM3_B_PIN_23
+                        config BSP_PWM3_B_PIN_7
+                            bool "7"
+                        config BSP_PWM3_B_PIN_23
+                            bool "23"
+                    endchoice
+                    config BSP_PWM3_B_PIN
+                        int
+                        default 7 if BSP_PWM3_B_PIN_7
+                        default 23 if BSP_PWM3_B_PIN_23
+                    config BSP_PWM3_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM3_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM4
+                bool "Enable PWM4"
+                default n
+                if BSP_USING_PWM4
+                    choice BSP_PWM4_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM4
+                        default BSP_PWM4_A_PIN_24
+                        config BSP_PWM4_A_PIN_8
+                            bool "8"
+                        config BSP_PWM4_A_PIN_24
+                            bool "24"
+                    endchoice
+                    config BSP_PWM4_A_PIN
+                        int
+                        default 8 if BSP_PWM4_A_PIN_8
+                        default 24 if BSP_PWM4_A_PIN_24
+                    choice BSP_PWM4_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM4
+                        default BSP_PWM4_B_PIN_25
+                        config BSP_PWM4_B_PIN_9
+                            bool "9"
+                        config BSP_PWM4_B_PIN_25
+                            bool "25"
+                    endchoice
+                    config BSP_PWM4_B_PIN
+                        int
+                        default 9 if BSP_PWM4_B_PIN_9
+                        default 25 if BSP_PWM4_B_PIN_25
+                    config BSP_PWM4_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM4_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM5
+                bool "Enable PWM5"
+                default n
+                if BSP_USING_PWM5
+                    choice BSP_PWM5_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM5
+                        default BSP_PWM5_A_PIN_10
+                        config BSP_PWM5_A_PIN_10
+                            bool "10"
+                        config BSP_PWM5_A_PIN_26
+                            bool "26"
+                    endchoice
+                    config BSP_PWM5_A_PIN
+                        int
+                        default 10 if BSP_PWM5_A_PIN_10
+                        default 26 if BSP_PWM5_A_PIN_26
+                    choice BSP_PWM5_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM5
+                        default BSP_PWM5_B_PIN_11
+                        config BSP_PWM5_B_PIN_11
+                            bool "11"
+                        config BSP_PWM5_B_PIN_27
+                            bool "27"
+                    endchoice
+                    config BSP_PWM5_B_PIN
+                        int
+                        default 11 if BSP_PWM5_B_PIN_11
+                        default 27 if BSP_PWM5_B_PIN_27
+                    config BSP_PWM5_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM5_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM6
+                bool "Enable PWM6"
+                default n
+                if BSP_USING_PWM6
+                    choice BSP_PWM6_A_PIN_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM6
+                        default BSP_PWM6_A_PIN_12
+                        config BSP_PWM6_A_PIN_12
+                            bool "12"
+                        config BSP_PWM6_A_PIN_28
+                            bool "28"
+                    endchoice
+                    config BSP_PWM6_A_PIN
+                        int
+                        default 12 if BSP_PWM6_A_PIN_12
+                        default 28 if BSP_PWM6_A_PIN_28
+                    choice BSP_PWM6_B_PIN_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM6
+                        default BSP_PWM6_B_PIN_13
+                        config BSP_PWM6_B_PIN_13
+                            bool "13"
+                        config BSP_PWM6_B_PIN_29
+                            bool "29"
+                    endchoice
+                    config BSP_PWM6_B_PIN
+                        int
+                        default 13 if BSP_PWM6_B_PIN_13
+                        default 29 if BSP_PWM6_B_PIN_29
+                    config BSP_PWM6_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM6_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM7
+                bool "Enable PWM7"
+                default n
+                if BSP_USING_PWM7
+                    choice PWM_SLICE_A_PIN_GP_SEL
+                        prompt "pwm slice A pin number (GP)"
+                        depends on BSP_USING_PWM7
+                        default BSP_PWM7_A_PIN_14
+                        config BSP_PWM7_A_PIN_14
+                            bool "14"
+                    endchoice
+                    config BSP_PWM7_A_PIN
+                        int
+                        default 14 if BSP_PWM7_A_PIN_14
+                    choice PWM_SLICE_B_PIN_GP_SEL
+                        prompt "pwm slice B pin number (GP)"
+                        depends on BSP_USING_PWM7
+                        default BSP_PWM7_B_PIN_15
+                        config BSP_PWM7_B_PIN_15
+                            bool "15"
+                    endchoice
+                    config BSP_PWM7_B_PIN
+                        int
+                        default 15 if BSP_PWM7_B_PIN_15
+                endif
+        endif
+
+    menuconfig BSP_USING_CLOCK_TIMER
+        bool "Enable CLOCK_TIMER"
+        default n
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_CLOCK_TIMER
+            config BSP_USING_TIMER0
+                bool "Enable CLOCK_TIMER0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable CLOCK_TIMER1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable CLOCK_TIMER2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable CLOCK_TIMER3"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+                if BSP_USING_I2C0
+                    choice BSP_I2C0_SCL_PIN_SEL
+                        prompt "i2c0 scl pin number (GP)"
+                        depends on BSP_USING_I2C0
+                        default BSP_I2C0_SCL_PIN_5 if BSP_USING_ARDUINO
+                        config BSP_I2C0_SCL_PIN_5
+                            bool "5"
+                        config BSP_I2C0_SCL_PIN_1
+                            bool "1"
+                        config BSP_I2C0_SCL_PIN_9
+                            bool "9"
+                        config BSP_I2C0_SCL_PIN_13
+                            bool "13"
+                        config BSP_I2C0_SCL_PIN_17
+                            bool "17"
+                        config BSP_I2C0_SCL_PIN_21
+                            bool "21"
+                    endchoice
+                    config BSP_I2C0_SCL_PIN
+                        int
+                        default 1 if BSP_I2C0_SCL_PIN_1
+                        default 5 if BSP_I2C0_SCL_PIN_5
+                        default 9 if BSP_I2C0_SCL_PIN_9
+                        default 13 if BSP_I2C0_SCL_PIN_13
+                        default 17 if BSP_I2C0_SCL_PIN_17
+                        default 21 if BSP_I2C0_SCL_PIN_21
+
+                    choice BSP_I2C0_SDA_PIN_SEL
+                        prompt "i2c0 sda pin number (GP)"
+                        depends on BSP_USING_I2C0
+                        default BSP_I2C0_SDA_PIN_4 if BSP_USING_ARDUINO
+                        config BSP_I2C0_SDA_PIN_4
+                            bool "4"
+                        config BSP_I2C0_SDA_PIN_0
+                            bool "0"
+                        config BSP_I2C0_SDA_PIN_8
+                            bool "8"
+                        config BSP_I2C0_SDA_PIN_12
+                            bool "12"
+                        config BSP_I2C0_SDA_PIN_16
+                            bool "16"
+                        config BSP_I2C0_SDA_PIN_20
+                            bool "20"
+                    endchoice
+                    config BSP_I2C0_SDA_PIN
+                        int
+                        default 0 if BSP_I2C0_SDA_PIN_0
+                        default 4 if BSP_I2C0_SDA_PIN_4
+                        default 8 if BSP_I2C0_SDA_PIN_8
+                        default 12 if BSP_I2C0_SDA_PIN_12
+                        default 16 if BSP_I2C0_SDA_PIN_16
+                        default 20 if BSP_I2C0_SDA_PIN_20
+                endif
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+                if BSP_USING_I2C1
+                    choice BSP_I2C1_SCL_PIN_SEL
+                        prompt "i2c1 scl pin number (GP)"
+                        depends on BSP_USING_I2C1
+                        config BSP_I2C1_SCL_PIN_3
+                            bool "3"
+                        config BSP_I2C1_SCL_PIN_7
+                            bool "7"
+                        config BSP_I2C1_SCL_PIN_11
+                            bool "11"
+                        config BSP_I2C1_SCL_PIN_15
+                            bool "15"
+                        config BSP_I2C1_SCL_PIN_19
+                            bool "19"
+                        config BSP_I2C1_SCL_PIN_27
+                            bool "27"
+                    endchoice
+                    config BSP_I2C1_SCL_PIN
+                        int
+                        default 3 if BSP_I2C1_SCL_PIN_3
+                        default 7 if BSP_I2C1_SCL_PIN_7
+                        default 11 if BSP_I2C1_SCL_PIN_11
+                        default 15 if BSP_I2C1_SCL_PIN_15
+                        default 19 if BSP_I2C1_SCL_PIN_19
+                        default 27 if BSP_I2C1_SCL_PIN_27
+
+                    choice BSP_I2C1_SDA_PIN_SEL
+                        prompt "i2c1 sda pin number (GP)"
+                        depends on BSP_USING_I2C1
+                        config BSP_I2C1_SDA_PIN_2
+                            bool "2"
+                        config BSP_I2C1_SDA_PIN_6
+                            bool "6"
+                        config BSP_I2C1_SDA_PIN_10
+                            bool "10"
+                        config BSP_I2C1_SDA_PIN_14
+                            bool "14"
+                        config BSP_I2C1_SDA_PIN_18
+                            bool "18"
+                        config BSP_I2C1_SDA_PIN_26
+                            bool "26"
+                    endchoice
+                    config BSP_I2C1_SDA_PIN
+                        int
+                        default 2 if BSP_I2C1_SDA_PIN_2
+                        default 6 if BSP_I2C1_SDA_PIN_6
+                        default 10 if BSP_I2C1_SDA_PIN_10
+                        default 14 if BSP_I2C1_SDA_PIN_14
+                        default 18 if BSP_I2C1_SDA_PIN_18
+                        default 26 if BSP_I2C1_SDA_PIN_26
+                endif
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable On-Chip FLASH"
+        select FAL_DEBUG_CONFIG
+        select FAL_PART_HAS_TABLE_CFG
+        default n
+
+endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 2 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 3 if RT_USING_SOFT_I2C1
+
+endmenu

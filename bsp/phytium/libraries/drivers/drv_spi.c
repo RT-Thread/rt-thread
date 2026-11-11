@@ -57,9 +57,9 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     rt_uint32_t cpu_id = rt_hw_cpu_id();
 
     LOG_D("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
-    config_p->irq_prority = 0xd0;
+    config_p->irq_priority = 0xd0;
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
-    rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_prority);
+    rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_priority);
 
     /* register intr callback */
     rt_hw_interrupt_install(config_p->irq_num,
@@ -138,7 +138,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     {
         return -RT_ERROR;
     }
-    FSpimRegisterIntrruptHandler(&user_data_cfg->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
+    FSpimRegisterInterruptHandler(&user_data_cfg->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
 
     return ret;
 }
@@ -229,7 +229,7 @@ static int spi_init(phytium_spi_bus *spi_bus)
     {
         return -RT_ERROR;
     }
-    FSpimRegisterIntrruptHandler(&spi_bus->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
+    FSpimRegisterInterruptHandler(&spi_bus->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
 
     rt_spi_bus_register(&spi_bus->spi_bus, spi_bus->name, &spim_ops);
     RT_ASSERT((struct rt_spi_device *)rt_device_find(spi_bus->name));
@@ -252,7 +252,7 @@ static int spi_init(phytium_spi_bus *spi_bus)
 
 int rt_hw_spi_init(void)
 {
-    /* event creat */
+    /* event create */
     if (RT_EOK != rt_event_init(&rx_done_event, "rx_done_event", RT_IPC_FLAG_FIFO))
     {
         rt_kprintf("Create event failed.\n");

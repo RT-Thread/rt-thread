@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC, PART_TM4C123GH6PM, TARGET_IS_TM4C123_RB1, rvmdk, __STDC_LIMIT_MACROS</Define>
+              <Define>RT_USING_LIBC, PART_TM4C123GH6PM, __RTTHREAD__, TARGET_IS_TM4C123_RB1, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, rvmdk, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>libraries\TivaWare_C_series\tm4c123_driverlib;..\..\components\drivers\phy;..\..\components\drivers\include;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib\inc;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\io\poll;..\..\components\drivers\spi;..\..\components\finsh;applications;..\..\components\libc\compilers\common\extension;board;..\..\components\drivers\include;.;libraries\Drivers;..\..\components\libc\posix\ipc;..\..\include;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib;libraries\Drivers\config;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\include</IncludePath>
+              <IncludePath>libraries\TivaWare_C_series\tm4c123_driverlib\driverlib\inc;..\..\components\drivers\include;..\..\components\drivers\include;board;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m4;..\..\components\net\utest;..\..\components\libc\posix\ipc;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;.;..\..\components\drivers\include;..\..\components\drivers\include;applications;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\smp_call;..\..\include;..\..\components\libc\posix\io\eventfd;libraries\Drivers;..\..\components\libc\compilers\common\extension;libraries\Drivers\config;libraries\TivaWare_C_series\tm4c123_driverlib;..\..\components\drivers\include;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\spi;..\..\libcpu\arm\common;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,61 +410,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -838,16 +810,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1154,7 +1126,63 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>kerrno.c</FileName>
@@ -1164,16 +1192,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1192,92 +1220,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Libraries</GroupName>
-          <Files>
-            <File>
-              <FileName>fpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\fpu.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>sysctl.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\sysctl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ssi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\ssi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>src_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1289,9 +1237,58 @@
           </Files>
           <Files>
             <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\fpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ssi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\ssi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>src_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\TivaWare_C_series\tm4c123_driverlib\src\adc.c</FilePath>
             </File>
           </Files>
         </Group>

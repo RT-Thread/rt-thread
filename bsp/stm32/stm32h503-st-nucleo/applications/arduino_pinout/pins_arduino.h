@@ -41,8 +41,8 @@
 
 #define LED_BUILTIN D13 /* Default Built-in LED */
 
-/* i2c1 : PB.7-SDA PB.6-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
+/* swi2c1 : PB.7-SDA PB.6-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 /* Serial2(uart1) : PB.14-TX  PB.15-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart1"

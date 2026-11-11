@@ -1,0 +1,168 @@
+/*
+ * Copyright (c) 2006-2024 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024-11-20     zhujiale     the first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Serial Bypass Lower Run Test
+ *
+ * Test Objectives:
+ * - Validate serial device bypass lower layer registration and data processing mechanisms.
+ * - Verify correct character reception and callback execution in bypass mode.
+ * - Test core APIs: rt_bypass_lower_register(), rt_bypass_lower_unregister(), rt_hw_serial_isr()
+ *
+ * Test Scenarios:
+ * - Register bypass lower layer callback to intercept serial RX data before normal processing.
+ * - Simulate hardware interrupt with custom getc function returning predefined character sequences.
+ * - Verify repeated character reception, counting mechanism and sequential character reception with incremental validation.
+ * - Temporarily replace serial device operations with mock implementations for controlled testing.
+ *
+ * Verification Metrics:
+ * - Bypass callback executes for each received character with correct character value.
+ * - Character validation assertions pass: bypass_lower_001 validates 10 'a' characters, bypass_lower_002 validates sequential characters 'b' to 'u'.
+ * - Mock getc function returns -1 after 10 iterations (bypass_lower_001) or 20 iterations (bypass_lower_002) to terminate reception.
+ * - Serial device operations restore to original state after test completion.
+ * - Bypass lower layer unregisters successfully without resource leaks.
+ *
+ * Dependencies:
+ * - Hardware requirements: Platform with serial console device (UART) support.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SERIAL_BYPASS must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> Serial Test -> Serial Bypass Test).
+ * - Environmental Assumptions: Serial device initialized and operational before test execution.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.serial.bypass_lower)"
+ * - Character validation assertions pass for all test iterations.
+ */
+
+#include <rtthread.h>
+#include <rtdevice.h>
+#include "utest.h"
+
+static struct rt_serial_device* _serial0;
+static int cnt = 0;
+
+#define __REG32(x) (*((volatile unsigned int*)((rt_ubase_t)x)))
+#define UART_FR(base)   __REG32(base + 0x18)
+#define UART_DR(base)   __REG32(base + 0x00)
+#define UARTFR_TXFF     0x20
+
+struct hw_uart_device
+{
+    rt_size_t hw_base;
+    rt_size_t irqno;
+};
+
+static int uart_putc(struct rt_serial_device* serial, char c)
+{
+    struct hw_uart_device* uart;
+
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct hw_uart_device*)serial->parent.user_data;
+
+    while (UART_FR(uart->hw_base) & UARTFR_TXFF);
+    UART_DR(uart->hw_base) = c;
+
+    return 1;
+}
+
+static rt_err_t utest_lower_run_test2(struct rt_serial_device* serial, char ch, void* data)
+{
+    static rt_uint8_t num = 0;
+    num++;
+    uassert_true(ch == ('a' + num));
+    return RT_EOK;
+}
+
+static int utest_getc_2(struct rt_serial_device* serial)
+{
+    static rt_uint8_t num = 0;
+    if (num == 20)
+        return -1;
+    num++;
+    return 'a' + num;
+}
+
+static const struct rt_uart_ops _utest_ops2 =
+{
+    RT_NULL,
+    RT_NULL,
+    uart_putc,
+    utest_getc_2,
+};
+
+static rt_err_t utest_lower_run(struct rt_serial_device* serial, char ch, void* data)
+{
+    uassert_true(ch == 'a');
+    cnt++;
+    return RT_EOK;
+}
+
+
+static int utest_getc(struct rt_serial_device* serial)
+{
+    static rt_uint8_t num = 0;
+    if (num == 10)
+        return -1;
+    num++;
+    return 'a';
+}
+
+static const struct rt_uart_ops _utest_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    uart_putc,
+    utest_getc,
+};
+static void bypass_lower_001(void)
+{
+    const struct rt_uart_ops* tmp = _serial0->ops;
+    _serial0->ops = &_utest_ops;
+    rt_bypass_lower_register(_serial0, "utest", RT_BYPASS_MAX_LEVEL, utest_lower_run, RT_NULL);
+
+    rt_hw_serial_isr(_serial0, RT_SERIAL_EVENT_RX_IND);
+    rt_thread_mdelay(100);
+    uassert_true(cnt == 10);
+    _serial0->ops = tmp;
+    rt_bypass_lower_unregister(_serial0, RT_BYPASS_MAX_LEVEL);
+}
+
+static void bypass_lower_002(void)
+{
+    const struct rt_uart_ops* tmp = _serial0->ops;
+    _serial0->ops = &_utest_ops2;
+    rt_bypass_lower_register(_serial0, "utest", RT_BYPASS_MAX_LEVEL, utest_lower_run_test2, RT_NULL);
+
+    rt_hw_serial_isr(_serial0, RT_SERIAL_EVENT_RX_IND);
+    rt_thread_mdelay(100);
+    uassert_true(cnt == 10);
+    _serial0->ops = tmp;
+    rt_bypass_lower_unregister(_serial0, RT_BYPASS_MAX_LEVEL);
+}
+
+static rt_err_t utest_tc_init(void)
+{
+    _serial0 = (struct rt_serial_device*)rt_console_get_device();
+    return RT_EOK;
+}
+
+static rt_err_t utest_tc_cleanup(void)
+{
+    return RT_EOK;
+}
+
+static void _testcase(void)
+{
+    UTEST_UNIT_RUN(bypass_lower_001);
+    UTEST_UNIT_RUN(bypass_lower_002);
+}
+
+UTEST_TC_EXPORT(_testcase, "components.drivers.serial.bypass_lower", utest_tc_init, utest_tc_cleanup, 10);

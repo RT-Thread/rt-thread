@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_INPUT_TOUCHSCREEN']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = []
+
+if GetDepend(['RT_INPUT_TOUCHSCREEN_ADS7846']):
+    src += ['ts-ads7846.c']
+
+if GetDepend(['RT_INPUT_TOUCHSCREEN_GOODIX']):
+    src += ['ts-goodix.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

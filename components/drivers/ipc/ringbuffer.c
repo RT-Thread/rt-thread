@@ -219,6 +219,51 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
 RTM_EXPORT(rt_ringbuffer_get);
 
 /**
+ * @brief Get data from the ring buffer in zero-copy mode.
+ *
+ * @param rb        A pointer to the ringbuffer.
+ * @param ptr       When this function return, *ptr is a pointer to the first readable byte of the ring buffer.
+ *
+ * @note This function returns a direct pointer to the internal buffer and consumes the data
+ *       (advances read_index). It returns the contiguous readable data length. If data wraps
+ *       around the buffer end, call this function again to get the remaining segment.
+ *
+ * @return Return the contiguous readable data size we consumed from the ring buffer.
+ */
+rt_size_t rt_ringbuffer_get_direct(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
+{
+    rt_size_t size;
+
+    RT_ASSERT(rb != RT_NULL);
+
+    *ptr = RT_NULL;
+
+    /* whether has enough data  */
+    size = rt_ringbuffer_data_len(rb);
+
+    /* no data */
+    if (size == 0)
+        return 0;
+
+    *ptr = &rb->buffer_ptr[rb->read_index];
+
+    if ((rt_size_t)(rb->buffer_size - rb->read_index) > size)
+    {
+        rb->read_index += size;
+        return size;
+    }
+
+    size = rb->buffer_size - rb->read_index;
+
+    /* we are going into the other side of the mirror */
+    rb->read_mirror = ~rb->read_mirror;
+    rb->read_index = 0;
+
+    return size;
+}
+RTM_EXPORT(rt_ringbuffer_get_direct);
+
+/**
  * @brief Get the first readable byte of the ring buffer.
  *
  * @param rb        A pointer to the ringbuffer.
@@ -247,15 +292,10 @@ rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 
     if ((rt_size_t)(rb->buffer_size - rb->read_index) > size)
     {
-        rb->read_index += size;
         return size;
     }
 
     size = rb->buffer_size - rb->read_index;
-
-    /* we are going into the other side of the mirror */
-    rb->read_mirror = ~rb->read_mirror;
-    rb->read_index = 0;
 
     return size;
 }

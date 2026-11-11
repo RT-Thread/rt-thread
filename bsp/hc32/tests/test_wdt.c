@@ -23,9 +23,9 @@
 #ifdef BSP_USING_WDT_TMR
 
 #if defined(BSP_USING_WDT)
-    #define WDT_DEVICE_NAME     "wdt"
+#define WDT_DEVICE_NAME "wdt"
 #elif defined(BSP_USING_SWDT)
-    #define WDT_DEVICE_NAME     "swdt"
+#define WDT_DEVICE_NAME "swdt"
 #endif
 
 static rt_device_t wdg_dev;
@@ -50,7 +50,7 @@ static void _wdt_cmd_print_usage(void)
 
 static int wdt_sample(int argc, char *argv[])
 {
-    rt_err_t ret = RT_EOK;
+    int ret = RT_EOK;
     rt_uint32_t timeleft;
     rt_uint32_t timeout = atoi(argv[2]);
 
@@ -114,12 +114,12 @@ static int wdt_sample(int argc, char *argv[])
     else
     {
         _wdt_cmd_print_usage();
-        return -RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;
 }
 
-MSH_CMD_EXPORT(wdt_sample, wdt_sample [option]);
+MSH_CMD_EXPORT(wdt_sample, wdt_sample[option]);
 
 #endif

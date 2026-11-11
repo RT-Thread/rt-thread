@@ -93,7 +93,7 @@ void plic_set_threshold(int threshold)
 int plic_claim(void)
 {
     int hart = __raw_hartid();
-    int irq = *(uint32_t *)PLIC_CLAIM(hart);
+    int irq = readl((uint32_t *)PLIC_CLAIM(hart));
     return irq;
 }
 
@@ -110,7 +110,7 @@ int plic_claim(void)
 void plic_complete(int irq)
 {
     int hart = __raw_hartid();
-    *(uint32_t *)PLIC_COMPLETE(hart) = irq;
+    writel(irq, (uint32_t *)PLIC_COMPLETE(hart));
 }
 
 void plic_set_ie(rt_uint32_t word_index, rt_uint32_t val)
@@ -151,6 +151,6 @@ extern struct rt_irq_desc irq_desc[MAX_HANDLERS];
 void plic_handle_irq(void)
 {
     int plic_irq = plic_claim();
-    plic_complete(plic_irq);
     irq_desc[plic_irq].handler(plic_irq, irq_desc[plic_irq].param);
+    plic_complete(plic_irq);
 }

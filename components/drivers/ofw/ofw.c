@@ -13,6 +13,7 @@
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/serial_dm.h>
+#include <drivers/misc.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
@@ -307,7 +308,26 @@ rt_err_t rt_ofw_console_setup(void)
 
     if (err == -RT_ENOSYS && !rt_ofw_prop_read_string(ofw_node_chosen, "stdout-path", &stdout_path))
     {
-        struct rt_ofw_node *stdout_np = rt_ofw_find_node_by_path(stdout_path);
+        struct rt_ofw_node *stdout_np;
+
+        if (*stdout_path != '/' && ofw_node_aliases)
+        {
+            int alias_len;
+            struct rt_ofw_prop *prop;
+
+            alias_len = strchrnul(stdout_path, ':') - stdout_path;
+
+            rt_ofw_foreach_prop(ofw_node_aliases, prop)
+            {
+                if (!rt_strncmp(prop->name, stdout_path, alias_len))
+                {
+                    stdout_path = prop->value;
+                    break;
+                }
+            }
+        }
+
+        stdout_np = rt_ofw_find_node_by_path(stdout_path);
 
         if (stdout_np && (ofw_name = ofw_console_serial_find(con_name, stdout_np)))
         {
@@ -659,9 +679,12 @@ void rt_ofw_node_dump_dts(struct rt_ofw_node *np, rt_bool_t sibling_too)
 
             for (int i = header->rsvmap_nr - 1; i >= 0; --i)
             {
-                rt_kprintf("/memreserve/\t%p %p;\n",
-                        ofw_static_cast(rt_size_t, fdt64_to_cpu(rsvmap->address)),
-                        ofw_static_cast(rt_size_t, fdt64_to_cpu(rsvmap->size)));
+                rt_uint64_t address = fdt64_to_cpu(rsvmap->address);
+                rt_uint64_t size = fdt64_to_cpu(rsvmap->size);
+
+                rt_kprintf("/memreserve/\t0x%08x%08x 0x%08x%08x;\n",
+                        rt_upper_32_bits(address), rt_lower_32_bits(address),
+                        rt_upper_32_bits(size), rt_lower_32_bits(size));
 
                 ++rsvmap;
             }

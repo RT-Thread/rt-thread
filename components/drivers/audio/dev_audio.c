@@ -24,7 +24,7 @@
 #endif
 
 /**
- * @addtogroup group_Audio
+ * @addtogroup group_drivers_audio
  */
 
 /** @{ */
@@ -751,8 +751,6 @@ int rt_audio_samplerate_to_speed(rt_uint32_t bitValue)
  * See _audio_send_replay_frame for details
  *
  * @param[in] audio pointer to audio device
- *
- * @return void
  */
 void rt_audio_tx_complete(struct rt_audio_device *audio)
 {
@@ -768,8 +766,6 @@ void rt_audio_tx_complete(struct rt_audio_device *audio)
  * @param[in] pbuf pointer ro data to be received
  *
  * @param[in] len buffer size
- *
- * @return void
  */
 void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t len)
 {
@@ -781,4 +777,4 @@ void rt_audio_rx_done(struct rt_audio_device *audio, rt_uint8_t *pbuf, rt_size_t
         audio->parent.rx_indicate(&audio->parent, len);
 }
 
-/** @} group_Audio */
+/** @} group_drivers_audio */

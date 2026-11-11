@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_GRAPHIC_FB_SPACEMIT']):
+    src += ['display-spacemit.c', 'hdmi-spacemit.c', 'fb-spacemit.c']
+
+group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=[cwd]) if src else []
+
+Return('group')

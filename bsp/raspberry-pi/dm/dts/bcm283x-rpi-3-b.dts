@@ -1,0 +1,657 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-02-25     GuEe-GUI     the first version
+ */
+
+/dts-v1/;
+#include <dt-bindings/pinctrl/bcm2835.h>
+#include <dt-bindings/clock/bcm2835.h>
+#include <dt-bindings/clock/bcm2835-aux.h>
+#include <dt-bindings/pin/pin.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/power/bcm2835-pm.h>
+#include <dt-bindings/power/raspberrypi-power.h>
+
+/*
+ * NOTE: Just for QEMU, not the really board!
+ */
+
+/*
+ * firmware-provided startup stubs live here, where the secondary CPUs are
+ * spinning.
+ */
+/memreserve/ 0x00000000 0x00001000;
+
+/ {
+    compatible = "raspberrypi,3-model-b", "brcm,bcm2837";
+    model = "Raspberry Pi 3 Model B";
+    #address-cells = <1>;
+    #size-cells = <1>;
+    interrupt-parent = <&intc>;
+
+    aliases {
+        serial0 = "/soc/serial@7e215040";
+        serial1 = "/soc/serial@7e201000";
+        mmc0 = "/soc/mmcnr@7e300000";
+        spi0 = "/soc/spi@7e204000";
+        i2c0 = "/soc/i2c@7e205000";
+        i2c1 = "/soc/i2c@7e804000";
+        i2c2 = "/soc/i2c@7e805000";
+    };
+
+    chosen {
+        stdout-path = "serial0:115200n8";
+    };
+
+    cpus: cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        /* For ARM 32-bit */
+        enable-method = "brcm,bcm2836-smp";
+
+        /*
+         * Source for d/i-cache-line-size and d/i-cache-sets
+         * https://developer.arm.com/documentation/ddi0500/e/level-1-memory-system
+         * /about-the-l1-memory-system?lang=en
+         *
+         * Source for d/i-cache-size
+         * https://magpi.raspberrypi.com/articles/raspberry-pi-3-specs-benchmarks
+         */
+        cpu0: cpu@0 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a53";
+            reg = <0>;
+            enable-method = "spin-table";
+            cpu-release-addr = <0x0 0x000000d8>;
+            d-cache-size = <0x8000>;
+            d-cache-line-size = <64>;
+            d-cache-sets = <128>; // 32KiB(size)/64(line-size)=512ways/4-way set
+            i-cache-size = <0x8000>;
+            i-cache-line-size = <64>;
+            i-cache-sets = <256>; // 32KiB(size)/64(line-size)=512ways/2-way set
+            next-level-cache = <&l2>;
+        };
+
+        cpu1: cpu@1 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a53";
+            reg = <1>;
+            enable-method = "spin-table";
+            cpu-release-addr = <0x0 0x000000e0>;
+            d-cache-size = <0x8000>;
+            d-cache-line-size = <64>;
+            d-cache-sets = <128>; // 32KiB(size)/64(line-size)=512ways/4-way set
+            i-cache-size = <0x8000>;
+            i-cache-line-size = <64>;
+            i-cache-sets = <256>; // 32KiB(size)/64(line-size)=512ways/2-way set
+            next-level-cache = <&l2>;
+        };
+
+        cpu2: cpu@2 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a53";
+            reg = <2>;
+            enable-method = "spin-table";
+            cpu-release-addr = <0x0 0x000000e8>;
+            d-cache-size = <0x8000>;
+            d-cache-line-size = <64>;
+            d-cache-sets = <128>; // 32KiB(size)/64(line-size)=512ways/4-way set
+            i-cache-size = <0x8000>;
+            i-cache-line-size = <64>;
+            i-cache-sets = <256>; // 32KiB(size)/64(line-size)=512ways/2-way set
+            next-level-cache = <&l2>;
+        };
+
+        cpu3: cpu@3 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a53";
+            reg = <3>;
+            enable-method = "spin-table";
+            cpu-release-addr = <0x0 0x000000f0>;
+            d-cache-size = <0x8000>;
+            d-cache-line-size = <64>;
+            d-cache-sets = <128>; // 32KiB(size)/64(line-size)=512ways/4-way set
+            i-cache-size = <0x8000>;
+            i-cache-line-size = <64>;
+            i-cache-sets = <256>; // 32KiB(size)/64(line-size)=512ways/2-way set
+            next-level-cache = <&l2>;
+        };
+
+        /*
+         * Source for cache-line-size + cache-sets
+         * https://developer.arm.com/documentation/ddi0500
+         * /e/level-2-memory-system/about-the-l2-memory-system?lang=en
+         * Source for cache-size
+         * https://datasheets.raspberrypi.com/cm/cm1-and-cm3-datasheet.pdf
+         */
+        l2: l2-cache0 {
+            compatible = "cache";
+            cache-size = <0x80000>;
+            cache-line-size = <64>;
+            cache-sets = <512>; // 512KiB(size)/64(line-size)=8192ways/16-way set
+            cache-level = <2>;
+        };
+    };
+
+    arm-pmu {
+        compatible = "arm,cortex-a53-pmu", "arm,cortex-a7-pmu";
+        interrupt-parent = <&local_intc>;
+        interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
+    };
+
+    timer {
+        compatible = "arm,armv7-timer";
+        interrupt-parent = <&local_intc>;
+        interrupts = <0 IRQ_TYPE_LEVEL_HIGH>, // PHYS_SECURE_PPI
+                     <1 IRQ_TYPE_LEVEL_HIGH>, // PHYS_NONSECURE_PPI
+                     <3 IRQ_TYPE_LEVEL_HIGH>, // VIRT_PPI
+                     <2 IRQ_TYPE_LEVEL_HIGH>; // HYP_PPI
+        always-on;
+    };
+
+    thermal-zones {
+
+        cpu-thermal {
+            polling-delay-passive = <0>;
+            polling-delay = <1000>;
+            thermal-sensors = <&thermal>;
+            coefficients = <(-538) 412000>;
+
+            trips {
+                cpu-crit {
+                    temperature = <90000>;
+                    hysteresis = <0>;
+                    type = "critical";
+                };
+            };
+
+            cooling-maps {
+            };
+        };
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges = <0x7e000000 0x3f000000 0x1000000>,
+                 <0x40000000 0x40000000 0x00001000>;
+        dma-ranges = <0xc0000000 0x00000000 0x3f000000>,
+                     <0x7e000000 0x3f000000 0x01000000>;
+
+        system_timer: timer@7e003000 {
+            compatible = "brcm,bcm2835-system-timer";
+            reg = <0x7e003000 0x1000>;
+            interrupts = <1 0>, <1 1>, <1 2>, <1 3>;
+            /*
+             * This could be a reference to BCM2835_CLOCK_TIMER,
+             * but we don't have the driver using the common clock
+             * support yet.
+             */
+            clock-frequency = <1000000>;
+        };
+
+        clocks: cprman@7e101000 {
+            compatible = "brcm,bcm2835-cprman";
+            #clock-cells = <1>;
+            reg = <0x7e101000 0x2000>;
+
+            /*
+             * CPRMAN derives almost everything from the
+             * platform's oscillator.  However, the DSI
+             * pixel clocks come from the DSI analog PHY.
+             */
+            clocks = <&clk_osc>;
+        };
+
+        mailbox: mailbox@7e00b880 {
+            compatible = "brcm,bcm2835-mbox";
+            reg = <0x7e00b880 0x40>;
+            interrupts = <0 1>;
+            #mbox-cells = <0>;
+        };
+
+        gpio: gpio@7e200000 {
+            compatible = "brcm,bcm2835-gpio";
+            reg = <0x7e200000 0xb4>;
+            interrupts = <2 17>, <2 18>;
+
+            gpio-controller;
+            #gpio-cells = <2>;
+
+            interrupt-controller;
+            #interrupt-cells = <2>;
+
+            gpio-ranges = <&gpio 0 0 54>;
+            pinctrl-names = "default";
+            gpio-line-names = "ID_SDA",
+                              "ID_SCL",
+                              "SDA1",
+                              "SCL1",
+                              "GPIO_GCLK",
+                              "GPIO5",
+                              "GPIO6",
+                              "SPI_CE1_N",
+                              "SPI_CE0_N",
+                              "SPI_MISO",
+                              "SPI_MOSI",
+                              "SPI_SCLK",
+                              "GPIO12",
+                              "GPIO13",
+                              /* Serial port */
+                              "TXD1",
+                              "RXD1",
+                              "GPIO16",
+                              "GPIO17",
+                              "GPIO18",
+                              "GPIO19",
+                              "GPIO20",
+                              "GPIO21",
+                              "GPIO22",
+                              "GPIO23",
+                              "GPIO24",
+                              "GPIO25",
+                              "GPIO26",
+                              "GPIO27",
+                              "NC", /* GPIO 28 */
+                              "LAN_RUN_BOOT",
+                              /* Used by BT module */
+                              "CTS0",
+                              "RTS0",
+                              "TXD0",
+                              "RXD0",
+                              /* Used by Wifi */
+                              "SD1_CLK",
+                              "SD1_CMD",
+                              "SD1_DATA0",
+                              "SD1_DATA1",
+                              "SD1_DATA2",
+                              "SD1_DATA3",
+                              "PWM0_OUT",
+                              "PWM1_OUT",
+                              "ETH_CLK",
+                              "WIFI_CLK",
+                              "SDA0",
+                              "SCL0",
+                              "SMPS_SCL",
+                              "SMPS_SDA",
+                              /* Used by SD Card */
+                              "SD_CLK_R",
+                              "SD_CMD_R",
+                              "SD_DATA0_R",
+                              "SD_DATA1_R",
+                              "SD_DATA2_R",
+                              "SD_DATA3_R";
+
+            spi0_pins: spi0_pins {
+                brcm,pins = <9 10 11>;
+                brcm,function = <BCM2835_FSEL_ALT0>;
+            };
+
+            spi0_cs_pins: spi0_cs_pins {
+                brcm,pins = <8 7>;
+                brcm,function = <BCM2835_FSEL_GPIO_OUT>;
+            };
+
+            i2c0_gpio0: i2c0_gpio0 {
+                brcm,pins = <0 1>;
+                brcm,function = <BCM2835_FSEL_ALT0>;
+            };
+
+            i2c1_gpio2: i2c1_gpio2 {
+                brcm,pins = <2 3>;
+                brcm,function = <BCM2835_FSEL_ALT0>;
+            };
+
+            sdio_pins: sdio_pins {
+                brcm,pins = <34 35 36 37 38 39>;
+                brcm,function = <BCM2835_FSEL_ALT3>;
+                brcm,pull = <BCM2835_PUD_OFF>,
+                            <BCM2835_PUD_UP>,
+                            <BCM2835_PUD_UP>,
+                            <BCM2835_PUD_UP>,
+                            <BCM2835_PUD_UP>,
+                            <BCM2835_PUD_UP>;
+            };
+
+            bt_pins: bt_pins {
+                brcm,pins = <43>;
+                brcm,function = <BCM2835_FSEL_ALT0>;
+                brcm,pull = <BCM2835_PUD_OFF>;
+            };
+
+            uart0_pins: uart0_pins {
+                brcm,pins = <32 33>;
+                brcm,function = <BCM2835_FSEL_ALT3>;
+                brcm,pull = <BCM2835_PUD_OFF BCM2835_PUD_UP>;
+            };
+
+            uart1_pins: uart1_pins {
+                brcm,pins;
+                brcm,function;
+                brcm,pull;
+            };
+        };
+
+        serial@7e201000 {
+            compatible = "arm,pl011", "arm,primecell";
+            reg = <0x7e201000 0x200>;
+            interrupts = <2 25>;
+            clocks = <&clocks BCM2835_CLOCK_UART>,
+                     <&clocks BCM2835_CLOCK_VPU>;
+            clock-names = "uartclk", "apb_pclk";
+            arm,primecell-periphid = <0x00241011>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&uart0_pins>, <&bt_pins>;
+            skip-init;
+        };
+
+        spi@7e204000 {
+            compatible = "brcm,bcm2835-spi";
+            reg = <0x7e204000 0x200>;
+            interrupts = <2 22>;
+            clocks = <&clocks BCM2835_CLOCK_VPU>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            dmas = <&dma 6>, <&dma 7>;
+            dma-names = "tx", "rx";
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi0_pins>, <&spi0_cs_pins>;
+            cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+
+            flash@0 {
+                compatible = "jedec,spi-nor";
+                reg = <0x00>;
+                spi-max-frequency = <50000000>;
+                spi-tx-bus-width = <4>;
+                spi-rx-bus-width = <4>;
+            };
+        };
+
+        i2c@7e205000 {
+            compatible = "brcm,bcm2835-i2c";
+            reg = <0x7e205000 0x200>;
+            interrupts = <2 21>;
+            clocks = <&clocks BCM2835_CLOCK_VPU>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&i2c0_gpio0>;
+            clock-frequency = <100000>;
+
+            rtc@68 {
+                compatible = "st,m41t00", "dallas,ds1338";
+                reg = <0x68>;
+            };
+        };
+
+        i2c@7e804000 {
+            compatible = "brcm,bcm2835-i2c";
+            reg = <0x7e804000 0x1000>;
+            interrupts = <2 21>;
+            clocks = <&clocks BCM2835_CLOCK_VPU>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&i2c1_gpio2>;
+            clock-frequency = <100000>;
+        };
+
+        i2c@7e805000 {
+            compatible = "brcm,bcm2835-i2c";
+            reg = <0x7e805000 0x1000>;
+            interrupts = <2 21>;
+            clocks = <&clocks BCM2835_CLOCK_VPU>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            clock-frequency = <100000>;
+        };
+
+        aux: aux@7e215000 {
+            compatible = "brcm,bcm2835-aux";
+            #clock-cells = <1>;
+            reg = <0x7e215000 0x8>;
+            clocks = <&clocks BCM2835_CLOCK_VPU>;
+        };
+
+        serial@7e215040 {
+            compatible = "brcm,bcm2835-aux-uart";
+            reg = <0x7e215040 0x40>;
+            interrupts = <1 29>;
+            clocks = <&aux BCM2835_AUX_CLOCK_UART>;
+            skip-init;
+            pinctrl-names = "default";
+            pinctrl-0 = <&uart1_pins>;
+        };
+
+        usb: usb@7e980000 {
+            compatible = "brcm,bcm2835-usb";
+            reg = <0x7e980000 0x10000>,
+                  <0x7e006000 0x1000>;
+            interrupts = <1 9>, <2 0>;
+            interrupt-names = "usb", "soft";
+            #address-cells = <1>;
+            #size-cells = <0>;
+            clocks = <&clk_usb>;
+            clock-names = "otg";
+            phys = <&usbphy>;
+            phy-names = "usb2-phy";
+            power-domains = <&power RPI_POWER_DOMAIN_USB>;
+        };
+
+        dma: dma@7e007000 {
+            compatible = "brcm,bcm2835-dma";
+            reg = <0x7e007000 0xf00>;
+            interrupts = <1 16>,
+                         <1 17>,
+                         <1 18>,
+                         <1 19>,
+                         <1 20>,
+                         <1 21>,
+                         <1 22>,
+                         <1 23>,
+                         <1 24>,
+                         <1 25>,
+                         <1 26>,
+                         /* dma channel 11-14 share one irq */
+                         <1 27>,
+                         <1 27>,
+                         <1 27>,
+                         <1 27>,
+                         /* unused shared irq for all channels */
+                         <1 28>;
+            interrupt-names = "dma0",
+                              "dma1",
+                              "dma2",
+                              "dma3",
+                              "dma4",
+                              "dma5",
+                              "dma6",
+                              "dma7",
+                              "dma8",
+                              "dma9",
+                              "dma10",
+                              "dma11",
+                              "dma12",
+                              "dma13",
+                              "dma14",
+                              "dma-shared-all";
+            #dma-cells = <1>;
+            brcm,dma-channel-mask = <0x7f35>;
+        };
+
+        intc: interrupt-controller@7e00b200 {
+            compatible = "brcm,bcm2836-armctrl-ic";
+            reg = <0x7e00b200 0x200>;
+            interrupt-parent = <&local_intc>;
+            interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
+            interrupt-controller;
+            #interrupt-cells = <2>;
+        };
+
+        pm: watchdog@7e100000 {
+            compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
+            #power-domain-cells = <1>;
+            #reset-cells = <1>;
+            reg = <0x7e100000 0x114>,
+                  <0x7e00a000 0x24>;
+            reg-names = "pm", "asb";
+            clocks = <&clocks BCM2835_CLOCK_V3D>,
+                     <&clocks BCM2835_CLOCK_PERI_IMAGE>,
+                     <&clocks BCM2835_CLOCK_H264>,
+                     <&clocks BCM2835_CLOCK_ISP>;
+            clock-names = "v3d", "peri_image", "h264", "isp";
+            system-power-controller;
+        };
+
+        random: rng@7e104000 {
+            compatible = "brcm,bcm2835-rng";
+            reg = <0x7e104000 0x10>;
+            interrupts = <2 29>;
+        };
+
+        thermal: thermal@7e212000 {
+            compatible = "brcm,bcm2837-thermal";
+            reg = <0x7e212000 0x8>;
+            clocks = <&clocks BCM2835_CLOCK_TSENS>;
+            #thermal-sensor-cells = <0>;
+        };
+
+        local_intc: local_intc@40000000 {
+            compatible = "brcm,bcm2836-l1-intc";
+            reg = <0x40000000 0x100>;
+            interrupt-controller;
+            #interrupt-cells = <2>;
+            interrupt-parent = <&local_intc>;
+        };
+
+        mmcnr@7e300000 {
+            compatible = "brcm,bcm2835-mmc", "brcm,bcm2835-sdhci";
+            reg = <0x7e300000 0x100>;
+            interrupts = <2 30>;
+            clocks = <&clocks BCM2835_CLOCK_EMMC>;
+            dmas = <&dma 11>;
+            dma-names = "rx-tx";
+            brcm,overclock-50 = <0>;
+            non-removable;
+            pinctrl-names = "default";
+            pinctrl-0 = <&sdio_pins>;
+            bus-width = <4>;
+        };
+
+        firmware: firmware {
+            compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
+            #address-cells = <1>;
+            #size-cells = <1>;
+            mboxes = <&mailbox>;
+            ranges;
+
+            clocks {
+                compatible = "raspberrypi,firmware-clocks";
+                #clock-cells = <1>;
+            };
+
+            expgpio: expgpio {
+                compatible = "raspberrypi,firmware-gpio";
+                gpio-controller;
+                #gpio-cells = <2>;
+                gpio-line-names = "BT_ON",
+                                  "WL_ON",
+                                  "STATUS_LED",
+                                  "LAN_RUN",
+                                  "HDMI_HPD_N",
+                                  "CAM_GPIO0",
+                                  "CAM_GPIO1",
+                                  "PWR_LOW_N";
+            };
+        };
+
+        power: power {
+            compatible = "raspberrypi,bcm2835-power";
+            firmware = <&firmware>;
+            #power-domain-cells = <1>;
+        };
+
+        fb: fb {
+            compatible = "brcm,bcm2708-fb";
+            firmware = <&firmware>;
+        };
+
+        virtgpio: virtgpio {
+            compatible = "brcm,bcm2835-virtgpio";
+            gpio-controller;
+            #gpio-cells = <2>;
+            firmware = <&firmware>;
+        };
+
+        nvmem {
+            compatible = "simple-bus";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            nvmem_otp: nvmem_otp {
+                compatible = "raspberrypi,rpi-otp";
+                firmware = <&firmware>;
+                reg = <0 166>;
+            };
+
+            nvmem_cust: nvmem_cust {
+                compatible = "raspberrypi,rpi-otp";
+                firmware = <&firmware>;
+                reg = <1 8>;
+            };
+
+            nvmem_priv: nvmem_priv {
+                compatible = "raspberrypi,rpi-otp";
+                firmware = <&firmware>;
+                reg = <3 8>;
+            };
+        };
+    };
+
+    clocks {
+
+        /* The oscillator is the root of the clock tree. */
+        clk_osc: clk-osc {
+            compatible = "fixed-clock";
+            #clock-cells = <0>;
+            clock-output-names = "osc";
+            clock-frequency = <19200000>;
+        };
+
+        clk_usb: clk-usb {
+            compatible = "fixed-clock";
+            #clock-cells = <0>;
+            clock-output-names = "otg";
+            clock-frequency = <480000000>;
+        };
+    };
+
+    usbphy: phy {
+        compatible = "usb-nop-xceiv";
+        #phy-cells = <0>;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+
+        led-act {
+            label = "ACT";
+            default-state = "off";
+            rt-thread,default-trigger = "mmc0";
+            gpios = <&virtgpio 0 0>;
+        };
+
+        led-pwr {
+            label = "PWR";
+            default-state = "off";
+            rt-thread,default-trigger = "input";
+            gpios = <&expgpio 7 0>;
+        };
+    };
+};

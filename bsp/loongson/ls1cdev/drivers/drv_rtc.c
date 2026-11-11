@@ -110,14 +110,14 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
 
-        *(rt_uint32_t *)args = get_timestamp();
-        rtc_debug("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+        *(time_t *)args = get_timestamp();
+        rtc_debug("RTC: get rtc_time %x\n", *(time_t *)args);
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        result = set_timestamp(*(rt_uint32_t *)args);
-        rtc_debug("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+        result = set_timestamp(*(time_t *)args);
+        rtc_debug("RTC: set rtc_time %x\n", *(time_t *)args);
     }
     break;
     }

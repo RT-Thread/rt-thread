@@ -45,7 +45,7 @@ AT32F413-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1/2                     |
 | PWM       | 支持     | TMR1/2                     |
-| HWTIMER   | 支持     | TMR3/4/5                   |
+| CLOCK_TIMER   | 支持     | TMR3/4/5                   |
 | SDIO      | 支持     | SDIO1                      |
 | CAN       | 支持     | CAN1/2                     |
 | WDT       | 支持     |                            |

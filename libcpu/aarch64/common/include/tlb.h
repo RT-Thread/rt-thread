@@ -51,14 +51,18 @@ static inline void rt_hw_tlb_invalidate_all_local(void)
 static inline void rt_hw_tlb_invalidate_aspace(rt_aspace_t aspace)
 {
 #ifdef ARCH_USING_ASID
-    __asm__ volatile(
-        // ensure updates to pte completed
-        "dsb nshst\n"
-        "tlbi aside1is, %0\n"
-        "dsb nsh\n"
-        // after tlb in new context, refresh inst
-        "isb\n" ::"r"(TLBI_ARG(0ul, aspace->asid))
-            : "memory");
+      if (aspace == &rt_kernel_space) {
+          rt_hw_tlb_invalidate_all();
+      } else {
+          __asm__ volatile(
+            // ensure updates to pte completed
+            "dsb ishst\n"
+            "tlbi aside1is, %0\n"
+            "dsb ish\n"
+            // after tlb in new context, refresh inst
+            "isb\n" ::"r"(TLBI_ARG(0ul, aspace->asid))
+                : "memory");
+      }
 #else
     rt_hw_tlb_invalidate_all();
 #endif

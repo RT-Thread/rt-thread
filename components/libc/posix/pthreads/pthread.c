@@ -23,6 +23,22 @@ RT_DEFINE_HW_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 static int concurrency_level;
 
+/**
+ * @brief   Retrieves the private data structure of a specified thread
+ *
+ * This function locates and validates the thread-private data structure associated with the given thread ID.
+ * It uses a spinlock to synchronize access to the global thread table, ensuring data consistency in multithreaded environments.
+ * A magic number validation is performed before returning to guarantee structural integrity.
+ *
+ * @param   thread  Thread ID used to index into the global thread data table
+ *
+ * @return  Pointer to the thread's private data structure on success; NULL if thread ID is invalid or data not initialized
+ *
+ * @note
+ *   - Protects global thread table access with spinlock to prevent data race conditions
+ *   - Magic number validation (magic) prevents access to released or corrupted thread data
+ *   - Internal interface typically used by other POSIX thread library functions
+ */
 _pthread_data_t *_pthread_get_data(pthread_t thread)
 {
     _pthread_data_t *ptd;
@@ -38,6 +54,24 @@ _pthread_data_t *_pthread_get_data(pthread_t thread)
     return NULL;
 }
 
+/**
+ * @brief Get the index position of a thread data in the global thread table
+ *
+ * This function searches for matching thread data index by traversing the global thread table.
+ * Uses spinlock synchronization mechanism to ensure safe access to the global thread table
+ * in multi-threaded environments.
+ *
+ * @param ptd Pointer to the target thread data structure
+ *
+ * @return Index value of type pthread_t
+ *     - Returns corresponding index (0~PTHREAD_NUM_MAX-1) when found
+ *     - Returns PTHREAD_NUM_MAX when no match is found
+ *
+ * @note
+ *   - Protects global thread table access with spinlock to prevent data races from concurrent access
+ *   - Uses sequential traversal method to find matching thread data
+ *   - Return value of PTHREAD_NUM_MAX indicates no match found in the global table
+ */
 pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
 {
     int index;
@@ -52,6 +86,26 @@ pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
     return index;
 }
 
+/**
+ * @brief Create and initialize a new thread data structure with index allocation
+ *
+ * This function allocates memory for a new thread data structure, initializes its default state,
+ * and registers it in the global thread table. Uses spinlock synchronization to ensure safe
+ * access to the global thread table in multi-threaded environments.
+ *
+ * @return Allocated index value of type pthread_t
+ *     - Returns valid index (0~PTHREAD_NUM_MAX-1) on successful allocation
+ *     - Returns PTHREAD_NUM_MAX when memory allocation fails or no space available in thread table
+ *
+ * @note
+ *   - Protects global thread table access with spinlock to prevent data races
+ *   - Uses sequential search to find first available slot in thread table
+ *   - Cleans up allocated memory and returns error when no available slots
+ *   - Initializes thread data with default states:
+ *     - Cancellation disabled (PTHREAD_CANCEL_DISABLE)
+ *     - Deferred cancellation type (PTHREAD_CANCEL_DEFERRED)
+ *     - Magic number validation (PTHREAD_MAGIC) for structure integrity
+ */
 pthread_t _pthread_data_create(void)
 {
     int index;
@@ -87,6 +141,24 @@ pthread_t _pthread_data_create(void)
     return index;
 }
 
+/**
+ * @brief Destroy thread local storage item at specified index
+ *
+ * This function cleans up thread-local storage data by:
+ * 1. Checking if the key at given index is active
+ * 2. If TLS data exists and a destructor is registered, invoking the destructor
+ * 3. Properly releasing resources associated with the TLS slot
+ *
+ * @param index Index into the thread keys array (0 to PTHREAD_KEY_MAX-1)
+ * @param ptd Pointer to thread data structure containing TLS information
+ *
+ * @note
+ *   - Relies on external spinlock protection when accessing shared data
+ *   - Only processes valid keys that have been initialized
+ *   - Safely handles NULL pointers and missing destructors
+ *   - Designed to be called during thread cleanup or explicit TLS destruction
+ *   - Matches POSIX thread standard requirements for TLS destructor invocation
+ */
 static inline void _destroy_item(int index, _pthread_data_t *ptd)
 {
     extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
@@ -106,6 +178,30 @@ static inline void _destroy_item(int index, _pthread_data_t *ptd)
     #define NOT_USE_CXX_TLS -1
 #endif
 
+
+/**
+ * @brief Destroy and clean up a thread data structure along with associated resources
+ *
+ * This function releases all resources associated with a thread data structure including:
+ * - Thread-local storage (TLS) destructors execution
+ * - Joinable semaphore deletion
+ * - Global thread table entry cleanup
+ * - Memory deallocation after proper resource release
+ *
+ * @param ptd Pointer to the thread data structure to be destroyed
+ *
+ * @note
+ *   - Protects global thread table access with spinlock to prevent data races
+ *   - Handles TLS destruction differently based on C++11 support:
+ *     - C++11: Reverse iteration from emutls key position for safe destructor calls
+ *     - C-only: Forward iteration through all thread keys
+ *   - Maintains strict resource cleanup order:
+ *     1. TLS destructors -> 2. Global table removal -> 3. Semaphore deletion -> 4. Memory release
+ *   - Uses magic number validation to prevent double-free and invalid access
+ *   - Explicitly clears magic number before final memory release
+ *   - Nullifies pointer references after freeing to prevent dangling references
+ *   - Thread-safe operation through spinlock protection during critical sections
+ */
 void _pthread_data_destroy(_pthread_data_t *ptd)
 {
     pthread_t pth;
@@ -174,6 +270,26 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
     }
 }
 
+/**
+ * @brief Perform final cleanup of thread resources during thread termination
+ *
+ * This function handles the complete resource cleanup for a terminated thread, including:
+ * - Clearing cleanup handlers
+ * - Releasing thread stack memory
+ * - Detaching thread data structures
+ * - Final deallocation of thread control block
+ *
+ * @param tid Thread control block pointer to be cleaned up
+ *
+ * @note
+ *   - Must be called as the final cleanup step after thread termination
+ *   - Follows strict resource release order:
+ *     1. Clear cleanup handlers -> 2. Release stack -> 3. Detach data -> 4. Free control block
+ *   - Explicitly nullifies pointers after freeing to prevent dangling references
+ *   - Thread-safe operation assumes caller has handled synchronization
+ *   - Handles both joinable and detached thread cleanup scenarios
+ *   - Designed to work with thread detachment and join completion mechanisms
+ */
 static void _pthread_cleanup(rt_thread_t tid)
 {
     /* clear cleanup function */
@@ -189,6 +305,26 @@ static void _pthread_cleanup(rt_thread_t tid)
     rt_free(tid);
 }
 
+/**
+ * @brief Thread entry point stub that manages thread execution and resource cleanup
+ *
+ * This function serves as the entry point for POSIX threads, executing the thread's main
+ * function and handling post-exit resource management based on the thread's detach state.
+ *
+ * @param parameter Thread parameter containing the _pthread_data_t structure pointer
+ *
+ * @note
+ *   - Executes thread's main function through thread_entry callback
+ *   - Handles two resource management scenarios:
+ *     - JOINABLE threads: Store return value and release join semaphore
+ *     - DETACHED threads: Immediately destroy thread resources
+ *   - Maintains strict execution flow:
+ *     1. Execute user thread function -> 2. Check detach state -> 3. Handle cleanup
+ *   - Properly coordinates with joinable semaphore mechanism for synchronous termination
+ *   - Assumes thread data structure remains valid until cleanup completion
+ *   - Thread-safe operation relies on proper synchronization in resource destruction
+ *   - Integrates with pthread lifecycle management system for complete resource recovery
+ */
 static void pthread_entry_stub(void *parameter)
 {
     void *value;
@@ -369,6 +505,8 @@ __exit:
     return ret;
 }
 RTM_EXPORT(pthread_create);
+
+
 
 /**
  * @brief Marks a thread as detached, allowing its resources to be automatically released upon termination.

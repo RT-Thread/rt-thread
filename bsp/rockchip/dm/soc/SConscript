@@ -1,0 +1,34 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/serial/device/']
+
+if GetDepend(['RT_SOC_ROCKCHIP_FIQ_DEBUGGER']):
+    src += ['fiq-debugger.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_GRF']):
+    src += ['grf.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_HW_DECOMPRESS']):
+    src += ['hw-decompress.c']
+
+if GetDepend(['RT_ROCKCHIP_JPEG_DEC']):
+    src += ['jpegd.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_IODOMAIN']):
+    src += ['io-domain.c']
+
+if GetDepend(['RT_DVFS_ROCKCHIP_CPUFREQ']):
+    src += ['opp-select.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+if GetDepend(['RT_ROCKCHIP_RGA2']):
+    group += SConscript('rga2/SConscript')
+
+if GetDepend(['RT_ROCKCHIP_RKNPU']):
+    group += SConscript('npu/SConscript')
+
+Return('group')

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,6 +29,10 @@
 #include <lwp.h>
 #endif
 
+#define DBG_TAG "kernel.obj"
+#define DBG_LVL DBG_ERROR
+#include <rtdbg.h>
+
 struct rt_custom_object
 {
     struct rt_object parent;
@@ -41,106 +45,105 @@ struct rt_custom_object
  */
 enum rt_object_info_type
 {
-    RT_Object_Info_Thread = 0,                         /**< The object is a thread. */
+    RT_Object_Info_Thread = 0, /**< The object is a thread. */
 #ifdef RT_USING_SEMAPHORE
-    RT_Object_Info_Semaphore,                          /**< The object is a semaphore. */
+    RT_Object_Info_Semaphore, /**< The object is a semaphore. */
 #endif
 #ifdef RT_USING_MUTEX
-    RT_Object_Info_Mutex,                              /**< The object is a mutex. */
+    RT_Object_Info_Mutex, /**< The object is a mutex. */
 #endif
 #ifdef RT_USING_EVENT
-    RT_Object_Info_Event,                              /**< The object is a event. */
+    RT_Object_Info_Event, /**< The object is a event. */
 #endif
 #ifdef RT_USING_MAILBOX
-    RT_Object_Info_MailBox,                            /**< The object is a mail box. */
+    RT_Object_Info_MailBox, /**< The object is a mail box. */
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
-    RT_Object_Info_MessageQueue,                       /**< The object is a message queue. */
+    RT_Object_Info_MessageQueue, /**< The object is a message queue. */
 #endif
 #ifdef RT_USING_MEMHEAP
-    RT_Object_Info_MemHeap,                            /**< The object is a memory heap */
+    RT_Object_Info_MemHeap, /**< The object is a memory heap */
 #endif
 #ifdef RT_USING_MEMPOOL
-    RT_Object_Info_MemPool,                            /**< The object is a memory pool. */
+    RT_Object_Info_MemPool, /**< The object is a memory pool. */
 #endif
 #ifdef RT_USING_DEVICE
-    RT_Object_Info_Device,                             /**< The object is a device */
+    RT_Object_Info_Device, /**< The object is a device */
 #endif
-    RT_Object_Info_Timer,                              /**< The object is a timer. */
+    RT_Object_Info_Timer, /**< The object is a timer. */
 #ifdef RT_USING_MODULE
-    RT_Object_Info_Module,                             /**< The object is a module. */
+    RT_Object_Info_Module, /**< The object is a module. */
 #endif
 #ifdef RT_USING_HEAP
-    RT_Object_Info_Memory,                             /**< The object is a memory. */
+    RT_Object_Info_Memory, /**< The object is a memory. */
 #endif
 #ifdef RT_USING_SMART
-    RT_Object_Info_Channel,                            /**< The object is a IPC channel */
-    RT_Object_Info_ProcessGroup,                       /**< The object is a process group */
-    RT_Object_Info_Session,                            /**< The object is a session */
+    RT_Object_Info_Channel,      /**< The object is a IPC channel */
+    RT_Object_Info_ProcessGroup, /**< The object is a process group */
+    RT_Object_Info_Session,      /**< The object is a session */
 #endif
 #ifdef RT_USING_HEAP
-    RT_Object_Info_Custom,                             /**< The object is a custom object */
+    RT_Object_Info_Custom, /**< The object is a custom object */
 #endif
-    RT_Object_Info_Unknown,                            /**< The object is unknown. */
+    RT_Object_Info_Unknown, /**< The object is unknown. */
 };
 
-#define _OBJ_CONTAINER_LIST_INIT(c)     \
-    {&(_object_container[c].object_list), &(_object_container[c].object_list)}
+#define _OBJ_CONTAINER_LIST_INIT(c) \
+    { &(_object_container[c].object_list), &(_object_container[c].object_list) }
 
-static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
-{
+static struct rt_object_information _object_container[RT_Object_Info_Unknown] = {
     /* initialize object container - thread */
-    {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread), RT_SPINLOCK_INIT },
 #ifdef RT_USING_SEMAPHORE
     /* initialize object container - semaphore */
-    {RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Semaphore), sizeof(struct rt_semaphore), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Semaphore, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Semaphore), sizeof(struct rt_semaphore), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_MUTEX
     /* initialize object container - mutex */
-    {RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mutex), sizeof(struct rt_mutex), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Mutex, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mutex), sizeof(struct rt_mutex), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_EVENT
     /* initialize object container - event */
-    {RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Event), sizeof(struct rt_event), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Event, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Event), sizeof(struct rt_event), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_MAILBOX
     /* initialize object container - mailbox */
-    {RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MailBox), sizeof(struct rt_mailbox), RT_SPINLOCK_INIT},
+    { RT_Object_Class_MailBox, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MailBox), sizeof(struct rt_mailbox), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
     /* initialize object container - message queue */
-    {RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MessageQueue), sizeof(struct rt_messagequeue), RT_SPINLOCK_INIT},
+    { RT_Object_Class_MessageQueue, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MessageQueue), sizeof(struct rt_messagequeue), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_MEMHEAP
     /* initialize object container - memory heap */
-    {RT_Object_Class_MemHeap, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemHeap), sizeof(struct rt_memheap), RT_SPINLOCK_INIT},
+    { RT_Object_Class_MemHeap, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemHeap), sizeof(struct rt_memheap), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_MEMPOOL
     /* initialize object container - memory pool */
-    {RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemPool), sizeof(struct rt_mempool), RT_SPINLOCK_INIT},
+    { RT_Object_Class_MemPool, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemPool), sizeof(struct rt_mempool), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_DEVICE
     /* initialize object container - device */
-    {RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Device), sizeof(struct rt_device), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Device, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Device), sizeof(struct rt_device), RT_SPINLOCK_INIT },
 #endif
     /* initialize object container - timer */
-    {RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Timer), sizeof(struct rt_timer), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Timer, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Timer), sizeof(struct rt_timer), RT_SPINLOCK_INIT },
 #ifdef RT_USING_MODULE
     /* initialize object container - module */
-    {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_HEAP
     /* initialize object container - small memory */
-    {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_SMART
     /* initialize object container - module */
-    {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel), RT_SPINLOCK_INIT},
-    {RT_Object_Class_ProcessGroup, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_ProcessGroup), sizeof(struct rt_processgroup), RT_SPINLOCK_INIT},
-    {RT_Object_Class_Session, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Session), sizeof(struct rt_session), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel), RT_SPINLOCK_INIT },
+    { RT_Object_Class_ProcessGroup, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_ProcessGroup), sizeof(struct rt_processgroup), RT_SPINLOCK_INIT },
+    { RT_Object_Class_Session, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Session), sizeof(struct rt_session), RT_SPINLOCK_INIT },
 #endif
 #ifdef RT_USING_HEAP
-    {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object), RT_SPINLOCK_INIT},
+    { RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object), RT_SPINLOCK_INIT },
 #endif
 };
 
@@ -153,9 +156,8 @@ void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
  * @addtogroup group_hook
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will set a hook function, which will be invoked when object
@@ -227,14 +229,13 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
     rt_object_put_hook = hook;
 }
 
-/**@}*/
+/** @} group_hook */
 #endif /* RT_USING_HOOK */
 
 /**
- * @addtogroup group_kernel_object
+ * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will return the specified type of object information.
@@ -251,8 +252,13 @@ rt_object_get_information(enum rt_object_class_type type)
 
     type = (enum rt_object_class_type)(type & ~RT_Object_Class_Static);
 
-    for (index = 0; index < RT_Object_Info_Unknown; index ++)
-        if (_object_container[index].type == type) return &_object_container[index];
+    for (index = 0; index < RT_Object_Info_Unknown; index++)
+    {
+        if (_object_container[index].type == type)
+        {
+            return &_object_container[index];
+        }
+    }
 
     return RT_NULL;
 }
@@ -274,12 +280,15 @@ int rt_object_get_length(enum rt_object_class_type type)
     struct rt_object_information *information = RT_NULL;
 
     information = rt_object_get_information((enum rt_object_class_type)type);
-    if (information == RT_NULL) return 0;
+    if (information == RT_NULL)
+    {
+        return 0;
+    }
 
     level = rt_spin_lock_irqsave(&(information->spinlock));
     rt_list_for_each(node, &(information->object_list))
     {
-        count ++;
+        count++;
     }
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
 
@@ -309,10 +318,16 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
-    if (maxlen <= 0) return 0;
+    if (maxlen <= 0)
+    {
+        return 0;
+    }
 
     information = rt_object_get_information(type);
-    if (information == RT_NULL) return 0;
+    if (information == RT_NULL)
+    {
+        return 0;
+    }
 
     level = rt_spin_lock_irqsave(&(information->spinlock));
     /* retrieve pointer of object */
@@ -321,9 +336,12 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
         object = rt_list_entry(node, struct rt_object, list);
 
         pointers[index] = object;
-        index ++;
+        index++;
 
-        if (index >= maxlen) break;
+        if (index >= maxlen)
+        {
+            break;
+        }
     }
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
 
@@ -350,11 +368,12 @@ RTM_EXPORT(rt_object_get_pointers);
  *             name is specified by RT_NAME_MAX. The system does not care if it
  *             uses '\0' as a terminal symbol.
  */
-void rt_object_init(struct rt_object         *object,
+void rt_object_init(struct rt_object *object,
                     enum rt_object_class_type type,
-                    const char               *name)
+                    const char *name)
 {
     rt_base_t level;
+    rt_size_t obj_name_len;
 #ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
 #endif /* RT_DEBUGING_ASSERT */
@@ -373,9 +392,9 @@ void rt_object_init(struct rt_object         *object,
     /* enter critical */
     level = rt_spin_lock_irqsave(&(information->spinlock));
     /* try to find object */
-    for (node  = information->object_list.next;
-            node != &(information->object_list);
-            node  = node->next)
+    for (node = information->object_list.next;
+         node != &(information->object_list);
+         node = node->next)
     {
         struct rt_object *obj;
 
@@ -390,10 +409,23 @@ void rt_object_init(struct rt_object         *object,
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX);  /* copy name */
+    if (name)
+    {
+        obj_name_len = rt_strlen(name);
+        if (obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+        }
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
+    }
+    else
+    {
+        object->name[0] = '\0';
+    }
 #else
     object->name = name;
-#endif /* RT_NAME_MAX > 0 */
+#endif
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -461,6 +493,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
     rt_base_t level;
+    rt_size_t obj_name_len;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -491,10 +524,23 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     object->flag = 0;
 
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX - 1); /* copy name */
+    if (name)
+    {
+        obj_name_len = rt_strlen(name);
+        if (obj_name_len > RT_NAME_MAX - 1)
+        {
+            LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
+        }
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
+    }
+    else
+    {
+        object->name[0] = '\0';
+    }
 #else
     object->name = name;
-#endif /* RT_NAME_MAX > 0 */
+#endif
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -533,7 +579,6 @@ void rt_object_delete(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
-
     information = rt_object_get_information((enum rt_object_class_type)object->type);
     RT_ASSERT(information != RT_NULL);
 
@@ -568,7 +613,9 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
     RT_ASSERT(object != RT_NULL);
 
     if (object->type & RT_Object_Class_Static)
+    {
         return RT_TRUE;
+    }
 
     return RT_FALSE;
 }
@@ -650,7 +697,13 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
 {
     struct _obj_find_param *param = data;
     const char *name = param->match_name;
-    if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
+    char truncated_name[RT_NAME_MAX];
+
+    /* Truncate input name to RT_NAME_MAX - 1 to match object name storage */
+    rt_strncpy(truncated_name, name, RT_NAME_MAX - 1);
+    truncated_name[RT_NAME_MAX - 1] = '\0';
+
+    if (rt_strcmp(obj->name, truncated_name) == 0)
     {
         param->matched_obj = obj;
 
@@ -676,14 +729,16 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
  */
 rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-    struct _obj_find_param param =
-    {
+    struct _obj_find_param param = {
         .match_name = name,
         .matched_obj = RT_NULL,
     };
 
     /* parameter check */
-    if (name == RT_NULL) return RT_NULL;
+    if (name == RT_NULL || rt_object_get_information(type) == RT_NULL)
+    {
+        return RT_NULL;
+    }
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -709,7 +764,9 @@ rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size
     if ((object != RT_NULL) && (name != RT_NULL) && (name_size != 0U))
     {
         const char *obj_name = object->name;
-        (void) rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        rt_strncpy(name, obj_name, (rt_size_t)name_size);
+        /* Ensure null-termination */
+        name[name_size - 1] = '\0';
         result = RT_EOK;
     }
 
@@ -771,4 +828,5 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj)
 }
 #endif
 
-/**@}*/
+/** @} group_object_management */
+

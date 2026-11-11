@@ -88,7 +88,6 @@ typedef rt_ubase_t                       rt_uintptr_t;   /**< Type for unsigned 
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
-typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
@@ -100,14 +99,22 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #endif
 
 #ifdef __cplusplus
+    typedef rt_uint8_t rt_atomic8_t;
+    typedef rt_uint16_t rt_atomic16_t;
     typedef rt_base_t rt_atomic_t;
 #else
     #if defined(RT_USING_STDC_ATOMIC)
         #include <stdatomic.h>
+        typedef _Atomic(rt_uint8_t) rt_atomic8_t;
+        typedef _Atomic(rt_uint16_t) rt_atomic16_t;
         typedef _Atomic(rt_base_t) rt_atomic_t;
     #elif defined(RT_USING_HW_ATOMIC)
+        typedef rt_uint8_t rt_atomic8_t;
+        typedef rt_uint16_t rt_atomic16_t;
         typedef rt_base_t rt_atomic_t;
     #else
+        typedef rt_uint8_t rt_atomic8_t;
+        typedef rt_uint16_t rt_atomic16_t;
         typedef rt_base_t rt_atomic_t;
     #endif /* RT_USING_STDC_ATOMIC */
 #endif /* __cplusplus */

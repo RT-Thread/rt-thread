@@ -1,0 +1,26 @@
+menuconfig RT_INPUT_TOUCHSCREEN
+    bool "Touchscreens"
+    select RT_USING_TOUCH
+    default n
+
+config RT_INPUT_TOUCHSCREEN_ADS7846
+    bool "TI ADS7843/45/46/73 XPT/TSC2046 touch screen support"
+    depends on RT_INPUT_TOUCHSCREEN
+    depends on RT_USING_SPI
+    depends on RT_USING_OFW
+    depends on RT_USING_PIN
+    depends on RT_USING_REGULATOR
+    default n
+
+config RT_INPUT_TOUCHSCREEN_GOODIX
+    bool "Goodix GT9xx capacitive touch screen support"
+    depends on RT_INPUT_TOUCHSCREEN
+    depends on RT_USING_I2C
+    depends on RT_USING_OFW
+    depends on RT_USING_PIN
+    depends on RT_USING_REGULATOR
+    default n
+
+if RT_INPUT_TOUCHSCREEN
+    osource "$(SOC_DM_INPUT_TOUCHSCREEN_DIR)/Kconfig"
+endif

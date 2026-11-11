@@ -19,24 +19,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART0"
                 default n
         endif
-
-    menuconfig ENABLE_FPU
-        bool "Enable FPU"
-        select ARCH_RISCV_FPU
-        default n
-
-    if ENABLE_FPU
-        choice
-            prompt "FPU Configuration"
-            default ARCH_RISCV_FPU_S
-
-            config ARCH_RISCV_FPU_S
-                bool "Enable [F] Extension"
-
-            config ARCH_RISCV_FPU_D
-                bool "Enable [F][D] Extension"
-        endchoice
-    endif   
+ 
 endmenu
 
 endmenu

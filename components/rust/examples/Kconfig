@@ -1,0 +1,104 @@
+menuconfig RT_USING_RUST_EXAMPLES
+    bool "Enable Rust Examples"
+    depends on RT_USING_RUST
+    default n
+    help
+        Enable Rust example applications, components, and modules.
+
+if RT_USING_RUST_EXAMPLES
+
+    config RT_RUST_BUILD_ALL_EXAMPLES
+        bool "Build All Examples"
+        default n
+        help
+            Build all available Rust examples.
+
+    menu "Application Examples"
+        config RT_RUST_BUILD_APPLICATIONS
+            bool "Build Application Examples"
+            default y
+            depends on RT_USING_FINSH
+            help
+                Build Rust application examples.
+
+        if RT_RUST_BUILD_APPLICATIONS
+            config RT_RUST_EXAMPLE_FS
+                bool "File System Example"
+                default n
+                help
+                    File system operations example.
+
+            config RT_RUST_EXAMPLE_LOADLIB
+                bool "Dynamic Library Loading Example"
+                default n
+                depends on RT_USING_MODULE
+                help
+                    Dynamic library loading and usage example.
+
+            config RT_RUST_EXAMPLE_MUTEX
+                bool "Mutex Example"
+                default y
+                help
+                    Mutex synchronization example.
+
+            config RT_RUST_EXAMPLE_PARAM
+                bool "Parameter Example"
+                default y
+                help
+                    Basic parameter handling example.
+
+            config RT_RUST_EXAMPLE_QUEUE
+                bool "Queue Example"
+                default y
+                help
+                    Message queue example.
+
+            config RT_RUST_EXAMPLE_SEMAPHORE
+                bool "Semaphore Example"
+                default y
+                help
+                    Semaphore synchronization example.
+
+            config RT_RUST_EXAMPLE_THREAD
+                bool "Thread Example"
+                default y
+                help
+                    Thread creation and management example.
+        endif
+    endmenu
+
+    menu "Component Examples"
+        config RT_RUST_BUILD_COMPONENTS
+            bool "Build Component Examples"
+            default y
+            help
+                Build Rust component examples.
+
+        if RT_RUST_BUILD_COMPONENTS
+            config RUST_LOG_COMPONENT
+                bool "Auto-initialize Rust log component"
+                default y
+                help
+                    Automatically initialize Rust log component during RT-Thread startup.
+        endif
+    endmenu
+
+    menu "Module Examples"
+        config RT_RUST_BUILD_MODULES
+            bool "Build Module Examples"
+            default n
+            depends on RT_USING_MODULE
+            help
+                Build Rust dynamic module examples.
+
+        if RT_RUST_BUILD_MODULES
+            config RT_RUST_MODULE_SIMPLE_MODULE
+                bool "Simple Module"
+                default y
+                help
+                    Basic dynamic module template.
+
+        endif
+    endmenu
+
+endif

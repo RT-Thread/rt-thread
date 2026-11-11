@@ -17,6 +17,8 @@
 #include <rtdevice.h>
 #include <terminal/terminal.h>
 
+#include <sys/ioctl.h>
+
 #define TTY_NAME_PREFIX "S" /* (S)erial */
 #define LWP_TTY_WORKQUEUE_PRIORITY 3
 
@@ -62,7 +64,11 @@ static char *alloc_device_name(struct rt_serial_device *serial)
      * must be obtained using the serial_dev_set_name function,
      * and it should begin with "uart".
      */
-    RT_ASSERT((strlen(serial_name) > strlen("uart")) && (strncmp(serial_name, "uart", 4) == 0));
+    if (!serial_name || rt_strlen(serial_name) < 4 || rt_strncmp(serial_name, "uart", 4))
+    {
+        return RT_NULL;
+    }
+
     long digits_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
                       + strlen(serial_name + sizeof("uart") - 1) /* suffix of serial device name*/
                       + 1;  /* tailing \0 */
@@ -155,6 +161,19 @@ static void _serial_tty_set_speed(struct lwp_tty *tp)
     tp->t_termios_init_in.__c_ispeed = tp->t_termios_init_in.__c_ospeed = cfgetospeed(&tp->t_termios_init_in);
 }
 
+static void _serial_tty_update_winsize(struct lwp_tty *tp,
+                                       struct rt_serial_device *serial)
+{
+    struct winsize winsz;
+
+    rt_memset(&winsz, 0, sizeof(winsz));
+    if (rt_device_control(&serial->parent, TIOCGWINSZ, &winsz) == RT_EOK &&
+        winsz.ws_row != 0 && winsz.ws_col != 0)
+    {
+        tp->t_winsize = winsz;
+    }
+}
+
 static int _serial_isbusy(struct rt_serial_device *serial)
 {
     rt_thread_t user_thread = rt_console_current_user();
@@ -218,6 +237,13 @@ static int serial_tty_open(struct lwp_tty *tp)
          * to avoid driver accesssing null data,
          * these are setup only after tty is registered
          */
+        if (rt_console_get_device() == &serial->parent)
+        {
+            /* Query before the bypass is installed so the response stays in
+             * the raw serial receive queue instead of being delivered as
+             * input. */
+            _serial_tty_update_winsize(tp, serial);
+        }
         _setup_serial(serial, tp, softc);
     }
     return error;
@@ -239,20 +265,8 @@ static void serial_tty_close(struct lwp_tty *tp)
 static int serial_tty_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, rt_caddr_t data,
                             struct rt_thread *td)
 {
-    int error;
-    switch (cmd)
-    {
-        default:
-            /**
-             * Note: for the most case, we don't let serial layer handle ioctl,
-             * for that they can't act properly regarding to the process
-             * management system, since it is unawared of that. So a ENOSYS is
-             * returned and caused the TTY layer to handle ioctl itself.
-             */
-            error = -ENOSYS;
-            break;
-    }
-    return error;
+    /* Let the TTY layer handle process state and cached terminal settings. */
+    return -ENOSYS;
 }
 
 static int serial_tty_param(struct lwp_tty *tp, struct termios *t)

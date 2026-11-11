@@ -751,7 +751,15 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     char *socket_info = RT_NULL;
     int base_socket = 0;
 
+    rt_sscanf(buff, "SOCKET:%d", &base_socket);
+    LOG_D("ACCEPT BASE SOCKET: %d", base_socket);
     /* avoid use bottom driver to alloc "socket" */
+    new_sock = at_get_base_socket(base_socket);
+    if (new_sock)
+    {
+        new_sock->state = AT_SOCKET_CONNECT;
+        return;
+    }
     new_socket = at_socket(AF_AT, SOCK_STREAM, 0);
     if (new_socket == -1)
     {
@@ -759,8 +767,6 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     }
     new_sock = at_get_socket(new_socket);
     new_sock->state = AT_SOCKET_CONNECT;
-    rt_sscanf(buff, "SOCKET:%d", &base_socket);
-    LOG_D("ACCEPT BASE SOCKET: %d", base_socket);
     new_sock->user_data = (void *)base_socket;
 
     /* find out the listen socket */
@@ -995,6 +1001,7 @@ __exit:
     if (result < 0)
     {
         at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+        return result;
     }
 
     return new_sock->socket;
@@ -1402,6 +1409,7 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
     struct at_device *device = RT_NULL;
     char ipstr[16] = { 0 };
     size_t idx = 0;
+    size_t name_len = 0;
 
     device = at_device_get_first_initialized();
     if (device == RT_NULL)
@@ -1414,9 +1422,10 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
         return -1;
     }
 
-    for (idx = 0; idx < strlen(name) && !isalpha(name[idx]); idx++);
+    name_len = strlen(name);
+    for (idx = 0; idx < name_len && !isalpha((unsigned char)name[idx]); idx++);
 
-    if (idx < strlen(name))
+    if (idx < name_len)
     {
         if (at_dlock == RT_NULL)
         {
@@ -1437,7 +1446,13 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
     }
     else
     {
-        strncpy(ipstr, name, strlen(name));
+        if (name_len >= sizeof(ipstr))
+        {
+            return -1;
+        }
+
+        rt_memcpy(ipstr, name, name_len);
+        ipstr[name_len] = '\0';
     }
 
 #if NETDEV_IPV4 && NETDEV_IPV6

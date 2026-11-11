@@ -5,12 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-5-30      Bernard      the first version
+ * 2017-05-30     Bernard      the first version
  */
 
 #include <rtthread.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     rt_kprintf("Hi, this is RT-Thread!!\n");
 

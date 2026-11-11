@@ -1,0 +1,145 @@
+/dts-v1/;
+
+/ {
+    compatible = "st,stm32h750xb", "st,stm32h7";
+    model = "RT-Thread STM32H750 ART-Pi";
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    aliases {
+    };
+
+    chosen {
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            compatible = "arm,cortex-m7";
+            device_type = "cpu";
+            reg = <0>;
+        };
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+        interrupt-parent = <&nvic>;
+
+        nvic: interrupt-controller@e000e100 {
+            compatible = "arm,v7m-nvic";
+            reg = <0xe000e100 0xc00>;
+            interrupt-controller;
+            #interrupt-cells = <2>;
+            arm,num-irqs = <150>;
+            arm,num-irq-priority-bits = <4>;
+        };
+
+        exti: interrupt-controller@58000000 {
+            compatible = "st,stm32-exti";
+            reg = <0x58000000 0x400>;
+            interrupt-controller;
+            #interrupt-cells = <1>;
+            #address-cells = <0>;
+            num-lines = <96>;
+            interrupts = <6 5>, <7 5>, <8 5>, <9 5>,
+                         <10 5>, <23 5>, <40 5>;
+            interrupt-names = "line0", "line1", "line2", "line3",
+                              "line4", "line5-9", "line10-15";
+            line-ranges = <0 1>, <1 1>, <2 1>, <3 1>,
+                          <4 1>, <5 5>, <10 6>;
+        };
+
+        gpioa: gpio@58020000 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58020000 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpiob: gpio@58020400 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58020400 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpioc: gpio@58020800 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58020800 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpiod: gpio@58020c00 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58020c00 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpioe: gpio@58021000 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58021000 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpiof: gpio@58021400 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58021400 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpiog: gpio@58021800 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58021800 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpioh: gpio@58021c00 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58021c00 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpioi: gpio@58022000 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58022000 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpioj: gpio@58022400 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58022400 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+
+        gpiok: gpio@58022800 {
+            compatible = "st,stm32-gpio";
+            reg = <0x58022800 0x400>;
+            gpio-controller;
+            #gpio-cells = <2>;
+            interrupt-parent = <&exti>;
+        };
+    };
+};

@@ -44,9 +44,9 @@ Hardware Drivers Config --->
 | 19 (D19) | GET_PIN(B, 2) | 是 |  |
 | 20 (D20) | GET_PIN(G, 0) | 是 |  |
 | 21 (D21) | GET_PIN(A, 0) | 是 |  |
-| 22 (D22) | GET_PIN(G, 5) | 是 | SSPI1-SCK,默认被RT-Thread的SPI设备框架sspi1接管|
-| 23 (D23) | GET_PIN(G, 3) | 是 | SSPI1-MISO,默认被RT-Thread的SPI设备框架sspi1接管 |
-| 24 (D24) | GET_PIN(G, 1) | 是 | SSPI1-MOSI,默认被RT-Thread的SPI设备框架sspi1接管 |
+| 22 (D22) | GET_PIN(G, 5) | 是 | SWSPI1-SCK,默认被RT-Thread的SPI设备框架swspi1接管|
+| 23 (D23) | GET_PIN(G, 3) | 是 | SWSPI1-MISO,默认被RT-Thread的SPI设备框架swspi1接管 |
+| 24 (D24) | GET_PIN(G, 1) | 是 | SWSPI1-MOSI,默认被RT-Thread的SPI设备框架swspi1接管 |
 | 25 (D25) | GET_PIN(G, 7) | 是 | I2C1-SCL,默认被RT-Thread的I2C设备框架i2c1接管 |
 | 26 (D26) | GET_PIN(D, 7) | 是 | I2C1-SDA,默认被RT-Thread的I2C设备框架i2c1接管 |
 | 27 (D27) | GET_PIN(B, 6) | 是 | I2C2-SCL,默认被RT-Thread的I2C设备框架i2c2接管 |

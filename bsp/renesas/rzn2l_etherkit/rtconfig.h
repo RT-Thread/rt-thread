@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_R9A07G084
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -102,10 +104,13 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 512
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_R
 #define ARCH_ARM_CORTEX_R52
@@ -304,6 +309,22 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -387,8 +408,6 @@
 #define SOC_SERIES_R9A07G0
 
 /* Hardware Drivers Config */
-
-#define SOC_R9A07G084
 
 /* Onboard Peripheral Drivers */
 

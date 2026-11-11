@@ -1,0 +1,6 @@
+config RT_PMDOMAIN_ROCKCHIP
+    bool "Rockchip"
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_CLK
+    depends on RT_USING_REGULATOR
+    default y

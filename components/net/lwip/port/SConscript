@@ -5,6 +5,10 @@ path  = [cwd]
 
 src  = Glob('*.c')
 
+# 如果使用了GD32 WiFi包，则排除sys_arch.c（GD32有自己的实现）
+if GetDepend(['PKG_USING_GD32VW55X_WIFI']):
+    src = [f for f in src if not str(f).endswith('sys_arch.c')]
+
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 
 Return('group')

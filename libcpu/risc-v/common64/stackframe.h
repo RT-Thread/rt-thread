@@ -41,6 +41,8 @@
 #define FRAME_OFF_SSTATUS   BYTES(2)
 #define FRAME_OFF_SP        BYTES(32)
 #define FRAME_OFF_GP        BYTES(3)
+#define FRAME_OFF_TP        BYTES(4)
+#define FRAME_OFF_A7        BYTES(17)
 
 /* switch frame */
 #define RT_HW_SWITCH_CONTEXT_SSTATUS    0

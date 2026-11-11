@@ -12,7 +12,7 @@
 #define __DAC_H__
 #include <rtthread.h>
 /**
- * @defgroup    group_DAC DAC
+ * @defgroup    group_drivers_dac DAC
  * @brief       DAC driver api
  * @ingroup     group_device_driver
  *
@@ -43,7 +43,7 @@
  *     ret = rt_dac_enable(dac_dev, DAC_DEV_CHANNEL);
  *
  *     value = atoi(argv[1]);
- *     rt_dac_write(dac_dev, DAC_DEV_NAME, DAC_DEV_CHANNEL, value);
+ *     rt_dac_write(dac_dev, DAC_DEV_CHANNEL, value);
  *     rt_kprintf("the value is :%d \n", value);
  *
  *     vol = value * REFER_VOLTAGE / CONVERT_BITS;
@@ -61,7 +61,7 @@
  */
 
 /*!
- * @addtogroup group_DAC
+ * @addtogroup group_drivers_dac
  * @{
  */
 struct rt_dac_device;

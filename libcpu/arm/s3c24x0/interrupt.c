@@ -15,6 +15,11 @@
 
 #define MAX_HANDLERS    32
 
+rt_inline rt_bool_t _interrupt_vector_is_valid(int vector)
+{
+    return (vector >= 0) && (vector < MAX_HANDLERS);
+}
+
 extern rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
@@ -29,7 +34,7 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 
 static void rt_hw_interrupt_handle(int vector, void *param)
 {
-    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    rt_kprintf("Unhandled interrupt %d occurred!!!\n", vector);
 }
 
 /**
@@ -77,6 +82,11 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     INTMSK |= 1 << vector;
 }
 
@@ -86,6 +96,11 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     if (vector == INTNOTUSED6)
     {
         rt_kprintf("Interrupt vec %d is not used!\n", vector);

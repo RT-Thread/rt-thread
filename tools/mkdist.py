@@ -22,6 +22,7 @@
 # 2017-10-04     Bernard      The first version
 # 2025-01-07     ZhaoCake     components copy and gen doc
 # 2025-03-02     ZhaoCake     Add MkDist_Strip
+# 2026-06-10     CYFS         Copy shared hal-sdk package libraries for dist
 
 
 import os
@@ -29,6 +30,8 @@ import subprocess
 import shutil
 from shutil import ignore_patterns
 from SCons.Script import *
+from env_package import find_libraries_path_upward
+from env_package import is_hal_sdk_package_bridge
 
 def do_copy_file(src, dst):
     # check source file
@@ -43,16 +46,21 @@ def do_copy_file(src, dst):
     shutil.copy2(src, dst)
 
 def do_copy_folder(src_dir, dst_dir, ignore=None):
-    import shutil
+    import shutil, stat
+
+    def _remove_readonly(func, path, excinfo):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+
     # check source directory
     if not os.path.exists(src_dir):
         return
 
     try:
         if os.path.exists(dst_dir):
-            shutil.rmtree(dst_dir)
-    except:
-        print('Deletes folder: %s failed.' % dst_dir)
+            shutil.rmtree(dst_dir, onerror = _remove_readonly)
+    except Exception as e:
+        print('Deletes folder: %s failed: %s\n' % (dst_dir, e))
         return
 
     shutil.copytree(src_dir, dst_dir, ignore = ignore)
@@ -99,17 +107,27 @@ def bsp_copy_files(bsp_root, dist_dir):
         ignore_patterns('build', '__pycache__', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
 
 def bsp_update_sconstruct(dist_dir):
-    with open(os.path.join(dist_dir, 'SConstruct'), 'r') as f:
+    sconstruct_path = os.path.join(dist_dir, 'SConstruct')
+    with open(sconstruct_path, 'r') as f:
         data = f.readlines()
-    with open(os.path.join(dist_dir, 'SConstruct'), 'w') as f:
+    # idempotency: skip when the injection is already effective. Match only the uncommented
+    # form, because some BSPs ship a commented-out copy of this block as source residue, and
+    # treating it as injected would leave the dist project RTT_ROOT pointing at the BSP dir.
+    if any(line.lstrip().startswith('if not os.getenv("RTT_ROOT"):') for line in data):
+        return
+    with open(sconstruct_path, 'w') as f:
         for line in data:
-            if line.find('RTT_ROOT') != -1:
-                if line.find('sys.path') != -1:
-                    f.write('# set RTT_ROOT\n')
-                    f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
+            if line.find('RTT_ROOT') != -1 and line.find('sys.path') != -1:
+                f.write('# set RTT_ROOT\n')
+                f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
             f.write(line)
 
 def bsp_update_kconfig_testcases(dist_dir):
+    utestcases_kconfig = os.path.join(dist_dir, 'rt-thread/components/utilities/utest/Kconfig')
+
+    if os.path.isfile(utestcases_kconfig):
+        return
+
     # delete testcases in rt-thread/Kconfig
     if not os.path.isfile(os.path.join(dist_dir, 'rt-thread/Kconfig')):
         return
@@ -118,7 +136,7 @@ def bsp_update_kconfig_testcases(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'rt-thread/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('examples/utest/testcases/Kconfig') == -1:
+            if line.find('components/utilities/utest/Kconfig') == -1:
                 f.write(line)
 
 def bsp_update_kconfig(dist_dir):
@@ -143,8 +161,9 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and line.find('../libraries') != -1:
-                line = line.replace('../libraries', 'libraries')
+            if line.find('source') != -1:
+                while '../libraries' in line:
+                    line = line.replace('../libraries', 'libraries')
             f.write(line)
 
     # change board/kconfig path
@@ -155,9 +174,41 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and line.find('../libraries') != -1:
-                line = line.replace('../libraries', 'libraries')
+            if line.find('source') != -1:
+                if 'BSP_DIR' in line:
+                    while '../libraries' in line:
+                        line = line.replace('../libraries', 'libraries')
+                else:
+                    while '../../libraries' in line:
+                        line = line.replace('../../libraries', '../libraries')
             f.write(line)
+
+def bsp_copy_hal_sdk_package_libraries(bsp_root, dist_dir):
+    packages_dir = os.path.join(dist_dir, 'packages')
+    if not os.path.isdir(packages_dir):
+        return
+
+    libraries_path = find_libraries_path_upward(bsp_root)
+    if not libraries_path:
+        return
+
+    copied = False
+    for package_name in os.listdir(packages_dir):
+        package_path = os.path.join(packages_dir, package_name)
+        if not os.path.isdir(package_path):
+            continue
+        if not is_hal_sdk_package_bridge(package_path):
+            continue
+
+        source_path = os.path.join(libraries_path, package_name)
+        if not os.path.isdir(source_path):
+            print('warning: hal-sdk package library not found: %s' % source_path)
+            continue
+
+        if not copied:
+            print('=> hal-sdk package libraries')
+            copied = True
+        bsp_copy_files(source_path, os.path.join(dist_dir, 'libraries', package_name))
 
 def zip_dist(dist_dir, dist_name):
     import zipfile
@@ -194,6 +245,8 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
         dist_handle = Env['dist_handle']
         dist_handle(BSP_ROOT, dist_dir)
 
+    bsp_copy_hal_sdk_package_libraries(BSP_ROOT, dist_dir)
+
     # copy tools directory
     print('=> components')
     do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(rtt_dir_path, 'components'))
@@ -210,6 +263,9 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     import rtconfig
     do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
+    # libcpu/Kconfig also sources libcpu/arm/Kconfig for shared ARM family symbols
+    # (ARCH_ARM, ARCH_ARMV8, ARCH_ARM_MMU), which aarch64 relies on as well.
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'arm', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'arm', 'Kconfig'))
     do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
 
     # copy src directory
@@ -273,6 +329,15 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path=No
         os.path.join(BSP_ROOT, 'compile_commands.json'), 
         RTT_ROOT
     )
+
+    if not used_paths:
+        print("Warning: No source paths found from compile_commands.json")
+        print("Skip source cleanup to avoid removing required files")
+        if project_path is None:
+            zip_dist(dist_dir, project_name)
+            print("Distribution package created: {}.zip".format(dist_dir))
+        print('=> Distribution strip skipped')
+        return
 
     # Clean up RT-Thread directory except tools and build files
     rt_thread_dir = os.path.join(dist_dir, 'rt-thread')

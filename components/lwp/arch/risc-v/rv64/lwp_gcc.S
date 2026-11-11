@@ -19,10 +19,27 @@
 #define __ASSEMBLY__
 #endif /* __ASSEMBLY__ */
 
+#ifdef RT_USING_RISCV_NEW_COMMON
+#include "asm.h"
+#include "csr.h"
+
+#define LOAD                REG_L
+#define STORE               REG_S
+#define REGBYTES            SZREG
+#define CTX_REG_NR          CTX_ALL_REG_NR
+#define FRAME_OFF_SSTATUS   FRAME_OFF_XSTATUS
+#define SSTATUS_SPP         SR_PP
+#define SSTATUS_SIE         SR_IE
+#define SSTATUS_SPIE        SR_PIE
+#define sstatus             CSR_STATUS
+#define sscratch            CSR_SCRATCH
+#define sepc                CSR_EPC
+#else
 #include "cpuport.h"
 #include "encoding.h"
 #include "stackframe.h"
 #include "asm-generic.h"
+#endif
 
 .section      .text.lwp
 
@@ -75,25 +92,38 @@ arch_crt_start_umode:
  * we handle following things here:
  * 1. restoring user mode debug state (not support yet)
  * 2. handling thread's exit request
- * 3. handling POSIX signal
+ * 3. handling POSIX signal (skipped for signal quit path)
  * 4. restoring user context
  * 5. jump to user mode
  */
 .global arch_ret_to_user
 arch_ret_to_user:
+    li s0, 1   // flag=1 (normal path)
+    j arch_ret_to_user_impl
+
+.global arch_signal_quit_ret_to_user
+arch_signal_quit_ret_to_user:
+    li s0, 0   // flag=0 (signal quit path)
+
+arch_ret_to_user_impl:
     // TODO: we don't support kernel gdb server in risc-v yet
     // so we don't check debug state here and handle debugging bussiness
 
+    /* Signal handling takes sleeping locks and must remain schedulable. */
+    OPEN_INTERRUPT
     call lwp_check_exit_request
     beqz a0, 1f
     mv a0, x0
     call sys_exit
 
 1:
+    // Skip signal handling if coming from arch_signal_quit
+    beqz s0, ret_to_user_exit
     mv a0, sp
     call lwp_thread_signal_catch
 
 ret_to_user_exit:
+    CLOSE_INTERRUPT
     RESTORE_ALL
     // `RESTORE_ALL` also reset sp to user sp, and setup sscratch
     sret
@@ -103,8 +133,10 @@ ret_to_user_exit:
  * And handle pending signals;
  */
 arch_signal_quit:
+    OPEN_INTERRUPT
     LOAD a0, FRAME_OFF_SP(sp)
     call arch_signal_ucontext_restore
+    CLOSE_INTERRUPT
 
     /* reset kernel sp to the stack */
     addi sp, sp, CTX_REG_NR * REGBYTES
@@ -119,7 +151,7 @@ arch_signal_quit:
 
     RESTORE_ALL
     SAVE_ALL
-    j arch_ret_to_user
+    j arch_signal_quit_ret_to_user
 
 /**
  * rt_noreturn
@@ -140,6 +172,7 @@ arch_thread_signal_enter:
     LOAD t0, FRAME_OFF_SP(a2)
     mv a3, t0
     call arch_signal_ucontext_save
+    CLOSE_INTERRUPT
 
     /** restore kernel sp */
     addi sp, s3, CTX_REG_NR * REGBYTES
@@ -177,6 +210,9 @@ arch_thread_signal_enter:
 
     /* restore user GP */
     LOAD gp, FRAME_OFF_GP(s3)
+
+    /* restore user TP */
+    LOAD tp, FRAME_OFF_TP(s3)
 
     /**
      * handler(signo, psi, ucontext);
@@ -254,13 +290,13 @@ copy_context_loop:
     LOAD t0, 0(t1)
     STORE t0, 0(t2)
     addi s0, s0, -1
-    addi t1, t1, 8
-    addi t2, t2, 8
+    addi t1, t1, REGBYTES
+    addi t2, t2, REGBYTES
     bnez s0, copy_context_loop
 #endif /* ARCH_USING_NEW_CTX_SWITCH */
 
     /* fetch SYSCALL ID */
-    LOAD a7, 17 * REGBYTES(sp)
+    LOAD a7, FRAME_OFF_A7(sp)
     addi a7, a7, -0xfe
     beqz a7, arch_signal_quit
 
@@ -294,7 +330,7 @@ dont_ret_to_user:
     call  lwp_user_setting_restore
 
     /* after restore the reg `tp`, need modify context */
-    STORE tp, 4 * REGBYTES(sp)
+    STORE tp, FRAME_OFF_TP(sp)
 #endif
 
     //restore context

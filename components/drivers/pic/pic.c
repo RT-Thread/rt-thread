@@ -17,7 +17,7 @@
 
 #include <drivers/pic.h>
 #ifdef RT_USING_PIC_STATISTICS
-#include <ktime.h>
+#include <drivers/clock_time.h>
 #endif
 
 struct irq_traps
@@ -28,17 +28,8 @@ struct irq_traps
     rt_bool_t (*handler)(void *);
 };
 
-static int _ipi_hash[] =
-{
-#ifdef RT_USING_SMP
-    [RT_SCHEDULE_IPI] = RT_SCHEDULE_IPI,
-    [RT_STOP_IPI] = RT_STOP_IPI,
-    [RT_SMP_CALL_IPI] = RT_SMP_CALL_IPI,
-#endif
-};
-
 /* reserved ipi */
-static int _pirq_hash_idx = RT_ARRAY_SIZE(_ipi_hash);
+static int _pirq_hash_idx = RT_MAX_IPI;
 static struct rt_pic_irq _pirq_hash[MAX_HANDLERS] =
 {
     [0 ... MAX_HANDLERS - 1] =
@@ -230,7 +221,7 @@ int rt_pic_config_ipi(struct rt_pic *pic, int ipi_index, int hwirq)
     int ipi = ipi_index;
     struct rt_pic_irq *pirq;
 
-    if (pic && ipi < RT_ARRAY_SIZE(_ipi_hash) && hwirq >= 0 && pic->ops->irq_send_ipi)
+    if (pic && ipi < RT_MAX_IPI && hwirq >= 0 && pic->ops->irq_send_ipi)
     {
         pirq = &_pirq_hash[ipi];
         config_pirq(pic, pirq, ipi, hwirq);
@@ -281,7 +272,7 @@ struct rt_pic_irq *rt_pic_find_ipi(struct rt_pic *pic, int ipi_index)
 {
     struct rt_pic_irq *pirq = &_pirq_hash[ipi_index];
 
-    RT_ASSERT(ipi_index < RT_ARRAY_SIZE(_ipi_hash));
+    RT_ASSERT(ipi_index < RT_MAX_IPI);
     RT_ASSERT(pirq->pic == pic);
 
     return pirq;
@@ -289,7 +280,7 @@ struct rt_pic_irq *rt_pic_find_ipi(struct rt_pic *pic, int ipi_index)
 
 struct rt_pic_irq *rt_pic_find_pirq(struct rt_pic *pic, int irq)
 {
-    if (pic && irq >= pic->irq_start && irq <= pic->irq_start + pic->irq_nr)
+    if (pic && irq >= pic->irq_start && irq < pic->irq_start + pic->irq_nr)
     {
         return &pic->pirqs[irq - pic->irq_start];
     }
@@ -562,7 +553,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     RT_ASSERT(pirq->pic != RT_NULL);
 
 #ifdef RT_USING_PIC_STATISTICS
-    rt_ktime_boottime_get_ns(&ts);
+    rt_clock_boottime_get_ns(&ts);
     current_irq_begin = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
 
@@ -623,7 +614,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     }
 
 #ifdef RT_USING_PIC_STATISTICS
-    rt_ktime_boottime_get_ns(&ts);
+    rt_clock_boottime_get_ns(&ts);
     irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - current_irq_begin;
     pirq->stat.sum_irq_time_ns += irq_time_ns;
     if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
@@ -1207,7 +1198,7 @@ static int list_irq(int argc, char**argv)
             _pic_name_max, "PIC",
             12, "Mode",
         #ifdef RT_USING_SMP
-            RT_CPUS_NR, "CPUs",
+            rt_max(RT_CPUS_NR, 4), "CPUs",
         #else
             0, 0,
         #endif
@@ -1263,7 +1254,15 @@ static int list_irq(int argc, char**argv)
 
         rt_kputs(info);
     #ifdef RT_USING_SMP
+        if (RT_CPUS_NR < 4)
+        {
+            rt_memset(&cpumask[RT_CPUS_NR], ' ', 4 - RT_CPUS_NR);
+        }
         rt_kputs(cpumask);
+        if (RT_CPUS_NR < 4)
+        {
+            rt_kprintf("%-*.s", 4 - RT_CPUS_NR, " ");
+        }
     #endif
 
     #ifdef RT_USING_INTERRUPT_INFO
@@ -1290,7 +1289,7 @@ static int list_irq(int argc, char**argv)
             #ifdef RT_USING_SMP
                 rt_kputs(cpumask);
             #endif
-                rt_kprintf("%-10d ", repeat_isr->action.counter);
+                rt_kprintf(" %-10d ", repeat_isr->action.counter);
                 rt_kprintf("%-*.s", 10, repeat_isr->action.name);
             #ifdef RT_USING_SMP
                 for (int cpuid = 0; cpuid < RT_CPUS_NR; cpuid++)
