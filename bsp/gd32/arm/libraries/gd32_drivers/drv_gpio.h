@@ -27,7 +27,9 @@ extern "C" {
 #include "gd32f30x_gpio.h"
 #elif defined SOC_SERIES_GD32F4xx
 #include "gd32f4xx_gpio.h"
-#elif defined SOC_SERIES_GD32H7xx
+#elif defined SOC_SERIES_GD32H77x_H78X
+#include "gd32h77x_78x_gpio.h"
+#elif (defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32H77x_H78X)
 #include "gd32h7xx_gpio.h"
 #elif defined SOC_SERIES_GD32H75e
 #include "gd32h75e_gpio.h"
@@ -41,7 +43,7 @@ extern "C" {
 
 #define __GD32_PORT(port)  GPIO##port
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x || defined SOC_SERIES_GD32H75E || defined SOC_SERIES_GD32H7xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x || defined SOC_SERIES_GD32H75E || (defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32H77x_H78X)
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
                                     GPIO##port, GPIO_PIN_##pin, \
                                     EXTI_SOURCE_GPIO##port,     \

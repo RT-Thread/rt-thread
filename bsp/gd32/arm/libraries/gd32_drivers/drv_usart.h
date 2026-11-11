@@ -35,7 +35,7 @@ typedef struct
     uint32_t dma_periph;
     /* dma channel */
     dma_channel_enum dma_ch;
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     /* rx dma request */
     uint32_t dma_mux_req_rx;
 #endif
