@@ -979,6 +979,10 @@ rt_err_t rt_fdt_unflatten(void)
 
             err = err ? : ofw_phandle_hash_reset(_phandle_min, _phandle_max);
         }
+        else
+        {
+            err = -RT_ERROR;
+        }
     }
     else
     {
@@ -1081,6 +1085,13 @@ static rt_err_t fdt_unflatten_single(struct rt_ofw_node *np, int node_off)
 
             if (node_off >= 0)
             {
+                if (depth >= OFW_NODE_MAX_DEPTH)
+                {
+                    LOG_E("DTB node depth exceeds limit %d", OFW_NODE_MAX_DEPTH);
+                    err = -RT_EINVAL;
+                    break;
+                }
+
                 parent = np;
 
                 np_stack[depth++] = np;
