@@ -174,8 +174,10 @@ static rt_err_t kd_pwm_set(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 
     /* Calculate duty cycle */
     pwmcmpx_max = (1 << PWM_CMP_WIDTH) - 1;
-    if (period > ((1 << (PWM_SCALE_MAX_BITS + PWM_PERIOD_BITS)) - 1LL))
+    if (period > ((1ULL << (PWM_SCALE_MAX_BITS + PWM_PERIOD_BITS)) - 1ULL))
+    {
         return -RT_EINVAL;
+    }
 
     while ((period >> pwmscale) > pwmcmpx_max)
         pwmscale++;
