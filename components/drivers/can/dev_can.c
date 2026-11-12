@@ -370,7 +370,13 @@ static rt_ssize_t _can_nonblocking_tx(struct rt_can_device *can, const struct rt
             if (can->ops->sendmsg_nonblocking(can, pmsg) != RT_EOK)
             {
                 level = rt_hw_local_irq_disable();
-                rt_ringbuffer_put_force(&can->nb_tx_rb, (rt_uint8_t *)pmsg, sizeof(struct rt_can_msg));
+                if (rt_ringbuffer_put(&can->nb_tx_rb, (rt_uint8_t *)pmsg,
+                                      sizeof(struct rt_can_msg)) != sizeof(struct rt_can_msg))
+                {
+                    can->status.dropedsndpkg += (size - sent_size) / sizeof(struct rt_can_msg);
+                    rt_hw_local_irq_enable(level);
+                    break;
+                }
                 rt_hw_local_irq_enable(level);
             }
 
