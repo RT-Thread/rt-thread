@@ -11,6 +11,7 @@
  * 2022-06-15     lianghongquan        fix bug, CAN_FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
  * 2026-05-27     CDT                  support HC32F4A2.
  * 2026-06-24     CDT                  Added _can_sendmsg_nonblocking.
+ * 2026-11-11     wdfk-prog            Adapt PTB TX to Generic CAN hardware mailbox interface.
  */
 
 #include "drv_can.h"
@@ -697,6 +698,12 @@ static rt_err_t _config_can_priv_mode(can_device *p_can_dev, void *arg)
     return rt_ret;
 }
 
+/**
+ * @brief Switch CAN RX, PTB TX and error interrupt sources.
+ * @param p_can_dev Hardware CAN instance.
+ * @param cmd RT_DEVICE_CTRL_SET_INT or RT_DEVICE_CTRL_CLR_INT.
+ * @param arg RT-Thread interrupt group selector.
+ */
 static void _config_can_int(can_device *p_can_dev, int cmd, void *arg)
 {
     en_functional_state_t stat = ENABLE;
@@ -704,10 +711,7 @@ static void _config_can_int(can_device *p_can_dev, int cmd, void *arg)
 
     if (cmd == RT_DEVICE_CTRL_CLR_INT)
     {
-        if (flag == RT_DEVICE_CAN_INT_ERR)
-        {
-            RT_ASSERT(p_can_dev->init.single_trans_mode == RT_FALSE);
-        }
+        /* Even single-shot mode must allow error IRQ shutdown during STOP. */
         stat = DISABLE;
     }
     switch (flag)
@@ -719,7 +723,6 @@ static void _config_can_int(can_device *p_can_dev, int cmd, void *arg)
         CAN_IntCmd(p_can_dev->instance, CAN_INT_RX_OVERRUN, stat);
         break;
     case RT_DEVICE_FLAG_INT_TX:
-        CAN_IntCmd(p_can_dev->instance, CAN_INT_STB_TX, stat);
         CAN_IntCmd(p_can_dev->instance, CAN_INT_PTB_TX, stat);
         break;
     case RT_DEVICE_CAN_INT_ERR:
@@ -842,6 +845,12 @@ static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
 }
 #endif
 
+/**
+ * @brief Configure hardware while Generic CAN has quiesced in-flight TX.
+ * @param can Registered CAN device.
+ * @param cfg Requested configuration.
+ * @return RT_EOK after a successful DDL init, or a negative error.
+ */
 static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg)
 {
     can_device *p_can_dev;
@@ -888,8 +897,16 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     p_can_dev->ll_init.stcBitCfg = _g_baudrate_tab[baud_index].ll_sbt;
 #endif
 
-    /* init can */
-    CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
+    /* A successful controller reset retires only BSP-owned hardware state. */
+    if (CAN_Init(p_can_dev->instance, &p_can_dev->ll_init) != LL_OK)
+    {
+        return -RT_ERROR;
+    }
+#if defined(RT_CAN_USING_CANFD) && (defined(HC32F472) || defined(HC32F4A8))
+    /* CAN_Init configures FD timing but does not restore the PERIC FD enable latch. */
+    CAN_FD_Cmd(p_can_dev->instance,
+               cfg->enable_canfd == CAN_FRAME_CLASSIC ? DISABLE : ENABLE);
+#endif /* defined(RT_CAN_USING_CANFD) && (defined(HC32F472) || defined(HC32F4A8)) */
 
     struct can_configure pre_config = p_can_dev->rt_can.config;
     rt_memcpy(&p_can_dev->rt_can.config, cfg, sizeof(struct can_configure));
@@ -907,6 +924,13 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     return rt_ret;
 }
 
+/**
+ * @brief Handle CAN configuration, start/stop and supported management commands.
+ * @param can Registered CAN device.
+ * @param cmd Device/framework control command.
+ * @param arg Command-specific value or pointer.
+ * @return RT_EOK on success, -RT_ENOSYS for unsupported abort, or an error.
+ */
 static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 {
     can_device *p_can_dev;
@@ -933,6 +957,33 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #endif
     case RT_CAN_CMD_SET_PRIV:
         return _config_can_priv_mode(p_can_dev, arg);
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ALL, DISABLE);
+            if (CAN_DeInit(p_can_dev->instance) != LL_OK)
+            {
+                return -RT_ERROR;
+            }
+            /* DeInit restores RTIE reset defaults, including enabled IRQ bits. */
+            CAN_IntCmd(p_can_dev->instance, CAN_INT_ALL, DISABLE);
+            return RT_EOK;
+        }
+        if (CAN_Init(p_can_dev->instance, &p_can_dev->ll_init) != LL_OK)
+        {
+            return -RT_ERROR;
+        }
+        /* Generic CAN will explicitly re-enable the required IRQ sources. */
+        CAN_IntCmd(p_can_dev->instance, CAN_INT_ALL, DISABLE);
+#if defined(RT_CAN_USING_CANFD) && (defined(HC32F472) || defined(HC32F4A8))
+        /* STOP/START must restore the separate CAN-FD hardware-enable latch. */
+        CAN_FD_Cmd(p_can_dev->instance,
+                   can->config.enable_canfd == CAN_FRAME_CLASSIC ? DISABLE : ENABLE);
+#endif /* defined(RT_CAN_USING_CANFD) && (defined(HC32F472) || defined(HC32F4A8)) */
+        return RT_EOK;
+    case RT_CAN_CMD_ABORT_TX:
+        /* AIF has no dedicated completion IRQ and cannot retire a Generic TX slot. */
+        return -RT_ENOSYS;
     case RT_CAN_CMD_GET_STATUS:
     {
         struct rt_can_status *rt_can_stat = (struct rt_can_status *)arg;
@@ -956,16 +1007,42 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
+/**
+ * @brief Submit one CAN frame to the single PTB hardware mailbox.
+ * @param can Registered CAN device; Generic holds tx_lock while calling.
+ * @param buf Frame to submit without waiting for the bus terminal.
+ * @param box_num Must be 0 (PTB).
+ * @return RT_EOK on acceptance, -RT_EBUSY while PTB is occupied, or an error.
+ */
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
     stc_can_tx_frame_t stc_tx_frame = { 0 };
     int32_t ll_ret;
 
-    (void)box_num;
     RT_ASSERT(can != RT_NULL);
     can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
     RT_ASSERT(p_can_dev);
+
+    if (box_num != 0U || box_num >= can->config.sndboxnumber)
+    {
+        return -RT_EINVAL;
+    }
+
+    /* PTB can be idle before its success IRQ has retired Generic ownership. */
+    if ((can->status.sndchange & 1UL) != 0U ||
+        READ_REG8_BIT(p_can_dev->instance->TCMD, CAN_TCMD_TPE) != 0U ||
+        CAN_GetStatus(p_can_dev->instance, CAN_FLAG_PTB_TX) == SET)
+    {
+        return -RT_EBUSY;
+    }
+    /* A one-shot failure must be retired by the ISR before PTB is reused. */
+    if (p_can_dev->init.single_trans_mode &&
+        (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) == SET ||
+         CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET))
+    {
+        return -RT_EBUSY;
+    }
 
     stc_tx_frame.u32ID = pmsg->id;
     if (RT_CAN_DTR == pmsg->rtr)
@@ -996,19 +1073,49 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     rt_memcpy(&stc_tx_frame.au8Data, pmsg->data, msg_len);
 
     ll_ret = CAN_FillTxFrame(p_can_dev->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
+    if (ll_ret == LL_ERR_BUSY || ll_ret == LL_ERR_BUF_FULL)
+    {
+        return -RT_EBUSY;
+    }
     if (ll_ret != LL_OK)
     {
-        return -RT_ERROR;
+        return ll_ret == LL_ERR_INVD_PARAM ? -RT_EINVAL : -RT_ERROR;
     }
-    /* Request transmission */
+
+    if (p_can_dev->init.single_trans_mode)
+    {
+        /* Drop old controller error flags before the sole in-flight one-shot TX. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR | CAN_FLAG_ARBITR_LOST);
+    }
     CAN_StartTx(p_can_dev->instance, CAN_TX_REQ_PTB);
 
     return RT_EOK;
 }
 
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Try one immediate nonblocking submit using PTB (mailbox 0).
+ * @param can Registered CAN device.
+ * @param buf Frame supplied by Generic CAN.
+ * @param mailbox_out PTB mailbox number on success.
+ * @return RT_EOK, -RT_EBUSY if PTB is occupied, or another error.
+ */
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                    rt_uint32_t *mailbox_out)
 {
-    return _can_sendmsg(can, buf, 0);
+    /* Result of the single PTB submission attempt. */
+    rt_ssize_t result;
+
+    if (mailbox_out == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    result = _can_sendmsg(can, buf, 0U);
+    if (result == RT_EOK)
+    {
+        *mailbox_out = 0U;
+    }
+    return result;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -1102,63 +1209,34 @@ rt_inline void _isr_can_rx(can_device *p_can_dev)
     }
 }
 
+/**
+ * @brief Report the single PTB mailbox's hardware terminal to Generic CAN.
+ * TPIF reports success only. With single-shot enabled, a cleared TPE plus a
+ * latched bus/arbitration error is treated as a failed PTB request.
+ * @param p_can_dev CAN instance generating this interrupt.
+ */
 rt_inline void _isr_can_tx(can_device *p_can_dev)
 {
-    rt_bool_t is_tx_done = RT_FALSE;
-    rt_bool_t need_check_single_trans = RT_FALSE;
-
-    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_BUF_FULL) == SET)
-    {
-        /* TX buffer full. */
-    }
-    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED) == SET)
-    {
-        /* TX aborted. */
-        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED);
-    }
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_PTB_TX) == SET)
     {
-        /* PTB transmitted. */
-        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_PTB_TX);
-        if (p_can_dev->ll_init.u8PTBSingleShotTx == CAN_PTB_SINGLESHOT_TX_ENABLE)
-        {
-            need_check_single_trans = RT_TRUE;
-        }
-        else
-        {
-            is_tx_done = RT_TRUE;
-        }
-    }
-    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_STB_TX) == SET)
-    {
-        /* STB transmitted. */
-        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_STB_TX);
-        if (p_can_dev->ll_init.u8STBSingleShotTx == CAN_STB_SINGLESHOT_TX_ENABLE)
-        {
-            need_check_single_trans = RT_TRUE;
-        }
-        else
-        {
-            is_tx_done = RT_TRUE;
-        }
-    }
-
-    if (need_check_single_trans)
-    {
-        if ((CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) != SET) && (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) != SET))
-        {
-            is_tx_done = RT_TRUE;
-        }
-        else
-        {
-            rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
-        }
-    }
-    if (is_tx_done)
-    {
+        /* Publish before clearing TPIF so a new submit cannot overtake the IRQ. */
         rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_DONE);
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_PTB_TX);
+    }
+    else if (p_can_dev->init.single_trans_mode &&
+             READ_REG8_BIT(p_can_dev->instance->TCMD, CAN_TCMD_TPE) == 0U &&
+             (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) == SET ||
+              CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET))
+    {
+        /* One-shot PTB has stopped without a successful transmission. */
+        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
     }
 
+    if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED) == SET)
+    {
+        /* No reliable abort-completion IRQ; explicit ABORT_TX remains unsupported. */
+        CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_TX_ABORTED);
+    }
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET)
     {
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST);
@@ -1334,6 +1412,10 @@ static void _init_ll_struct_filter(can_device *p_can_dev)
     p_can_dev->ll_init.u16FilterSelect = CAN_FILTER1;
 }
 
+/**
+ * @brief Initialize the single PTB mailbox and DDL defaults.
+ * @param p_can_dev Registered CAN instance to initialize.
+ */
 static void _init_default_cfg(can_device *p_can_dev)
 {
     struct can_configure rt_can_config = CANDEFAULTCONFIG;
