@@ -183,8 +183,11 @@ rt_hw_context_switch_to    PROC
     ; restore MSP
     LDR     r0, =SCB_VTOR
     LDR     r0, [r0]
+    CMP     r0, #0
+    BEQ     _restore_msp_done
     LDR     r0, [r0]
     MSR     msp, r0
+_restore_msp_done
 
     ; enable interrupts at processor level
     CPSIE   I

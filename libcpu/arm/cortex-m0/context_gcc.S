@@ -173,9 +173,12 @@ rt_hw_context_switch_to:
     /* restore MSP */
     LDR     R0, =SCB_VTOR
     LDR     R0, [R0]
+    CMP     R0, #0
+    BEQ     _restore_msp_done
     LDR     R0, [R0]
     NOP
     MSR     MSP, R0
+_restore_msp_done:
 
     /* enable interrupts at processor level */
     CPSIE   I
