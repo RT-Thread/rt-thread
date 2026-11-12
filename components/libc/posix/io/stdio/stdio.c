@@ -129,53 +129,31 @@ int rt_posix_stdio_get_console(void)
 
 #elif defined(RT_USING_MUSLLIBC)
 
-static FILE* std_console = NULL;
-
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+static int std_fd = -1;
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
-    FILE *fp;
+    int fd;
     char name[STDIO_DEVICE_NAME_MAX];
-    char *file_mode;
 
     rt_snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
     name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
 
-    if (mode == O_RDWR) file_mode = "r+";
-    else if (mode == O_WRONLY) file_mode = "wb";
-    else file_mode = "rb";
-
-    fp = fopen(name, file_mode);
-    if (fp)
+    fd = open(name, mode, 0);
+    if (fd >= 0)
     {
-        setvbuf(fp, NULL, _IONBF, 0);
-
-        if (std_console)
+        if (std_fd >= 0)
         {
-            fclose(std_console);
-            std_console = NULL;
+            close(std_fd);
         }
-        std_console = fp;
+        std_fd = fd;
     }
 
-    if (std_console)
-    {
-        int fd = fileno(std_console);
-
-        return fd;
-    }
-
-    return -1;
+    return std_fd;
 }
 
 int rt_posix_stdio_get_console(void)
 {
-    int ret = -1;
-    if (std_console)
-    {
-        ret = fileno(std_console);
-    }
-
-    return ret;
+    return std_fd;
 }
 
 #else
