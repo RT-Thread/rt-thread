@@ -62,6 +62,462 @@ extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
 #endif /* RT_USING_HOOK */
 
+#if defined(RT_USING_MAILBOX) || defined(RT_USING_MESSAGEQUEUE)
+#ifdef RT_USING_NANO
+#define _IPC_HANDOFF_MAX 16
+#else
+#define _IPC_HANDOFF_MAX 64
+#endif /* RT_USING_NANO */
+
+void rt_ipc_handoff_thread_cleanup(rt_thread_t thread);
+
+#define _IPC_HANDOFF_MB_RX 0
+#define _IPC_HANDOFF_MB_TX 1
+#define _IPC_HANDOFF_MQ_RX 2
+#define _IPC_HANDOFF_MQ_TX 3
+
+struct _ipc_handoff
+{
+    void *ipc;
+    rt_thread_t thread;
+    rt_ubase_t value;
+    rt_uint8_t kind;
+};
+
+/* FIFO handoff records cover the wakeup-to-dequeue window. If all records are
+ * busy, mb/mq keep the original shared-queue path instead of failing. */
+static struct _ipc_handoff _ipc_handoffs[_IPC_HANDOFF_MAX];
+RT_DEFINE_SPINLOCK(_ipc_handoff_lock);
+
+static rt_bool_t _ipc_handoff_put(void *ipc, rt_thread_t thread,
+                                  rt_ubase_t value, rt_uint8_t kind)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread == RT_NULL)
+        {
+            _ipc_handoffs[i].ipc = ipc;
+            _ipc_handoffs[i].thread = thread;
+            _ipc_handoffs[i].value = value;
+            _ipc_handoffs[i].kind = kind;
+            rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+            return RT_TRUE;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+    return RT_FALSE;
+}
+
+static rt_bool_t _ipc_handoff_take(void *ipc, rt_thread_t thread,
+                                   rt_uint8_t kind, rt_ubase_t *value)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread == thread &&
+            _ipc_handoffs[i].ipc == ipc &&
+            _ipc_handoffs[i].kind == kind)
+        {
+            *value = _ipc_handoffs[i].value;
+            _ipc_handoffs[i].thread = RT_NULL;
+            rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+            return RT_TRUE;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+    return RT_FALSE;
+}
+
+#ifdef RT_USING_MAILBOX
+static rt_uint32_t _ipc_handoff_count(void *ipc, rt_uint8_t kind)
+{
+    rt_base_t level;
+    rt_size_t i;
+    rt_uint32_t count = 0;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread != RT_NULL &&
+            _ipc_handoffs[i].ipc == ipc &&
+            _ipc_handoffs[i].kind == kind)
+        {
+            count++;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+    return count;
+}
+
+static void _ipc_handoff_clear(void *ipc)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread != RT_NULL &&
+            _ipc_handoffs[i].ipc == ipc)
+        {
+            _ipc_handoffs[i].thread = RT_NULL;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+}
+
+static rt_uint32_t _mb_occupied_count(rt_mailbox_t mb)
+{
+    return mb->entry + _ipc_handoff_count(mb, _IPC_HANDOFF_MB_TX) +
+           _ipc_handoff_count(mb, _IPC_HANDOFF_MB_RX);
+}
+
+static void _mb_tx_return(rt_mailbox_t mb, rt_thread_t thread)
+{
+    struct rt_thread *next;
+    rt_ubase_t value;
+    rt_base_t level;
+    rt_bool_t taken;
+
+    level = rt_spin_lock_irqsave(&(mb->spinlock));
+    taken = _ipc_handoff_take(mb, thread, _IPC_HANDOFF_MB_TX, &value);
+    if (!taken)
+    {
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+        return;
+    }
+
+    if (mb->parent.parent.flag == RT_IPC_FLAG_FIFO &&
+        !rt_list_isempty(&(mb->suspend_sender_thread)) &&
+        _mb_occupied_count(mb) < mb->size)
+    {
+        next = rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
+        if (next)
+        {
+            _ipc_handoff_put(mb, next, 0, _IPC_HANDOFF_MB_TX);
+        }
+    }
+    rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+    rt_schedule();
+}
+
+static void _mb_rx_return(rt_mailbox_t mb, rt_thread_t thread)
+{
+    struct rt_thread *next;
+    rt_ubase_t value;
+    rt_base_t level;
+    rt_bool_t taken;
+
+    level = rt_spin_lock_irqsave(&(mb->spinlock));
+    taken = _ipc_handoff_take(mb, thread, _IPC_HANDOFF_MB_RX, &value);
+    if (!taken)
+    {
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+        return;
+    }
+
+    if (!rt_list_isempty(&(mb->parent.suspend_thread)))
+    {
+        next = rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
+        if (next && _ipc_handoff_put(mb, next, value, _IPC_HANDOFF_MB_RX))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            rt_schedule();
+            return;
+        }
+    }
+
+    if (mb->entry < mb->size)
+    {
+        if (mb->out_offset == 0)
+        {
+            mb->out_offset = mb->size - 1;
+        }
+        else
+        {
+            mb->out_offset--;
+        }
+        mb->msg_pool[mb->out_offset] = value;
+        mb->entry++;
+    }
+
+    if (!rt_list_isempty(&(mb->parent.suspend_thread)))
+    {
+        rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
+    }
+    rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+    rt_schedule();
+}
+
+static rt_bool_t _mb_rx_handoff_replace_urgent(rt_mailbox_t mb, rt_ubase_t urgent_val)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread != RT_NULL &&
+            _ipc_handoffs[i].ipc == mb &&
+            _ipc_handoffs[i].kind == _IPC_HANDOFF_MB_RX)
+        {
+            rt_ubase_t prev_val = _ipc_handoffs[i].value;
+            _ipc_handoffs[i].value = urgent_val;
+            rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+            /* insert previous normal value to queue head */
+            if (mb->out_offset > 0)
+            {
+                mb->out_offset--;
+            }
+            else
+            {
+                mb->out_offset = mb->size - 1;
+            }
+            mb->msg_pool[mb->out_offset] = prev_val;
+            mb->entry++;
+            return RT_TRUE;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+    return RT_FALSE;
+}
+#endif /* RT_USING_MAILBOX */
+
+#ifdef RT_USING_MESSAGEQUEUE
+static void _mq_handoff_clear(rt_mq_t mq)
+{
+    struct rt_mq_message *msg;
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread != RT_NULL &&
+            _ipc_handoffs[i].ipc == mq &&
+            (_ipc_handoffs[i].kind == _IPC_HANDOFF_MQ_RX ||
+             _ipc_handoffs[i].kind == _IPC_HANDOFF_MQ_TX))
+        {
+            msg = (struct rt_mq_message *)_ipc_handoffs[i].value;
+            msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+            mq->msg_queue_free = msg;
+            _ipc_handoffs[i].thread = RT_NULL;
+        }
+        else if (_ipc_handoffs[i].thread != RT_NULL &&
+                 _ipc_handoffs[i].ipc == mq)
+        {
+            _ipc_handoffs[i].thread = RT_NULL;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+}
+
+static void _mq_tx_return(rt_mq_t mq, rt_thread_t thread)
+{
+    struct rt_thread *next;
+    struct rt_mq_message *msg;
+    rt_ubase_t value;
+    rt_base_t level;
+    rt_bool_t taken;
+
+    level = rt_spin_lock_irqsave(&(mq->spinlock));
+    taken = _ipc_handoff_take(mq, thread, _IPC_HANDOFF_MQ_TX, &value);
+    if (!taken)
+    {
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return;
+    }
+
+    msg = (struct rt_mq_message *)value;
+    if (mq->parent.parent.flag == RT_IPC_FLAG_FIFO &&
+        !rt_list_isempty(&(mq->suspend_sender_thread)))
+    {
+        next = rt_susp_list_dequeue(&(mq->suspend_sender_thread), RT_EOK);
+        if (next && _ipc_handoff_put(mq, next, value, _IPC_HANDOFF_MQ_TX))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            rt_schedule();
+            return;
+        }
+    }
+    msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+    mq->msg_queue_free = msg;
+    rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+
+    rt_schedule();
+}
+
+static void _mq_rx_return(rt_mq_t mq, rt_thread_t thread)
+{
+    struct rt_thread *next;
+    struct rt_mq_message *msg;
+    rt_ubase_t value;
+    rt_base_t level;
+    rt_bool_t taken;
+
+    level = rt_spin_lock_irqsave(&(mq->spinlock));
+    taken = _ipc_handoff_take(mq, thread, _IPC_HANDOFF_MQ_RX, &value);
+    if (!taken)
+    {
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return;
+    }
+
+    msg = (struct rt_mq_message *)value;
+    if (!rt_list_isempty(&(mq->parent.suspend_thread)))
+    {
+        next = rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
+        if (next && _ipc_handoff_put(mq, next, value, _IPC_HANDOFF_MQ_RX))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            rt_schedule();
+            return;
+        }
+    }
+    if (mq->entry < mq->max_msgs)
+    {
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+        if (mq->msg_queue_head == RT_NULL)
+        {
+            mq->msg_queue_head = msg;
+            mq->msg_queue_tail = msg;
+            msg->next = RT_NULL;
+        }
+        else
+        {
+            struct rt_mq_message *curr = mq->msg_queue_head;
+            struct rt_mq_message *prev = RT_NULL;
+            while (curr != RT_NULL && curr->prio >= msg->prio)
+            {
+                prev = curr;
+                curr = curr->next;
+            }
+            if (prev == RT_NULL)
+            {
+                msg->next = mq->msg_queue_head;
+                mq->msg_queue_head = msg;
+            }
+            else
+            {
+                msg->next = curr;
+                prev->next = msg;
+                if (curr == RT_NULL)
+                {
+                    mq->msg_queue_tail = msg;
+                }
+            }
+        }
+#else
+        msg->next = (struct rt_mq_message *)mq->msg_queue_head;
+        mq->msg_queue_head = msg;
+        if (mq->msg_queue_tail == RT_NULL)
+        {
+            mq->msg_queue_tail = msg;
+        }
+#endif
+        mq->entry++;
+    }
+    else
+    {
+        msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+        mq->msg_queue_free = msg;
+    }
+    rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+
+    rt_schedule();
+}
+
+static rt_bool_t _mq_rx_handoff_replace_urgent(rt_mq_t mq, struct rt_mq_message *urgent_msg)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread != RT_NULL &&
+            _ipc_handoffs[i].ipc == mq &&
+            _ipc_handoffs[i].kind == _IPC_HANDOFF_MQ_RX)
+        {
+            struct rt_mq_message *prev_msg = (struct rt_mq_message *)_ipc_handoffs[i].value;
+            _ipc_handoffs[i].value = (rt_ubase_t)urgent_msg;
+            rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+            /* insert previous normal message to queue head */
+            prev_msg->next = (struct rt_mq_message *)mq->msg_queue_head;
+            mq->msg_queue_head = prev_msg;
+            if (mq->msg_queue_tail == RT_NULL)
+            {
+                mq->msg_queue_tail = prev_msg;
+            }
+            mq->entry++;
+            return RT_TRUE;
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+    return RT_FALSE;
+}
+#endif /* RT_USING_MESSAGEQUEUE */
+
+void rt_ipc_handoff_thread_cleanup(rt_thread_t thread)
+{
+    rt_base_t level;
+    rt_size_t i;
+
+    if (thread == RT_NULL)
+    {
+        return;
+    }
+
+    level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+    for (i = 0; i < _IPC_HANDOFF_MAX; i++)
+    {
+        if (_ipc_handoffs[i].thread == thread)
+        {
+            void *ipc = _ipc_handoffs[i].ipc;
+            rt_uint8_t kind = _ipc_handoffs[i].kind;
+            rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+
+#ifdef RT_USING_MAILBOX
+            if (kind == _IPC_HANDOFF_MB_RX)
+            {
+                _mb_rx_return((rt_mailbox_t)ipc, thread);
+            }
+            else if (kind == _IPC_HANDOFF_MB_TX)
+            {
+                _mb_tx_return((rt_mailbox_t)ipc, thread);
+            }
+#endif
+#ifdef RT_USING_MESSAGEQUEUE
+            if (kind == _IPC_HANDOFF_MQ_RX)
+            {
+                _mq_rx_return((rt_mq_t)ipc, thread);
+            }
+            else if (kind == _IPC_HANDOFF_MQ_TX)
+            {
+                _mq_tx_return((rt_mq_t)ipc, thread);
+            }
+#endif
+            level = rt_spin_lock_irqsave(&_ipc_handoff_lock);
+        }
+    }
+    rt_spin_unlock_irqrestore(&_ipc_handoff_lock, level);
+}
+#endif /* RT_USING_MAILBOX || RT_USING_MESSAGEQUEUE */
+
 /**
  * @addtogroup group_thread_comm
  * @{
@@ -2447,6 +2903,7 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb)
     rt_susp_list_resume_all(&(mb->parent.suspend_thread), RT_ERROR);
     /* also resume all mailbox private suspended thread */
     rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
+    _ipc_handoff_clear(mb);
     rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
     /* detach mailbox object */
@@ -2565,6 +3022,8 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     /* also resume all mailbox private suspended thread */
     rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
 
+    _ipc_handoff_clear(mb);
+
     rt_spin_unlock(&(mb->spinlock));
 
     /* free mailbox pool */
@@ -2607,9 +3066,12 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
                                  int suspend_flag)
 {
     struct rt_thread *thread;
+    struct rt_thread *receiver = RT_NULL;
     rt_base_t level;
     rt_uint32_t tick_delta;
     rt_err_t ret;
+    rt_bool_t has_tx_slot = RT_FALSE;
+    rt_ubase_t handoff;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -2629,14 +3091,15 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     level = rt_spin_lock_irqsave(&(mb->spinlock));
 
     /* for non-blocking call */
-    if (mb->entry == mb->size && timeout == 0)
+    if (_mb_occupied_count(mb) >= mb->size && timeout == 0)
     {
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
         return -RT_EFULL;
     }
 
     /* mailbox is full */
-    while (mb->entry == mb->size)
+    while ((_mb_occupied_count(mb) >= mb->size) &&
+           !has_tx_slot)
     {
         /* reset error number in thread */
         thread->error = -RT_EINTR;
@@ -2684,10 +3147,12 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         if (thread->error != RT_EOK)
         {
             /* return error */
+            _mb_tx_return(mb, thread);
             return thread->error;
         }
 
         level = rt_spin_lock_irqsave(&(mb->spinlock));
+        has_tx_slot = _ipc_handoff_take(mb, thread, _IPC_HANDOFF_MB_TX, &handoff);
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -2698,6 +3163,19 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
             {
                 timeout = 0;
             }
+        }
+    }
+
+    /* hand the value directly to the first FIFO receiver, if possible */
+    if (mb->parent.parent.flag == RT_IPC_FLAG_FIFO && mb->entry == 0 &&
+        !rt_list_isempty(&(mb->parent.suspend_thread)))
+    {
+        receiver = rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
+        if (receiver && _ipc_handoff_put(mb, receiver, value, _IPC_HANDOFF_MB_RX))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            rt_schedule();
+            return RT_EOK;
         }
     }
 
@@ -2722,7 +3200,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     }
 
     /* resume suspended thread */
-    if (!rt_list_isempty(&mb->parent.suspend_thread))
+    if (receiver == RT_NULL && !rt_list_isempty(&mb->parent.suspend_thread))
     {
         rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
 
@@ -2733,6 +3211,11 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         return RT_EOK;
     }
     rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+    if (receiver)
+    {
+        rt_schedule();
+    }
 
     return RT_EOK;
 }
@@ -2813,6 +3296,7 @@ RTM_EXPORT(rt_mb_send_killable);
  */
 rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 {
+    struct rt_thread *receiver = RT_NULL;
     rt_base_t level;
 
     /* parameter check */
@@ -2823,10 +3307,31 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 
     level = rt_spin_lock_irqsave(&(mb->spinlock));
 
-    if (mb->entry == mb->size)
+    if (_mb_occupied_count(mb) >= mb->size)
     {
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
         return -RT_EFULL;
+    }
+
+    /* hand the urgent value directly to the first FIFO receiver or replace normal in-flight handoff */
+    if (mb->parent.parent.flag == RT_IPC_FLAG_FIFO)
+    {
+        if (_mb_rx_handoff_replace_urgent(mb, value))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            return RT_EOK;
+        }
+
+        if (mb->entry == 0 && !rt_list_isempty(&(mb->parent.suspend_thread)))
+        {
+            receiver = rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
+            if (receiver && _ipc_handoff_put(mb, receiver, value, _IPC_HANDOFF_MB_RX))
+            {
+                rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+                rt_schedule();
+                return RT_EOK;
+            }
+        }
     }
 
     /* rewind to the previous position */
@@ -2846,7 +3351,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     mb->entry++;
 
     /* resume suspended thread */
-    if (!rt_list_isempty(&mb->parent.suspend_thread))
+    if (receiver == RT_NULL && !rt_list_isempty(&mb->parent.suspend_thread))
     {
         rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
 
@@ -2857,6 +3362,11 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
         return RT_EOK;
     }
     rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+    if (receiver)
+    {
+        rt_schedule();
+    }
 
     return RT_EOK;
 }
@@ -2890,9 +3400,11 @@ RTM_EXPORT(rt_mb_urgent);
 static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout, int suspend_flag)
 {
     struct rt_thread *thread;
+    struct rt_thread *sender;
     rt_base_t level;
     rt_uint32_t tick_delta;
     rt_err_t ret;
+    rt_ubase_t handoff;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -2909,6 +3421,30 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mb->parent.parent)));
 
     level = rt_spin_lock_irqsave(&(mb->spinlock));
+
+    if (_ipc_handoff_take(mb, thread, _IPC_HANDOFF_MB_RX, &handoff))
+    {
+        *value = handoff;
+        sender = RT_NULL;
+        if (!rt_list_isempty(&(mb->suspend_sender_thread)))
+        {
+            sender = rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
+            if (sender && mb->parent.parent.flag == RT_IPC_FLAG_FIFO)
+            {
+                _ipc_handoff_put(mb, sender, 0, _IPC_HANDOFF_MB_TX);
+            }
+        }
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+        RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
+
+        if (sender)
+        {
+            rt_schedule();
+        }
+
+        return RT_EOK;
+    }
 
     /* for non-blocking call */
     if (mb->entry == 0 && timeout == 0)
@@ -2969,9 +3505,34 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         if (thread->error != RT_EOK)
         {
             /* return error */
+            _mb_rx_return(mb, thread);
             return thread->error;
         }
         level = rt_spin_lock_irqsave(&(mb->spinlock));
+
+        if (_ipc_handoff_take(mb, thread, _IPC_HANDOFF_MB_RX, &handoff))
+        {
+            *value = handoff;
+            sender = RT_NULL;
+            if (!rt_list_isempty(&(mb->suspend_sender_thread)))
+            {
+                sender = rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
+                if (sender && mb->parent.parent.flag == RT_IPC_FLAG_FIFO)
+                {
+                    _ipc_handoff_put(mb, sender, 0, _IPC_HANDOFF_MB_TX);
+                }
+            }
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+
+            RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
+
+            if (sender)
+            {
+                rt_schedule();
+            }
+
+            return RT_EOK;
+        }
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -3004,7 +3565,11 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
     {
-        rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
+        sender = rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
+        if (sender && mb->parent.parent.flag == RT_IPC_FLAG_FIFO)
+        {
+            _ipc_handoff_put(mb, sender, 0, _IPC_HANDOFF_MB_TX);
+        }
 
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
@@ -3071,6 +3636,8 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
         rt_susp_list_resume_all(&(mb->parent.suspend_thread), RT_ERROR);
         /* also resume all mailbox private suspended thread */
         rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
+
+        _ipc_handoff_clear(mb);
 
         /* re-init mailbox */
         mb->entry = 0;
@@ -3233,6 +3800,7 @@ rt_err_t rt_mq_detach(rt_mq_t mq)
     rt_susp_list_resume_all(&mq->parent.suspend_thread, RT_ERROR);
     /* also resume all message queue private suspended thread */
     rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
+    _mq_handoff_clear(mq);
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     /* detach message queue object */
@@ -3376,6 +3944,7 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     rt_susp_list_resume_all(&(mq->parent.suspend_thread), RT_ERROR);
     /* also resume all message queue private suspended thread */
     rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
+    _mq_handoff_clear(mq);
 
     rt_spin_unlock(&(mq->spinlock));
 
@@ -3432,9 +4001,12 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 {
     rt_base_t level;
     struct rt_mq_message *msg;
-    rt_uint32_t tick_delta;
     struct rt_thread *thread;
+    struct rt_thread *receiver = RT_NULL;
+    rt_uint32_t tick_delta;
     rt_err_t ret;
+    rt_bool_t has_tx_slot = RT_FALSE;
+    rt_ubase_t handoff;
 
     RT_UNUSED(prio);
 
@@ -3473,7 +4045,8 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     }
 
     /* message queue is full */
-    while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
+    while (!has_tx_slot &&
+           (msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
         thread->error = -RT_EINTR;
@@ -3521,9 +4094,15 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         if (thread->error != RT_EOK)
         {
             /* return error */
+            _mq_tx_return(mq, thread);
             return thread->error;
         }
         level = rt_spin_lock_irqsave(&(mq->spinlock));
+        has_tx_slot = _ipc_handoff_take(mq, thread, _IPC_HANDOFF_MQ_TX, &handoff);
+        if (has_tx_slot)
+        {
+            msg = (struct rt_mq_message *)handoff;
+        }
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -3538,7 +4117,10 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     }
 
     /* move free list pointer */
-    mq->msg_queue_free = msg->next;
+    if (!has_tx_slot)
+    {
+        mq->msg_queue_free = msg->next;
+    }
 
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
@@ -3552,6 +4134,23 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 
     /* disable interrupt */
     level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    msg->prio = prio;
+#endif
+    if (mq->parent.parent.flag == RT_IPC_FLAG_FIFO &&
+        mq->entry == 0 &&
+        !rt_list_isempty(&(mq->parent.suspend_thread)))
+    {
+        receiver = rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
+        if (receiver && _ipc_handoff_put(mq, receiver, (rt_ubase_t)msg, _IPC_HANDOFF_MQ_RX))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            rt_schedule();
+            return RT_EOK;
+        }
+    }
+
 #ifdef RT_USING_MESSAGEQUEUE_PRIORITY
     msg->prio = prio;
     if (mq->msg_queue_head == RT_NULL)
@@ -3615,7 +4214,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     }
 
     /* resume suspended thread */
-    if (!rt_list_isempty(&mq->parent.suspend_thread))
+    if (receiver == RT_NULL && !rt_list_isempty(&mq->parent.suspend_thread))
     {
         rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
 
@@ -3626,6 +4225,11 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         return RT_EOK;
     }
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+
+    if (receiver)
+    {
+        rt_schedule();
+    }
 
     return RT_EOK;
 }
@@ -3717,6 +4321,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     rt_base_t level;
     struct rt_mq_message *msg;
+    struct rt_thread *receiver = RT_NULL;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -3755,6 +4360,26 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+    if (mq->parent.parent.flag == RT_IPC_FLAG_FIFO)
+    {
+        if (_mq_rx_handoff_replace_urgent(mq, msg))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            return RT_EOK;
+        }
+
+        if (mq->entry == 0 && !rt_list_isempty(&(mq->parent.suspend_thread)))
+        {
+            receiver = rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
+            if (receiver && _ipc_handoff_put(mq, receiver, (rt_ubase_t)msg, _IPC_HANDOFF_MQ_RX))
+            {
+                rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+                rt_schedule();
+                return RT_EOK;
+            }
+        }
+    }
+
     /* link msg to the beginning of message queue */
     msg->next = (struct rt_mq_message *)mq->msg_queue_head;
     mq->msg_queue_head = msg;
@@ -3777,7 +4402,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     }
 
     /* resume suspended thread */
-    if (!rt_list_isempty(&mq->parent.suspend_thread))
+    if (receiver == RT_NULL && !rt_list_isempty(&mq->parent.suspend_thread))
     {
         rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
 
@@ -3789,6 +4414,11 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     }
 
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+
+    if (receiver)
+    {
+        rt_schedule();
+    }
 
     return RT_EOK;
 }
@@ -3832,11 +4462,13 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
                               int suspend_flag)
 {
     struct rt_thread *thread;
+    struct rt_thread *sender;
     rt_base_t level;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     rt_err_t ret;
     rt_size_t len;
+    rt_ubase_t handoff;
 
     RT_UNUSED(prio);
 
@@ -3856,6 +4488,12 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+    if (_ipc_handoff_take(mq, thread, _IPC_HANDOFF_MQ_RX, &handoff))
+    {
+        msg = (struct rt_mq_message *)handoff;
+        goto _mq_recv_copy;
+    }
 
     /* for non-blocking call */
     if (mq->entry == 0 && timeout == 0)
@@ -3917,10 +4555,17 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         if (thread->error != RT_EOK)
         {
             /* return error */
+            _mq_rx_return(mq, thread);
             return thread->error;
         }
 
         level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+        if (_ipc_handoff_take(mq, thread, _IPC_HANDOFF_MQ_RX, &handoff))
+        {
+            msg = (struct rt_mq_message *)handoff;
+            goto _mq_recv_copy;
+        }
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -3951,6 +4596,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         mq->entry--;
     }
 
+_mq_recv_copy:
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     /* get real message length */
@@ -3970,14 +4616,33 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     }
 #endif
     level = rt_spin_lock_irqsave(&(mq->spinlock));
-    /* put message to free list */
-    msg->next = (struct rt_mq_message *)mq->msg_queue_free;
-    mq->msg_queue_free = msg;
 
-    /* resume suspended thread */
+    sender = RT_NULL;
     if (!rt_list_isempty(&(mq->suspend_sender_thread)))
     {
-        rt_susp_list_dequeue(&(mq->suspend_sender_thread), RT_EOK);
+        if (mq->parent.parent.flag == RT_IPC_FLAG_FIFO)
+        {
+            sender = rt_susp_list_dequeue(&(mq->suspend_sender_thread), RT_EOK);
+            if (sender && _ipc_handoff_put(mq, sender, (rt_ubase_t)msg, _IPC_HANDOFF_MQ_TX))
+            {
+                rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+
+                RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
+
+                rt_schedule();
+
+                return len;
+            }
+        }
+
+        /* put message to free list */
+        msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+        mq->msg_queue_free = msg;
+
+        if (sender == RT_NULL)
+        {
+            sender = rt_susp_list_dequeue(&(mq->suspend_sender_thread), RT_EOK);
+        }
 
         rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
@@ -3988,9 +4653,18 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         return len;
     }
 
+    /* put message to free list */
+    msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+    mq->msg_queue_free = msg;
+
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
+
+    if (sender)
+    {
+        rt_schedule();
+    }
 
     return len;
 }
@@ -4074,6 +4748,7 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
         rt_susp_list_resume_all(&mq->parent.suspend_thread, RT_ERROR);
         /* also resume all message queue private suspended thread */
         rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
+        _mq_handoff_clear(mq);
 
         /* release all message in the queue */
         while (mq->msg_queue_head != RT_NULL)
