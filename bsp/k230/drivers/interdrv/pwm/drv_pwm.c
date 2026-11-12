@@ -92,6 +92,7 @@ static struct k230_pwm_dev pwm_devs[] = {
 #endif
 
 #if !defined(BSP_USING_PWM0) && !defined(BSP_USING_PWM1)
+// cppcheck-suppress preprocessorErrorDirective
 #error "No pwm device defined!"
 #endif
 };
