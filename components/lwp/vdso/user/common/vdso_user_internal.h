@@ -17,6 +17,7 @@
 #include <time.h>
 #include <sys/types.h>
 
+#include <vdso_clockid_compat.h>
 #include <vdso_data_page.h>
 #include <vdso_arch.h>
 
