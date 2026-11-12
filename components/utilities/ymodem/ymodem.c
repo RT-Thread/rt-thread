@@ -540,6 +540,13 @@ static rt_err_t _rym_do_fin(struct rym_ctx *ctx)
         return -RYM_ERR_CODE;
 
     _rym_putchar(ctx, RYM_CODE_ACK);
+    /*
+     * Character sticking / byte fusion: when the receiver sends ACK (0x06) and 'C' (0x43) back-to-back,
+     * if the gap between them is extremely short and the sender's UART driver has an improper timeout
+     * or interrupt handling, one of the two bytes may get swallowed (e.g. only 0x06 is read and 0x43 is missed).
+     * So add 40ms delay here.
+     */
+    rt_thread_mdelay(40);
     _rym_putchar(ctx, RYM_CODE_C);
 
     code = _rym_read_code(ctx, RYM_WAIT_PKG_TICK);
