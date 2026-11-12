@@ -1531,6 +1531,18 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
 
     if (thread_stat == RT_THREAD_READY)
     {
+        /*
+         * Binding to the cpu the thread is already bound to is a no-op. Taking
+         * it through remove + insert would move it to the tail of the ready
+         * queue of that very cpu, dropping the position it earned by becoming
+         * ready earlier than its same-priority peers.
+         */
+        if (RT_SCHED_CTX(thread).bind_cpu == cpu)
+        {
+            rt_sched_unlock(slvl);
+            return RT_EOK;
+        }
+
         /* unbind */
         /* remove from old ready queue */
         rt_sched_remove_thread(thread);

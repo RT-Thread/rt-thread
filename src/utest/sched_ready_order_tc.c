@@ -105,6 +105,8 @@ static rt_size_t _run_count;
  */
 static rt_bool_t _sem_order_ok;
 static rt_bool_t _startup_order_ok;
+static rt_bool_t _same_priority_ok;
+static rt_bool_t _reset_priority_ok;
 
 static void _order_reset(void)
 {
@@ -219,6 +221,77 @@ static void _startup_order(void)
 }
 
 /*
+ * Re-applying the priority a ready thread already has must not move it. Both
+ * workers stay READY (they are below the test thread and nothing yields before
+ * the check), and the update goes through the same remove + insert path that
+ * used to append the thread to the tail of its own ready queue.
+ */
+static void _same_priority_update_keeps_position(void)
+{
+    rt_thread_t worker_a;
+    rt_thread_t worker_b;
+    rt_uint8_t priority = _test_thread_priority();
+
+    _order_reset();
+
+    worker_a = rt_thread_create("owA", _worker_run, (void *)'A',
+                                UTEST_THR_STACK_SIZE, priority, 5);
+    worker_b = rt_thread_create("owB", _worker_run, (void *)'B',
+                                UTEST_THR_STACK_SIZE, priority, 5);
+    uassert_not_null(worker_a);
+    uassert_not_null(worker_b);
+
+    /* queue A then B without yielding, so the ready order is A -> B */
+    _start_worker(worker_a);
+    _start_worker(worker_b);
+
+    /* ask A to take the priority it already has */
+    uassert_int_equal(rt_thread_control(worker_a, RT_THREAD_CTRL_CHANGE_PRIORITY,
+                                        &priority), RT_EOK);
+
+    rt_thread_mdelay(100);
+
+    LOG_I("order after a same-priority update: \"%s\", expect \"AB\"", _run_order);
+    _same_priority_ok = (rt_strcmp(_run_order, "AB") == 0);
+    uassert_true(_same_priority_ok);
+}
+
+/*
+ * A same-value update still has to refresh init_priority when it comes from
+ * RT_THREAD_CTRL_RESET_PRIORITY: that is the only caller that asks for it, and
+ * it is legal to reset a thread to the priority it currently runs at.
+ */
+static void _reset_priority_updates_init(void)
+{
+    rt_thread_t worker;
+    rt_uint8_t base = _test_thread_priority() - 1;
+    rt_uint8_t moved = _test_thread_priority();
+
+    worker = rt_thread_create("owR", _worker_run, (void *)'R',
+                              UTEST_THR_STACK_SIZE, base, 5);
+    uassert_not_null(worker);
+    if (worker == RT_NULL)
+    {
+        return;
+    }
+
+    /* base -> moved: current == moved, init still base */
+    uassert_int_equal(rt_thread_control(worker, RT_THREAD_CTRL_CHANGE_PRIORITY,
+                                        &moved), RT_EOK);
+    uassert_int_equal(RT_SCHED_PRIV(worker).current_priority, moved);
+    uassert_int_equal(RT_SCHED_PRIV(worker).init_priority, base);
+
+    /* reset to the priority it already runs at: init has to follow */
+    uassert_int_equal(rt_thread_control(worker, RT_THREAD_CTRL_RESET_PRIORITY,
+                                        &moved), RT_EOK);
+    uassert_int_equal(RT_SCHED_PRIV(worker).current_priority, moved);
+    uassert_int_equal(RT_SCHED_PRIV(worker).init_priority, moved);
+
+    _reset_priority_ok = (RT_SCHED_PRIV(worker).init_priority == moved) &&
+                         (RT_SCHED_PRIV(worker).current_priority == moved);
+}
+
+/*
  * Final verdict, asserted from the last unit so that the value
  * utest_unit_run() leaves in local_utest.failed_num is the one that reflects the
  * whole testcase. Without this a failing _sem_wakeup_order() followed by a
@@ -232,6 +305,8 @@ static void _order_summary(void)
 
     uassert_true(_sem_order_ok);
     uassert_true(_startup_order_ok);
+    uassert_true(_same_priority_ok);
+    uassert_true(_reset_priority_ok);
 }
 
 static rt_err_t utest_tc_init(void)
@@ -240,6 +315,8 @@ static rt_err_t utest_tc_init(void)
     _order_reset();
     _sem_order_ok = RT_TRUE;
     _startup_order_ok = RT_TRUE;
+    _same_priority_ok = RT_TRUE;
+    _reset_priority_ok = RT_TRUE;
 
 #ifdef RT_USING_SMP
     /*
@@ -264,6 +341,8 @@ static void testcase(void)
 {
     UTEST_UNIT_RUN(_sem_wakeup_order);
     UTEST_UNIT_RUN(_startup_order);
+    UTEST_UNIT_RUN(_same_priority_update_keeps_position);
+    UTEST_UNIT_RUN(_reset_priority_updates_init);
     UTEST_UNIT_RUN(_order_summary);
 }
 UTEST_TC_EXPORT(testcase, "core.scheduler_ready_order", utest_tc_init, utest_tc_cleanup, 10);

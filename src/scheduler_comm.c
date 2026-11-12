@@ -354,6 +354,26 @@ static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t p
     /* for ready thread, change queue; otherwise simply update the priority */
     if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
     {
+        /*
+         * Setting the priority the thread already has must not move it inside
+         * its ready queue. A same-priority ready queue holds the threads in the
+         * order they became ready, so a no-op update has to stay a no-op instead
+         * of removing the thread and appending it to the tail.
+         *
+         * init_priority still has to be refreshed: rt_sched_thread_reset_priority()
+         * is the caller that asks for it, and it may legitimately be called with
+         * the priority the thread already runs at.
+         */
+        if (RT_SCHED_PRIV(thread).current_priority == priority)
+        {
+            if (update_init_prio)
+            {
+                RT_SCHED_PRIV(thread).init_priority = priority;
+            }
+
+            return RT_EOK;
+        }
+
         /* remove thread from schedule queue first */
         rt_sched_remove_thread(thread);
 
