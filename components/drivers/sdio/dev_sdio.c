@@ -23,7 +23,7 @@
 #include <rtdbg.h>
 
 #ifndef RT_SDIO_STACK_SIZE
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 2048
 #endif
 #ifndef RT_SDIO_THREAD_PRIORITY
 #define RT_SDIO_THREAD_PRIORITY  0x40
