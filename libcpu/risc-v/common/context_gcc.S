@@ -48,11 +48,54 @@
     li          s0, (SR_PP)
     or          s1, s1, s0
     SAVE_REG    s1, REG_IDX(XSTATUS)
+
+#ifdef ARCH_RISCV_FPU
+    /* Save the callee-saved FP registers and fcsr. */
+    li          t0, SR_FS
+    csrs        CSR_STATUS, t0
+    addi        t1, sp, RT_HW_SWITCH_CONTEXT_FPU_BASE * SZREG
+    CTX_FREG_S  f8,  FPU_CTX_SW_FS0_OFF(t1)
+    CTX_FREG_S  f9,  FPU_CTX_SW_FS1_OFF(t1)
+    CTX_FREG_S  f18, FPU_CTX_SW_FS2_OFF(t1)
+    CTX_FREG_S  f19, FPU_CTX_SW_FS3_OFF(t1)
+    CTX_FREG_S  f20, FPU_CTX_SW_FS4_OFF(t1)
+    CTX_FREG_S  f21, FPU_CTX_SW_FS5_OFF(t1)
+    CTX_FREG_S  f22, FPU_CTX_SW_FS6_OFF(t1)
+    CTX_FREG_S  f23, FPU_CTX_SW_FS7_OFF(t1)
+    CTX_FREG_S  f24, FPU_CTX_SW_FS8_OFF(t1)
+    CTX_FREG_S  f25, FPU_CTX_SW_FS9_OFF(t1)
+    CTX_FREG_S  f26, FPU_CTX_SW_FS10_OFF(t1)
+    CTX_FREG_S  f27, FPU_CTX_SW_FS11_OFF(t1)
+    csrr        t0, CSR_FCSR
+    REG_S       t0, RT_HW_SWITCH_CONTEXT_FCSR * SZREG(sp)
+#endif /* ARCH_RISCV_FPU */
 .endm
 
 .macro RESTORE_CONTEXT
     LOAD_REG    s1, REG_IDX(XSTATUS)
     csrw        CSR_STATUS, s1
+
+#ifdef ARCH_RISCV_FPU
+    /* Restore the callee-saved FP registers and fcsr. */
+    li          t0, SR_FS
+    csrs        CSR_STATUS, t0
+    addi        t1, sp, RT_HW_SWITCH_CONTEXT_FPU_BASE * SZREG
+    CTX_FREG_L  f8,  FPU_CTX_SW_FS0_OFF(t1)
+    CTX_FREG_L  f9,  FPU_CTX_SW_FS1_OFF(t1)
+    CTX_FREG_L  f18, FPU_CTX_SW_FS2_OFF(t1)
+    CTX_FREG_L  f19, FPU_CTX_SW_FS3_OFF(t1)
+    CTX_FREG_L  f20, FPU_CTX_SW_FS4_OFF(t1)
+    CTX_FREG_L  f21, FPU_CTX_SW_FS5_OFF(t1)
+    CTX_FREG_L  f22, FPU_CTX_SW_FS6_OFF(t1)
+    CTX_FREG_L  f23, FPU_CTX_SW_FS7_OFF(t1)
+    CTX_FREG_L  f24, FPU_CTX_SW_FS8_OFF(t1)
+    CTX_FREG_L  f25, FPU_CTX_SW_FS9_OFF(t1)
+    CTX_FREG_L  f26, FPU_CTX_SW_FS10_OFF(t1)
+    CTX_FREG_L  f27, FPU_CTX_SW_FS11_OFF(t1)
+    REG_L       t0, RT_HW_SWITCH_CONTEXT_FCSR * SZREG(sp)
+    csrw        CSR_FCSR, t0
+#endif /* ARCH_RISCV_FPU */
+
 #ifndef ARCH_RISCV_32E
     LOAD_REG    s11, REG_IDX(S11)
     LOAD_REG    s10, REG_IDX(S10)
@@ -183,6 +226,13 @@ rt_hw_context_switch_interrupt:
     li      TMP, (K_XSTATUS_DEFAULT & ~SR_PIE)
     REG_S   TMP, REG_IDX(XSTATUS) * SZREG(sp)
     REG_S   ra, REG_IDX(RA) * SZREG(sp)
+#ifdef ARCH_RISCV_FPU
+    /*
+     * The interrupted thread's FP state is in its trap frame and is restored
+     * by RESTORE_ALL. Use a sane fcsr until then.
+     */
+    REG_S   zero, RT_HW_SWITCH_CONTEXT_FCSR * SZREG(sp)
+#endif /* ARCH_RISCV_FPU */
 
     /* Save SP of from-thread */
     mv      a0, sp
