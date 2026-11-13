@@ -130,18 +130,38 @@ rt_err_t ivshmem_install_intx_vector(struct ivshmem_device *ivdev, const char *n
 static rt_bool_t ivshmem_shmem_range_valid(rt_uint64_t addr, rt_uint64_t size)
 {
     rt_uint64_t max_addr = (rt_uint64_t)(rt_ubase_t)-1;
+#ifdef RT_PAGE_AFFINITY_BLOCK_SIZE
+    rt_uint64_t lo_off;
+#endif
 
-    /* A zero-sized window and an address out of native range are invalid */
-    if (!size || addr > max_addr)
+    /*
+     * A zero-sized window, a length that cannot be represented by rt_size_t
+     * or an address out of native range is invalid.
+     */
+    if (!size || size > (rt_uint64_t)(rt_size_t)-1 || addr > max_addr)
     {
         return RT_FALSE;
     }
 
-    /* The whole window must be representable with native pointer and size types */
+    /* The whole window must be representable with native pointer types */
     if (size - 1 > max_addr - addr)
     {
         return RT_FALSE;
     }
+
+#ifdef RT_PAGE_AFFINITY_BLOCK_SIZE
+    /*
+     * rt_ioremap() aligns the mapping on a page block. Make sure that both the
+     * offset inside the first block and the aligned length fit in rt_size_t.
+     */
+    lo_off = addr & (RT_PAGE_AFFINITY_BLOCK_SIZE - 1);
+
+    if ((size > (rt_uint64_t)(rt_size_t)-1 - lo_off) ||
+        (size + lo_off > (rt_uint64_t)(rt_size_t)-1 - (RT_PAGE_AFFINITY_BLOCK_SIZE - 1)))
+    {
+        return RT_FALSE;
+    }
+#endif
 
     return RT_TRUE;
 }
@@ -234,10 +254,13 @@ rt_err_t ivshmem_pci_probe(struct rt_pci_device *pdev, struct ivshmem_device *iv
 
     /*
      * The BAR is allocated by the PCI host bridge, so its address is trusted.
+     * Only memory BARs describe the shared memory; an I/O BAR must never be
+     * passed to rt_ioremap() or exposed as a shared memory window.
      * The JailHouse config words are controlled by the device and are only
      * used when the platform explicitly opts in.
      */
-    if (shmem_res->flags != PCI_BUS_REGION_F_NONE &&
+    if ((shmem_res->flags == PCI_BUS_REGION_F_MEM ||
+         shmem_res->flags == PCI_BUS_REGION_F_PREFETCH) &&
         ivshmem_shmem_range_valid(shmem_res->base, shmem_res->size))
     {
         ivdev->shmem = (void *)shmem_res->base;
