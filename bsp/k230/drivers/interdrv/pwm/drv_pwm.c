@@ -92,6 +92,7 @@ static struct k230_pwm_dev pwm_devs[] = {
 #endif
 
 #if !defined(BSP_USING_PWM0) && !defined(BSP_USING_PWM1)
+// cppcheck-suppress preprocessorErrorDirective
 #error "No pwm device defined!"
 #endif
 };
@@ -131,7 +132,7 @@ static rt_err_t kd_pwm_get(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 {
     int ret;
     uint64_t pulse, period;
-    uint32_t pwm_pclock, pwmscale;
+    uint32_t pwm_pclock, pwmscale, period_count, compare;
 
     ret = check_channel(channel);
     if (ret < 0)
@@ -141,9 +142,11 @@ static rt_err_t kd_pwm_get(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 
     pwmscale = reg->pwmcfg & 0xf;
     pwm_pclock >>= pwmscale;
-    period = reg->pwmcmp0;
-    period = period * NSEC_PER_SEC / pwm_pclock;
-    pulse = *((&reg->pwmcmp1) + channel);
+    period_count = reg->pwmcmp0;
+    compare = *((&reg->pwmcmp1) + channel);
+    period = period_count * NSEC_PER_SEC / pwm_pclock;
+    /* A compare value at or beyond the period produces no high pulse. */
+    pulse = compare < period_count ? period_count - compare : 0;
     pulse = pulse * NSEC_PER_SEC / pwm_pclock;
 
     configuration->period = period;
@@ -171,8 +174,10 @@ static rt_err_t kd_pwm_set(kd_pwm_t *reg, int channel, struct rt_pwm_configurati
 
     /* Calculate duty cycle */
     pwmcmpx_max = (1 << PWM_CMP_WIDTH) - 1;
-    if (period > ((1 << (PWM_SCALE_MAX_BITS + PWM_PERIOD_BITS)) - 1LL))
+    if (period > ((1ULL << (PWM_SCALE_MAX_BITS + PWM_PERIOD_BITS)) - 1ULL))
+    {
         return -RT_EINVAL;
+    }
 
     while ((period >> pwmscale) > pwmcmpx_max)
         pwmscale++;
