@@ -82,18 +82,18 @@
         .pwm_input = BSP_INPUT_CAPTURE_TIM1_PWM_INPUT, \
     }
 /** @brief TIM1 exclusive dual-edge capture (CH1/CH2 on one TI input). */
-#define INPUTCAPTURE_TIM1_DUAL_CONFIG               \
-    {                                               \
-        .name = "ic1",                              \
-        .instance = TIM1,                           \
-        .channel = TIM_CHANNEL_1,                   \
-        .input_filter = 0U,                         \
-        .counter_period = 0xFFFFU,                  \
-        .initial_edge_rising = RT_TRUE,             \
-        .hardware_both_edges = RT_FALSE,            \
-        .pwm_input = RT_FALSE,                      \
-        .dual_edge = RT_TRUE,                       \
-        .dual_partner_filter = 0U,                  \
+#define INPUTCAPTURE_TIM1_DUAL_CONFIG    \
+    {                                    \
+        .name = "ic1",                   \
+        .instance = TIM1,                \
+        .channel = TIM_CHANNEL_1,        \
+        .input_filter = 0U,              \
+        .counter_period = 0xFFFFU,       \
+        .initial_edge_rising = RT_TRUE,  \
+        .hardware_both_edges = RT_FALSE, \
+        .pwm_input = RT_FALSE,           \
+        .dual_edge = RT_TRUE,            \
+        .dual_partner_filter = 0U,       \
     }
 
 #endif /* BSP_USING_INPUT_CAPTURE_TIM1 */
@@ -164,18 +164,18 @@
         .pwm_input = BSP_INPUT_CAPTURE_TIM2_PWM_INPUT, \
     }
 /** @brief TIM2 exclusive dual-edge capture (CH1/CH2 on one TI input). */
-#define INPUTCAPTURE_TIM2_DUAL_CONFIG               \
-    {                                               \
-        .name = "ic2",                              \
-        .instance = TIM2,                           \
-        .channel = TIM_CHANNEL_1,                   \
-        .input_filter = 0U,                         \
-        .counter_period = 0xFFFFU,                  \
-        .initial_edge_rising = RT_TRUE,             \
-        .hardware_both_edges = RT_FALSE,            \
-        .pwm_input = RT_FALSE,                      \
-        .dual_edge = RT_TRUE,                       \
-        .dual_partner_filter = 0U,                  \
+#define INPUTCAPTURE_TIM2_DUAL_CONFIG    \
+    {                                    \
+        .name = "ic2",                   \
+        .instance = TIM2,                \
+        .channel = TIM_CHANNEL_1,        \
+        .input_filter = 0U,              \
+        .counter_period = 0xFFFFU,       \
+        .initial_edge_rising = RT_TRUE,  \
+        .hardware_both_edges = RT_FALSE, \
+        .pwm_input = RT_FALSE,           \
+        .dual_edge = RT_TRUE,            \
+        .dual_partner_filter = 0U,       \
     }
 
 #endif /* BSP_USING_INPUT_CAPTURE_TIM2 */
@@ -246,18 +246,18 @@
         .pwm_input = BSP_INPUT_CAPTURE_TIM3_PWM_INPUT, \
     }
 /** @brief TIM3 exclusive dual-edge capture (CH1/CH2 on one TI input). */
-#define INPUTCAPTURE_TIM3_DUAL_CONFIG               \
-    {                                               \
-        .name = "ic0",                              \
-        .instance = TIM3,                           \
-        .channel = TIM_CHANNEL_2,                   \
-        .input_filter = 9U,                         \
-        .counter_period = 0xFFFFU,                  \
-        .initial_edge_rising = RT_TRUE,             \
-        .hardware_both_edges = RT_FALSE,            \
-        .pwm_input = RT_FALSE,                      \
-        .dual_edge = RT_TRUE,                       \
-        .dual_partner_filter = 0U,                  \
+#define INPUTCAPTURE_TIM3_DUAL_CONFIG    \
+    {                                    \
+        .name = "ic0",                   \
+        .instance = TIM3,                \
+        .channel = TIM_CHANNEL_2,        \
+        .input_filter = 9U,              \
+        .counter_period = 0xFFFFU,       \
+        .initial_edge_rising = RT_TRUE,  \
+        .hardware_both_edges = RT_FALSE, \
+        .pwm_input = RT_FALSE,           \
+        .dual_edge = RT_TRUE,            \
+        .dual_partner_filter = 0U,       \
     }
 
 #endif /* BSP_USING_INPUT_CAPTURE_TIM3 */
@@ -328,18 +328,18 @@
         .pwm_input = BSP_INPUT_CAPTURE_TIM4_PWM_INPUT, \
     }
 /** @brief TIM4 exclusive dual-edge capture (CH1/CH2 on one TI input). */
-#define INPUTCAPTURE_TIM4_DUAL_CONFIG               \
-    {                                               \
-        .name = "ic4",                              \
-        .instance = TIM4,                           \
-        .channel = TIM_CHANNEL_1,                   \
-        .input_filter = 0U,                         \
-        .counter_period = 0xFFFFU,                  \
-        .initial_edge_rising = RT_TRUE,             \
-        .hardware_both_edges = RT_FALSE,            \
-        .pwm_input = RT_FALSE,                      \
-        .dual_edge = RT_TRUE,                       \
-        .dual_partner_filter = 0U,                  \
+#define INPUTCAPTURE_TIM4_DUAL_CONFIG    \
+    {                                    \
+        .name = "ic4",                   \
+        .instance = TIM4,                \
+        .channel = TIM_CHANNEL_1,        \
+        .input_filter = 0U,              \
+        .counter_period = 0xFFFFU,       \
+        .initial_edge_rising = RT_TRUE,  \
+        .hardware_both_edges = RT_FALSE, \
+        .pwm_input = RT_FALSE,           \
+        .dual_edge = RT_TRUE,            \
+        .dual_partner_filter = 0U,       \
     }
 
 #endif /* BSP_USING_INPUT_CAPTURE_TIM4 */

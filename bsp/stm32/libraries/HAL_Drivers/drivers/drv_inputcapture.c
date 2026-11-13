@@ -74,7 +74,7 @@ enum stm32_capture_index
 #endif /* BSP_USING_INPUT_CAPTURE_TIM3 */
 #ifdef BSP_USING_INPUT_CAPTURE_TIM4
     STM32_CAPTURE_TIM4_INDEX,
-#endif /* BSP_USING_INPUT_CAPTURE_TIM4 */
+#endif                        /* BSP_USING_INPUT_CAPTURE_TIM4 */
     STM32_CAPTURE_TIMER_COUNT /**< Number of enabled physical timers. */
 };
 
@@ -336,8 +336,8 @@ static rt_err_t stm32_capture_pwm_input_init(struct stm32_capture_device *device
 {
     const struct stm32_inputcapture_config *config = device->config; /* Physical TI configuration. */
     TIM_HandleTypeDef *timer = device->timer;                        /* Physical TIM handle. */
-    TIM_IC_InitTypeDef ic = {0};                                     /* Both capture channels. */
-    TIM_SlaveConfigTypeDef slave = {0};                              /* Reset trigger configuration. */
+    TIM_IC_InitTypeDef ic = { 0 };                                   /* Both capture channels. */
+    TIM_SlaveConfigTypeDef slave = { 0 };                            /* Reset trigger configuration. */
 
     ic.ICPolarity = config->initial_edge_rising ? TIM_INPUTCHANNELPOLARITY_RISING : TIM_INPUTCHANNELPOLARITY_FALLING;
     ic.ICSelection = TIM_ICSELECTION_DIRECTTI;
@@ -472,7 +472,7 @@ static rt_err_t stm32_capture_dual_edge_init(struct stm32_capture_device *device
 {
     const struct stm32_inputcapture_config *config = device->config; /* Direct channel and polarity. */
     TIM_HandleTypeDef *timer = device->timer;                        /* Shared physical TIM. */
-    TIM_IC_InitTypeDef ic = {0};                                     /* Direct/indirect capture setup. */
+    TIM_IC_InitTypeDef ic = { 0 };                                   /* Direct/indirect capture setup. */
 
     ic.ICPolarity = config->initial_edge_rising ? TIM_INPUTCHANNELPOLARITY_RISING : TIM_INPUTCHANNELPOLARITY_FALLING;
     ic.ICSelection = TIM_ICSELECTION_DIRECTTI;
@@ -711,7 +711,7 @@ static rt_err_t stm32_capture_init(struct rt_inputcapture_device *inputcapture)
         rt_container_of(inputcapture, struct stm32_capture_device, parent); /* Logical capture state. */
     const struct stm32_inputcapture_config *config = device->config;        /* Board mapping. */
     TIM_HandleTypeDef *timer = device->timer;                               /* Shared HAL timer handle. */
-    TIM_IC_InitTypeDef ic = {0};                                            /* EDGE channel settings. */
+    TIM_IC_InitTypeDef ic = { 0 };                                          /* EDGE channel settings. */
     rt_uint32_t clock = stm32_inputcapture_timer_clock(config->instance);   /* Physical TIM clock. */
 
     if (clock < BSP_INPUT_CAPTURE_COUNTER_HZ || clock % BSP_INPUT_CAPTURE_COUNTER_HZ != 0U)
