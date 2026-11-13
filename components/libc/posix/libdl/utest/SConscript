@@ -1,0 +1,23 @@
+import os
+import subprocess
+import sys
+from building import *
+
+Import('env')
+
+cwd = GetCurrentDir()
+variant = Dir('.').abspath
+fixture_sources = Glob('fixtures/*.c') + Glob('fixtures/*.ld')
+builder = os.path.join(cwd, 'build_fixtures.py')
+
+def build_fixtures(target, source, env):
+    subprocess.check_call([sys.executable, builder, '--cc', env.subst('$CC'),
+                           '--output', str(target[0])], env=env['ENV'])
+
+header = env.Command('dlmodule_fixtures.h', [builder] + fixture_sources,
+                     Action(build_fixtures, 'Building dlmodule ELF fixtures'))
+group = DefineGroup('dlmodule-utest', ['dlmodule_tc.c'],
+                    depend=['RT_UTEST_DLMODULE'], CPPPATH=[cwd, variant])
+env.Depends(group, header)
+
+Return('group')
