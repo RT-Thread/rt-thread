@@ -5,8 +5,11 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd, cwd + '/../../include']
 
-if GetDepend(['RT_UTEST_CAN']):
-    src += Glob('*.c')
+if GetDepend('RT_UTEST_CAN'):
+    src += Glob('can_send_recv_tc.c')
+
+if GetDepend('RT_UTEST_CAN_FRAMEWORK'):
+    src += Glob('can_framework_tc.c')
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_CAN'], CPPPATH = CPPPATH)
 
