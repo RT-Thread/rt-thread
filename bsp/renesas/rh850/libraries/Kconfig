@@ -1,0 +1,6 @@
+config SOC_FAMILY_RENESAS_RH850
+    bool
+
+config SOC_SERIES_RH850_U2C
+    bool
+    select SOC_FAMILY_RENESAS_RH850
