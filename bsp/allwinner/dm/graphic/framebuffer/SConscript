@@ -1,0 +1,14 @@
+from building import *
+
+src = []
+
+if GetDepend(['RT_GRAPHIC_FB_SUNXI_DE']):
+    src += ['fb-sunxi-de.c', 'sunxi-display-output.c']
+
+if GetDepend(['RT_GRAPHIC_FB_SUN50I_H616_DE33']):
+    src += ['fb-sun50i-h616-de33.c']
+
+
+group = DefineGroup('DeviceDrivers', src, depend=[''])
+
+Return('group')

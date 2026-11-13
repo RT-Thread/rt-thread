@@ -1,0 +1,13 @@
+from building import *
+Import('RTT_ROOT')
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend('RT_I2C_SUNXI'):
+    src += ['i2c-sunxi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''],
+        CPPPATH = [RTT_ROOT + '/components/drivers/i2c'])
+
+Return('group')

@@ -56,6 +56,7 @@ struct dw8250
     struct rt_spinlock spinlock;
 
     struct rt_clk *pclk;
+    struct rt_reset_control *rstc;
 
     rt_bool_t uart_16550_compatible;
     struct dw8250_platform_data *platform_data;
@@ -173,6 +174,11 @@ static void dw8250_free_resource(struct dw8250 *dw8250)
         rt_clk_put(dw8250->pclk);
     }
 
+    if (!rt_is_err_or_null(dw8250->rstc))
+    {
+        rt_reset_control_put(dw8250->rstc);
+    }
+
     rt_free(dw8250);
 }
 
@@ -216,8 +222,15 @@ static rt_err_t dw8250_probe(struct rt_platform_device *pdev)
         goto _free_res;
     }
 
-    serial->clk = rt_clk_get_by_name(dev, "baudclk");
-    dw8250->pclk = rt_clk_get_by_name(dev, "apb_pclk");
+    if (rt_dm_dev_prop_read_bool(dev, "clock-names"))
+    {
+        serial->clk = rt_clk_get_by_name(dev, "baudclk");
+        dw8250->pclk = rt_clk_get_by_name(dev, "apb_pclk");
+    }
+    else
+    {
+        serial->clk = rt_clk_get_by_index(dev, 0);
+    }
 
     if (rt_is_err_or_null(serial->clk))
     {
@@ -244,6 +257,19 @@ static rt_err_t dw8250_probe(struct rt_platform_device *pdev)
     }
 
     if ((err = rt_clk_prepare_enable(dw8250->pclk)))
+    {
+        goto _free_res;
+    }
+
+    dw8250->rstc = rt_reset_control_get_by_index(dev, 0);
+
+    if (rt_is_err(dw8250->rstc))
+    {
+        err = rt_ptr_err(dw8250->rstc);
+        goto _free_res;
+    }
+
+    if (dw8250->rstc && (err = rt_reset_control_deassert(dw8250->rstc)))
     {
         goto _free_res;
     }

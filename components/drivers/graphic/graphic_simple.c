@@ -283,7 +283,11 @@ rt_err_t rt_graphic_device_simple_register(struct rt_graphic_device *gdev,
 _free_plane:
     if (err)
     {
-        rt_free(plane);
+        if (gdev->primary_plane == plane)
+        {
+            rt_graphic_device_del_plane(gdev, plane);
+        }
+        rt_graphic_device_free_plane(plane);
     }
 
     return err;
