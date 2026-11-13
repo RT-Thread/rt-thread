@@ -95,6 +95,30 @@ menuconfig RT_USING_ULOG
             bool "Enable assert check."
             default y
 
+        config ULOG_USING_OUTPUT_FILE
+            bool "Output the calling file name."
+            default n
+            depends on !ULOG_USING_SYSLOG
+            help
+                The calling file name will be prepended to the log message when using LOG_X API.
+                Not available in syslog mode, where the format of every record is owned by syslog_formater().
+
+        config ULOG_USING_OUTPUT_FUNC
+            bool "Output the calling function name."
+            default n
+            depends on !ULOG_USING_SYSLOG
+            help
+                The calling function name will be prepended to the log message when using LOG_X API.
+                Not available in syslog mode, where the format of every record is owned by syslog_formater().
+
+        config ULOG_USING_OUTPUT_LINE
+            bool "Output the calling line number."
+            default n
+            depends on !ULOG_USING_SYSLOG
+            help
+                The calling line number will be prepended to the log message when using LOG_X API.
+                Not available in syslog mode, where the format of every record is owned by syslog_formater().
+
         config ULOG_LINE_BUF_SIZE
             int "The log's max width."
             default 128
