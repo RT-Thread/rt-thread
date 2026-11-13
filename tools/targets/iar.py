@@ -23,6 +23,7 @@
 #
 
 import os
+import re
 import sys
 import string
 import utils
@@ -75,32 +76,54 @@ def _update_iar_wsdt(wsdt_path, project_name, active_config):
     config_str = '%s/%s' % (project_name, active_config)
 
     if not os.path.exists(wsdt_path):
-        # create a minimal wsdt if it does not exist yet
         os.makedirs(os.path.dirname(wsdt_path), exist_ok=True)
-        content = '<?xml version="1.0"?>\n<Workspace>\n    <ConfigDictionary>\n        <CurrentConfigs>\n            <Project>%s</Project>\n        </CurrentConfigs>\n    </ConfigDictionary>\n</Workspace>\n' % config_str
-        with open(wsdt_path, 'w') as f:
-            f.write(content)
-        return
-
-    try:
+        tree = etree.ElementTree(etree.Element('Workspace'))
+    else:
         tree = etree.parse(wsdt_path)
-        root = tree.getroot()
-        proj_elem = root.find('ConfigDictionary/CurrentConfigs/Project')
-        if proj_elem is not None:
-            proj_elem.text = config_str
+
+    root = tree.getroot()
+    cfg_dict = root.find('ConfigDictionary')
+    if cfg_dict is None:
+        cfg_dict = SubElement(root, 'ConfigDictionary')
+    cur_cfgs = cfg_dict.find('CurrentConfigs')
+    if cur_cfgs is None:
+        cur_cfgs = SubElement(cfg_dict, 'CurrentConfigs')
+    proj_elem = cur_cfgs.find('Project')
+    if proj_elem is None:
+        proj_elem = SubElement(cur_cfgs, 'Project')
+    proj_elem.text = config_str
+    tree.write(wsdt_path, encoding='utf-8', xml_declaration=True)
+
+def _split_iar_linkflags(linkflags):
+    tokens = re.findall(r'(?:[^\s"]+|"[^"]*")+', linkflags)
+    if re.sub(r'\s+', '', ''.join(tokens)) != re.sub(r'\s+', '', linkflags):
+        raise ValueError('Invalid quoting in IAR linker flags: %s' % linkflags)
+
+    defines = []
+    extra = []
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token == '--config_def':
+            index += 1
+            if index == len(tokens):
+                raise ValueError('Missing value for --config_def')
+            define = tokens[index]
+        elif token.startswith('--config_def='):
+            define = token[len('--config_def='):]
         else:
-            # create the elements if missing
-            cfg_dict = root.find('ConfigDictionary')
-            if cfg_dict is None:
-                cfg_dict = SubElement(root, 'ConfigDictionary')
-            cur_cfgs = cfg_dict.find('CurrentConfigs')
-            if cur_cfgs is None:
-                cur_cfgs = SubElement(cfg_dict, 'CurrentConfigs')
-            proj_elem = SubElement(cur_cfgs, 'Project')
-            proj_elem.text = config_str
-        tree.write(wsdt_path, encoding='unicode', xml_declaration=True)
-    except Exception as e:
-        print('Warning: could not update %s: %s' % (wsdt_path, e))
+            extra.append(token)
+            index += 1
+            continue
+
+        if define.startswith('"') and define.endswith('"'):
+            define = define[1:-1]
+        if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*=.+', define):
+            raise ValueError('Invalid IAR configuration definition: %s' % define)
+        defines.append(define)
+        index += 1
+
+    return defines, ' '.join(extra)
 
 def IARWorkspace(target, active_config=None):
     # make an workspace, optionally setting the active configuration
@@ -119,8 +142,6 @@ def IARProject(env, target, script):
 
     tree = etree.parse('template.ewp')
     root = tree.getroot()
-
-    out = open(target, 'w')
 
     CPPPATH = []
     CPPDEFINES = env.get('CPPDEFINES', [])
@@ -156,7 +177,7 @@ def IARProject(env, target, script):
 
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:
-            LINKFLAGS += group['LINKFLAGS']
+            LINKFLAGS += ' ' + group['LINKFLAGS']
 
         if 'LIBS' in group and group['LIBS']:
             for item in group['LIBS']:
@@ -174,6 +195,16 @@ def IARProject(env, target, script):
         inc = _make_path_relative(project_path, os.path.normpath(path))
         paths[inc] = None  # 使用 dict 去重并保持插入顺序
     paths = list(paths.keys())
+
+    config_defines, extra_linkflags = _split_iar_linkflags(LINKFLAGS)
+
+    if config_defines or extra_linkflags:
+        for config in tree.findall('configuration'):
+            names = [option.findtext('name') for option in config.findall('settings/data/option')]
+            if config_defines and 'IlinkConfigDefines' not in names:
+                raise ValueError('IAR configuration has no IlinkConfigDefines option')
+            if extra_linkflags and ('IlinkUseExtraOptions' not in names or 'IlinkExtraOptions' not in names):
+                raise ValueError('IAR configuration has no linker extra options')
 
     # setting options
     options = tree.findall('configuration/settings/data/option')
@@ -199,11 +230,21 @@ def IARProject(env, target, script):
                 state.text = define
 
         if name.text == 'IlinkConfigDefines':
-            # write bare symbol=value tokens from LINKFLAGS as IAR linker defines
-            import re
-            for token in re.findall(r'\S+', LINKFLAGS):
+            for define in config_defines:
                 state = SubElement(option, 'state')
-                state.text = token
+                state.text = define
+
+        if name.text == 'IlinkUseExtraOptions' and extra_linkflags:
+            state = option.find('state')
+            if state is None:
+                state = SubElement(option, 'state')
+            state.text = '1'
+
+        if name.text == 'IlinkExtraOptions' and extra_linkflags:
+            state = option.find('state')
+            if state is None:
+                state = SubElement(option, 'state')
+            state.text = ' '.join(filter(None, [state.text, extra_linkflags]))
 
         if name.text == 'IlinkAdditionalLibs':
             for path in Libs:
@@ -215,8 +256,8 @@ def IARProject(env, target, script):
                 state.text = path
 
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8').decode())
-    out.close()
+    with open(target, 'w') as out:
+        out.write(etree.tostring(root, encoding='utf-8').decode())
 
     # Determine the active configuration from the BSP via an optional board-specific hook.
     active_config = None

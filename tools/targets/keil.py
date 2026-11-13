@@ -288,11 +288,21 @@ def MDK45Project(env, tree, target, script):
                     else:
                         group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
-    # write include path, definitions and link flags
-    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
     # Keep the same include path precedence as the SCons build environment.
     paths = [_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH]
-    IncludePath.text = ';'.join(dict.fromkeys(paths))
+    include_path_text = ';'.join(dict.fromkeys(paths))
+    define_text = ', '.join(set(CPPDEFINES))
+
+    for target_node in tree.findall('Targets/Target'):
+        if target_node is not first_target:
+            existing_groups = target_node.find('Groups')
+            if existing_groups is not None:
+                target_node.remove(existing_groups)
+            target_node.append(copy.deepcopy(groups))
+
+        inc = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+        if inc is not None:
+            inc.text = include_path_text
 
         dfn = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/Define')
         if dfn is not None:
