@@ -1875,7 +1875,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\0.RanChen\2.Projects\RT-Thread\rt-thread_pr\rt-thread\bsp\nxp\imx\imxrt\imxrt1180-nxp-evk\cm7\board\linker_scripts\MIMXRT1189xxxxx_cm7_hyperram.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\MIMXRT1189xxxxx_cm7_hyperram.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -2974,7 +2974,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\0.RanChen\2.Projects\RT-Thread\rt-thread_pr\rt-thread\bsp\nxp\imx\imxrt\imxrt1180-nxp-evk\cm7\board\linker_scripts\MIMXRT1189xxxxx_cm7_flexspi_nor.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\MIMXRT1189xxxxx_cm7_flexspi_nor.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -4073,7 +4073,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\0.RanChen\2.Projects\RT-Thread\rt-thread_pr\rt-thread\bsp\nxp\imx\imxrt\imxrt1180-nxp-evk\cm7\board\linker_scripts\MIMXRT1189xxxxx_cm7_flexspi_nor_hyperram.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\MIMXRT1189xxxxx_cm7_flexspi_nor_hyperram.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

@@ -43,12 +43,12 @@ static void test_align(int align, size_t len)
     uassert_false(len + 64 > (size_t)(buf + TEST_BUF_SIZE - s));
     uassert_false(len + 64 > (size_t)(buf2 + TEST_BUF_SIZE - want));
 
-    for(i = 0; i < TEST_BUF_SIZE; i++)
+    for (i = 0; i < TEST_BUF_SIZE; i++)
     {
         buf[i] = buf2[i] = ' ';
     }
 
-    for(i = 0; i < (int)len; i++)
+    for (i = 0; i < (int)len; i++)
     {
         want[i] = '#';
     }
@@ -57,7 +57,7 @@ static void test_align(int align, size_t len)
 
     uassert_ptr_equal(p, s);
 
-    for(i = -64; i < (int)len + 64; i++)
+    for (i = -64; i < (int)len + 64; i++)
     {
         uassert_int_equal(s[i], want[i]);
     }
@@ -65,9 +65,9 @@ static void test_align(int align, size_t len)
 
 static void TC_rt_memcpy_align(void)
 {
-    for(int i = 0; i < 16; i++)
+    for (int i = 0; i < 16; i++)
     {
-        for(size_t j = 0; j < 200; j++)
+        for (size_t j = 0; j < 200; j++)
         {
             test_align(i, j);
         }
@@ -77,7 +77,7 @@ static void TC_rt_memcpy_align(void)
 static void test_input(char c)
 {
     rt_memset(buf, c, 10);
-    for(int i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
         uassert_int_equal(buf[i], c);
     }

@@ -78,7 +78,7 @@ int main(void) {
 
 ```sh
 wcx@tim  ~/rt-thread/bsp/ESP32_C3   esp32 ±  sudo riscv32-esp-elf-gdb # 进入gdb调试
-GNU gdb (crosstool-NG esp-2022r1-RC1) 9.2.90.20200913-git
+GNU gdb (esp-gdb) 17.1_20260402
 Copyright (C) 2020 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
@@ -147,8 +147,8 @@ Type "apropos word" to search for commands related to "word".
 1. 下载 RISC-V 工具链：
 
  ```sh
- wget https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
- tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+ wget https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz
+ tar xf riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz
  ```
 
   2. 配置工具链的路径：

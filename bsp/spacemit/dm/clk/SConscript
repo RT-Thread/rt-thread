@@ -1,0 +1,15 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_CLK_SPACEMIT']):
+    src += ['ccu_ddn.c', 'ccu_ddr.c', 'ccu_dpll.c', 'ccu_mix.c', 'ccu_pll.c']
+
+    if GetDepend(['RT_CLK_SPACEMIT_K1X']):
+        src += ['ccu-spacemit-k1x.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -15,7 +15,7 @@ def GenAttachConfigProject(program = None):
     if GetOption('attach') == '?':
         attachconfig=[]
         GetAttachConfig("get",attachconfig,0)
-        print("\033[32m✅ AttachConfig has: \033[0m")
+        print("\033[32m[OK] AttachConfig has: \033[0m")
         prefix=attachconfig[0]
         for line in attachconfig:
             temp_prefix=line.split(".", 1)
@@ -32,13 +32,13 @@ def GenAttachConfigProject(program = None):
         if os.path.exists(rtconfig__bacakup):
             shutil.copyfile(rtconfig__bacakup, rtconfig_file)
             os.remove(rtconfig__bacakup)
-        print("\033[32m✅ Default .config and rtconfig.h recovery success!\033[0m")
+        print("\033[32m[OK] Default .config and rtconfig.h recovery success!\033[0m")
     else:
         attachconfig=GetOption('attach')
         attachconfig_result=[]
         GetAttachConfig("search",attachconfig,attachconfig_result)
         if attachconfig_result==[]:
-            print("❌\033[31m Without this AttachConfig:"+attachconfig+"\033[0m")
+            print("[ERR]\033[31m Without this AttachConfig:"+attachconfig+"\033[0m")
             return
         if os.path.exists(config_bacakup)==False:
             shutil.copyfile(config_file, config_bacakup)
@@ -49,7 +49,7 @@ def GenAttachConfigProject(program = None):
                 destination.write(line + '\n')
         from env_utility import defconfig
         defconfig(Rtt_Root)
-        print("\033[32m✅ AttachConfig add success!\033[0m")
+        print("\033[32m[OK] AttachConfig add success!\033[0m")
 
 def GetAttachConfig(action,attachconfig,attachconfig_result):
     rtt_root = os.getcwd()

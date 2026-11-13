@@ -39,13 +39,19 @@ void rtt_board_init(void)
 {
     rtt_os_tick_clock();
     board_init_clock();
+
+    /* initialize memory system
+     * NOTE: this must happen before board_init_console(), because the SDK console_init()
+     * calls setvbuf(), which allocates through the C library malloc() -> rt_malloc() and
+     * therefore requires the RT-Thread heap to be ready. Otherwise RT_ASSERT() fires in
+     * rt_smem_alloc() whenever RT_USING_DEBUG is enabled.
+     */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+
     board_init_console();
     board_init_pmp();
 
     dma_mgr_init();
-
-    /* initialize memory system */
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 
     /* Configure the OS Tick */
     os_tick_config();
@@ -128,64 +134,12 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
 
 uint32_t rtt_board_init_adc12_clock(ADC12_Type *ptr, bool clk_src_ahb)
 {
-    uint32_t freq = 0;
-
-    if (ptr == HPM_ADC0) {
-        if (clk_src_ahb) {
-            /* Configure the ADC clock from AHB (@200MHz by default)*/
-            clock_set_adc_source(clock_adc0, clk_adc_src_ahb0);
-        } else {
-            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
-            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
-            clock_set_source_divider(clock_ana0, clk_src_pll1_clk1, 2U);
-        }
-        clock_add_to_group(clock_adc0, 0);
-        freq = clock_get_frequency(clock_adc0);
-    } else if (ptr == HPM_ADC1) {
-        if (clk_src_ahb) {
-            /* Configure the ADC clock from AHB (@200MHz by default)*/
-            clock_set_adc_source(clock_adc1, clk_adc_src_ahb0);
-        } else {
-            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
-            clock_set_adc_source(clock_adc1, clk_adc_src_ana1);
-            clock_set_source_divider(clock_ana1, clk_src_pll1_clk1, 2U);
-        }
-        clock_add_to_group(clock_adc1, 0);
-        freq = clock_get_frequency(clock_adc1);
-    } else if (ptr == HPM_ADC2) {
-        if (clk_src_ahb) {
-            /* Configure the ADC clock from AHB (@200MHz by default)*/
-            clock_set_adc_source(clock_adc2, clk_adc_src_ahb0);
-        } else {
-            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
-            clock_set_adc_source(clock_adc2, clk_adc_src_ana2);
-            clock_set_source_divider(clock_ana2, clk_src_pll1_clk1, 2U);
-        }
-        clock_add_to_group(clock_adc2, 0);
-        freq = clock_get_frequency(clock_adc2);
-    }
-
-    return freq;
+    return board_init_adc12_clock(ptr, clk_src_ahb);
 }
 
 uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)
 {
-    uint32_t freq = 0;
-
-    if (ptr == HPM_ADC3) {
-        if (clk_src_ahb) {
-            /* Configure the ADC clock from AHB (@200MHz by default)*/
-            clock_set_adc_source(clock_adc3, clk_adc_src_ahb0);
-        } else {
-            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
-            clock_set_adc_source(clock_adc3, clk_adc_src_ana2);
-            clock_set_source_divider(clock_ana2, clk_src_pll1_clk1, 2U);
-        }
-        clock_add_to_group(clock_adc3, 0);
-        freq = clock_get_frequency(clock_adc3);
-    }
-
-    return freq;
+    return board_init_adc16_clock(ptr, clk_src_ahb);
 }
 
 uint32_t rtt_board_init_i2s_clock(I2S_Type *ptr)

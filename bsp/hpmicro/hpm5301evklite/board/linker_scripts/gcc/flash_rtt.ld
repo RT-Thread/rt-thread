@@ -14,7 +14,7 @@ MEMORY
 {
     XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = FLASH_SIZE
     ILM (wx) : ORIGIN = 0x00000000, LENGTH = 128K
-    DLM (w) : ORIGIN = 0x00080300, LENGTH = 128K - 768
+    DLM (w) : ORIGIN = 0x00080000, LENGTH = 128K
     AHB_SRAM (w) : ORIGIN = 0xf0400000, LENGTH = 32K
 }
 
@@ -26,6 +26,15 @@ __app_offset__ = __app_load_addr__ - __boot_header_load_addr__;
 
 SECTIONS
 {
+    /* Anchor the lowest LMA at the flash base address (0x80000000): objcopy takes the
+     * lowest LMA as the start address of the generated .bin, so without this marker the
+     * .bin starts at .nor_cfg_option (0x80000400). The value is all ones (erased flash),
+     * so programming it does not change the flash state.
+     */
+    .flash_base ORIGIN(XPI0) : {
+        LONG(0xFFFFFFFF)
+    } > XPI0
+
     .nor_cfg_option __nor_cfg_option_load_addr__ : {
         KEEP(*(.nor_cfg_option))
     } > XPI0
@@ -165,17 +174,34 @@ SECTIONS
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
 
+    /* The first 0x300 bytes of DLM are reserved; keep them as an explicit NOLOAD
+     * placeholder. This also keeps the DLM region 4KB aligned so that the linker does
+     * not emit an extra file-backed PT_LOAD (which made "program rtthread.elf" fail).
+     */
+    .dlm_reserved (NOLOAD) : {
+        . = . + 0x300;
+    } > DLM
+
     .fast_ram (NOLOAD) : {
         KEEP(*(.fast_ram))
     } > DLM
 
-    __fast_ram_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init);
+    __fast_ram_init_load_addr__ = __noncacheable_init_load_addr__ + SIZEOF(.noncacheable.init);
         .fast_ram.init : AT(__fast_ram_init_load_addr__) {
         . = ALIGN(8);
         __fast_ram_init_start__ = .;
         KEEP(*(.fast_ram.init))
         KEEP(*(.fast_ram.init.*))
         __fast_ram_init_end__ = .;
+        . = ALIGN(8);
+    } > DLM
+
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
         . = ALIGN(8);
     } > DLM
 
@@ -256,7 +282,7 @@ SECTIONS
         PROVIDE (edata = .);
     } > DLM
 
-    __fast_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata);
+    __fast_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata) + SIZEOF(.fast);
 
     __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init) + SIZEOF(.eh_frame) + SIZEOF(.eh_frame_hdr);
 
@@ -295,7 +321,7 @@ SECTIONS
         PROVIDE( __rt_rvstack = . );
     } > DLM
 
-    __noncacheable_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata) + SIZEOF(.fast);
+    __noncacheable_init_load_addr__ = __fast_load_addr__ + SIZEOF(.fast);
     .noncacheable.init : AT(__noncacheable_init_load_addr__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;

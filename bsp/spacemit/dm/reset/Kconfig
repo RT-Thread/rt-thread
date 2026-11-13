@@ -1,0 +1,4 @@
+config RT_RESET_SPACEMIT_K1
+    bool "Reset controller driver for Spacemit K1"
+    depends on RT_USING_RESET
+    default y

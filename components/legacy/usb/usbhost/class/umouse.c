@@ -135,11 +135,20 @@ static rt_thread_t mouse_thread;
 static void mouse_task(void* param)
 {
     struct uhintf* intf = (struct uhintf*)param;
+    struct uhid *hid = (struct uhid *)intf->user_data;
+    rt_size_t xfer_len;
+
+    /* the endpoint packet size is device controlled and may exceed buffer */
+    xfer_len = hid->pipe_in->ep.wMaxPacketSize;
+    if (xfer_len > sizeof(hid->buffer))
+    {
+        xfer_len = sizeof(hid->buffer);
+    }
+
     while (1)
     {
-        if (rt_usb_hcd_pipe_xfer(intf->device->hcd, ((struct uhid*)intf->user_data)->pipe_in,
-            ((struct uhid*)intf->user_data)->buffer, ((struct uhid*)intf->user_data)->pipe_in->ep.wMaxPacketSize,
-            USB_TIMEOUT_BASIC) == 0)
+        if (rt_usb_hcd_pipe_xfer(intf->device->hcd, hid->pipe_in,
+                                 hid->buffer, xfer_len, USB_TIMEOUT_BASIC) == 0)
         {
             break;
         }

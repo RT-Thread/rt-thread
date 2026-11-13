@@ -148,6 +148,12 @@ int lwp_tty_set_ctrl_proc(lwp_tty_t tp, rt_thread_t td)
     int rc = -1;
     struct rt_lwp *p = td->lwp;
 
+    /* a kernel thread cannot own a controlling terminal */
+    if (p == RT_NULL)
+    {
+        return -EPERM;
+    }
+
     tty_unlock(tp);
     LWP_LOCK(p);
     tty_lock(tp);
@@ -507,49 +513,137 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
         /* Controlling terminal */
         case TIOCSCTTY:
         case TIOCNOTTY:
+            error = IOCTL(cmd, RT_NULL, fflags, td);
+            break;
 
         /* Process group and session ID */
         case TIOCGPGRP:
-        case TIOCSPGRP:
-        case TIOCGSID:
+        {
+            int pgrp;
+            error = IOCTL(TIOCGPGRP, (rt_caddr_t)&pgrp, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &pgrp, sizeof(pgrp));
+            }
+            break;
+        }
 
-            /* TIOCOUTQ */
-            /* TIOCSTI */
+        case TIOCSPGRP:
+        {
+            int pgrp;
+            error = _copy_from_user(&pgrp, args, sizeof(pgrp));
+            if (!error)
+            {
+                error = IOCTL(TIOCSPGRP, (rt_caddr_t)&pgrp, fflags, td);
+            }
+            break;
+        }
+
+        case TIOCGSID:
+        {
+            int sid;
+            error = IOCTL(TIOCGSID, (rt_caddr_t)&sid, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &sid, sizeof(sid));
+            }
+            break;
+        }
+
         case TIOCGWINSZ:
+        {
+            struct winsize ws;
+            error = IOCTL(TIOCGWINSZ, (rt_caddr_t)&ws, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &ws, sizeof(ws));
+            }
+            break;
+        }
+
         case TIOCSWINSZ:
-            error = IOCTL(cmd, (rt_caddr_t)args, fflags, td);
+        {
+            struct winsize ws;
+            error = _copy_from_user(&ws, args, sizeof(ws));
+            if (!error)
+            {
+                error = IOCTL(TIOCSWINSZ, (rt_caddr_t)&ws, fflags, td);
+            }
             break;
-#ifdef USING_BSD_IOCTL_EXT
+        }
+
+        case TIOCSTI:
+        {
+            char ch;
+            error = _copy_from_user(&ch, args, sizeof(ch));
+            if (!error)
+            {
+                error = IOCTL(TIOCSTI, (rt_caddr_t)&ch, fflags, td);
+            }
+            break;
+        }
+
+        case TIOCOUTQ:
+        case FIONWRITE:
+        {
+            int nout;
+            error = IOCTL(cmd, (rt_caddr_t)&nout, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &nout, sizeof(nout));
+            }
+            break;
+        }
+
         case TIOCMGET:
-            args->cmd = TIOCMGET;
-            error = (sys_ioctl(td, (struct ioctl_args *)args));
+        {
+            int bits;
+            error = IOCTL(TIOCMGET, (rt_caddr_t)&bits, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &bits, sizeof(bits));
+            }
             break;
+        }
 
         case TIOCMBIS:
-            args->cmd = TIOCMBIS;
-            error = (sys_ioctl(td, (struct ioctl_args *)args));
-            break;
-
         case TIOCMBIC:
-            args->cmd = TIOCMBIC;
-            error = (sys_ioctl(td, (struct ioctl_args *)args));
-            break;
-
         case TIOCMSET:
-            args->cmd = TIOCMSET;
-            error = (sys_ioctl(td, (struct ioctl_args *)args));
+        {
+            int bits;
+            error = _copy_from_user(&bits, args, sizeof(bits));
+            if (!error)
+            {
+                error = IOCTL(cmd, (rt_caddr_t)&bits, fflags, td);
+            }
             break;
-#endif /* USING_BSD_IOCTL_EXT */
-            /* TIOCGSOFTCAR */
-            /* TIOCSSOFTCAR */
+        }
 
         case FIONREAD: /* TIOCINQ */
-            error = (IOCTL(FIONREAD, args, fflags, td));
+        {
+            int nread;
+            error = IOCTL(FIONREAD, (rt_caddr_t)&nread, fflags, td);
+            if (!error)
+            {
+                error = _copy_to_user(args, &nread, sizeof(nread));
+            }
             break;
+        }
+
+        case TIOCLINUX:
+        {
+            /*
+             * Linux uses TIOCLINUX to obtain console keyboard modifier
+             * state.  RT-Thread serial consoles do not expose that state,
+             * but applications such as mc only need this ioctl to be
+             * harmless when it is unavailable.
+             */
+            unsigned char modifiers = 0;
+            error = _copy_to_user(args, &modifiers, sizeof(modifiers));
+            break;
+        }
 
 #ifdef USING_BSD_IOCTL_EXT
-            /* TIOCLINUX */
-
         case TIOCCONS:
             args->cmd = TIOCCONS;
             error = (sys_ioctl(td, (struct ioctl_args *)args));

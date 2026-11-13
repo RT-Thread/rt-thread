@@ -91,7 +91,7 @@ static void done_safely(struct rt_completion *completion)
 
 static void wait_safely(struct rt_completion *completion)
 {
-    int try_times = 3;
+    int try_times = 100;
     rt_err_t error;
     do
     {

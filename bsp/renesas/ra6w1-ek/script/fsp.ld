@@ -1,4 +1,5 @@
 INCLUDE memory_regions.ld
+INCLUDE rom_code_gcc.symbols
 MEMORY
 {
 	RAM (rwx) : ORIGIN = RAM_START, LENGTH = RAM_LENGTH
@@ -382,4 +383,3 @@ PROVIDE( _end = __HeapBase);
 PROVIDE( __end__ = __HeapBase);
 
 ASSERT(__HeapBase <= __HeapLimit, "RAM overflow: no space left for RT-Thread heap");
-

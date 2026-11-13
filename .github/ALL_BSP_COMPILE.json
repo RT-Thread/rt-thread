@@ -427,6 +427,7 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [
         "k210",
+        "wch/risc-v/ch32v203c-evt-r0",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
         "wch/risc-v/yd-ch32v307vct6",
@@ -450,6 +451,13 @@
       ]
     },
     {
+      "RTT_BSP": "spacemit-k1",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "spacemit/k1"
+      ]
+    },
+    {
       "RTT_BSP": "hpmicro",
       "RTT_TOOL_CHAIN": "RISC-V-GCC-RV32",
       "SUB_RTT_BSP": [
@@ -463,7 +471,8 @@
         "hpmicro/hpm6800evk",
         "hpmicro/hpm6e00evk",
         "hpmicro/hpm6p00evk",
-        "hpmicro/hpm5e00evk"
+        "hpmicro/hpm5e00evk",
+        "hpmicro/hpm5100evk"
       ]
     },
     {
@@ -492,6 +501,13 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
         "ESP/ESP32_C3"
+      ]
+    },
+    {
+      "RTT_BSP": "ESP32C6",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_C6"
       ]
     },
     {

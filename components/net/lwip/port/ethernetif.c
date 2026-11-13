@@ -447,6 +447,44 @@ static void netdev_del(struct netif *lwip_netif)
     netdev_unregister(netdev);
     rt_free(netdev);
 }
+
+#ifdef RT_LWIP_USING_LOOPBACK
+static int lwip_loopback_init(void)
+{
+    struct netif *netif = netif_find("lo0");
+    struct netdev *netdev;
+    err_t result;
+
+    if (netif == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+
+    netif->mtu = 65535;
+    if (netdev_add(netif) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
+    result = netifapi_netif_set_link_up(netif);
+    if (result == ERR_OK && netif_default == RT_NULL)
+    {
+        result = netifapi_netif_set_default(netif);
+    }
+    if (result != ERR_OK)
+    {
+        netdev_del(netif);
+        return -RT_ERROR;
+    }
+
+    netdev = netdev_get_by_name("lo");
+    netdev_low_level_set_dhcp_status(netdev, RT_FALSE);
+    netdev_low_level_set_status(netdev, RT_TRUE);
+    netdev_low_level_set_link_status(netdev, RT_TRUE);
+    return RT_EOK;
+}
+INIT_APP_EXPORT(lwip_loopback_init);
+#endif /* RT_LWIP_USING_LOOPBACK */
 #endif /* RT_USING_NETDEV */
 
 static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)

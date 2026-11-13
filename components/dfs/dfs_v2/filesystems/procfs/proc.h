@@ -30,6 +30,7 @@ struct proc_ops
 struct proc_dentry
 {
     rt_uint32_t mode;
+    rt_size_t size;
     rt_atomic_t ref_count;
 
     struct proc_dentry *parent;

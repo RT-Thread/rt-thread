@@ -14,7 +14,7 @@ extern "C" {
 void init_py_pins_as_pgpio(void);
 void init_uart_pins(UART_Type *ptr);
 void init_uart_pin_as_gpio(UART_Type *ptr);
-void init_i2c_pins(I2C_Type *ptr);
+hpm_stat_t init_i2c_pins(I2C_Type *ptr);
 void init_gpio_pins(void);
 void init_spi_pins(SPI_Type *ptr);
 void init_spi_pins_with_gpio_as_cs(SPI_Type *ptr);

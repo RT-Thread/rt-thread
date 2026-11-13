@@ -62,6 +62,7 @@
  * 2024-03-30     Meco Man     update version number to v5.2.0
  * 2025-11-10     Rbb666       update version number to v5.3.0
  * 2026-09-10     CYFS         update version number to v5.3.1
+ * 2026-10-17     Rbb666       update version number to v5.4.0
  */
 
 #ifndef __RT_DEF_H__
@@ -84,8 +85,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                3               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                4               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
@@ -107,6 +108,15 @@ extern "C" {
 #define RT_UINT32_MAX                   0xFFFFFFFFUL          /**< Maximum number of UINT32 */
 #define RT_UINT64_MAX                   0xFFFFFFFFFFFFFFFFULL /**< Maximum number of UINT64 */
 #endif /* RT_USING_LIBC */
+
+/* maximum value of rt_size_t */
+#if defined(RT_USING_LIBC) && !defined(RT_USING_NANO)
+#define RT_SIZE_MAX SIZE_MAX
+#elif defined(ARCH_CPU_64BIT)
+#define RT_SIZE_MAX RT_UINT64_MAX
+#else
+#define RT_SIZE_MAX RT_UINT32_MAX
+#endif
 
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
 

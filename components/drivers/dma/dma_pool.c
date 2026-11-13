@@ -1007,6 +1007,7 @@ rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t si
  */
 static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
 {
+#ifdef ARCH_MM_MMU
     rt_region_t *region = &pool->region;
     rt_size_t start = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
     rt_size_t end = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
@@ -1032,6 +1033,9 @@ static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
               (unsigned long)start, (unsigned long)end);
         return -RT_ERROR;
     }
+#else
+    RT_UNUSED(pool);
+#endif /* ARCH_MM_MMU */
 
     return RT_EOK;
 }

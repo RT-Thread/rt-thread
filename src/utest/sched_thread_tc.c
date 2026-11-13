@@ -62,10 +62,10 @@
 #include <rtthread.h>
 #include "utest.h"
 
-#define TEST_LOOP_TIMES (100 * 1000)
+#define TEST_LOOP_TIMES      (100 * 1000)
 #define TEST_PROGRESS_COUNTS (36)
-#define TEST_THREAD_COUNT (RT_CPUS_NR * 1)
-#define TEST_PROGRESS_ON (TEST_LOOP_TIMES*TEST_THREAD_COUNT/TEST_PROGRESS_COUNTS)
+#define TEST_THREAD_COUNT    (RT_CPUS_NR * 1)
+#define TEST_PROGRESS_ON     (TEST_LOOP_TIMES * TEST_THREAD_COUNT / TEST_PROGRESS_COUNTS)
 
 static struct rt_semaphore _thr_exit_sem;
 static rt_atomic_t _progress_counter;
@@ -87,7 +87,9 @@ static void _thread_entry1(void *param)
         rt_exit_critical_safe(critical_level);
 
         if (rt_atomic_add(&_progress_counter, 1) % TEST_PROGRESS_ON == 0)
+        {
             uassert_true(1);
+        }
     }
 
     rt_sem_release(&_thr_exit_sem);
@@ -109,7 +111,9 @@ static void _thread_entry2(void *param)
         rt_exit_critical_safe(critical_level);
 
         if (rt_atomic_add(&_progress_counter, 1) % TEST_PROGRESS_ON == 0)
+        {
             uassert_true(1);
+        }
     }
 
     rt_sem_release(&_thr_exit_sem);

@@ -61,10 +61,10 @@
 #include <stdlib.h>
 #include "utest.h"
 
-#define TEST_SECONDS 10
-#define TEST_LOOP_TICKS (TEST_SECONDS * RT_TICK_PER_SECOND)
+#define TEST_SECONDS         10
+#define TEST_LOOP_TICKS      (TEST_SECONDS * RT_TICK_PER_SECOND)
 #define TEST_PROGRESS_COUNTS (36)
-#define TEST_PROGRESS_ON (TEST_LOOP_TICKS*2/TEST_PROGRESS_COUNTS)
+#define TEST_PROGRESS_ON     (TEST_LOOP_TICKS * 2 / TEST_PROGRESS_COUNTS)
 
 static struct rt_semaphore _thr_exit_sem;
 static struct rt_semaphore _ipc_sem;
@@ -89,8 +89,7 @@ static void _wait_until_edge(void)
     do
     {
         current = rt_tick_get();
-    }
-    while (current == entry_level);
+    } while (current == entry_level);
 
     /* give a random latency for test */
     random_latency = rand();
@@ -99,7 +98,9 @@ static void _wait_until_edge(void)
     {
         current = rt_tick_get();
         if (current != entry_level)
+        {
             break;
+        }
     }
 }
 
@@ -112,7 +113,9 @@ static void _producer_entry(void *param)
         rt_sem_release(&_ipc_sem);
 
         if (rt_atomic_add(&_progress_counter, 1) % TEST_PROGRESS_ON == 0)
+        {
             uassert_true(1);
+        }
     }
 
     rt_sem_release(&_thr_exit_sem);
@@ -132,11 +135,15 @@ static void _consumer_entry(void *param)
         else
         {
             if (error != RT_EOK)
+            {
                 uassert_true(0);
+            }
         }
 
         if (rt_atomic_add(&_progress_counter, 1) % TEST_PROGRESS_ON == 0)
+        {
             uassert_true(1);
+        }
     }
 
     rt_sem_release(&_thr_exit_sem);

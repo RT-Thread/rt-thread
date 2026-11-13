@@ -19,9 +19,9 @@
 void rt_dm_power_domain_proxy_default_name(struct rt_dm_power_domain_proxy *proxy)
 {
 #if RT_NAME_MAX > 0
-    rt_strncpy(proxy->parent.name, RT_POWER_DOMAIN_OBJ_NAME, RT_NAME_MAX);
+    rt_strncpy(proxy->parent.name, RT_POWER_DOMAIN_PROXY_OBJ_NAME, RT_NAME_MAX);
 #else
-    proxy->parent.name = RT_POWER_DOMAIN_OBJ_NAME;
+    proxy->parent.name = RT_POWER_DOMAIN_PROXY_OBJ_NAME;
 #endif
 }
 
@@ -286,7 +286,7 @@ static struct rt_dm_power_domain *ofw_find_power_domain(struct rt_device *dev,
 
         if (power_domain_np && (obj = rt_ofw_data(power_domain_np)))
         {
-            if (!rt_strcmp(obj->name, RT_POWER_DOMAIN_OBJ_NAME))
+            if (!rt_strcmp(obj->name, RT_POWER_DOMAIN_PROXY_OBJ_NAME))
             {
                 proxy = rt_container_of(obj, struct rt_dm_power_domain_proxy, parent);
                 domain = proxy->ofw_parse(proxy, args);

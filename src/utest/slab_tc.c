@@ -55,7 +55,9 @@ static int _mem_cmp(void *ptr, rt_uint8_t v, rt_size_t size)
     while (size-- != 0)
     {
         if (*(rt_uint8_t *)ptr != v)
+        {
             return *(rt_uint8_t *)ptr - v;
+        }
     }
     return 0;
 }
@@ -76,8 +78,8 @@ struct slab_alloc_head
     rt_tick_t interval;
 };
 
-#define SLAB_RANG_ALLOC_BLK_MIN  2
-#define SLAB_RANG_ALLOC_BLK_MAX  5
+#define SLAB_RANG_ALLOC_BLK_MIN   2
+#define SLAB_RANG_ALLOC_BLK_MAX   5
 #define SLAB_RANG_ALLOC_TEST_TIME 5
 
 static void slab_alloc_test(void)
@@ -133,7 +135,7 @@ static void slab_alloc_test(void)
                     }
                     rt_memset(ctx, 0xAA, ctx->size);
                     rt_slab_free(heap, ctx);
-                    head.count --;
+                    head.count--;
                 }
                 continue;
             }
@@ -167,7 +169,7 @@ static void slab_alloc_test(void)
                 }
                 rt_memset(ctx, 0xAA, ctx->size);
                 rt_slab_free(heap, ctx);
-                head.count --;
+                head.count--;
             }
         }
     }
@@ -184,7 +186,7 @@ static void slab_alloc_test(void)
         }
         rt_memset(ctx, 0xAA, ctx->size);
         rt_slab_free(heap, ctx);
-        head.count --;
+        head.count--;
     }
     uassert_int_equal(head.count, 0);
     // slab heap deinit
@@ -193,8 +195,8 @@ static void slab_alloc_test(void)
     rt_free(buf);
 }
 
-#define SLAB_RANG_REALLOC_BLK_MIN  0
-#define SLAB_RANG_REALLOC_BLK_MAX  5
+#define SLAB_RANG_REALLOC_BLK_MIN   0
+#define SLAB_RANG_REALLOC_BLK_MAX   5
 #define SLAB_RANG_REALLOC_TEST_TIME 5
 
 struct slab_realloc_context

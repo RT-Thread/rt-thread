@@ -40,6 +40,10 @@ extern "C" {
 #include "h49x/can_config.h"
 #include "h49x/spi_config.h"
 #include "h49x/i2c_hard_config.h"
+#include "h49x/tim_config.h"
+#include "h49x/pwm_config.h"
+#include "h49x/pulse_encoder_config.h"
+#include "h49x/lptim_config.h"
 #elif defined(SOC_SERIES_N32H47x_48x)
 #include "h47x_48x/dma_config.h"
 #include "h47x_48x/uart_config.h"
@@ -48,6 +52,10 @@ extern "C" {
 #include "h47x_48x/can_config.h"
 #include "h47x_48x/spi_config.h"
 #include "h47x_48x/i2c_hard_config.h"
+#include "h47x_48x/tim_config.h"
+#include "h47x_48x/pwm_config.h"
+#include "h47x_48x/pulse_encoder_config.h"
+#include "h47x_48x/lptim_config.h"
 #endif /* defined(SOC_SERIES_N32H7xx) */
 
 #ifdef __cplusplus

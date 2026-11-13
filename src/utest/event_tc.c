@@ -43,36 +43,32 @@
 #include <stdlib.h>
 
 #define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
-#define EVENT_FLAG3 (1 << 3)
-#define EVENT_FLAG5 (1 << 5)
+#define EVENT_FLAG3      (1 << 3)
+#define EVENT_FLAG5      (1 << 5)
 
-static struct rt_event static_event = {0};
+static struct rt_event static_event = { 0 };
 #ifdef RT_USING_HEAP
 static rt_event_t dynamic_event = RT_NULL;
 static rt_uint32_t dynamic_event_recv_thread_finish = 0, dynamic_event_send_thread_finish = 0;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread3_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread3_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread3;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread4_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread4_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread4;
 #endif /* RT_USING_HEAP */
 
 static rt_uint32_t recv_event_times1 = 0, recv_event_times2 = 0;
 static rt_uint32_t static_event_recv_thread_finish = 0, static_event_send_thread_finish = 0;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread1_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread1_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread1;
 
-rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[UTEST_THR_STACK_SIZE];
+rt_align(RT_ALIGN_SIZE) static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 
-#define THREAD_PRIORITY      9
-#define THREAD_TIMESLICE     5
+#define THREAD_PRIORITY  9
+#define THREAD_TIMESLICE 5
 
 static void test_event_init(void)
 {
@@ -161,13 +157,12 @@ static void thread2_send_static_event(void *param)
     static_event_send_thread_finish = 1;
 }
 
-
 static void test_static_event_send_recv(void)
 {
     rt_err_t result = RT_EOK;
 
-    result  = rt_event_init(&static_event, "event", RT_IPC_FLAG_PRIO);
-    if (result  != RT_EOK)
+    result = rt_event_init(&static_event, "event", RT_IPC_FLAG_PRIO);
+    if (result != RT_EOK)
     {
         uassert_false(1);
     }

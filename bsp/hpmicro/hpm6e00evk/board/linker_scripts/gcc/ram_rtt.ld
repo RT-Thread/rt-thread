@@ -113,6 +113,16 @@ SECTIONS
         . = ALIGN(8);
     } > DLM
 
+    
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
+        . = ALIGN(8);
+    } > DLM
+
     .bss(NOLOAD) : {
         . = ALIGN(8);
         __bss_start__ = .;

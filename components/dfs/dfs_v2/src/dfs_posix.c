@@ -219,7 +219,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     {
         attr.ia_mtime.tv_sec = current_time;
     }
-    else if (UTIME_OMIT == __times[1].tv_nsec)
+    else if (UTIME_OMIT != __times[1].tv_nsec)
     {
         attr.ia_mtime.tv_sec = __times[1].tv_sec;
     }

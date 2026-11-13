@@ -19,7 +19,10 @@ int main(void)
 
     static uint32_t led_thread_arg = 0;
     rt_thread_t led_thread = rt_thread_create("led_th", thread_entry, &led_thread_arg, 1024, 1, 10);
-    rt_thread_startup(led_thread);
+    if (led_thread != RT_NULL)
+    {
+        rt_thread_startup(led_thread);
+    }
 
     return 0;
 }

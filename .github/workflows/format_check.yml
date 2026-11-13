@@ -30,7 +30,7 @@ jobs:
       - name: Install clang-format
         shell: bash
         run: |
-          python -m pip install clang-format
+          python -m pip install -r tools/ci/requirements-format.txt
           clang-format --version
 
       - name: Check clang-format

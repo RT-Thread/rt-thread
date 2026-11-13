@@ -628,25 +628,44 @@ static int str_common(const char *str1, const char *str2)
 }
 
 #ifdef DFS_USING_POSIX
-void msh_auto_complete_path(char *path)
+void msh_auto_complete_path(char *path, rt_size_t path_size)
 {
     DIR *dir = RT_NULL;
     struct dirent *dirent = RT_NULL;
     char *full_path, *ptr, *index;
+    rt_size_t full_length, copy_length;
 
-    if (!path)
+    if (!path || path_size == 0)
+    {
         return;
+    }
 
-    full_path = (char *)rt_malloc(256);
+    full_path = (char *)rt_malloc(DFS_PATH_MAX);
     if (full_path == RT_NULL) return; /* out of memory */
 
+    full_path[0] = '\0';
     if (*path != '/')
     {
-        getcwd(full_path, 256);
-        if (full_path[rt_strlen(full_path) - 1]  != '/')
-            strcat(full_path, "/");
+        if (getcwd(full_path, DFS_PATH_MAX) == RT_NULL)
+        {
+            rt_free(full_path);
+            return;
+        }
+        full_path[DFS_PATH_MAX - 1] = '\0';
+
+        full_length = rt_strlen(full_path);
+        if (full_length > 0 && full_path[full_length - 1] != '/')
+        {
+            if (full_length + 1 >= DFS_PATH_MAX)
+            {
+                rt_free(full_path);
+                return;
+            }
+
+            full_path[full_length] = '/';
+            full_path[full_length + 1] = '\0';
+        }
     }
-    else *full_path = '\0';
 
     index = RT_NULL;
     ptr = path;
@@ -664,12 +683,16 @@ void msh_auto_complete_path(char *path)
         char *dest = index;
 
         /* fill the parent path */
-        ptr = full_path;
-        while (*ptr) ptr ++;
+        full_length = rt_strlen(full_path);
+        copy_length = (rt_size_t)(dest - path);
+        if (full_length + copy_length >= DFS_PATH_MAX)
+        {
+            rt_free(full_path);
+            return;
+        }
 
-        for (index = path; index != dest;)
-            *ptr++ = *index++;
-        *ptr = '\0';
+        rt_memcpy(full_path + full_length, path, copy_length);
+        full_path[full_length + copy_length] = '\0';
 
         dir = opendir(full_path);
         if (dir == RT_NULL) /* open directory failed! */
@@ -710,9 +733,11 @@ void msh_auto_complete_path(char *path)
                 multi ++;
                 if (min_length == 0)
                 {
-                    min_length = rt_strlen(dirent->d_name);
+                    copy_length = rt_strnlen(dirent->d_name, DFS_PATH_MAX - 1);
+                    min_length = copy_length;
                     /* save dirent name */
-                    rt_strcpy(full_path, dirent->d_name);
+                    rt_memcpy(full_path, dirent->d_name, copy_length);
+                    full_path[copy_length] = '\0';
                 }
 
                 length = str_common(dirent->d_name, full_path);
@@ -742,6 +767,13 @@ void msh_auto_complete_path(char *path)
             }
 
             length = index - path;
+            if (length + min_length >= path_size)
+            {
+                closedir(dir);
+                rt_free(full_path);
+                return;
+            }
+
             rt_memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
 
@@ -753,7 +785,11 @@ void msh_auto_complete_path(char *path)
                 {
                     if (S_ISDIR(buffer.st_mode))
                     {
-                        strcat(path, "/");
+                        if (length + min_length + 1 < path_size)
+                        {
+                            path[length + min_length] = '/';
+                            path[length + min_length + 1] = '\0';
+                        }
                     }
                     else if (S_ISLNK(buffer.st_mode))
                     {
@@ -761,7 +797,11 @@ void msh_auto_complete_path(char *path)
                         if (link_dir)
                         {
                             closedir(link_dir);
-                            strcat(path, "/");
+                            if (length + min_length + 1 < path_size)
+                            {
+                                path[length + min_length] = '/';
+                                path[length + min_length + 1] = '\0';
+                            }
                         }
                     }
                 }
@@ -799,7 +839,7 @@ void msh_auto_complete(char *prefix)
         {
             if (*ptr == ' ')
             {
-                msh_auto_complete_path(ptr + 1);
+                msh_auto_complete_path(ptr + 1, FINSH_CMD_SIZE + 1 - (rt_size_t)(ptr + 1 - prefix));
                 break;
             }
 
@@ -811,7 +851,7 @@ void msh_auto_complete(char *prefix)
          * module, the system won't crash anyway. */
         if (ptr == prefix)
         {
-            msh_auto_complete_path(ptr);
+            msh_auto_complete_path(ptr, FINSH_CMD_SIZE + 1 - (rt_size_t)(ptr - prefix));
         }
 #endif /* RT_USING_MODULE */
     }

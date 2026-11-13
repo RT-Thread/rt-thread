@@ -61,19 +61,19 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 12
-#define RT_CPUS_NR 1
+#define RT_NAME_MAX   12
+#define RT_CPUS_NR    1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND     1000
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_PRIO       4
 #define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice options */
@@ -101,10 +101,10 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE     128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_USING_CONSOLE_OUTPUT_CTL
-#define RT_VER_NUM 0x50300
+#define RT_VER_NUM                0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
@@ -115,12 +115,12 @@
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
-#define RT_MAIN_THREAD_PRIORITY 10
+#define RT_MAIN_THREAD_PRIORITY   10
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
-#define FINSH_THREAD_NAME "tshell"
-#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_NAME       "tshell"
+#define FINSH_THREAD_PRIORITY   20
 #define FINSH_THREAD_STACK_SIZE 2048
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
@@ -158,16 +158,14 @@
 
 #define RT_LIBC_USING_LIGHT_TZ_DST
 #define RT_LIBC_TZ_DEFAULT_HOUR 8
-#define RT_LIBC_TZ_DEFAULT_MIN 0
-#define RT_LIBC_TZ_DEFAULT_SEC 0
+#define RT_LIBC_TZ_DEFAULT_MIN  0
+#define RT_LIBC_TZ_DEFAULT_SEC  0
 /* end of Timezone and Daylight Saving Time */
 /* end of ISO-ANSI C layer */
 
 /* POSIX (Portable Operating System Interface) layer */
 
-
 /* Interprocess Communication (IPC) */
-
 
 /* Socket is in the 'Network' category */
 
@@ -199,7 +197,6 @@
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
-
 
 /* Wi-Fi */
 
@@ -297,7 +294,7 @@
 /* WCH HAL & SDK Drivers */
 
 #define PKG_USING_CH32V20x_SDK
-#define PKG_USING_CH32V20x_SDK_LATEST_VERSION
+#define PKG_USING_CH32V20x_SDK_V205
 /* end of WCH HAL & SDK Drivers */
 
 /* AT32 HAL & SDK Drivers */
@@ -363,7 +360,6 @@
 
 /* Arduino libraries */
 
-
 /* Projects and Demos */
 
 /* end of Projects and Demos */
@@ -409,6 +405,7 @@
 #define SOC_RISCV_FAMILY_CH32
 #define SOC_RISCV_SERIES_CH32V2
 #define SOC_RISCV_SERIES_CH32V20x_D8W
+#define WCH_QINGKE_V4C
 
 /* Hardware Drivers Config */
 

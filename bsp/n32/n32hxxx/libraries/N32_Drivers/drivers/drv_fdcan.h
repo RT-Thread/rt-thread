@@ -17,6 +17,18 @@
 #include <rtdevice.h>
 #include <rtthread.h>
 
+/*
+ * The FDCAN_xxx types below come from the SoC SDK; pull in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_fdcan.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_fdcan.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_fdcan.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -71,8 +83,6 @@ struct n32_fdcan
                                               hardware finished/cancelled the transmission. */
     struct rt_can_device device;        /**< RT-Thread CAN device base */
 };
-
-int rt_hw_fdcan_init(void);
 
 #ifdef __cplusplus
 }

@@ -302,7 +302,7 @@ exit:
 
 static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t i = 0, rindex = 0;
+    uint32_t i = 0, rindex = 0;
 
     uint8_t *send_buf = (uint8_t *)qspi_msg->parent.send_buf;
     uint8_t *recv_buf = (uint8_t *)qspi_msg->parent.recv_buf;
@@ -410,7 +410,7 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
 
 static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t number = 0;
+    uint32_t number = 0;
 
     uint8_t *buf = (uint8_t *)qspi_msg->parent.send_buf;
 
@@ -487,7 +487,7 @@ static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message 
 
 static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t i = 0, j = 0;
+    uint32_t i = 0, j = 0;
     uint8_t *buf = (uint8_t *)qspi_msg->parent.recv_buf;
 
     uint8_t s_data[5] = { 0 };
@@ -774,7 +774,7 @@ static uint32_t xspi_get_addrlen(uint8_t size)
 
 static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t i = 0, rindex = 0;
+    uint32_t i = 0, rindex = 0;
     uint8_t *send_buf = (uint8_t *)qspi_msg->parent.send_buf;
     uint8_t *recv_buf = (uint8_t *)qspi_msg->parent.recv_buf;
     uint32_t len = qspi_msg->parent.length;
@@ -846,7 +846,7 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
 
 static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t i = 0;
+    uint32_t i = 0;
     uint8_t *buf = (uint8_t *)qspi_msg->parent.send_buf;
     uint32_t len = qspi_msg->parent.length;
     uint8_t s_data[4] = { 0 };
@@ -914,7 +914,7 @@ static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message 
 
 static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
 {
-    uint16_t i = 0, j = 0;
+    uint32_t i = 0, j = 0;
     uint8_t *buf = (uint8_t *)qspi_msg->parent.recv_buf;
     uint32_t len = qspi_msg->parent.length;
     uint8_t s_data[4] = { 0 };

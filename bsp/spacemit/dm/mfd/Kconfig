@@ -1,0 +1,7 @@
+config RT_MFD_SPACEMIT_PMIC
+    bool "Spacemit Power Management Chip"
+    depends on RT_USING_PIC
+    depends on RT_USING_I2C
+    depends on RT_USING_OFW
+    select RT_MFD_SYSCON
+    default y

@@ -1,0 +1,12 @@
+# for module compiling
+import os
+Import('rtconfig')
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+
+objs = objs + SConscript(os.path.join(rtconfig.CHIP_NAME, 'SConscript'))
+
+Return('objs')

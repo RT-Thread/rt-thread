@@ -492,11 +492,12 @@ static const char *blk_get_mounted_path(struct rt_device *device)
 const char *convert_size(struct rt_device_blk_geometry *geome,
                          rt_size_t sector_count, rt_size_t *out_cap, rt_size_t *out_minor)
 {
-    rt_size_t cap, minor = 0;
+    rt_uint64_t cap;
+    rt_size_t minor = 0;
     int size_index = 0;
     const char *size_name[] = { "B", "K", "M", "G", "T", "P", "E" };
 
-    cap = geome->bytes_per_sector * sector_count;
+    cap = (rt_uint64_t)geome->bytes_per_sector * sector_count;
 
     for (size_index = 0; size_index < RT_ARRAY_SIZE(size_name) - 1; ++size_index)
     {

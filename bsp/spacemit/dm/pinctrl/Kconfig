@@ -1,0 +1,5 @@
+config RT_PINCTRL_SPACEMIT_PMIC
+    bool "Pinctrl and GPIO driver for Spacemit PMIC"
+    depends on RT_USING_PINCTRL
+    depends on RT_MFD_SPACEMIT_PMIC
+    default n

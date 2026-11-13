@@ -55,8 +55,8 @@ static void test_feature(void)
  * not modified by each other
  * ==============================================================
  */
-#define TEST_THREAD 2
-#define VECTOR_CTX_BYTES (CTX_VECTOR_REG_NR * REGBYTES)
+#define TEST_THREAD      2
+#define VECTOR_CTX_BYTES (CTX_VECTOR_REG_NR * sizeof(rt_ubase_t))
 void *ctx_vector[TEST_THREAD * 2];
 
 static rt_sem_t sem;

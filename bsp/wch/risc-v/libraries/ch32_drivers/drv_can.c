@@ -9,6 +9,7 @@
  */
 #include <stdint.h>
 #include <board.h>
+#include "drv_common.h"
 #include <rtdevice.h>
 #include "drv_can.h"
 #ifdef BSP_USING_CAN
@@ -20,39 +21,39 @@
 
 //兼容老版的can宏定义
 #ifndef RT_CAN_MODE_LISTEN
-#define RT_CAN_MODE_LISTEN    RT_CAN_MODE_LISEN
+#define RT_CAN_MODE_LISTEN RT_CAN_MODE_LISEN
 #endif
 #ifndef RT_CAN_MODE_LOOPBACKANLISTEN
-#define RT_CAN_MODE_LOOPBACKANLISTEN    RT_CAN_MODE_LOOPBACKANLISEN
+#define RT_CAN_MODE_LOOPBACKANLISTEN RT_CAN_MODE_LOOPBACKANLISEN
 #endif
 
 struct ch32v307x_can_baud_info
 {
     rt_uint32_t baud_rate;
     rt_uint16_t prescaler;
-    rt_uint8_t  tsjw;        //CAN synchronisation jump width.
-    rt_uint8_t  tbs1;       //CAN time quantum in bit segment 1.
-    rt_uint8_t  tbs2;       //CAN time quantum in bit segment 2.
-    rt_uint8_t  notused;
+    rt_uint8_t tsjw; //CAN synchronisation jump width.
+    rt_uint8_t tbs1; //CAN time quantum in bit segment 1.
+    rt_uint8_t tbs2; //CAN time quantum in bit segment 2.
+    rt_uint8_t notused;
 };
 
 #define CH32V307X_CAN_BAUD_DEF(xrate, xsjw, xbs1, xbs2, xprescale) \
-    {                                                      \
-        .baud_rate = xrate,                                 \
-        .tsjw = xsjw,                                      \
-        .tbs1 = xbs1,                                      \
-        .tbs2 = xbs2,                                      \
-        .prescaler = xprescale                               \
+    {                                                              \
+        .baud_rate = xrate,                                        \
+        .tsjw = xsjw,                                              \
+        .tbs1 = xbs1,                                              \
+        .tbs2 = xbs2,                                              \
+        .prescaler = xprescale                                     \
     }
 
 /* CH32V307X can device object */
 struct ch32v307x_can_obj
 {
-    char                   * name;
-    CAN_TypeDef            * can_base;
-    CAN_InitTypeDef          can_init;
-    CAN_FilterInitTypeDef    can_filter_init;
-    struct rt_can_device     device; /* inherit from can device */
+    char *name;
+    CAN_TypeDef *can_base;
+    CAN_InitTypeDef can_init;
+    CAN_FilterInitTypeDef can_filter_init;
+    struct rt_can_device device; /* inherit from can device */
 };
 
 /*
@@ -69,31 +70,28 @@ struct ch32v307x_can_obj
 * sample = 75%    at baud > 800K
 */
 #if defined(CH32V30x_D8C) /* APB1 (PCLK1 72MHz) */
-static const struct ch32v307x_can_baud_info  can_baud_rate_tab[] =
-{
-    CH32V307X_CAN_BAUD_DEF(  CAN1MBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 4),
+static const struct ch32v307x_can_baud_info can_baud_rate_tab[] = {
+    CH32V307X_CAN_BAUD_DEF(CAN1MBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 4),
     CH32V307X_CAN_BAUD_DEF(CAN800kBaud, CAN_SJW_1tq, CAN_BS1_12tq, CAN_BS2_2tq, 6),
     CH32V307X_CAN_BAUD_DEF(CAN500kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 8),
     CH32V307X_CAN_BAUD_DEF(CAN250kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 16),
     CH32V307X_CAN_BAUD_DEF(CAN125kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 32),
     CH32V307X_CAN_BAUD_DEF(CAN100kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 40),
-    CH32V307X_CAN_BAUD_DEF( CAN50kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 80),
-    CH32V307X_CAN_BAUD_DEF( CAN20kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 200),
-    CH32V307X_CAN_BAUD_DEF( CAN10kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 400),
+    CH32V307X_CAN_BAUD_DEF(CAN50kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 80),
+    CH32V307X_CAN_BAUD_DEF(CAN20kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 200),
+    CH32V307X_CAN_BAUD_DEF(CAN10kBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 400),
 };
 #endif
 
 #ifdef BSP_USING_CAN1
-static struct ch32v307x_can_obj  drv_can1 =
-{
+static struct ch32v307x_can_obj drv_can1 = {
     .name = "can1",
     .can_base = CAN1,
 };
 #endif
 
 #ifdef BSP_USING_CAN2
-static struct ch32v307x_can_obj  drv_can2 =
-{
+static struct ch32v307x_can_obj drv_can2 = {
     .name = "can2",
     .can_base = CAN2,
 };
@@ -102,21 +100,21 @@ static struct ch32v307x_can_obj  drv_can2 =
 #ifdef BSP_USING_CAN
 rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
 {
-    GPIO_InitTypeDef GPIO_InitSturcture={0};
+    GPIO_InitTypeDef GPIO_InitSturcture = { 0 };
 #ifdef BSP_USING_CAN1
     if (CAN1 == can_base)
     {
-        RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE );
-        RCC_APB1PeriphClockCmd( RCC_APB1Periph_CAN1, ENABLE );
-        GPIO_PinRemapConfig( GPIO_Remap1_CAN1, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
+        GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
         // CAN1 TXD --> PB9         CAN1 RXD --> PB8
         GPIO_InitSturcture.GPIO_Pin = GPIO_Pin_9;
         GPIO_InitSturcture.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitSturcture.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init( GPIOB, &GPIO_InitSturcture);
+        GPIO_Init(GPIOB, &GPIO_InitSturcture);
         GPIO_InitSturcture.GPIO_Pin = GPIO_Pin_8;
         GPIO_InitSturcture.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_Init( GPIOB, &GPIO_InitSturcture);
+        GPIO_Init(GPIOB, &GPIO_InitSturcture);
         /*
         RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA, ENABLE );
         RCC_APB1PeriphClockCmd( RCC_APB1Periph_CAN1, ENABLE );
@@ -135,16 +133,16 @@ rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
 #ifdef BSP_USING_CAN2
     if (CAN2 == can_base)
     {
-        RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE );
-        RCC_APB1PeriphClockCmd( RCC_APB1Periph_CAN2, ENABLE );
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE);
         // CAN2 TXD --> PB13        CAN2 RXD --> PB12
         GPIO_InitSturcture.GPIO_Pin = GPIO_Pin_13;
         GPIO_InitSturcture.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitSturcture.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init( GPIOB, &GPIO_InitSturcture);
+        GPIO_Init(GPIOB, &GPIO_InitSturcture);
         GPIO_InitSturcture.GPIO_Pin = GPIO_Pin_12;
         GPIO_InitSturcture.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_Init( GPIOB, &GPIO_InitSturcture);
+        GPIO_Init(GPIOB, &GPIO_InitSturcture);
         /*
         RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE );
         RCC_APB1PeriphClockCmd( RCC_APB1Periph_CAN2, ENABLE );
@@ -171,7 +169,9 @@ static uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
     return 0; /* default baud is CAN1MBaud */
 }
@@ -201,11 +201,11 @@ static rt_err_t _can_filter_config(struct ch32v307x_can_obj *drv_can_obj)
 {
     if (drv_can_obj->can_base == CAN1)
     {
-        CAN_FilterInit( &(drv_can_obj->can_filter_init) );
+        CAN_FilterInit(&(drv_can_obj->can_filter_init));
     }
     else if (drv_can_obj->can_base == CAN2)
     {
-        CAN_FilterInit( &(drv_can_obj->can_filter_init) );
+        CAN_FilterInit(&(drv_can_obj->can_filter_init));
     }
     else
     {
@@ -214,7 +214,6 @@ static rt_err_t _can_filter_config(struct ch32v307x_can_obj *drv_can_obj)
     }
     return RT_EOK;
 }
-
 
 static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg)
 {
@@ -261,18 +260,18 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     drv_can_obj->can_init.CAN_BS2 = can_baud_rate_tab[baud_index].tbs2;
     drv_can_obj->can_init.CAN_Prescaler = can_baud_rate_tab[baud_index].prescaler;
     /* init can */
-    if (CAN_Init( drv_can_obj->can_base, &(drv_can_obj->can_init) ) != CAN_InitStatus_Success )
+    if (CAN_Init(drv_can_obj->can_base, &(drv_can_obj->can_init)) != CAN_InitStatus_Success)
     {
         LOG_E("can init error");
         return -RT_ERROR;
     }
 
-    smaple = (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1)*100 * 100 ;
+    smaple = (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1) * 100 * 100;
     smaple = smaple / (can_baud_rate_tab[baud_index].tsjw + can_baud_rate_tab[baud_index].tbs1 + can_baud_rate_tab[baud_index].tbs2);
     LOG_D("can[%08X] init baud:%d sjw:%d tbs1:%d tbs2:%d prescaler:%d sample:%d.%d",
-            drv_can_obj->can_base,  cfg->baud_rate,
-            can_baud_rate_tab[baud_index].tsjw,  can_baud_rate_tab[baud_index].tbs1, can_baud_rate_tab[baud_index].tbs2,
-            can_baud_rate_tab[baud_index].prescaler , smaple/100, smaple%100);
+          drv_can_obj->can_base, cfg->baud_rate,
+          can_baud_rate_tab[baud_index].tsjw, can_baud_rate_tab[baud_index].tbs1, can_baud_rate_tab[baud_index].tbs2,
+          can_baud_rate_tab[baud_index].prescaler, smaple / 100, smaple % 100);
 
     /* default filter config */
     _can_filter_config(drv_can_obj);
@@ -305,18 +304,18 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_DisableIRQ(CAN2_RX0_IRQn);
                 NVIC_DisableIRQ(CAN2_RX1_IRQn);
             }
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP0 );
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF0 );
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV0 );
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP1 );
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF1 );
-//            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV1 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP0 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF0 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV0 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP1 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF1 );
+            //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV1 );
 
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FMP0, DISABLE); /* FIFO 0 message pending Interrupt*/
-            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF0,  DISABLE);  /* FIFO 0 full Interrupt*/
+            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF0, DISABLE);  /* FIFO 0 full Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FOV0, DISABLE); /* FIFO 0 overrun Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FMP1, DISABLE); /* FIFO 1 message pending Interrupt*/
-            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF1,  DISABLE);  /* FIFO 1 full Interrupt*/
+            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF1, DISABLE);  /* FIFO 1 full Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FOV1, DISABLE); /* FIFO 1 overrun Interrupt*/
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
@@ -341,11 +340,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 NVIC_DisableIRQ(CAN2_SCE_IRQn);
             }
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_EWG );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_EPV );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_BOF );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_LEC );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_ERR );
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_EWG);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_EPV);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_BOF);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_LEC);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_ERR);
 
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_EWG, DISABLE); /*!< Error warning Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_EPV, DISABLE); /*!< Error passive Interrupt*/
@@ -358,18 +357,18 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP0 );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF0 );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV0 );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP1 );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF1 );
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV1 );
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FMP0);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FF0);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FOV0);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FMP1);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FF1);
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_FOV1);
 
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FMP0, ENABLE); /* FIFO 0 message pending Interrupt*/
-            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF0,  ENABLE);  /* FIFO 0 full Interrupt*/
+            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF0, ENABLE);  /* FIFO 0 full Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FOV0, ENABLE); /* FIFO 0 overrun Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FMP1, ENABLE); /* FIFO 1 message pending Interrupt*/
-            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF1,  ENABLE);  /* FIFO 1 full Interrupt*/
+            CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FF1, ENABLE);  /* FIFO 1 full Interrupt*/
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_FOV1, ENABLE); /* FIFO 1 overrun Interrupt*/
 
             if (CAN1 == drv_can_obj->can_base)
@@ -389,7 +388,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
-            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_TME );
+            CAN_ClearITPendingBit(drv_can_obj->can_base, CAN_IT_TME);
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_TME, ENABLE); /*!< Transmit mailbox empty Interrupt*/
 
             if (CAN1 == drv_can_obj->can_base)
@@ -451,11 +450,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     drv_can_obj->can_filter_init.CAN_FilterNumber = filter_cfg->items[i].hdr_bank;
                 }
 
-                if (filter_cfg->items[i].mode == 0x00)  //CAN_FILTERMODE_IDMASK
+                if (filter_cfg->items[i].mode == 0x00) //CAN_FILTERMODE_IDMASK
                 {
                     drv_can_obj->can_filter_init.CAN_FilterMode = CAN_FilterMode_IdMask;
                 }
-                else if (filter_cfg->items[i].mode == 0x01)  //CAN_FILTERMODE_IDLIST
+                else if (filter_cfg->items[i].mode == 0x01) //CAN_FILTERMODE_IDLIST
                 {
                     drv_can_obj->can_filter_init.CAN_FilterMode = CAN_FilterMode_IdList;
                 }
@@ -465,7 +464,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     id_h = ((filter_cfg->items[i].id << 18) >> 13) & 0xFFFF;
                     id_l = ((filter_cfg->items[i].id << 18) |
                             (filter_cfg->items[i].ide << 2) |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 21) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 21)) & 0xFFFF;
                 }
@@ -474,15 +474,16 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
                     id_l = ((filter_cfg->items[i].id << 3) |
                             (filter_cfg->items[i].ide << 2) |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
-                    mask_l = ((filter_cfg->items[i].mask << 3) ) & 0xFFFF;
+                    mask_l = ((filter_cfg->items[i].mask << 3)) & 0xFFFF;
                 }
                 drv_can_obj->can_filter_init.CAN_FilterScale = CAN_FilterScale_32bit;
                 drv_can_obj->can_filter_init.CAN_FilterIdHigh = id_h;
-                drv_can_obj->can_filter_init.CAN_FilterIdLow  = id_l;
+                drv_can_obj->can_filter_init.CAN_FilterIdLow = id_l;
                 drv_can_obj->can_filter_init.CAN_FilterMaskIdHigh = mask_h;
-                drv_can_obj->can_filter_init.CAN_FilterMaskIdLow  = mask_l;
+                drv_can_obj->can_filter_init.CAN_FilterMaskIdLow = mask_l;
                 drv_can_obj->can_filter_init.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;
                 drv_can_obj->can_filter_init.CAN_FilterActivation = ENABLE;
 
@@ -543,10 +544,10 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_GET_STATUS:
     {
         rt_uint32_t errval;
-        errval = drv_can_obj->can_base->ERRSR;  //ERRSR
-        drv_can_obj->device.status.rcverrcnt = errval >> 24;            //REC
-        drv_can_obj->device.status.snderrcnt = (errval >> 16 & 0xFF);   //TEC
-        drv_can_obj->device.status.lasterrtype = errval & 0x70;         //LEC
+        errval = drv_can_obj->can_base->ERRSR;                        //ERRSR
+        drv_can_obj->device.status.rcverrcnt = errval >> 24;          //REC
+        drv_can_obj->device.status.snderrcnt = (errval >> 16 & 0xFF); //TEC
+        drv_can_obj->device.status.lasterrtype = errval & 0x70;       //LEC
         drv_can_obj->device.status.errcode = errval & 0x07;
 
         rt_memcpy(arg, &drv_can_obj->device.status, sizeof(drv_can_obj->device.status));
@@ -558,11 +559,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 }
 
 /* CAN Mailbox Transmit Request */
-#define TMIDxR_TXRQ         ((rt_uint32_t)0x00000001)
+#define TMIDxR_TXRQ ((rt_uint32_t)0x00000001)
 
 static int _can_send_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_uint32_t mailbox_index)
 {
-    CanTxMsg CAN_TxMessage = {0};
+    CanTxMsg CAN_TxMessage = { 0 };
     CanTxMsg *TxMessage = &CAN_TxMessage;
     /* Select one empty transmit mailbox */
     switch (mailbox_index)
@@ -617,7 +618,7 @@ static int _can_send_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
     if (mailbox_index != CAN_TxStatus_NoMailBox)
     {
         /* Set Id */
-        can_base->sTxMailBox[mailbox_index].TXMIR  &= TMIDxR_TXRQ;
+        can_base->sTxMailBox[mailbox_index].TXMIR &= TMIDxR_TXRQ;
         if (TxMessage->IDE == CAN_Id_Standard)
         {
             can_base->sTxMailBox[mailbox_index].TXMIR |= ((TxMessage->StdId << 21) | TxMessage->RTR);
@@ -667,11 +668,11 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
 
 static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_uint32_t FIFONum)
 {
-    CanRxMsg CAN_RxMessage = {0};
+    CanRxMsg CAN_RxMessage = { 0 };
     CanRxMsg *RxMessage = &CAN_RxMessage;
 
     /* Check the Rx FIFO */
-    if( CAN_MessagePending( can_base, FIFONum ) == 0)
+    if (CAN_MessagePending(can_base, FIFONum) == 0)
     {
         return -RT_ERROR;
     }
@@ -692,11 +693,11 @@ static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
     RxMessage->FMI = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDTR >> 8);
 
     /* Get the data field */
-    pmsg->data[0] = (rt_uint8_t)0xFF &  can_base->sFIFOMailBox[FIFONum].RXMDLR;
+    pmsg->data[0] = (rt_uint8_t)0xFF & can_base->sFIFOMailBox[FIFONum].RXMDLR;
     pmsg->data[1] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDLR >> 8);
     pmsg->data[2] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDLR >> 16);
     pmsg->data[3] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDLR >> 24);
-    pmsg->data[4] = (rt_uint8_t)0xFF &  can_base->sFIFOMailBox[FIFONum].RXMDHR;
+    pmsg->data[4] = (rt_uint8_t)0xFF & can_base->sFIFOMailBox[FIFONum].RXMDHR;
     pmsg->data[5] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDHR >> 8);
     pmsg->data[6] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDHR >> 16);
     pmsg->data[7] = (rt_uint8_t)0xFF & (can_base->sFIFOMailBox[FIFONum].RXMDHR >> 24);
@@ -735,7 +736,7 @@ static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
         pmsg->hdr_index = (RxMessage->FMI >> 1) + 14;
     }
     /* Release FIFO */
-    CAN_FIFORelease(can_base,FIFONum);
+    CAN_FIFORelease(can_base, FIFONum);
     return RT_EOK;
 }
 
@@ -752,8 +753,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     return _can_recv_rtmsg(drv_can_obj->can_base, ((struct rt_can_msg *)buf), fifo);
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
     _can_sendmsg,
@@ -767,37 +767,37 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
     drv_can_obj = (struct ch32v307x_can_obj *)can->parent.user_data;
     RT_ASSERT(drv_can_obj != RT_NULL);
 
-    CAN_TypeDef * can_base = drv_can_obj->can_base;
+    CAN_TypeDef *can_base = drv_can_obj->can_base;
 
     switch (fifo)
     {
     case CAN_FIFO0:
-        if( ((can_base->RFIFO0 & CAN_RFIFO0_FMP0) ) && ((can_base->INTENR & CAN_IT_FMP0) == CAN_IT_FMP0) )
+        if (((can_base->RFIFO0 & CAN_RFIFO0_FMP0)) && ((can_base->INTENR & CAN_IT_FMP0) == CAN_IT_FMP0))
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
         }
-        if( ((can_base->RFIFO0 & CAN_RFIFO0_FULL0)) && ((can_base->INTENR & CAN_IT_FF0) == CAN_IT_FF0) )
+        if (((can_base->RFIFO0 & CAN_RFIFO0_FULL0)) && ((can_base->INTENR & CAN_IT_FF0) == CAN_IT_FF0))
         {
-            can_base->RFIFO0 |= CAN_RFIFO0_FULL0;  //clear
+            can_base->RFIFO0 |= CAN_RFIFO0_FULL0; //clear
         }
-        if( ((can_base->RFIFO0 & CAN_RFIFO0_FOVR0)) && ((can_base->INTENR & CAN_IT_FOV0) == CAN_IT_FOV0) )
+        if (((can_base->RFIFO0 & CAN_RFIFO0_FOVR0)) && ((can_base->INTENR & CAN_IT_FOV0) == CAN_IT_FOV0))
         {
-            can_base->RFIFO0 |= CAN_RFIFO0_FOVR0;  //clear
+            can_base->RFIFO0 |= CAN_RFIFO0_FOVR0; //clear
             rt_hw_can_isr(can, RT_CAN_EVENT_RXOF_IND | fifo << 8);
         }
         break;
     case CAN_FIFO1:
-        if( ((can_base->RFIFO1 & CAN_RFIFO1_FMP1)) && ((can_base->INTENR & CAN_IT_FMP1) == CAN_IT_FMP1) )
+        if (((can_base->RFIFO1 & CAN_RFIFO1_FMP1)) && ((can_base->INTENR & CAN_IT_FMP1) == CAN_IT_FMP1))
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
         }
-        if( ((can_base->RFIFO1 & CAN_RFIFO1_FULL1)) && ((can_base->INTENR & CAN_IT_FF1) == CAN_IT_FF1) )
+        if (((can_base->RFIFO1 & CAN_RFIFO1_FULL1)) && ((can_base->INTENR & CAN_IT_FF1) == CAN_IT_FF1))
         {
-            can_base->RFIFO1 |= CAN_RFIFO1_FULL1;  //clear
+            can_base->RFIFO1 |= CAN_RFIFO1_FULL1; //clear
         }
-        if( ((can_base->RFIFO1 & CAN_RFIFO1_FOVR1)) && ((can_base->INTENR & CAN_IT_FOV1) == CAN_IT_FOV1) )
+        if (((can_base->RFIFO1 & CAN_RFIFO1_FOVR1)) && ((can_base->INTENR & CAN_IT_FOV1) == CAN_IT_FOV1))
         {
-            can_base->RFIFO1 |= CAN_RFIFO1_FOVR1;  //clear
+            can_base->RFIFO1 |= CAN_RFIFO1_FOVR1; //clear
             rt_hw_can_isr(can, RT_CAN_EVENT_RXOF_IND | fifo << 8);
         }
         break;
@@ -808,66 +808,63 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
 /**
  * @brief This function handles CAN1 TX interrupts. transmit fifo0/1/2 is empty can trigger this interrupt
  */
-void USB_HP_CAN1_TX_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USB_HP_CAN1_TX_IRQHandler(void) WCH_IRQ_ATTR;
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
     struct ch32v307x_can_obj *drv_can_obj = &drv_can1;
 
-    CAN_TypeDef * can_base = drv_can_obj->can_base;
+    CAN_TypeDef *can_base = drv_can_obj->can_base;
 
-    if((can_base->INTENR & CAN_IT_TME) == CAN_IT_TME)
+    if ((can_base->INTENR & CAN_IT_TME) == CAN_IT_TME)
     {
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
         {
             //Request Completed Mailbox0
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK0; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0) || ((can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST0 | CAN_TSTATR_TERR0); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP0; // set 1 clear
         }
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
         {
             //Request Completed Mailbox1
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK1; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1) || ((can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST1 | CAN_TSTATR_TERR1); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP1; // set 1 clear
         }
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
         {
             //Request Completed Mailbox2
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK2; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2) || ((can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST2 | CAN_TSTATR_TERR2); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP2; // set 1 clear
         }
-        CAN_ClearITPendingBit( can_base, CAN_IT_TME );
+        CAN_ClearITPendingBit(can_base, CAN_IT_TME);
     }
     rt_interrupt_leave();
     FREE_INT_SP();
@@ -876,7 +873,7 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 /**
  * @brief This function handles CAN1 RX0 interrupts.
  */
-void USB_LP_CAN1_RX0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USB_LP_CAN1_RX0_IRQHandler(void) WCH_IRQ_ATTR;
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     GET_INT_SP();
@@ -889,7 +886,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 /**
  * @brief This function handles CAN1 RX1 interrupts.
  */
-void CAN1_RX1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN1_RX1_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN1_RX1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -902,15 +899,15 @@ void CAN1_RX1_IRQHandler(void)
 /**
  * @brief This function handles CAN1 SCE interrupts.
  */
-void CAN1_SCE_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN1_SCE_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN1_SCE_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
 
     struct ch32v307x_can_obj *drv_can_obj = &drv_can1;
-    CAN_TypeDef * can_base = drv_can_obj->can_base;
-    rt_uint32_t errval = can_base->ERRSR;  //ERRSR
+    CAN_TypeDef *can_base = drv_can_obj->can_base;
+    rt_uint32_t errval = can_base->ERRSR; //ERRSR
 
     switch ((errval & 0x70) >> 4)
     {
@@ -922,15 +919,15 @@ void CAN1_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can_obj->device.status.ackerrcnt++;
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
+        if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x00 << 8);
-        }else
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
+        }
+        else if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x01 << 8);
-        }else
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
+        }
+        else if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x02 << 8);
         }
@@ -959,66 +956,63 @@ void CAN1_SCE_IRQHandler(void)
 /**
  * @brief This function handles CAN2 TX interrupts.
  */
-void CAN2_TX_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_TX_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_TX_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
     struct ch32v307x_can_obj *drv_can_obj = &drv_can2;
 
-    CAN_TypeDef * can_base = drv_can_obj->can_base;
+    CAN_TypeDef *can_base = drv_can_obj->can_base;
 
-    if((can_base->INTENR & CAN_IT_TME) == CAN_IT_TME)
+    if ((can_base->INTENR & CAN_IT_TME) == CAN_IT_TME)
     {
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
         {
             //Request Completed Mailbox0
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK0; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0) || ((can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST0 | CAN_TSTATR_TERR0); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP0; // set 1 clear
         }
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
         {
             //Request Completed Mailbox1
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK1; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1) || ((can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST1 | CAN_TSTATR_TERR1); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP1; // set 1 clear
         }
-        if( (can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
+        if ((can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
         {
             //Request Completed Mailbox2
-            if( ( can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
+            if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
             {
                 can_base->TSTATR |= CAN_TSTATR_TXOK2; // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
             }
-            if( ( ( can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2)
-                || (( can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2) )
+            if (((can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2) || ((can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2))
             {
                 can_base->TSTATR |= (CAN_TSTATR_ALST2 | CAN_TSTATR_TERR2); // set 1 clear
                 rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
             }
             can_base->TSTATR |= CAN_TSTATR_RQCP2; // set 1 clear
         }
-        CAN_ClearITPendingBit( can_base, CAN_IT_TME );
+        CAN_ClearITPendingBit(can_base, CAN_IT_TME);
     }
     rt_interrupt_leave();
     FREE_INT_SP();
@@ -1027,7 +1021,7 @@ void CAN2_TX_IRQHandler(void)
 /**
  * @brief This function handles CAN2 RX0 interrupts.
  */
-void CAN2_RX0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_RX0_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_RX0_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1040,7 +1034,7 @@ void CAN2_RX0_IRQHandler(void)
 /**
  * @brief This function handles CAN2 RX1 interrupts.
  */
-void CAN2_RX1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_RX1_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_RX1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -1053,14 +1047,14 @@ void CAN2_RX1_IRQHandler(void)
 /**
  * @brief This function handles CAN2 SCE interrupts.
  */
-void CAN2_SCE_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void CAN2_SCE_IRQHandler(void) WCH_IRQ_ATTR;
 void CAN2_SCE_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
     struct ch32v307x_can_obj *drv_can_obj = &drv_can2;
-    CAN_TypeDef * can_base = drv_can_obj->can_base;
-    rt_uint32_t errval = can_base->ERRSR;  //ERRSR
+    CAN_TypeDef *can_base = drv_can_obj->can_base;
+    rt_uint32_t errval = can_base->ERRSR; //ERRSR
 
     switch ((errval & 0x70) >> 4)
     {
@@ -1072,15 +1066,15 @@ void CAN2_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can_obj->device.status.ackerrcnt++;
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
+        if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x00 << 8);
-        }else
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
+        }
+        else if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x01 << 8);
-        }else
-        if( (can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
+        }
+        else if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
         {
             rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x02 << 8);
         }
