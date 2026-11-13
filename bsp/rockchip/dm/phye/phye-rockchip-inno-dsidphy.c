@@ -8,12 +8,8 @@
  * 2023-09-23     GuEe-GUI     first version
  */
 
-#include <drivers/clk.h>
-#include <drivers/misc.h>
-#include <drivers/ofw_io.h>
-#include <drivers/phye.h>
-#include <drivers/platform.h>
-#include <drivers/reset.h>
+#include <rtdevice.h>
+#include <rtthread.h>
 
 #define DBG_TAG "phye.inno-dsi"
 #define DBG_LVL DBG_INFO

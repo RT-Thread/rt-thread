@@ -17,11 +17,14 @@
 #include <rtdbg.h>
 
 #include "rockchip-i2s-tdm.h"
+#include "rockchip-sai.h"
 #include "rockchip-hdmi.h"
 #include "codec/rk817-codec.h"
+#include "codec/rk3528-codec.h"
 
 #define CARD_PREFIX         "simple-audio-card,"
 #define CARD_DAI            "sound-dai"
+#define ROCKCHIP_HDMI_CARD  "rockchip,hdmi"
 #define DEFAULT_MCLK_FS     256
 
 #ifndef RT_AUDIO_REPLAY_MP_BLOCK_SIZE
@@ -44,13 +47,21 @@ struct rockchip_audio_card
 
     struct rt_device *dev;
     struct rockchip_i2s_tdm *i2s;
+    struct rockchip_sai *sai;
     struct rk817_codec *codec;
+    struct rk3528_codec *acodec;
     struct rt_ofw_node *hdmi_np;
 
     rt_uint32_t mclk_fs;
+    struct rt_spinlock replay_lock;
+    struct rt_completion replay_idle;
+    rt_uint32_t replay_callbacks;
     rt_bool_t started;
     rt_bool_t is_hdmi;
     rt_bool_t use_dma;
+    rt_bool_t playback_coherent;
+    rt_uint32_t volume;
+    rt_bool_t muted;
     char name[32];
 
     struct rt_dma_chan *dma_tx;
@@ -134,7 +145,10 @@ static rt_err_t rockchip_audio_card_getcaps(struct rt_audio_device *audio,
             caps->udata.mask = AUDIO_MIXER_VOLUME | AUDIO_MIXER_MUTE;
             break;
         case AUDIO_MIXER_VOLUME:
-            caps->udata.value = AUDIO_VOLUME_MAX;
+            caps->udata.value = card->acodec ? card->volume : AUDIO_VOLUME_MAX;
+            break;
+        case AUDIO_MIXER_MUTE:
+            caps->udata.value = card->muted;
             break;
         default:
             break;
@@ -155,6 +169,7 @@ static rt_err_t rockchip_audio_card_configure(struct rt_audio_device *audio,
     struct rockchip_audio_card *card = audio->parent.user_data;
     struct rockchip_i2s_config i2s_cfg;
     struct rk817_codec_config codec_cfg;
+    struct rt_audio_configure config;
 
     switch (caps->main_type)
     {
@@ -162,8 +177,26 @@ static rt_err_t rockchip_audio_card_configure(struct rt_audio_device *audio,
         switch (caps->sub_type)
         {
         case AUDIO_MIXER_MUTE:
+            if (card->acodec)
+            {
+                err = rk3528_codec_mute(card->acodec, !!caps->udata.value);
+                if (err)
+                {
+                    return err;
+                }
+                card->muted = !!caps->udata.value;
+            }
             break;
         case AUDIO_MIXER_VOLUME:
+            if (card->acodec)
+            {
+                err = rk3528_codec_set_volume(card->acodec, caps->udata.value);
+                if (err)
+                {
+                    return err;
+                }
+                card->volume = caps->udata.value;
+            }
             if (!card->is_hdmi && card->codec)
             {
                 rk817_codec_set_volume(card->codec, caps->udata.value);
@@ -178,32 +211,58 @@ static rt_err_t rockchip_audio_card_configure(struct rt_audio_device *audio,
         switch (caps->sub_type)
         {
         case AUDIO_DSP_PARAM:
-            card->config = caps->udata.config;
-
-            if (!card->config.samplerate)
+            if (card->sai && card->started)
             {
-                card->config.samplerate = 48000;
+                return -RT_EBUSY;
+            }
+            config = caps->udata.config;
+
+            if (!config.samplerate)
+            {
+                config.samplerate = 48000;
             }
 
-            if (!card->config.channels)
+            if (!config.channels)
             {
-                card->config.channels = 2;
+                config.channels = 2;
             }
 
-            if (!card->config.samplebits)
+            if (!config.samplebits)
             {
-                card->config.samplebits = 16;
+                config.samplebits = 16;
             }
 
-            i2s_cfg.samplerate = card->config.samplerate;
-            i2s_cfg.channels = card->config.channels;
-            i2s_cfg.samplebits = card->config.samplebits;
+            i2s_cfg.samplerate = config.samplerate;
+            i2s_cfg.channels = config.channels;
+            i2s_cfg.samplebits = config.samplebits;
             i2s_cfg.mclk_fs = card->mclk_fs;
 
-            codec_cfg.samplerate = card->config.samplerate;
-            codec_cfg.samplebits = card->config.samplebits;
-            codec_cfg.mclk_rate = card->config.samplerate * card->mclk_fs;
+            codec_cfg.samplerate = config.samplerate;
+            codec_cfg.samplebits = config.samplebits;
+            codec_cfg.mclk_rate = config.samplerate * card->mclk_fs;
 
+            if (card->sai)
+            {
+                if (config.channels != 2 || config.samplebits != 16 ||
+                    (config.samplerate != 44100 && config.samplerate != 48000))
+                {
+                    return -RT_EINVAL;
+                }
+                if ((err = rockchip_sai_hw_params(card->sai, &i2s_cfg)))
+                {
+                    return err;
+                }
+                /* SAI2 establishes the shared source before the DAC divider. */
+                if (card->acodec && (err = rk3528_codec_hw_params(card->acodec,
+                        config.samplerate, config.samplebits, card->mclk_fs)))
+                {
+                    return err;
+                }
+                card->config = config;
+                return RT_EOK;
+            }
+
+            card->config = config;
             if (!card->is_hdmi && card->codec)
             {
                 if ((err = rk817_codec_hw_params(card->codec, &codec_cfg)))
@@ -234,6 +293,32 @@ static rt_err_t rockchip_audio_card_init(struct rt_audio_device *audio)
     return RT_EOK;
 }
 
+static void rockchip_audio_card_queue_frame(struct rockchip_audio_card *card)
+{
+    rt_base_t level = rt_spin_lock_irqsave(&card->replay_lock);
+
+    if (!card->started)
+    {
+        rt_spin_unlock_irqrestore(&card->replay_lock, level);
+        return;
+    }
+    ++card->replay_callbacks;
+    rt_spin_unlock_irqrestore(&card->replay_lock, level);
+
+    if (card->i2s)
+    {
+        rockchip_i2s_tdm_dma_check_underrun(card->i2s);
+    }
+    rt_audio_tx_complete(&card->audio);
+
+    level = rt_spin_lock_irqsave(&card->replay_lock);
+    if (!--card->replay_callbacks && !card->started)
+    {
+        rt_completion_done(&card->replay_idle);
+    }
+    rt_spin_unlock_irqrestore(&card->replay_lock, level);
+}
+
 static rt_err_t rockchip_audio_card_start(struct rt_audio_device *audio, int stream)
 {
     rt_err_t err;
@@ -246,18 +331,32 @@ static rt_err_t rockchip_audio_card_start(struct rt_audio_device *audio, int str
 
     if (card->is_hdmi)
     {
+        rt_bool_t qp = rt_ofw_node_is_compatible(card->hdmi_np, "rockchip,rk3588-dw-hdmi");
+
+        /* QP enable prepares its controller; legacy DW requires hw_params first. */
+        if (qp && (err = rk_hdmi_audio_enable(card->hdmi_np, RT_TRUE)))
+        {
+            return err;
+        }
+
         err = rk_hdmi_audio_configure(card->hdmi_np,
                 card->config.samplerate, card->config.channels,
                 card->config.samplebits);
         if (err)
         {
             LOG_E("HDMI audio configure failed: %s", rt_strerror(err));
+            rk_hdmi_audio_enable(card->hdmi_np, RT_FALSE);
             return err;
         }
-
-        if ((err = rk_hdmi_audio_enable(card->hdmi_np, RT_TRUE)))
+        if (!qp && (err = rk_hdmi_audio_enable(card->hdmi_np, RT_TRUE)))
         {
-            LOG_E("HDMI audio enable failed: %s", rt_strerror(err));
+            return err;
+        }
+    }
+    else if (card->acodec)
+    {
+        if ((err = rk3528_codec_start(card->acodec)))
+        {
             return err;
         }
     }
@@ -266,39 +365,69 @@ static rt_err_t rockchip_audio_card_start(struct rt_audio_device *audio, int str
         rk817_codec_start(card->codec);
     }
 
-    if (card->i2s)
+    if (card->sai)
+    {
+        if ((err = rockchip_sai_start(card->sai)))
+        {
+            goto _stop_i2s;
+        }
+    }
+    else if (card->i2s)
     {
         if ((err = rockchip_i2s_tdm_start(card->i2s)))
         {
-            if (card->is_hdmi)
-            {
-                rk_hdmi_audio_enable(card->hdmi_np, RT_FALSE);
-            }
-            return err;
+            goto _stop_i2s;
         }
 
-        /* TX reset in start() clears DMACR, so enable requests afterwards. */
         if (card->use_dma && (err = rockchip_i2s_tdm_dma_enable(card->i2s)))
         {
-            rockchip_i2s_tdm_stop(card->i2s);
-            if (card->is_hdmi)
-            {
-                rk_hdmi_audio_enable(card->hdmi_np, RT_FALSE);
-            }
-            return err;
+            goto _stop_i2s;
         }
     }
 
     card->started = RT_TRUE;
+    LOG_D("%s replay via %s", card->name, card->use_dma ? "DMA" : "PIO");
 
     /* Prime the first replay block; later blocks are queued by DMA callbacks. */
-    rt_audio_tx_complete(audio);
+    rockchip_audio_card_queue_frame(card);
 
     return RT_EOK;
+
+_stop_i2s:
+    LOG_E("%s: audio start failed: %s", card->name, rt_strerror(err));
+
+    if (card->sai)
+    {
+        rockchip_sai_stop(card->sai);
+    }
+    if (card->i2s && card->use_dma && card->dma_tx)
+    {
+        rockchip_i2s_tdm_dma_disable(card->i2s);
+    }
+    if (card->i2s)
+    {
+        rockchip_i2s_tdm_stop(card->i2s);
+    }
+    if (card->acodec)
+    {
+        rk3528_codec_stop(card->acodec);
+    }
+    if (card->codec)
+    {
+        rk817_codec_stop(card->codec);
+    }
+    if (card->is_hdmi)
+    {
+        rk_hdmi_audio_enable(card->hdmi_np, RT_FALSE);
+    }
+    return err;
 }
 
 static rt_err_t rockchip_audio_card_stop(struct rt_audio_device *audio, int stream)
 {
+    rt_err_t err, result = RT_EOK;
+    rt_base_t level;
+    rt_bool_t busy;
     struct rockchip_audio_card *card = audio->parent.user_data;
 
     if (stream != AUDIO_STREAM_REPLAY)
@@ -306,9 +435,25 @@ static rt_err_t rockchip_audio_card_stop(struct rt_audio_device *audio, int stre
         return -RT_EINVAL;
     }
 
+    /* The core can wake close() before its callback submits the final silence. */
+    level = rt_spin_lock_irqsave(&card->replay_lock);
+    card->started = RT_FALSE;
+    busy = card->replay_callbacks != 0;
+    if (busy)
+    {
+        rt_completion_init(&card->replay_idle);
+    }
+    rt_spin_unlock_irqrestore(&card->replay_lock, level);
+    if (busy && (result = rt_completion_wait(&card->replay_idle,
+            rt_tick_from_millisecond(1000))))
+    {
+        LOG_E("%s: replay callback did not finish", card->name);
+        return result;
+    }
+
     if (card->use_dma && card->dma_tx)
     {
-        rt_dma_chan_stop(card->dma_tx);
+        result = rt_dma_chan_stop(card->dma_tx);
     }
 
     if (card->i2s)
@@ -320,6 +465,18 @@ static rt_err_t rockchip_audio_card_stop(struct rt_audio_device *audio, int stre
 
         rockchip_i2s_tdm_stop(card->i2s);
     }
+    if (card->sai)
+    {
+        err = rockchip_sai_stop(card->sai);
+        if (!result)
+        {
+            result = err;
+        }
+    }
+    if (card->acodec)
+    {
+        rk3528_codec_stop(card->acodec);
+    }
 
     if (!card->is_hdmi && card->codec)
     {
@@ -330,9 +487,13 @@ static rt_err_t rockchip_audio_card_stop(struct rt_audio_device *audio, int stre
         rk_hdmi_audio_enable(card->hdmi_np, RT_FALSE);
     }
 
-    card->started = RT_FALSE;
+    if (card->i2s && card->use_dma && rockchip_i2s_tdm_dma_underruns(card->i2s))
+    {
+        LOG_W("%s: TX FIFO underruns: %u", card->name,
+                rockchip_i2s_tdm_dma_underruns(card->i2s));
+    }
 
-    return RT_EOK;
+    return result;
 }
 
 static void rockchip_audio_card_dma_tx_done(struct rt_dma_chan *chan, rt_size_t size)
@@ -341,7 +502,7 @@ static void rockchip_audio_card_dma_tx_done(struct rt_dma_chan *chan, rt_size_t 
 
     RT_UNUSED(size);
 
-    rt_audio_tx_complete(&card->audio);
+    rockchip_audio_card_queue_frame(card);
 }
 
 static rt_ssize_t rockchip_audio_card_dma_transmit(struct rockchip_audio_card *card,
@@ -377,9 +538,6 @@ static rt_ssize_t rockchip_audio_card_dma_transmit(struct rockchip_audio_card *c
         return -RT_EINVAL;
     }
 
-    rt_dma_chan_stop(card->dma_tx);
-
-    /* The audio core submits one block at a time. */
     if ((err = rt_dma_prep_single(card->dma_tx, &transfer)))
     {
         LOG_E("DMA prep failed: %s", rt_strerror(err));
@@ -402,7 +560,7 @@ static rt_ssize_t rockchip_audio_card_transmit(struct rt_audio_device *audio,
 
     RT_UNUSED(readBuf);
 
-    if (!card->started || !card->i2s)
+    if (!card->started || (!card->i2s && !card->sai))
     {
         return 0;
     }
@@ -420,19 +578,11 @@ static void rockchip_audio_card_buffer_info(struct rt_audio_device *audio,
 {
     struct rockchip_audio_card *card = audio->parent.user_data;
 
-    if (card->use_dma && card->playback_buf)
-    {
-        info->buffer = card->playback_buf;
-        info->block_size = RT_AUDIO_REPLAY_MP_BLOCK_SIZE;
-        info->block_count = RT_AUDIO_REPLAY_MP_BLOCK_COUNT;
-        info->total_size = ROCKCHIP_AUDIO_PLAYBACK_SIZE;
-        return;
-    }
-
-    info->buffer = RT_NULL;
+    RT_ASSERT(card->playback_buf);
+    info->buffer = card->playback_buf;
     info->block_size = RT_AUDIO_REPLAY_MP_BLOCK_SIZE;
     info->block_count = RT_AUDIO_REPLAY_MP_BLOCK_COUNT;
-    info->total_size = info->block_size * info->block_count;
+    info->total_size = ROCKCHIP_AUDIO_PLAYBACK_SIZE;
 }
 
 static const struct rt_audio_ops rockchip_audio_card_ops =
@@ -481,6 +631,7 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     struct rt_ofw_node *cpu_np, *codec_np;
     struct rockchip_audio_card *card;
     const char *card_name = "rockchip-audio";
+    rt_bool_t vendor_hdmi;
 
     card = rt_calloc(1, sizeof(*card));
 
@@ -489,17 +640,25 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
         return -RT_ENOMEM;
     }
 
-    rt_ofw_prop_read_string(card_np, CARD_PREFIX "name", &card_name);
+    rt_spin_lock_init(&card->replay_lock);
+    rt_completion_init(&card->replay_idle);
+
+    vendor_hdmi = rt_ofw_node_is_compatible(card_np, ROCKCHIP_HDMI_CARD);
+    rt_ofw_prop_read_string(card_np, vendor_hdmi ? "rockchip,card-name" :
+            CARD_PREFIX "name", &card_name);
     rt_strncpy(card->name, card_name, sizeof(card->name) - 1);
-    rt_ofw_prop_read_u32(card_np, CARD_PREFIX "mclk-fs", &card->mclk_fs);
+    rt_ofw_prop_read_u32(card_np, vendor_hdmi ? "rockchip,mclk-fs" :
+            CARD_PREFIX "mclk-fs", &card->mclk_fs);
 
     if (!card->mclk_fs)
     {
         card->mclk_fs = DEFAULT_MCLK_FS;
     }
 
-    cpu_np = rockchip_audio_parse_dai_np(card_np, CARD_PREFIX "cpu");
-    codec_np = rockchip_audio_parse_dai_np(card_np, CARD_PREFIX "codec");
+    cpu_np = vendor_hdmi ? rt_ofw_parse_phandle(card_np, "rockchip,cpu", 0) :
+            rockchip_audio_parse_dai_np(card_np, CARD_PREFIX "cpu");
+    codec_np = vendor_hdmi ? rt_ofw_parse_phandle(card_np, "rockchip,codec", 0) :
+            rockchip_audio_parse_dai_np(card_np, CARD_PREFIX "codec");
 
     if (!cpu_np)
     {
@@ -509,10 +668,11 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     }
 
     card->i2s = rockchip_i2s_tdm_find(cpu_np);
+    card->sai = rockchip_sai_find(cpu_np);
 
-    if (!card->i2s)
+    if (!card->i2s && !card->sai)
     {
-        LOG_E("I2S not ready for %s", card->name);
+        LOG_E("CPU DAI %s not ready for %s", cpu_np->name, card->name);
         err = -RT_ENOSYS;
         goto _fail;
     }
@@ -520,11 +680,22 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     if (codec_np)
     {
         if (rt_ofw_node_is_compatible(codec_np, "rockchip,rk3568-dw-hdmi") ||
+            rt_ofw_node_is_compatible(codec_np, "rockchip,rk3528-dw-hdmi") ||
             rt_ofw_node_is_compatible(codec_np, "rockchip,rk3588-dw-hdmi"))
         {
             card->is_hdmi = RT_TRUE;
             card->hdmi_np = codec_np;
             rt_ofw_node_get(card->hdmi_np);
+        }
+        else if (rt_ofw_node_is_compatible(codec_np, "rockchip,rk3528-codec"))
+        {
+            card->acodec = rk3528_codec_find(codec_np);
+            if (!card->acodec)
+            {
+                LOG_E("RK3528 codec not ready for %s", card->name);
+                err = -RT_ENOSYS;
+                goto _fail;
+            }
         }
         else
         {
@@ -540,9 +711,12 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     card->config.samplerate = 48000;
     card->config.channels = 2;
     card->config.samplebits = 16;
+    card->volume = AUDIO_VOLUME_MAX;
     card->dev = dev;
-    card->dma_tx = rockchip_i2s_tdm_get_dma_tx(card->i2s);
-    card->txdr_dma = rockchip_i2s_tdm_txdr_phys(card->i2s);
+    card->dma_tx = card->sai ? rockchip_sai_dma_tx(card->sai) :
+            rockchip_i2s_tdm_get_dma_tx(card->i2s);
+    card->txdr_dma = card->sai ? rockchip_sai_txdr_phys(card->sai) :
+            rockchip_i2s_tdm_txdr_phys(card->i2s);
 
     if (card->dma_tx && card->txdr_dma)
     {
@@ -554,9 +728,10 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
             card->dma_tx->callback = rockchip_audio_card_dma_tx_done;
             card->dma_tx->priv = card;
             card->use_dma = RT_TRUE;
+            card->playback_coherent = RT_TRUE;
             LOG_D("%s: DMA playback enabled", card->name);
         }
-        else
+        else if (!card->sai)
         {
             LOG_W("%s: DMA buffer alloc failed, using PIO", card->name);
         }
@@ -564,6 +739,22 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     else
     {
         LOG_W("%s: No DMA channel, using PIO", card->name);
+    }
+
+    if (!card->playback_buf)
+    {
+        if (card->sai)
+        {
+            LOG_E("%s: SAI playback requires DMA and a coherent buffer", card->name);
+            err = -RT_ENOMEM;
+            goto _fail;
+        }
+        card->playback_buf = rt_malloc(ROCKCHIP_AUDIO_PLAYBACK_SIZE);
+        if (!card->playback_buf)
+        {
+            err = -RT_ENOMEM;
+            goto _fail;
+        }
     }
 
     card->audio.ops = (struct rt_audio_ops *)&rockchip_audio_card_ops;
@@ -585,9 +776,26 @@ static rt_err_t rockchip_audio_card_probe(struct rt_platform_device *pdev)
     return RT_EOK;
 
 _fail:
+    if (card->dma_tx && card->dma_tx->priv == card)
+    {
+        card->dma_tx->callback = RT_NULL;
+        card->dma_tx->priv = RT_NULL;
+    }
     rt_ofw_node_put(cpu_np);
     rt_ofw_node_put(codec_np);
     rt_ofw_node_put(card->hdmi_np);
+    if (card->playback_buf)
+    {
+        if (card->playback_coherent)
+        {
+            rt_dma_free_coherent(card->dev, ROCKCHIP_AUDIO_PLAYBACK_SIZE,
+                    card->playback_buf, card->playback_dma);
+        }
+        else
+        {
+            rt_free(card->playback_buf);
+        }
+    }
     rt_free(card);
 
     return err;
@@ -602,13 +810,33 @@ static rt_err_t rockchip_audio_card_remove(struct rt_platform_device *pdev)
         return RT_EOK;
     }
 
+    if (card->started)
+    {
+        rt_err_t err = rockchip_audio_card_stop(&card->audio, AUDIO_STREAM_REPLAY);
+        if (err)
+        {
+            return err;
+        }
+    }
+    if (card->dma_tx && card->dma_tx->priv == card)
+    {
+        card->dma_tx->callback = RT_NULL;
+        card->dma_tx->priv = RT_NULL;
+    }
     rt_device_unregister(&card->audio.parent);
     rt_dm_dev_unbind_fwdata(&pdev->parent, RT_NULL);
 
     if (card->playback_buf)
     {
-        rt_dma_free_coherent(card->dev, ROCKCHIP_AUDIO_PLAYBACK_SIZE,
-                card->playback_buf, card->playback_dma);
+        if (card->playback_coherent)
+        {
+            rt_dma_free_coherent(card->dev, ROCKCHIP_AUDIO_PLAYBACK_SIZE,
+                    card->playback_buf, card->playback_dma);
+        }
+        else
+        {
+            rt_free(card->playback_buf);
+        }
     }
 
     rt_ofw_node_put(card->hdmi_np);
@@ -621,6 +849,7 @@ static rt_err_t rockchip_audio_card_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id rockchip_audio_card_ofw_ids[] =
 {
     { .compatible = "simple-audio-card" },
+    { .compatible = "rockchip,hdmi" },
     { /* sentinel */ }
 };
 

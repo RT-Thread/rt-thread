@@ -59,6 +59,43 @@ scons
 
 ## 3. Execution
 
+### Configuring Framebuffer Memory
+
+Framebuffer and RGA use DMA pools. Add or adjust the bootargs:
+
+```text
+cma=48M coherent_pool=4M
+```
+
+`cma` includes `coherent_pool` and must be larger than it. This example
+provides approximately 4 MiB of coherent memory and 44 MiB of ordinary CMA memory;
+adjust the parameters to the board's memory layout to avoid overlapping device-tree
+reserved memory.
+
+### Memory Configuration by Resolution
+
+The following estimates assume 32-bit RGB/RGBA double buffering. These are starting
+configurations for display; allow additional memory for RGA and other DMA devices.
+
+| Resolution | Double Framebuffer | Example Boot Arguments |
+| ---------- | ------------------ | ---------------------- |
+| 1280 x 720 | 7.03 MiB | `cma=16M coherent_pool=4M` |
+| 1920 x 1080 | 15.82 MiB | `cma=32M coherent_pool=4M` |
+| 2560 x 1440 | 28.13 MiB | `cma=48M coherent_pool=4M` |
+
+### Inspecting Memory Pools
+
+Run in the RT-Thread shell:
+
+```text
+list_dma_pool
+```
+
+If boot logs report `dma-pool ... overlap` or `Alloc DMA pool ... fail`, first check
+whether the boot arguments cause a conflict with reserved memory.
+
+### Booting
+
 The RK3500 SoC uses different methods to install the kernel depending on the board.It is recommended to install and boot from an SD card.The following steps take the Orange Pi Compute Module 4 as an example:
 
 Connect the serial port of the development board:

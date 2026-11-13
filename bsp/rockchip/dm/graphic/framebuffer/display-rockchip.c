@@ -33,7 +33,7 @@ static const char *display_node_name(struct rt_ofw_node *np)
     return np ? rt_ofw_node_full_name(np) : "<no-node>";
 }
 
-static rt_bool_t display_is_legacy_hdmi(struct rt_ofw_node *np)
+static rt_bool_t display_is_hdmi(struct rt_ofw_node *np)
 {
     if (!np)
     {
@@ -41,28 +41,49 @@ static rt_bool_t display_is_legacy_hdmi(struct rt_ofw_node *np)
     }
 
     return rt_ofw_node_is_compatible(np, "rockchip,rk3568-dw-hdmi") ||
-           rt_ofw_node_is_compatible(np, "rockchip,rk3528-dw-hdmi");
+           rt_ofw_node_is_compatible(np, "rockchip,rk3528-dw-hdmi") ||
+           rt_ofw_node_is_compatible(np, "rockchip,rk3588-dw-hdmi");
 }
 
 static rt_bool_t display_try_fallback_timing(const struct display_route *route,
         struct display_timing *tim)
 {
-    if (!route || !tim || !display_is_legacy_hdmi(route->connector_np))
+    if (!route || !tim || !display_is_hdmi(route->connector_np))
     {
         return RT_FALSE;
     }
 
     rt_memset(tim, 0, sizeof(*tim));
-    tim->pixelclock = 74250000;
-    tim->hactive = 1280;
-    tim->hfront_porch = 110;
-    tim->hsync_len = 40;
-    tim->hback_porch = 220;
-    tim->vactive = 720;
-    tim->vfront_porch = 5;
+
+    if (rt_ofw_node_is_compatible(route->connector_np, "rockchip,rk3528-dw-hdmi"))
+    {
+        /* Conservative RGB8 bring-up mode, independent of the ROCK 5B sink. */
+        tim->pixelclock = 74250000;
+        tim->hactive = 1280;
+        tim->hfront_porch = 110;
+        tim->hsync_len = 40;
+        tim->hback_porch = 220;
+        tim->vactive = 720;
+        tim->vfront_porch = 5;
+        tim->vsync_len = 5;
+        tim->vback_porch = 20;
+        tim->flags = DISPLAY_TIMING_F_PHSYNC | DISPLAY_TIMING_F_PVSYNC;
+        display_timing_derive(tim);
+        return RT_TRUE;
+    }
+
+    /* Native timing advertised by the Rock 5B HDMI0 sink. */
+    tim->pixelclock = 241500000;
+    tim->hactive = 2560;
+    tim->hfront_porch = 48;
+    tim->hsync_len = 32;
+    tim->hback_porch = 80;
+    tim->vactive = 1440;
+    tim->vfront_porch = 3;
     tim->vsync_len = 5;
-    tim->vback_porch = 20;
-    tim->flags = DISPLAY_TIMING_F_PHSYNC | DISPLAY_TIMING_F_PVSYNC;
+    tim->vback_porch = 33;
+    /* The ROCK 5B HDMI0 sink's native 2560x1440 mode is +HSync/-VSync. */
+    tim->flags = DISPLAY_TIMING_F_PHSYNC;
     display_timing_derive(tim);
 
     return RT_TRUE;
@@ -221,8 +242,8 @@ rt_err_t rockchip_display_route_enable(struct rt_ofw_node *route_np)
     {
         if (display_try_fallback_timing(&route, &tim))
         {
-            LOG_D("route %s: fallback timing 1280x720p60 for %s",
-                    display_node_name(route_np),
+            LOG_D("route %s: fallback timing %ux%up60 for %s",
+                    display_node_name(route_np), tim.hactive, tim.vactive,
                     display_node_name(route.connector_np));
         }
         else
@@ -492,7 +513,7 @@ static rt_bool_t display_route_is_legacy_hdmi(struct rt_ofw_node *route_np)
 
     conn = display_route_find_connector(route_np);
 
-    return conn && display_is_legacy_hdmi(conn->np);
+    return conn && display_is_hdmi(conn->np);
 }
 
 static int display_route_dsi_id(struct rt_ofw_node *route_np)
@@ -591,7 +612,12 @@ static rt_bool_t display_route_matches(struct rt_ofw_node *route_np,
     struct rockchip_display_entity *conn;
 
     conn = display_route_find_connector(route_np);
-    if (!conn || !conn->conn_ops || !conn->conn_ops->detect)
+    if (!conn || !conn->conn_ops)
+    {
+        return RT_FALSE;
+    }
+
+    if (!conn->conn_ops->detect)
     {
         return pass == DISPLAY_ROUTE_FIXED;
     }
@@ -704,7 +730,46 @@ static rt_uint32_t display_enable_routes(void)
         }
     }
 
+    rt_ofw_node_put(route_np);
     return enabled_count;
+}
+
+static rt_uint32_t display_enable_hdmi0_fallback(void)
+{
+    struct rt_ofw_node *routes_np;
+    struct rt_ofw_node *route_np;
+    rt_err_t err;
+
+    if (!display_pdev)
+    {
+        return 0;
+    }
+
+    routes_np = rt_ofw_get_child_by_tag(display_pdev->parent.ofw_node, "route");
+    route_np = routes_np ? rt_ofw_get_child_by_tag(routes_np, "route-hdmi0") : RT_NULL;
+    rt_ofw_node_put(routes_np);
+
+    if (!route_np)
+    {
+        return 0;
+    }
+
+    /*
+     * HDMI0 is the explicit auto-mode fallback on RK3588 boards.  Board
+     * firmware may leave the route node disabled while still exposing the
+     * complete endpoint graph, so do not discard this selected route here.
+     */
+    LOG_D("try route-hdmi0");
+    err = rockchip_display_route_enable(route_np);
+    rt_ofw_node_put(route_np);
+
+    if (err)
+    {
+        LOG_W("route-hdmi0 fallback failed: %s", rt_strerror(err));
+        return 0;
+    }
+
+    return 1;
 }
 
 static rt_err_t display_subsys_probe(struct rt_platform_device *pdev)
@@ -716,11 +781,47 @@ static rt_err_t display_subsys_probe(struct rt_platform_device *pdev)
 
 static int rockchip_display_routes_init(void)
 {
+    enum display_route_policy policy = display_route_get_policy();
+
+#ifdef RT_PHYE_ROCKCHIP_INNO_HDMI
+    /* VOP and HDMI can precede the external PHY/clk-port provider in OFW. */
+    static const char * const rk3528_consumers[] =
+    {
+        "rockchip,rk3528-vop", "rockchip,rk3528-dw-hdmi",
+    };
+    rt_size_t i;
+
+    for (i = 0; i < sizeof(rk3528_consumers) / sizeof(rk3528_consumers[0]); ++i)
+    {
+        struct rt_ofw_node *np = rt_ofw_find_node_by_compatible(RT_NULL,
+                rk3528_consumers[i]);
+
+        if (np && rt_ofw_node_is_available(np))
+        {
+            rt_err_t err = rt_ofw_clk_set_defaults(np);
+            if (err)
+                LOG_W("%s clock defaults: %s", display_node_name(np), rt_strerror(err));
+            if (!np->dev || !np->dev->drv)
+                rt_platform_ofw_request(np);
+        }
+        rt_ofw_node_put(np);
+    }
+#endif /* RT_PHYE_ROCKCHIP_INNO_HDMI */
+
     /*
      * DSI retries deferred probing at component level 4. Enable every display
      * policy afterwards, but before environment level 5 can wait for rootfs.
      */
-    display_enable_routes();
+    if ((policy == DISPLAY_POLICY_AUTO || policy == DISPLAY_POLICY_HDMI) &&
+            display_enable_hdmi0_fallback())
+    {
+        return 0;
+    }
+
+    if (!display_enable_routes())
+    {
+        display_enable_hdmi0_fallback();
+    }
 
     return 0;
 }

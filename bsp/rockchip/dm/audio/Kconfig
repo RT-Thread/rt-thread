@@ -4,9 +4,9 @@ menuconfig RT_AUDIO_ROCKCHIP
     depends on RT_USING_AUDIO
     default n
     help
-      Rockchip I2S/TDM audio for boards such as ROCK 3A (rk3568):
-        - Analog output via RK809/RK817 PMIC codec (I2S1)
-        - HDMI audio via I2S0 (requires dw-hdmi display stack)
+      Rockchip I2S/TDM and SAI audio for analog and HDMI playback.
+      RK3528 uses SAI2 with its internal DAC and SAI3 for HDMI.
+      HDMI audio requires the corresponding display driver.
 
 if RT_AUDIO_ROCKCHIP
 
@@ -17,9 +17,18 @@ config RT_AUDIO_ROCKCHIP_I2S_TDM
       I2S/TDM block driver (e.g. i2s0_8ch, i2s1_8ch).
       Uses PL330 DMA when RT_USING_DMA is enabled, otherwise PIO.
 
+config RT_AUDIO_ROCKCHIP_SAI
+    bool "Rockchip RK3528 SAI controller (playback)"
+    depends on RT_USING_DMA && RT_USING_CLK && RT_USING_RESET
+    default y if RT_CLK_ROCKCHIP_RK3528
+    help
+      RK3528 SAI2/SAI3 playback for the internal DAC and HDMI.
+      Supports stereo S16_LE at 44.1/48 kHz using DMA.
+      Enable the board's DMA controller driver as well (PL330 on RK3528).
+
 menuconfig RT_AUDIO_ROCKCHIP_CODEC
     bool "Rockchip codec support"
-    depends on RT_AUDIO_ROCKCHIP_I2S_TDM
+    depends on RT_AUDIO_ROCKCHIP_I2S_TDM || RT_AUDIO_ROCKCHIP_SAI
     default y
     help
       Codec drivers for analog audio (headphone / line-out).
@@ -29,17 +38,25 @@ if RT_AUDIO_ROCKCHIP_CODEC
 
 config RT_AUDIO_ROCKCHIP_CODEC_RK817
     bool "RK817/RK809 codec (I2C PMIC)"
-    depends on RT_USING_I2C
+    depends on RT_USING_I2C && RT_AUDIO_ROCKCHIP_I2S_TDM
     select RT_MFD_RK8XX_I2C
     default y
     help
       RK809/RK817 built-in codec on ROCK 3A, routed over I2S1.
 
+config RT_AUDIO_ROCKCHIP_CODEC_RK3528
+    bool "RK3528 internal DAC codec"
+    depends on RT_AUDIO_ROCKCHIP_SAI && RT_USING_PIN
+    default y if RT_CLK_ROCKCHIP_RK3528
+    help
+      Stereo line-out playback through the RK3528 internal DAC,
+      including optional pa-ctl GPIO, volume and mute controls.
+
 endif
 
 config RT_AUDIO_ROCKCHIP_CARD
     bool "Rockchip simple-audio-card (machine driver)"
-    depends on RT_AUDIO_ROCKCHIP_I2S_TDM
+    depends on RT_AUDIO_ROCKCHIP_I2S_TDM || RT_AUDIO_ROCKCHIP_SAI
     default y
     help
       Parses simple-audio-card nodes (e.g. rk809-sound, hdmi_sound)

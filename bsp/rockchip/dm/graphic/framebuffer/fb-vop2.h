@@ -20,47 +20,87 @@
 #define VOP2FB_VP_MAX                   4
 
 /* System */
-#define VOP2_REG_CFG_DONE               0x000
-#define VOP2_CFG_DONE_EN                RT_BIT(15)
+#define VOP2_REG_CFG_DONE                       0x000
+#define RK3588_WIN_REG_CFG_DONE                 0x00c
+#define RK3588_SYS_VAR_FREQ_CTRL                0x038
+#define RK3568_SYS_PD_CTRL                      0x034
+#define RK3568_SYS_STATUS0                      0x060
+#define VOP2_SYS_AXI_LUT_CTRL                   0x024
+#define VOP2_SYS_MMU_BYPASS_EN_SHIFT            31
+#define VOP2_SYS_MMU_BYPASS_ID_SHIFT            26
+#define VOP2_SYS_MMU_BYPASS_ID_MASK             0x1f
+#define RK3588_VP_ALMOST_FULL_OR_EN_SHIFT(vp)   (28 + (vp))
+#define RK3588_VP_LINE_FLAG_OR_EN_SHIFT(vp)     (20 + (vp))
 
-#define VOP2_EN_MASK                    1
+/* RK3588 VOP internal power-domain control/status bits. */
+#define RK3588_VOP_PD_CLUSTER0_SHIFT            0
+#define RK3588_VOP_PD_CLUSTER0_STATUS           8
+#define RK3588_VOP_PD_ESMART_SHIFT              7
+#define RK3588_VOP_PD_ESMART_STATUS             15
+#define VOP2_CFG_DONE_EN                        RT_BIT(15)
+
+#define VOP2_EN_MASK                            1
 
 /* Cluster layer (RK3568 layout) */
-#define VOP2_CLUSTER0_BASE              0x1000
-#define VOP2_CLUSTER_STRIDE             0x200
+#define VOP2_CLUSTER0_BASE                      0x1000
+#define VOP2_CLUSTER_STRIDE                     0x200
 
-#define VOP2_CLUSTER_WIN0_CTRL0         0x00
-#define VOP2_CLUSTER_WIN0_CTRL2         0x08
-#define VOP2_CLUSTER_WIN0_YRGB_MST      0x10
-#define VOP2_CLUSTER_WIN0_VIR           0x18
-#define VOP2_CLUSTER_WIN0_ACT_INFO      0x20
-#define VOP2_CLUSTER_WIN0_DSP_INFO      0x24
-#define VOP2_CLUSTER_WIN0_DSP_ST        0x28
-#define VOP2_CLUSTER_CTRL               0x100
-#define VOP2_CLUSTER_EN_SHIFT           0
-
-#define VOP2_CLUSTER_AXI_ID_SHIFT       13
-#define VOP2_CLUSTER_AXI_YRGB_ID_SHIFT  0
-#define VOP2_CLUSTER_AXI_UV_ID_SHIFT    5
-#define VOP2_CLUSTER_AXI_YRGB_ID_MASK   0x1f
-#define VOP2_CLUSTER_AXI_UV_ID_MASK     0x1f
-#define VOP2_CLUSTER_AXI_ID_MASK        0x1
+#define VOP2_CLUSTER_WIN0_CTRL0                 0x00
+#define VOP2_CLUSTER_WIN0_CTRL1                 0x04
+#define VOP2_CLUSTER_WIN0_CTRL2                 0x08
+#define VOP2_CLUSTER_WIN0_YRGB_MST              0x10
+#define VOP2_CLUSTER_WIN0_VIR                   0x18
+#define VOP2_CLUSTER_WIN0_ACT_INFO              0x20
+#define VOP2_CLUSTER_WIN0_DSP_INFO              0x24
+#define VOP2_CLUSTER_WIN0_DSP_ST                0x28
+#define VOP2_CLUSTER_WIN0_SCL_FACTOR_YRGB       0x30
+#define VOP2_CLUSTER_WIN0_AFBCD_OUTPUT_CTRL     0x50
+#define VOP2_CLUSTER_WIN0_AFBCD_CTRL            0x6c
+#define VOP2_CLUSTER_CTRL                       0x100
+#define VOP2_CLUSTER_EN_SHIFT                   0
+#define VOP2_CLUSTER_AFBC_EN_SHIFT              1
+#define VOP2_CLUSTER_LB_MODE_SHIFT              4
+#define VOP2_CLUSTER_LB_MODE_MASK               0xf
+#define VOP2_CLUSTER_MMU_BYPASS_SHIFT           14
+#define VOP2_CLUSTER_FRM_RESET_EN_SHIFT         31
+#define VOP2_CLUSTER_AFBCD_GATING_EN_SHIFT      4
+#define VOP2_CLUSTER_AFBCD_HALF_BLOCK_SHIFT     7
+#define VOP2_CLUSTER_AFBCD_BLOCK_SPLIT_SHIFT    8
+#define VOP2_CLUSTER_YUV2RGB_EN_SHIFT           8
+#define VOP2_CLUSTER_RGB2YUV_EN_SHIFT           9
+#define VOP2_CLUSTER_CSC_MODE_SHIFT             10
+#define VOP2_CLUSTER_CSC_MODE_MASK              0x3
+#define VOP2_CLUSTER_AXI_ID_SHIFT               13
+#define VOP2_CLUSTER_AXI_YRGB_ID_SHIFT          0
+#define VOP2_CLUSTER_AXI_UV_ID_SHIFT            5
+#define VOP2_CLUSTER_AXI_YRGB_ID_MASK           0x1f
+#define VOP2_CLUSTER_AXI_UV_ID_MASK             0x1f
+#define VOP2_CLUSTER_AXI_ID_MASK                0x1
+#define VOP2_CLUSTER_YRGB_XSCL_MODE_SHIFT       12
+#define VOP2_CLUSTER_YRGB_YSCL_MODE_SHIFT       14
+#define VOP2_CLUSTER_AVG2_SHIFT                 18
+#define VOP2_CLUSTER_AVG4_SHIFT                 19
+#define VOP2_CLUSTER_YRGB_GT2_SHIFT             28
+#define VOP2_CLUSTER_YRGB_GT4_SHIFT             29
 
 /* Esmart / Smart shared region layout */
 #define VOP2_ESMART0_BASE               0x1800
 #define VOP2_SMART0_BASE                0x1C00
 #define VOP2_ESMART_STRIDE              0x200
 #define VOP2_SMART_STRIDE               0x200
+#define VOP2_SMART_DLY_NUM              0x6f8
 
 #define VOP2_ESMART_CTRL0               0x00
 #define VOP2_ESMART_AXI_CTRL            0x08
 #define VOP2_ESMART_CTRL1               0x04
+#define VOP2_ESMART_MMU_BYPASS_SHIFT    2
 #define VOP2_ESMART_AXI_ID_SHIFT        1
-#define VOP2_ESMART_AXI_YRGB_ID_SHIFT   0
+#define VOP2_ESMART_AXI_YRGB_ID_SHIFT   4
 #define VOP2_ESMART_AXI_UV_ID_SHIFT     12
 #define VOP2_ESMART_AXI_ID_MASK         0x1
 #define VOP2_ESMART_AXI_YRGB_ID_MASK    0x1f
 #define VOP2_ESMART_AXI_UV_ID_MASK      0x1f
+#define VOP2_YUV2RGB_EN_SHIFT           0
 #define VOP2_RGB2YUV_EN_SHIFT           1
 #define VOP2_CSC_MODE_SHIFT             2
 #define VOP2_CSC_MODE_MASK              0x3
@@ -131,6 +171,7 @@ struct vop2fb_win_desc
     rt_uint8_t axi_id;
     rt_uint8_t axi_yrgb_id;
     rt_uint8_t axi_uv_id;
+    rt_uint8_t cfg_done_bit;
     rt_int8_t plane_id;
     rt_uint32_t mix_alpha_reg;
 };
@@ -191,8 +232,11 @@ struct vop2fb
     struct rt_device *dev;
 
     const struct vop2fb_soc_data *soc;
+    const struct vop2fb_win_desc *primary_desc;
+    const struct vop2fb_win_desc *cursor_desc;
 
     void *regs;
+    void *gamma_lut;
     rt_uint32_t *regsbak;
 
     rt_uint32_t display_w;
@@ -210,9 +254,13 @@ struct vop2fb
 
     rt_bool_t clk_enabled;
     struct rt_clk_array *clks;
+    struct rt_reset_control *rsts;
+    struct rt_syscon *vop_grf;
+    struct rt_syscon *vo1_grf;
     struct rt_spinlock reg_lock;
 
     int irq;
+    rt_uint32_t frame_start_count[VOP2FB_VP_MAX];
     rt_uint32_t post_buf_empty_count[VOP2FB_VP_MAX];
     rt_uint32_t axi_bus_error_count[2];
 
@@ -273,9 +321,24 @@ rt_inline rt_uint32_t vop2fb_cfg_done_pending(struct vop2fb *vfb)
 
 rt_inline rt_uint32_t vop2fb_cfg_done_vp_val(struct vop2fb *vfb, rt_uint32_t vp)
 {
+    if (vfb && vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3528)
+    {
+        rt_uint32_t mask = RT_BIT(vp) | RT_BIT(vp + 4);
+        return VOP2_CFG_DONE_EN | mask | (mask << 16);
+    }
     if (vfb && vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3568)
     {
         return VOP2_CFG_DONE_EN | RT_BIT(vp) | vop2fb_cfg_done_pending(vfb);
+    }
+
+    if (vfb && vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3588)
+    {
+        /*
+         * REG_CFG_DONE uses a hiword write mask.  The VP's done bit and
+         * global-regdone are sufficient for a normal RK3588 plane commit;
+         * the system shadow-bank bits are not part of this transaction.
+         */
+        return VOP2_CFG_DONE_EN | RT_BIT(vp) | (RT_BIT(vp) << 16);
     }
 
     return VOP2_CFG_DONE_EN | RT_BIT(vp) | (RT_BIT(vp) << 16);
@@ -289,6 +352,11 @@ rt_inline rt_uint32_t vop2fb_cfg_done_val(struct vop2fb *vfb)
 rt_inline rt_uint32_t vop2fb_cfg_done_mask_val(struct vop2fb *vfb,
         rt_uint32_t vp_mask)
 {
+    if (vfb && vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3528)
+    {
+        vp_mask |= vp_mask << 4;
+        return VOP2_CFG_DONE_EN | vp_mask | (vp_mask << 16);
+    }
     if (vfb && vfb->soc && vfb->soc->soc == VOP2FB_SOC_RK3568)
     {
         return VOP2_CFG_DONE_EN | vp_mask | vop2fb_cfg_done_pending(vfb);
