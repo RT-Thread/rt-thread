@@ -64,6 +64,7 @@ struct ptyfs_file
     rt_list_t ent_node;             /* entry node in subdir list */
     struct ptyfs_sb *sb;            /* superblock ptr */
     rt_device_t device;             /* device binding on this file */
+    rt_uint32_t ref;                /* references, protected by sb->lock */
 };
 
 struct ptyfs_sb
@@ -122,6 +123,8 @@ static rt_err_t ptyfile_init(struct ptyfs_file *file, struct ptyfs_sb *sb,
     rt_list_init(&file->ent_node);
     file->sb = sb;
     file->device = device;
+    /* the root list owns the initial reference */
+    file->ref = 1;
 
     return 0;
 }
@@ -131,10 +134,9 @@ static rt_err_t ptyfile_add_to_root(struct ptyfs_sb *sb,
 {
     struct ptyfs_file *root_file = &sb->root_file;
 
+    rt_mutex_take(&sb->lock, RT_WAITING_FOREVER);
     /* update super block */
     sb->df_size += sizeof(struct ptyfs_file);
-
-    rt_mutex_take(&sb->lock, RT_WAITING_FOREVER);
     rt_list_insert_after(&(root_file->subdirs), &(new_file->ent_node));
     rt_mutex_release(&sb->lock);
 
@@ -144,14 +146,38 @@ static rt_err_t ptyfile_add_to_root(struct ptyfs_sb *sb,
 static rt_err_t ptyfile_remove_from_root(struct ptyfs_sb *sb,
                                          struct ptyfs_file *rm_file)
 {
+    rt_mutex_take(&sb->lock, RT_WAITING_FOREVER);
     /* update super block */
     sb->df_size -= sizeof(struct ptyfs_file);
-
-    rt_mutex_take(&sb->lock, RT_WAITING_FOREVER);
     rt_list_remove(&(rm_file->ent_node));
+    /* drop the reference owned by the root list */
+    RT_ASSERT(rm_file->ref > 0);
+    rm_file->ref--;
     rt_mutex_release(&sb->lock);
 
     return 0;
+}
+
+/**
+ * Release a reference returned by ptyfile_lookup().
+ *
+ * The last reference frees the file, so a reader that got a pointer from
+ * ptyfile_lookup() can keep using it while another thread unregisters the pts.
+ */
+static void ptyfile_put(struct ptyfs_sb *sb, struct ptyfs_file *file)
+{
+    if (!file || file == &sb->root_file)
+    {
+        return;
+    }
+
+    rt_mutex_take(&sb->lock, RT_WAITING_FOREVER);
+    RT_ASSERT(file->ref > 0);
+    if (--file->ref == 0)
+    {
+        rt_free(file);
+    }
+    rt_mutex_release(&sb->lock);
 }
 
 static struct ptyfs_file *ptyfile_lookup(struct ptyfs_sb *superblock,
@@ -203,6 +229,8 @@ static struct ptyfs_file *ptyfile_lookup(struct ptyfs_sb *superblock,
             {
                 if (strcmp(file_iter->basename, basename) == 0)
                 {
+                    /* keep the file alive until the caller is done with it */
+                    file_iter->ref++;
                     found_file = file_iter;
                     break;
                 }
@@ -303,8 +331,8 @@ rt_err_t ptyfs_unregister_pts(rt_device_t ptmx, ptsno_t ptsno)
             ptyfile_remove_from_root(sb, pts_file);
             ptsno_pool = &sb->ptsno_pool;
             rid_bitmap_put(ptsno_pool, ptsno);
-            /* the file is no longer reachable from the root list */
-            rt_free(pts_file);
+            /* drop the lookup reference; a concurrent reader may still hold one */
+            ptyfile_put(sb, pts_file);
             rc = 0;
         }
         else
@@ -401,11 +429,16 @@ static int ptyfs_ops_setattr(struct dfs_dentry *dentry, struct dfs_attr *attr)
     pty_file = ptyfile_lookup(superblock, dentry->pathname);
     if (pty_file && pty_file->type == PTYFS_TYPE_FILE_SLAVE)
     {
+        rt_mutex_take(&superblock->lock, RT_WAITING_FOREVER);
         pty_file->mode &= ~0xFFF;
         pty_file->mode |= attr->st_mode & 0xFFF;
+        rt_mutex_release(&superblock->lock);
+
+        ptyfile_put(superblock, pty_file);
         return 0;
     }
 
+    ptyfile_put(superblock, pty_file);
     return -1;
 }
 
@@ -487,6 +520,8 @@ static struct dfs_vnode *ptyfs_ops_lookup(struct dfs_dentry *dentry)
         }
     }
 
+    ptyfile_put(superblock, pty_file);
+
     return vnode;
 }
 
@@ -515,6 +550,7 @@ static struct dfs_vnode *ptyfs_ops_create_vnode(struct dfs_dentry *dentry,
         pty_file = ptyfile_lookup(sb, vnode_path);
         if (!pty_file || (~pty_file->mode & mode))
         {
+            ptyfile_put(sb, pty_file);
             dfs_vnode_destroy(vnode);
             return NULL;
         }
@@ -541,9 +577,12 @@ static struct dfs_vnode *ptyfs_ops_create_vnode(struct dfs_dentry *dentry,
         else
         {
             /* unsupported types */
+            ptyfile_put(sb, pty_file);
             dfs_vnode_destroy(vnode);
             return NULL;
         }
+
+        ptyfile_put(sb, pty_file);
     }
 
     return vnode;
@@ -579,6 +618,7 @@ static int devpty_deffops_getdents(struct dfs_file *file, struct dirent *dirp,
         count = (count / sizeof(struct dirent));
         if (count == 0)
         {
+            ptyfile_put(superblock, d_file);
             return -EINVAL;
         }
 
@@ -586,6 +626,8 @@ static int devpty_deffops_getdents(struct dfs_file *file, struct dirent *dirp,
         index = 0;
         count = 0;
 
+        /* the lock keeps the entries alive while they are being read */
+        rt_mutex_take(&superblock->lock, RT_WAITING_FOREVER);
         rt_list_for_each(list, &d_file->subdirs)
         {
             if (index >= (rt_size_t)file->fpos)
@@ -616,6 +658,9 @@ static int devpty_deffops_getdents(struct dfs_file *file, struct dirent *dirp,
                 break;
             }
         }
+        rt_mutex_release(&superblock->lock);
+
+        ptyfile_put(superblock, d_file);
     }
 
     return count * sizeof(struct dirent);
