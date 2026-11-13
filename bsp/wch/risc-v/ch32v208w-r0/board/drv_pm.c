@@ -7,25 +7,14 @@
  * Date           Author       Notes
  * 2026-11-08     kaidegit     first version
  *
- * 唤醒限制与用户配置 / Wakeup limitations and user configuration:
- * - CH32V208 在关中断时无法通过 WFI 唤醒，因此本驱动使用 WFE 进入 STOP；
- *   RTC 闹钟唤醒由本驱动配置。
- *   On CH32V208, WFI cannot wake the CPU while interrupts are disabled, so this
- *   driver uses WFE for STOP. RTC alarm wakeup is configured by this driver.
- * - 仅使能 IRQ（包括调用 rt_pin_irq_enable()）并不能使其成为 STOP 唤醒源。
- *   所有需要唤醒 CPU 的 IRQ 都必须同时配置对应的事件路径；否则，该 IRQ
- *   只能在其他事件唤醒 CPU 后得到处理，使用本驱动时最长可能延迟 10 秒。
- *   Merely enabling an IRQ, including rt_pin_irq_enable(), does not make it a
- *   STOP wakeup source. Every IRQ that must wake the CPU also needs its event
- *   path configured. Otherwise, it is serviced only after another event wakes
- *   the CPU, potentially up to 10 seconds later with this driver.
- * - GPIO 唤醒需在进入 STOP 前配置 EXTI 线映射、触发边沿和事件使能；其他
- *   外设唤醒源也需配置对应的事件路径。如果唤醒后还需要执行 IRQ 处理函数
- *   或 rt_pin_attach_irq() 注册的回调，则仍需保持相应 IRQ 使能。
- *   For GPIO, configure the EXTI line mapping, trigger edge and event enable;
- *   for other peripherals, configure their corresponding event path before
- *   entering STOP. Keep the IRQ enabled as well when its handler or an
- *   rt_pin_attach_irq() callback must run after wakeup.
+ * 唤醒配置 / Wakeup configuration:
+ * - 使用 WFE 和 SEVONPEND 进入 STOP，RTC 闹钟唤醒由本驱动配置。
+ *   Use WFE with SEVONPEND for STOP. RTC alarm wakeup is configured by this
+ *   driver.
+ * - GPIO 可直接通过 rt_pin_irq_enable() 配置 EXTI 中断唤醒和回调，无需额外
+ *   配置事件路径。
+ *   GPIO wakeup and callbacks can be configured directly with
+ *   rt_pin_irq_enable() through EXTI interrupts, without an extra event path.
  */
 
 #include <board.h>
@@ -407,7 +396,7 @@ static void pm_stop(void)
 
     pm_state.runtime.systick_suspended = 1;
     sctlr = NVIC->SCTLR;
-    NVIC->SCTLR &= ~(PFIC_SLEEP_ON_EXIT | PFIC_EVENT_ON_PENDING);
+    NVIC->SCTLR = (sctlr & ~PFIC_SLEEP_ON_EXIT) | PFIC_EVENT_ON_PENDING;
     PWR_EnterSTOPMode_RAM_LV(PWR_Regulator_LowPower, PWR_STOPEntry_WFE);
 
     pm_clock_restore();
