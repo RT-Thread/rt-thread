@@ -851,7 +851,8 @@ static const char *ulog_basename(const char *path)
  *
  * writes "[file:line func()] " into the given buffer. The line number and the
  * function name are reserved first, so that a long file name can never
- * truncate them.
+ * truncate them; when the buffer is too small they are omitted instead of
+ * being printed truncated.
  *
  * @param buf buffer to write to
  * @param size size of the buffer
@@ -883,14 +884,11 @@ static rt_size_t ulog_ctx_formater(char *buf, rt_size_t size, const char *file, 
     {
         reserved += rt_strlen(func) + 4; /* " (" and ")" */
     }
-    if (reserved + 6 > size)
-    {
-        reserved = size / 3;
-    }
 
     buf[pos++] = '[';
 
-    /* file name, bounded so that the line number and the function name fit */
+    /* file name, written only when the line number and the function name
+     * still fit after it */
     if ((file != RT_NULL) && (size - pos > reserved + 3))
     {
         file = ulog_basename(file);
@@ -902,23 +900,32 @@ static rt_size_t ulog_ctx_formater(char *buf, rt_size_t size, const char *file, 
         }
     }
 
-    if ((line > 0) && (size - pos > 3))
+    /* line number, emitted only when the complete number fits, so that a
+     * truncated number is never printed */
+    if ((line > 0) && (size - pos > 4))
     {
-        room = size - pos - 3;
-        n = rt_snprintf(buf + pos, room, ":%d", line);
-        if (n > 0)
+        char line_buf[16];
+
+        n = rt_snprintf(line_buf, sizeof(line_buf), ":%d", line);
+        if ((n > 0) && (n < (int)sizeof(line_buf)) && (size - pos - 3 >= (rt_size_t)n))
         {
-            pos += ((rt_size_t)n < room) ? (rt_size_t)n : (room - 1);
+            rt_memcpy(buf + pos, line_buf, (rt_size_t)n);
+            pos += (rt_size_t)n;
         }
     }
 
-    if ((func != RT_NULL) && (size - pos > 3))
+    /* function name, emitted only when the complete name fits */
+    if ((func != RT_NULL) && (size - pos > 4))
     {
         room = size - pos - 3;
-        n = rt_snprintf(buf + pos, room, " %s()", func);
-        if (n > 0)
+
+        if (room >= rt_strlen(func) + 5) /* " " + func + "()" + "\0" */
         {
-            pos += ((rt_size_t)n < room) ? (rt_size_t)n : (room - 1);
+            n = rt_snprintf(buf + pos, room, " %s()", func);
+            if (n > 0)
+            {
+                pos += (rt_size_t)n;
+            }
         }
     }
 
@@ -949,6 +956,7 @@ static void ulog_voutput_ctx(rt_uint32_t level, const char *tag, rt_bool_t newli
 {
     char *log_buf = RT_NULL;
     static rt_size_t log_len = 0;
+    rt_size_t ctx_size = 0;
     int fmt_result;
 
     RT_ASSERT(tag);
@@ -993,13 +1001,14 @@ static void ulog_voutput_ctx(rt_uint32_t level, const char *tag, rt_bool_t newli
 
     if (ulog_voutput_recursion == RT_TRUE)
     {
-        /* a synchronous backend is logging again: format into a small local
-         * buffer and print it directly, so that the va_list is never handed to
+        /* a synchronous backend is logging again: format into a static buffer
+         * as wide as the console buffer and print it directly, so that the
+         * message is not truncated and the va_list is never handed to
          * rt_kprintf() as an ordinary argument */
-        char tmp_buf[64];
+        static char recursion_buf[ULOG_LINE_BUF_SIZE];
 
-        rt_vsnprintf(tmp_buf, sizeof(tmp_buf), format, args);
-        rt_kprintf("%s", tmp_buf);
+        rt_vsnprintf(recursion_buf, sizeof(recursion_buf), format, args);
+        rt_kprintf("%s", recursion_buf);
 
         if (newline == RT_TRUE)
         {
@@ -1014,8 +1023,16 @@ static void ulog_voutput_ctx(rt_uint32_t level, const char *tag, rt_bool_t newli
 
     /* log head */
     log_len = ulog_head_formater(log_buf, level, tag);
-    /* calling context prefix, e.g. "[ulog.c:42 app_entry()] " */
-    log_len += ulog_ctx_formater(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, file, func, line);
+    /* calling context prefix, e.g. "[ulog.c:42 app_entry()] ". At most half of
+     * the remaining space is given to the prefix, so that the message always
+     * keeps the same amount of room and a long file name cannot hide it; when
+     * the space is really tight the line number still gets its 12 bytes */
+    ctx_size = (ULOG_LINE_BUF_SIZE - log_len) / 2;
+    if ((ctx_size < 12) && ((ULOG_LINE_BUF_SIZE - log_len) >= 12))
+    {
+        ctx_size = 12;
+    }
+    log_len += ulog_ctx_formater(log_buf + log_len, ctx_size, file, func, line);
     /* log content */
     fmt_result = rt_vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
     /* calculate log length; the complete byte count is kept so that a message
@@ -1078,6 +1095,11 @@ void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const
 
     va_start(args, format);
 
+#ifdef ULOG_USING_SYSLOG
+    /* syslog mode owns the record format, so the public entry keeps using the
+     * plain path and never emits a record without the syslog head */
+    ulog_voutput(level, tag, newline, RT_NULL, 0, 0, 0, format, args);
+#else
     if ((file == RT_NULL) && (func == RT_NULL) && (line <= 0))
     {
         /* no context available, keep the original path with zero overhead */
@@ -1087,6 +1109,7 @@ void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const
     {
         ulog_voutput_ctx(level, tag, newline, file, func, line, format, args);
     }
+#endif /* ULOG_USING_SYSLOG */
 
     va_end(args);
 }
