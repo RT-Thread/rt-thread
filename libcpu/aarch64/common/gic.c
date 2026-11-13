@@ -75,14 +75,11 @@ int arm_gic_get_active_irq(rt_uint64_t index)
 
 void arm_gic_ack(rt_uint64_t index, int irq)
 {
-    rt_uint64_t mask = 1U << (irq % 32U);
-
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0U);
 
-    GIC_DIST_PENDING_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
     GIC_CPU_EOI(_gic_table[index].cpu_hw_base) = irq;
 }
 
