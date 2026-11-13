@@ -1,0 +1,117 @@
+#!armclang --target=arm-arm-none-eabi -mcpu=cortex-m7 -E -x c
+
+#define m_itcm_start                   0x00000000
+#define m_itcm_size                    0x00040000
+#define m_dtcm_start                   0x20000000
+#define m_dtcm_size                    0x00040000
+#define m_ocram1_start                 0x20484000
+#define m_ocram1_size                  0x0007C000
+#define m_ocram2_start                 0x20500000
+#define m_ocram2_size                  0x00040000
+#define m_sdram_start                  0x80000000
+#define m_sdram_size                   0x01E00000
+#define m_hyperram_start               0x04000000
+#define m_hyperram_size                0x00600000
+#define m_flash_start                  0x28000000
+#define m_flash_size                   0x01000000
+#define app_image_offset               0x0000B000
+#define vector_table_size              0x400
+#define m_ram_vector_table_start       m_itcm_start
+
+#if defined(__stack_size__)
+#define stack_size                     __stack_size__
+#else
+#define stack_size                     0x1000
+#endif
+#if defined(__heap_size__)
+#define heap_size                      __heap_size__
+#else
+#define heap_size                      0x10000
+#endif
+
+#define m_ram_vector_table_size        0
+#define m_qacode_start                 m_itcm_start + m_ram_vector_table_size
+#define m_qadata_start                 m_dtcm_start
+#define m_qacode_size                  0
+#define m_qadata_size                  0
+#define m_text_size                    m_itcm_size
+#define m_data_size                    m_dtcm_size
+#define m_text_start                   m_itcm_start
+#define m_interrupts_start             m_text_start
+#define m_data_start                   m_dtcm_start
+#define m_ncache_size                  0x40000
+#define m_ncache_start                 m_ocram1_start + m_ocram1_size - m_ncache_size
+#define m_heap_start                   m_ocram1_start
+#define m_ocram2_data_start            0x20520000
+#define m_ocram2_data_size             0x18000
+#define m_shmem_size                   0x8000
+#define m_shmem_start                  m_ocram2_start + m_ocram2_size - m_shmem_size
+
+#if !defined(__heap_noncacheable__) && (heap_size > (m_ncache_start - m_heap_start))
+#error Heap exceeds the cacheable OCRAM1 region
+#endif
+#if defined(__heap_noncacheable__) && (heap_size > m_ncache_size)
+#error Heap exceeds the non-cacheable OCRAM1 region
+#endif
+
+LR_m_text m_text_start m_text_size
+{
+  VECTOR_ROM m_interrupts_start FIXED vector_table_size
+  {
+    * (.isr_vector,+FIRST)
+  }
+  VECTOR_RAM m_ram_vector_table_start EMPTY m_ram_vector_table_size
+  {
+  }
+  ER_m_text m_text_start + vector_table_size FIXED m_text_size - vector_table_size
+  {
+    * (InRoot$$Sections)
+    .ANY (+RO)
+    .ANY (CodeQuickAccess)
+  }
+  ER_m_QuickAccessCode m_qacode_start EMPTY m_qacode_size
+  {
+  }
+  ER_m_QuickAccessData m_qadata_start EMPTY m_qadata_size
+  {
+  }
+  RW_m_data m_data_start m_data_size-stack_size
+  {
+    .ANY (+RW +ZI)
+    .ANY (DataQuickAccess)
+  }
+  RW_m_ncache m_ncache_start m_ncache_size
+  {
+    .ANY (NonCacheable.init)
+    .ANY (.bss.NonCacheable)
+  }
+#if defined(__heap_noncacheable__)
+  ARM_LIB_HEAP +0 ALIGN 0x100 EMPTY heap_size
+  {
+  }
+  ScatterAssert(ImageLimit(ARM_LIB_HEAP) <= (m_ncache_start + m_ncache_size))
+#endif
+  RW_m_ncache_aux m_ncache_start + m_ncache_size EMPTY 0
+  {
+  }
+  OCRAM2_DATA m_ocram2_data_start EMPTY m_ocram2_data_size
+  {
+  }
+#if defined(__use_shmem__)
+  RPMSG_SH_MEM m_shmem_start m_shmem_size
+  {
+    .ANY (rpmsg_sh_mem_section)
+  }
+  RPMSG_SH_MEM_aux m_shmem_start + m_shmem_size EMPTY 0
+  {
+  }
+#endif
+#if !defined(__heap_noncacheable__)
+  ARM_LIB_HEAP m_heap_start EMPTY heap_size
+  {
+  }
+#endif
+  ARM_LIB_STACK m_data_start+m_data_size EMPTY -stack_size
+  {
+  }
+}

@@ -1498,8 +1498,8 @@ void PHY_Reset(void)
 void rt_hw_board_init()
 {
     extern void BOARD_InitPeripherals(void);
-    BOARD_CommonSetting();
     BOARD_ConfigMPU();
+    BOARD_CommonSetting();
     BOARD_InitBootPins();
     BOARD_BootClockRUN();
 //    BOARD_InitPeripherals();
