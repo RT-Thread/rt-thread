@@ -15,18 +15,18 @@
 
 #ifdef RT_USING_PM
 
-#define PM_RTC_LSE_MILLIHZ              16384000u
-#define PM_MAX_STOP_SECONDS             10u
-#define PM_WAKE_GUARD_US                3000u
-#define PM_MIN_STOP_US                  10000u
-#define PM_LSI_CAPTURE_CYCLES           128u
-#define PM_LSI_COUNTER_MODULUS          16384u
-#define PM_LSI_REFRESH_MS               10000u
-#define PM_LSI_TIMEOUT_MS               50u
+#define PM_RTC_LSE_MILLIHZ     16384000u
+#define PM_MAX_STOP_SECONDS    10u
+#define PM_WAKE_GUARD_US       3000u
+#define PM_MIN_STOP_US         10000u
+#define PM_LSI_CAPTURE_CYCLES  128u
+#define PM_LSI_COUNTER_MODULUS 16384u
+#define PM_LSI_REFRESH_MS      10000u
+#define PM_LSI_TIMEOUT_MS      50u
 
-#define PFIC_SLEEP_ON_EXIT              (1u << 1)
-#define PFIC_SLEEP_DEEP                 (1u << 2)
-#define PFIC_EVENT_ON_PENDING           (1u << 4)
+#define PFIC_SLEEP_ON_EXIT    (1u << 1)
+#define PFIC_SLEEP_DEEP       (1u << 2)
+#define PFIC_EVENT_ON_PENDING (1u << 4)
 
 static struct
 {
@@ -108,9 +108,9 @@ static void lsi_measure_poll(void)
             OSC->LSI32K_CAL_CTRL &= ~RB_OSC_CAL_EN;
             count = (OSC->LSI32K_CAL_STATR & RB_OSC_CAL_CNT) +
                     (rt_uint32_t)OSC->LSI32K_CAL_OV_CNT * PM_LSI_COUNTER_MODULUS;
-            lsi_millihz = count ?
-                          (rt_uint32_t)((rt_uint64_t)PM_LSI_CAPTURE_CYCLES *
-                                        SystemCoreClock * 1000u / count) : 0;
+            lsi_millihz = count ? (rt_uint32_t)((rt_uint64_t)PM_LSI_CAPTURE_CYCLES *
+                                                SystemCoreClock * 1000u / count)
+                                : 0;
             if (lsi_millihz >= 25000000u && lsi_millihz <= 45000000u)
             {
                 rt_uint32_t rtc_millihz = lsi_millihz / 2;
@@ -172,8 +172,7 @@ static rt_uint32_t irq_save(void)
 
 static void irq_restore(rt_uint32_t previous)
 {
-    __asm volatile("csrc 0x800, %0; csrs 0x800, %1; fence.i"
-                   :: "r"(0x88u), "r"(previous & 0x88u) : "memory");
+    __asm volatile("csrc 0x800, %0; csrs 0x800, %1; fence.i" ::"r"(0x88u), "r"(previous & 0x88u) : "memory");
 }
 
 static void short_idle_wfe(void)
@@ -277,8 +276,7 @@ static void pm_timer_start(struct rt_pm *pm, rt_uint32_t timeout)
             pm_state.runtime.aborts++;
             return;
         }
-    }
-    while (edge == before);
+    } while (edge == before);
 
     if (pending_irq() || SysTick->SR || (rt_int32_t)(alarm - edge) <= 0)
     {
@@ -362,7 +360,6 @@ static void pm_stop(void)
     rt_uint32_t spins;
     rt_uint32_t sctlr;
     rt_uint32_t rtc_ticks;
-    rt_uint32_t recovery_cycles;
     rt_uint64_t total;
     rt_uint64_t cycles_per_tick = SystemCoreClock / RT_TICK_PER_SECOND;
 
@@ -401,8 +398,7 @@ static void pm_stop(void)
             pm_state.runtime.calibration_errors++;
             break;
         }
-    }
-    while (wake == before);
+    } while (wake == before);
 
     SysTick->CNT = 0;
     SysTick->CMP = ~(rt_uint64_t)0;
@@ -415,8 +411,7 @@ static void pm_stop(void)
     EXTI_ClearITPendingBit(EXTI_Line17);
     NVIC->SCTLR = sctlr;
 
-    recovery_cycles = SysTick->CNT;
-    total = pm_state.runtime.edge_phase + rtc_to_cycles(rtc_ticks) + recovery_cycles;
+    total = pm_state.runtime.edge_phase + rtc_to_cycles(rtc_ticks);
     pm_state.runtime.sleep_ticks = total / cycles_per_tick;
     pm_state.runtime.resume_phase = total % cycles_per_tick;
     pm_state.runtime.sleeps++;
@@ -552,15 +547,16 @@ static rt_err_t pm_rtc_init(void)
 #ifdef BSP_PM_PARK_UNUSED_GPIO
 static void pm_park_unused_gpio(void)
 {
-    GPIO_InitTypeDef gpio = {0};
+    GPIO_InitTypeDef gpio = { 0 };
     rt_uint16_t pa_keep = GPIO_Pin_0; /* PM demo LED. */
 
 #ifdef BSP_USING_UART1
     pa_keep |= GPIO_Pin_9 | GPIO_Pin_10; /* Console TX/RX. */
 #endif
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
-                          RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
-                          RCC_APB2Periph_AFIO, ENABLE);
+                               RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
+                               RCC_APB2Periph_AFIO,
+                           ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 
     /* Pin masks for the PM measurement board. Keep both crystal pairs. */
@@ -578,8 +574,7 @@ static void pm_park_unused_gpio(void)
 
 static int ch32_pm_init(void)
 {
-    static const struct rt_pm_ops ops =
-    {
+    static const struct rt_pm_ops ops = {
         pm_sleep,
         RT_NULL,
         pm_timer_start,
