@@ -233,6 +233,51 @@ static void test_mq_delete(void)
 #endif /* RT_USING_HEAP */
 }
 
+static struct rt_messagequeue fifo_mq;
+static rt_uint8_t fifo_mq_buf[RT_MQ_BUF_SIZE(MSG_SIZE, MAX_MSGS)];
+static rt_uint32_t fifo_recv_val[2];
+
+static void _fifo_recv_entry(void *param)
+{
+    rt_mq_recv(&fifo_mq, &fifo_recv_val[0], sizeof(fifo_recv_val[0]), RT_WAITING_FOREVER);
+    rt_mq_recv(&fifo_mq, &fifo_recv_val[1], sizeof(fifo_recv_val[1]), RT_WAITING_FOREVER);
+}
+
+static void test_mq_fifo_order(void)
+{
+    struct rt_thread recv_th;
+    rt_uint8_t recv_stack[UTEST_THR_STACK_SIZE];
+    rt_uint32_t v1 = 111, v2 = 222;
+    rt_err_t ret;
+
+    ret = rt_mq_init(&fifo_mq, "mq_fifo", fifo_mq_buf, MSG_SIZE, sizeof(fifo_mq_buf), RT_IPC_FLAG_FIFO);
+    uassert_true(ret == RT_EOK);
+
+    fifo_recv_val[0] = 0;
+    fifo_recv_val[1] = 0;
+
+    ret = rt_thread_init(&recv_th, "th_recv", _fifo_recv_entry, RT_NULL, recv_stack, sizeof(recv_stack), 24, 20);
+    uassert_true(ret == RT_EOK);
+    rt_thread_startup(&recv_th);
+
+    /* allow recv thread to block on empty mq */
+    rt_thread_mdelay(20);
+
+    /* send messages after receiver has blocked */
+    ret = rt_mq_send(&fifo_mq, &v1, sizeof(v1));
+    uassert_true(ret == RT_EOK);
+    ret = rt_mq_send(&fifo_mq, &v2, sizeof(v2));
+    uassert_true(ret == RT_EOK);
+
+    rt_thread_mdelay(20);
+
+    uassert_int_equal(fifo_recv_val[0], 111);
+    uassert_int_equal(fifo_recv_val[1], 222);
+
+    rt_thread_detach(&recv_th);
+    rt_mq_detach(&fifo_mq);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     rt_err_t ret;
@@ -278,5 +323,6 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_mq_testcase);
     UTEST_UNIT_RUN(test_mq_detach);
     UTEST_UNIT_RUN(test_mq_delete);
+    UTEST_UNIT_RUN(test_mq_fifo_order);
 }
 UTEST_TC_EXPORT(testcase, "core.messagequeue", utest_tc_init, utest_tc_cleanup, 1000);
