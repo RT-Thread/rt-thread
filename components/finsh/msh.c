@@ -640,6 +640,11 @@ void msh_auto_complete_path(char *path, rt_size_t path_size)
         return;
     }
 
+    if (rt_strlen(path) >= DFS_PATH_MAX)
+    {
+        return;
+    }
+
     full_path = (char *)rt_malloc(DFS_PATH_MAX);
     if (full_path == RT_NULL) return; /* out of memory */
 
