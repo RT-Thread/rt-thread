@@ -177,10 +177,45 @@ rt_err_t ivshmem_pci_probe(struct rt_pci_device *pdev, struct ivshmem_device *iv
 
     if (!ivdev->shmem_size)
     {
-        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_ADDR_LO, (rt_uint32_t *)&ivdev->shmem);
-        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_ADDR_HI, (rt_uint32_t *)&ivdev->shmem + 1);
-        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_SIZE_LO, (rt_uint32_t *)&ivdev->shmem_size);
-        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_SIZE_HI, (rt_uint32_t *)&ivdev->shmem_size + 1);
+        rt_uint32_t addr_lo = 0, addr_hi = 0, size_lo = 0, size_hi = 0;
+        rt_uint64_t raw_addr, raw_size;
+
+        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_ADDR_LO, &addr_lo);
+        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_ADDR_HI, &addr_hi);
+        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_SIZE_LO, &size_lo);
+        rt_pci_read_config_u32(pdev, PCI_CFG_SHARE_MEM_SIZE_HI, &size_hi);
+
+        raw_addr = ((rt_uint64_t)addr_hi << 32) | addr_lo;
+        raw_size = ((rt_uint64_t)size_hi << 32) | size_lo;
+
+        /* Validate: size must be non-zero and range must not overflow */
+        if (raw_size == 0 || (raw_addr + raw_size < raw_addr))
+        {
+            LOG_E("ivshmem: invalid shmem config addr=0x%llx size=0x%llx",
+                  (unsigned long long)raw_addr, (unsigned long long)raw_size);
+            err = -RT_EINVAL;
+            goto _fail;
+        }
+
+        /* Must fit in system pointer and size range without truncation */
+        if (sizeof(void *) < sizeof(rt_uint64_t))
+        {
+            if (addr_hi != 0 || size_hi != 0 || ((raw_addr + raw_size) > 0xFFFFFFFFULL))
+            {
+                LOG_E("ivshmem: 64-bit shmem addr/size unsupported on 32-bit architecture");
+                err = -RT_EINVAL;
+                goto _fail;
+            }
+        }
+
+        ivdev->shmem = (void *)(rt_ubase_t)raw_addr;
+        ivdev->shmem_size = (rt_size_t)raw_size;
+    }
+
+    if (!ivdev->shmem || !ivdev->shmem_size)
+    {
+        err = -RT_EINVAL;
+        goto _fail;
     }
 
     ivdev->shmem = rt_ioremap(ivdev->shmem, ivdev->shmem_size);
