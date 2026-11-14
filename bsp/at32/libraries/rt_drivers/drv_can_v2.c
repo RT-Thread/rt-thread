@@ -14,57 +14,54 @@
 
 #ifdef BSP_USING_CAN_V2
 
-#define LOG_TAG    "drv_can"
+#define LOG_TAG "drv_can"
 #include <drv_log.h>
 
 #ifdef RT_CAN_USING_CANFD
-static const uint8_t dlc_to_bytes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
+static const uint8_t dlc_to_bytes[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64 };
 #endif
 
 #ifdef SOC_SERIES_AT32M412
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 180 / ((45 + 135) * 1) = 1MHz*/
 /* attention !!! default apbclk 180 mhz */
-static const struct at32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1 ,  45,  135,  45},
-    {CAN800kBaud, 1 ,  45,  180,  45},
-    {CAN500kBaud, 1 ,  90,  270,  90},
-    {CAN250kBaud, 2 ,  90,  270,  90},
-    {CAN125kBaud, 3 ,  120, 360, 120},
-    {CAN100kBaud, 5 ,  90,  270,  90},
-    {CAN50kBaud,  9 ,  100, 300, 100},
-    {CAN20kBaud,  18,  125, 375, 125},
-    {CAN10kBaud,  30,  120, 480, 120},
+static const struct at32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1, 45, 135, 45 },
+    { CAN800kBaud, 1, 45, 180, 45 },
+    { CAN500kBaud, 1, 90, 270, 90 },
+    { CAN250kBaud, 2, 90, 270, 90 },
+    { CAN125kBaud, 3, 120, 360, 120 },
+    { CAN100kBaud, 5, 90, 270, 90 },
+    { CAN50kBaud, 9, 100, 300, 100 },
+    { CAN20kBaud, 18, 125, 375, 125 },
+    { CAN10kBaud, 30, 120, 480, 120 },
 };
 #endif
 
 #ifdef SOC_SERIES_AT32M416
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 180 / ((45 + 135) * 1) = 1MHz*/
 /* attention !!! default apbclk 180 mhz */
-static const struct at32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1 ,  45,  135,  45},
-    {CAN800kBaud, 1 ,  45,  180,  45},
-    {CAN500kBaud, 1 ,  90,  270,  90},
-    {CAN250kBaud, 2 ,  90,  270,  90},
-    {CAN125kBaud, 3 ,  120, 360, 120},
-    {CAN100kBaud, 5 ,  90,  270,  90},
-    {CAN50kBaud,  9 ,  100, 300, 100},
-    {CAN20kBaud,  18,  125, 375, 125},
-    {CAN10kBaud,  30,  120, 480, 120},
+static const struct at32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1, 45, 135, 45 },
+    { CAN800kBaud, 1, 45, 180, 45 },
+    { CAN500kBaud, 1, 90, 270, 90 },
+    { CAN250kBaud, 2, 90, 270, 90 },
+    { CAN125kBaud, 3, 120, 360, 120 },
+    { CAN100kBaud, 5, 90, 270, 90 },
+    { CAN50kBaud, 9, 100, 300, 100 },
+    { CAN20kBaud, 18, 125, 375, 125 },
+    { CAN10kBaud, 30, 120, 480, 120 },
 };
 
 #ifdef RT_CAN_USING_CANFD
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 180 / ((45 + 135) * 1) = 1MHz*/
 /* attention !!! default apbclk 180 mhz, ssoffset default value is 'seg1 + 1', baud_rate_fd.div must equal to baud_rate.div */
-static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
-{
-    {CANFD_DATA_1MBaud, 1 ,  45,  135,  45, 136},
-    {CANFD_DATA_2MBaud, 1 ,  18,   72,  18,  73},
-    {CANFD_DATA_3MBaud, 1 ,  15,   45,  15,  46},
-    {CANFD_DATA_4MBaud, 1 ,   9,   36,   9,  37},
-    {CANFD_DATA_5MBaud, 1 ,   9,   27,   9,  28},
-    {CANFD_DATA_6MBaud, 1 ,   6,   24,   6,  25},
+static const struct at32_baud_rate_fd canfd_baud_rate_tab[] = {
+    { CANFD_DATA_1MBaud, 1, 45, 135, 45, 136 },
+    { CANFD_DATA_2MBaud, 1, 18, 72, 18, 73 },
+    { CANFD_DATA_3MBaud, 1, 15, 45, 15, 46 },
+    { CANFD_DATA_4MBaud, 1, 9, 36, 9, 37 },
+    { CANFD_DATA_5MBaud, 1, 9, 27, 9, 28 },
+    { CANFD_DATA_6MBaud, 1, 6, 24, 6, 25 },
 };
 #endif
 #endif
@@ -72,46 +69,43 @@ static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
 #ifdef SOC_SERIES_AT32F455
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
 /* attention !!! default apbclk 192 mhz */
-static const struct at32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1 ,  48,  144,  48},
-    {CAN800kBaud, 1 ,  60,  180,  60},
-    {CAN500kBaud, 1 ,  96,  288,  96},
-    {CAN250kBaud, 2 ,  96,  288,  96},
-    {CAN125kBaud, 3 ,  128, 384, 128},
-    {CAN100kBaud, 4 ,  120, 260, 120},
-    {CAN50kBaud,  8,   120, 260, 120},
-    {CAN20kBaud,  16,  150, 450, 150},
-    {CAN10kBaud,  24,  200, 600, 200},
+static const struct at32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1, 48, 144, 48 },
+    { CAN800kBaud, 1, 60, 180, 60 },
+    { CAN500kBaud, 1, 96, 288, 96 },
+    { CAN250kBaud, 2, 96, 288, 96 },
+    { CAN125kBaud, 3, 128, 384, 128 },
+    { CAN100kBaud, 4, 120, 260, 120 },
+    { CAN50kBaud, 8, 120, 260, 120 },
+    { CAN20kBaud, 16, 150, 450, 150 },
+    { CAN10kBaud, 24, 200, 600, 200 },
 };
 #endif
 
 #ifdef SOC_SERIES_AT32F456
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
 /* attention !!! default apbclk 192 mhz */
-static const struct at32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1 ,  48,  144,  48},
-    {CAN800kBaud, 1 ,  60,  180,  60},
-    {CAN500kBaud, 1 ,  96,  288,  96},
-    {CAN250kBaud, 2 ,  96,  288,  96},
-    {CAN125kBaud, 3 ,  128, 384, 128},
-    {CAN100kBaud, 4 ,  120, 260, 120},
-    {CAN50kBaud,  8,   120, 260, 120},
-    {CAN20kBaud,  16,  150, 450, 150},
-    {CAN10kBaud,  24,  200, 600, 200},
+static const struct at32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1, 48, 144, 48 },
+    { CAN800kBaud, 1, 60, 180, 60 },
+    { CAN500kBaud, 1, 96, 288, 96 },
+    { CAN250kBaud, 2, 96, 288, 96 },
+    { CAN125kBaud, 3, 128, 384, 128 },
+    { CAN100kBaud, 4, 120, 260, 120 },
+    { CAN50kBaud, 8, 120, 260, 120 },
+    { CAN20kBaud, 16, 150, 450, 150 },
+    { CAN10kBaud, 24, 200, 600, 200 },
 };
 
 #ifdef RT_CAN_USING_CANFD
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
 /* attention !!! default apbclk 192 mhz, ssoffset default value is 'seg1 + 1', baud_rate_fd.div must equal to baud_rate.div */
-static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
-{
-    {CANFD_DATA_1MBaud, 1 ,  48,  144,  48, 145},
-    {CANFD_DATA_2MBaud, 1 ,  24,   72,  24,  25},
-    {CANFD_DATA_3MBaud, 1 ,  16,   48,  16,  49},
-    {CANFD_DATA_4MBaud, 1 ,  12,   36,  12,  37},
-    {CANFD_DATA_6MBaud, 1 ,  12,   24,  12,  25},
+static const struct at32_baud_rate_fd canfd_baud_rate_tab[] = {
+    { CANFD_DATA_1MBaud, 1, 48, 144, 48, 145 },
+    { CANFD_DATA_2MBaud, 1, 24, 72, 24, 25 },
+    { CANFD_DATA_3MBaud, 1, 16, 48, 16, 49 },
+    { CANFD_DATA_4MBaud, 1, 12, 36, 12, 37 },
+    { CANFD_DATA_6MBaud, 1, 12, 24, 12, 25 },
 };
 #endif
 #endif
@@ -119,34 +113,33 @@ static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
 #ifdef SOC_SERIES_AT32F457
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
 /* attention !!! default apbclk 192 mhz */
-static const struct at32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1 ,  48,  144,  48},
-    {CAN800kBaud, 1 ,  60,  180,  60},
-    {CAN500kBaud, 1 ,  96,  288,  96},
-    {CAN250kBaud, 2 ,  96,  288,  96},
-    {CAN125kBaud, 3 ,  128, 384, 128},
-    {CAN100kBaud, 4 ,  120, 260, 120},
-    {CAN50kBaud,  8,   120, 260, 120},
-    {CAN20kBaud,  16,  150, 450, 150},
-    {CAN10kBaud,  24,  200, 600, 200},
+static const struct at32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1, 48, 144, 48 },
+    { CAN800kBaud, 1, 60, 180, 60 },
+    { CAN500kBaud, 1, 96, 288, 96 },
+    { CAN250kBaud, 2, 96, 288, 96 },
+    { CAN125kBaud, 3, 128, 384, 128 },
+    { CAN100kBaud, 4, 120, 260, 120 },
+    { CAN50kBaud, 8, 120, 260, 120 },
+    { CAN20kBaud, 16, 150, 450, 150 },
+    { CAN10kBaud, 24, 200, 600, 200 },
 };
 
 #ifdef RT_CAN_USING_CANFD
 /* attention !!! baud calculation example: apbclk / ((bs1 + bs2) * bittime_div), ep: 192 / ((48 + 144) * 1) = 1MHz*/
 /* attention !!! default apbclk 192 mhz, ssoffset default value is 'seg1 + 1', baud_rate_fd.div must equal to baud_rate.div */
-static const struct at32_baud_rate_fd canfd_baud_rate_tab[] =
-{
-    {CANFD_DATA_1MBaud, 1 ,  48,  144,  48, 145},
-    {CANFD_DATA_2MBaud, 1 ,  24,   72,  24,  25},
-    {CANFD_DATA_3MBaud, 1 ,  16,   48,  16,  49},
-    {CANFD_DATA_4MBaud, 1 ,  12,   36,  12,  37},
-    {CANFD_DATA_6MBaud, 1 ,  12,   24,  12,  25},
+static const struct at32_baud_rate_fd canfd_baud_rate_tab[] = {
+    { CANFD_DATA_1MBaud, 1, 48, 144, 48, 145 },
+    { CANFD_DATA_2MBaud, 1, 24, 72, 24, 25 },
+    { CANFD_DATA_3MBaud, 1, 16, 48, 16, 49 },
+    { CANFD_DATA_4MBaud, 1, 12, 36, 12, 37 },
+    { CANFD_DATA_6MBaud, 1, 12, 24, 12, 25 },
 };
 #endif
 #endif
 
-enum {
+enum
+{
 #ifdef BSP_USING_CAN1
     CAN1_INDEX,
 #endif
@@ -178,7 +171,9 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
     /* default baud is CAN1MBaud */
     return 0;
@@ -193,7 +188,9 @@ static rt_uint32_t get_canfd_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (canfd_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
     /* default baud is CAN1MBaud */
     return 0;
@@ -214,11 +211,11 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 
     at32_msp_can_init((void *)can_instance->can_x);
     /* config can baudrate */
-    do {
+    do
+    {
         can_transmit_status_get(can_instance->can_x, &statues);
-    }
-    while((statues.current_tstat != CAN_TSTAT_IDLE) || (can_stb_status_get(can_instance->can_x) != CAN_STB_STATUS_EMPTY) || \
-          (can_rxbuf_status_get(can_instance->can_x) != CAN_RXBUF_STATUS_EMPTY));
+    } while ((statues.current_tstat != CAN_TSTAT_IDLE) || (can_stb_status_get(can_instance->can_x) != CAN_STB_STATUS_EMPTY) ||
+             (can_rxbuf_status_get(can_instance->can_x) != CAN_RXBUF_STATUS_EMPTY));
     can_software_reset(can_instance->can_x, TRUE);
 #ifdef RT_CAN_USING_CANFD
     can_instance->enable_canfd = cfg->enable_canfd;
@@ -233,7 +230,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
         can_instance->can_x->fdtime_bit.fd_sjw = cfg->canfd_timing.num_sjw - 1;
         can_instance->can_x->lbtcfg_bit.fd_sspoff = cfg->canfd_timing.num_sspoff;
     }
-    else if(cfg->baud_rate_fd != 0U)
+    else if (cfg->baud_rate_fd != 0U)
     {
         baud_index = get_canfd_baud_index(cfg->baud_rate_fd);
         /* get baudrate parameters */
@@ -296,7 +293,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             nvic_irq_disable(can_instance->rx_irqn);
@@ -325,7 +322,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             /* enable interrupt */
@@ -334,7 +331,6 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             can_interrupt_enable(can_instance->can_x, CAN_ROIE_INT, TRUE);
             can_interrupt_enable(can_instance->can_x, CAN_RIE_INT, TRUE);
             nvic_irq_enable(can_instance->rx_irqn, 1, 0);
-
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
@@ -377,18 +373,18 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 
                 can_instance->filter_init_struct.code_para.id = filter_cfg->items[i].id;
                 can_instance->filter_init_struct.code_para.id_type = (can_identifier_type)filter_cfg->items[i].ide;
-                can_instance->filter_init_struct.mask_para.id =  (~(filter_cfg->items[i].mask) & ~(filter_cfg->items[i].id & filter_cfg->items[i].mask));
+                can_instance->filter_init_struct.mask_para.id = (~(filter_cfg->items[i].mask) & ~(filter_cfg->items[i].id & filter_cfg->items[i].mask));
                 can_instance->filter_init_struct.mask_para.id_type = FALSE;
                 can_instance->filter_init_struct.mask_para.data_length = 0xF;
                 can_instance->filter_init_struct.mask_para.frame_type = TRUE;
                 can_instance->filter_init_struct.mask_para.recv_frame = TRUE;
 
                 /* filter configuration */
-                do {
+                do
+                {
                     can_transmit_status_get(can_instance->can_x, &statues);
-                }
-                while((statues.current_tstat != CAN_TSTAT_IDLE) || (can_stb_status_get(can_instance->can_x) != CAN_STB_STATUS_EMPTY) || \
-                      (can_rxbuf_status_get(can_instance->can_x) != CAN_RXBUF_STATUS_EMPTY));
+                } while ((statues.current_tstat != CAN_TSTAT_IDLE) || (can_stb_status_get(can_instance->can_x) != CAN_STB_STATUS_EMPTY) ||
+                         (can_rxbuf_status_get(can_instance->can_x) != CAN_RXBUF_STATUS_EMPTY));
                 can_software_reset(can_instance->can_x, TRUE);
                 can_filter_set(can_instance->can_x, (can_filter_type)filter_number, &can_instance->filter_init_struct);
                 can_software_reset(can_instance->can_x, FALSE);
@@ -397,7 +393,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
             argval != RT_CAN_MODE_LISTEN &&
             argval != RT_CAN_MODE_LOOPBACK &&
@@ -412,15 +408,15 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
-        if (argval != CAN1MBaud   &&
+        argval = (rt_uint32_t)arg;
+        if (argval != CAN1MBaud &&
             argval != CAN800kBaud &&
             argval != CAN500kBaud &&
             argval != CAN250kBaud &&
             argval != CAN125kBaud &&
             argval != CAN100kBaud &&
-            argval != CAN50kBaud  &&
-            argval != CAN20kBaud  &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
             argval != CAN10kBaud)
         {
             return -RT_ERROR;
@@ -432,7 +428,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_PRIV &&
             argval != RT_CAN_MODE_NOPRIV)
         {
@@ -479,13 +475,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef RT_CAN_USING_CANFD
     case RT_CAN_CMD_SET_CANFD:
         argval = (rt_uint32_t)(rt_ubase_t)arg;
-        if(can_instance->enable_canfd != argval)
+        if (can_instance->enable_canfd != argval)
         {
-            can_instance->enable_canfd = (rt_uint32_t) argval;
+            can_instance->enable_canfd = (rt_uint32_t)argval;
         }
         break;
     case RT_CAN_CMD_SET_BAUD_FD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != CANFD_DATA_1MBaud &&
             argval != CANFD_DATA_2MBaud &&
             argval != CANFD_DATA_3MBaud &&
@@ -502,23 +498,23 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BITTIMING:
+    {
+        struct rt_can_bit_timing_config *timing_configs = (struct rt_can_bit_timing_config *)arg;
+        if ((timing_configs == RT_NULL) || (timing_configs->count < 1) || (timing_configs->count > 2))
         {
-            struct rt_can_bit_timing_config *timing_configs = (struct rt_can_bit_timing_config*)arg;
-            if ((timing_configs == RT_NULL) || (timing_configs->count < 1) || (timing_configs->count > 2))
-            {
-                return -RT_ERROR;
-            }
-            if (timing_configs->count != 0U)
-            {
-                can_instance->device.config.can_timing = timing_configs->items[0];
-            }
-            if (timing_configs->count == 2)
-            {
-                can_instance->device.config.canfd_timing = timing_configs->items[1];
-            }
-            return _can_config(&can_instance->device, &can_instance->device.config);
+            return -RT_ERROR;
         }
-        break;
+        if (timing_configs->count != 0U)
+        {
+            can_instance->device.config.can_timing = timing_configs->items[0];
+        }
+        if (timing_configs->count == 2)
+        {
+            can_instance->device.config.canfd_timing = timing_configs->items[1];
+        }
+        return _can_config(&can_instance->device, &can_instance->device.config);
+    }
+    break;
 #endif
     }
     return RT_EOK;
@@ -527,11 +523,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     rt_uint8_t copy_length = 0;
-    can_txbuf_type tx_message = {0};
+    can_txbuf_type tx_message = { 0 };
     /* Distinguish a frame already on the bus from an empty software STB. */
     can_transmit_status_type tx_status;
     struct at32_can *can_instance = rt_container_of(can, struct at32_can, device);
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
 
     /* STB has three FIFO stages but no separate Generic terminal per stage. */
     if (box_num != 0U)
@@ -642,7 +638,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 {
     can_rxbuf_type rx_message;
     struct at32_can *can_instance = rt_container_of(can, struct at32_can, device);
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
 
     /* get data */
     can_rxbuf_read(can_instance->can_x, &rx_message);
@@ -652,10 +648,14 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     pmsg->fd_frame = rx_message.fd_format;
     pmsg->brs = rx_message.fd_rate_switch;
 #else
-    if(rx_message.data_length > 8)
+    if (rx_message.data_length > 8)
+    {
         pmsg->len = 8;
+    }
     else
+    {
         pmsg->len = rx_message.data_length;
+    }
 #endif
     pmsg->id = rx_message.id;
     /* get the data field */
@@ -675,8 +675,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
     _can_sendmsg,
@@ -689,26 +688,26 @@ static void _can_rx_isr(struct rt_can_device *can)
     struct at32_can *can_instance = rt_container_of(can, struct at32_can, device);
 
     /* rx_buffer had data be received */
-    if(can_interrupt_flag_get(can_instance->can_x, CAN_RIF_FLAG) != RESET)
+    if (can_interrupt_flag_get(can_instance->can_x, CAN_RIF_FLAG) != RESET)
     {
         can_flag_clear(can_instance->can_x, CAN_RIF_FLAG);
         rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND);
     }
 
     /* rx_buffer almost full */
-    if(can_interrupt_flag_get(can_instance->can_x, CAN_RAFIF_FLAG) != RESET)
+    if (can_interrupt_flag_get(can_instance->can_x, CAN_RAFIF_FLAG) != RESET)
     {
         can_flag_clear(can_instance->can_x, CAN_RAFIF_FLAG);
     }
 
     /* rx_buffer full */
-    if(can_interrupt_flag_get(can_instance->can_x, CAN_RFIF_FLAG) != RESET)
+    if (can_interrupt_flag_get(can_instance->can_x, CAN_RFIF_FLAG) != RESET)
     {
         can_flag_clear(can_instance->can_x, CAN_RFIF_FLAG);
     }
 
     /* rx_buffer overflow */
-    if(can_interrupt_flag_get(can_instance->can_x, CAN_ROIF_FLAG) != RESET)
+    if (can_interrupt_flag_get(can_instance->can_x, CAN_ROIF_FLAG) != RESET)
     {
         can_flag_clear(can_instance->can_x, CAN_ROIF_FLAG);
         rt_hw_can_isr(can, RT_CAN_EVENT_RXOF_IND);
@@ -774,7 +773,8 @@ void _can_err_isr(struct rt_can_device *can)
 }
 
 #ifdef BSP_USING_CAN1
-void CAN1_TX_IRQHandler(void) {
+void CAN1_TX_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     _can_tx_isr(&can_config[CAN1_INDEX].device);
@@ -806,7 +806,8 @@ void CAN1_ERR_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_CAN2
-void CAN2_TX_IRQHandler(void) {
+void CAN2_TX_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     _can_tx_isr(&can_config[CAN2_INDEX].device);
@@ -838,7 +839,8 @@ void CAN2_ERR_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_CAN3
-void CAN3_TX_IRQHandler(void) {
+void CAN3_TX_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     _can_tx_isr(&can_config[CAN3_INDEX].device);
@@ -883,17 +885,18 @@ int rt_hw_can_init(void)
 #ifdef RT_CAN_USING_HDR
     config.maxhdr = 16;
 #endif
-    for (index = 0; index < obj_num; index++) {
-    /* config default filter */
-    can_filter_config_type filter_config;
-    can_filter_default_para_init(&filter_config);
+    for (index = 0; index < obj_num; index++)
+    {
+        /* config default filter */
+        can_filter_config_type filter_config;
+        can_filter_default_para_init(&filter_config);
 
-    can_config[index].filter_init_struct = filter_config;
-    can_config[index].device.config = config;
-    rt_hw_can_register(&can_config[index].device,
-                       can_config[index].name,
-                       &_can_ops,
-                       &can_config[index]);
+        can_config[index].filter_init_struct = filter_config;
+        can_config[index].device.config = config;
+        rt_hw_can_register(&can_config[index].device,
+                           can_config[index].name,
+                           &_can_ops,
+                           &can_config[index]);
     }
 
     return 0;

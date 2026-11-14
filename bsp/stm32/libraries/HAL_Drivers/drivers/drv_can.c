@@ -60,7 +60,7 @@
 #endif
 
 /* attention !!! baud calculation example: Tclk / ((ss + bs1 + bs2) * brp) = 36 / ((1 + 8 + 3) * 3) = 1MHz*/
-#if defined(SOC_SERIES_STM32F1)/* APB1 36MHz(max) */
+#if defined(SOC_SERIES_STM32F1) /* APB1 36MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ | CAN_BS2_3TQ | 3) },
     { CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_5TQ | CAN_BS2_3TQ | 5) },
@@ -72,7 +72,7 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ | CAN_BS2_3TQ | 150) },
     { CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ | CAN_BS2_3TQ | 300) }
 };
-#elif defined(SOC_SERIES_STM32F4)  /* 42MHz or 45MHz */
+#elif defined(SOC_SERIES_STM32F4) /* 42MHz or 45MHz */
 #if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx) || \
     defined(STM32F401xC) || defined(STM32F401xE) /* 42MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
@@ -86,7 +86,7 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ | CAN_BS2_4TQ | 150) },
     { CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ | CAN_BS2_4TQ | 300) }
 };
-#else  /* APB1 45MHz(max) */
+#else                                            /* APB1 45MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
 #ifdef BSP_USING_CAN168M
     { CAN1MBaud, (CAN_SJW_1TQ | CAN_BS1_3TQ | CAN_BS2_3TQ | 6) },
@@ -103,7 +103,7 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ | CAN_BS2_5TQ | 300) }
 };
 #endif
-#elif defined(SOC_SERIES_STM32F7)/* APB1 54MHz(max) */
+#elif defined(SOC_SERIES_STM32F7) /* APB1 54MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ | CAN_BS2_7TQ | 3) },
     { CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ | CAN_BS2_7TQ | 4) },
@@ -115,7 +115,7 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ | CAN_BS2_7TQ | 150) },
     { CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ | CAN_BS2_7TQ | 300) }
 };
-#elif defined(SOC_SERIES_STM32L4)/* APB1 80MHz(max) */
+#elif defined(SOC_SERIES_STM32L4) /* APB1 80MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] = {
     { CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_5TQ | CAN_BS2_2TQ | 10) },
     { CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_14TQ | CAN_BS2_5TQ | 5) },
@@ -353,7 +353,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t id_l = 0;
         rt_uint32_t mask_h = 0;
         rt_uint32_t mask_l = 0;
-        rt_uint32_t mask_l_tail = 0;  /*CAN_FxR2 bit [2:0]*/
+        rt_uint32_t mask_l_tail = 0; /*CAN_FxR2 bit [2:0]*/
 
         if (RT_NULL == arg)
         {
@@ -397,7 +397,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     LOG_W("can%s invalid FilterBank=%d, skip item %d", drv_can->name, drv_can->FilterConfig.FilterBank, i);
                     continue;
                 }
-                 /**
+                /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
                  * MASK   | CAN_FxR2[31:24] | CAN_FxR2[23:16] | CAN_FxR2[15:8] | CAN_FxR2[7:0]       |
                  * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
@@ -448,7 +448,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->FilterConfig.FilterMaskIdLow = mask_l;
 
                 drv_can->FilterConfig.FilterMode = filter_cfg->items[i].mode;
-                drv_can->FilterConfig.FilterFIFOAssignment = filter_cfg->items[i].rxfifo;/*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
+                drv_can->FilterConfig.FilterFIFOAssignment = filter_cfg->items[i].rxfifo; /*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
                 /* Keep hardware activation aligned with the Generic HDR shadow transaction. */
                 drv_can->FilterConfig.FilterActivation = filter_cfg->actived ? ENABLE : DISABLE;
                 /* Filter conf */
@@ -837,7 +837,6 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
-
 static const struct rt_can_ops _can_ops = {
     .configure = _can_config,
     .control = _can_control,
@@ -946,9 +945,9 @@ static void _can_check_tx_complete(struct rt_can_device *can)
         WRITE_REG(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
 
-    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
+    if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR0)) /*IF AutoRetransmission = ENABLE,ACK ERR handler*/
     {
-        WRITE_REG(hcan->Instance->TSR, CAN_TSR_ABRQ0);/*Abort the send request, trigger the TX interrupt,release completion quantity*/
+        WRITE_REG(hcan->Instance->TSR, CAN_TSR_ABRQ0); /*Abort the send request, trigger the TX interrupt,release completion quantity*/
     }
 
     if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_TERR1))
@@ -977,7 +976,7 @@ static void _can_sce_isr(struct rt_can_device *can)
     case RT_CAN_BUS_FORMAT_ERR:
         can->status.formaterrcnt++;
         break;
-    case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
+    case RT_CAN_BUS_ACK_ERR: /* attention !!! test ack err's unit is transmit unit */
         can->status.ackerrcnt++;
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:

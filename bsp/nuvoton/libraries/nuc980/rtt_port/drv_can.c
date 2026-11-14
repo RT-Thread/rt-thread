@@ -1,4 +1,4 @@
-/**************************************************************************//**
+/**************************************************************************/ /**
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
@@ -20,22 +20,22 @@
 #include <drv_sys.h>
 
 /* Private Define ---------------------------------------------------------------*/
-#define RX_MSG_ID_INDEX        16
-#define IS_CAN_STDID(STDID)   ((STDID) <= 0x7FFU)
-#define IS_CAN_EXTID(EXTID)   ((EXTID) <= 0x1FFFFFFFU)
-#define IS_CAN_DLC(DLC)       ((DLC) <= 8U)
+#define RX_MSG_ID_INDEX     16
+#define IS_CAN_STDID(STDID) ((STDID) <= 0x7FFU)
+#define IS_CAN_EXTID(EXTID) ((EXTID) <= 0x1FFFFFFFU)
+#define IS_CAN_DLC(DLC)     ((DLC) <= 8U)
 
 /* Default config for serial_configure structure */
-#define NU_CAN_CONFIG_DEFAULT                  \
-{                                              \
-    CAN1MBaud,           /* 1M bits/s       */ \
-    RT_CANMSG_BOX_SZ,    /* message box max size */ \
-    RT_CANSND_BOX_NUM,   /* message box number   */ \
-    RT_CAN_MODE_NORMAL,  /* Normal mode     */ \
-    0,                   /* privmode        */ \
-    0,                   /* reserved        */ \
-    100,                 /* Timeout Tick    */ \
-}
+#define NU_CAN_CONFIG_DEFAULT                          \
+    {                                                  \
+        CAN1MBaud,          /* 1M bits/s       */      \
+        RT_CANMSG_BOX_SZ,   /* message box max size */ \
+        RT_CANSND_BOX_NUM,  /* message box number   */ \
+        RT_CAN_MODE_NORMAL, /* Normal mode     */      \
+        0,                  /* privmode        */      \
+        0,                  /* reserved        */      \
+        100,                /* Timeout Tick    */      \
+    }
 
 enum
 {
@@ -77,13 +77,12 @@ static rt_ssize_t nu_can_sendmsg_nonblocking(struct rt_can_device *can, const vo
 static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 static void nu_can_isr(int vector, void *param);
 
-static struct nu_can nu_can_arr[] =
-{
+static struct nu_can nu_can_arr[] = {
 #if defined(BSP_USING_CAN0)
     {
         .name = "can0",
         .base = CAN0,
-        .irqn =  IRQ_CAN0,
+        .irqn = IRQ_CAN0,
         .rstidx = CAN0RST,
         .clkidx = CAN0CKEN,
     },
@@ -92,7 +91,7 @@ static struct nu_can nu_can_arr[] =
     {
         .name = "can1",
         .base = CAN1,
-        .irqn =  IRQ_CAN1,
+        .irqn = IRQ_CAN1,
         .rstidx = CAN1RST,
         .clkidx = CAN1CKEN,
     },
@@ -101,7 +100,7 @@ static struct nu_can nu_can_arr[] =
     {
         .name = "can2",
         .base = CAN2,
-        .irqn =  IRQ_CAN2,
+        .irqn = IRQ_CAN2,
         .rstidx = CAN2RST,
         .clkidx = CAN2CKEN,
     },
@@ -110,7 +109,7 @@ static struct nu_can nu_can_arr[] =
     {
         .name = "can3",
         .base = CAN3,
-        .irqn =  IRQ_CAN3,
+        .irqn = IRQ_CAN3,
         .rstidx = CAN3RST,
         .clkidx = CAN3CKEN,
     },
@@ -120,8 +119,7 @@ static struct nu_can nu_can_arr[] =
 /* Public functions ------------------------------------------------------------*/
 
 /* Private variables ------------------------------------------------------------*/
-static const struct rt_can_ops nu_can_ops =
-{
+static const struct rt_can_ops nu_can_ops = {
     .configure = nu_can_configure,
     .control = nu_can_control,
     .sendmsg = nu_can_sendmsg,
@@ -139,7 +137,7 @@ static const struct can_configure nu_can_default_config = NU_CAN_CONFIG_DEFAULT;
  */
 static void nu_can_isr(int vector, void *param)
 {
-    nu_can_t psNuCAN  = (nu_can_t)param;
+    nu_can_t psNuCAN = (nu_can_t)param;
 
     /* Get base address of CAN register */
     CAN_T *base = psNuCAN->base;
@@ -158,7 +156,7 @@ static void nu_can_isr(int vector, void *param)
         /**************************/
         if (base->STATUS & CAN_STATUS_TXOK_Msk)
         {
-            base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
+            base->STATUS &= ~CAN_STATUS_TXOK_Msk; /* Clear Tx Ok status*/
             if (basic && (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX) &&
                 (psNuCAN->tx_pending & 1U))
             {
@@ -169,7 +167,7 @@ static void nu_can_isr(int vector, void *param)
 
         if (base->STATUS & CAN_STATUS_RXOK_Msk)
         {
-            base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
+            base->STATUS &= ~CAN_STATUS_RXOK_Msk; /* Clear Rx Ok status*/
             if (basic && (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX))
             {
                 rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND);
@@ -181,12 +179,12 @@ static void nu_can_isr(int vector, void *param)
         /**************************/
         if (base->STATUS & CAN_STATUS_EWARN_Msk)
         {
-            rt_kprintf("[%s]EWARN INT\n", psNuCAN->name) ;
+            rt_kprintf("[%s]EWARN INT\n", psNuCAN->name);
         }
 
         if (base->STATUS & CAN_STATUS_BOFF_Msk)
         {
-            rt_kprintf("[%s]BUSOFF INT\n", psNuCAN->name) ;
+            rt_kprintf("[%s]BUSOFF INT\n", psNuCAN->name);
 
             /* To release busoff pin */
             CAN_EnterInitMode(base, CAN_CON_INIT_Msk | CAN_CON_CCE_Msk);
@@ -195,9 +193,8 @@ static void nu_can_isr(int vector, void *param)
 
         if (base->STATUS & CAN_STATUS_LEC_Msk)
         {
-            rt_kprintf("[%s] Last Error Code %03x\n", psNuCAN->name, base->STATUS & CAN_STATUS_LEC_Msk) ;
+            rt_kprintf("[%s] Last Error Code %03x\n", psNuCAN->name, base->STATUS & CAN_STATUS_LEC_Msk);
         }
-
     }
 #ifdef RT_CAN_USING_HDR
     /*IntId: 0x0001-0x0020, Number of Message Object which caused the interrupt.*/
@@ -275,7 +272,7 @@ static void nu_can_ie(nu_can_t psNuCAN)
  */
 static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
-    nu_can_t psNuCAN  = (nu_can_t)can;
+    nu_can_t psNuCAN = (nu_can_t)can;
     uint32_t u32CANMode;
 
     RT_ASSERT(can);
@@ -297,7 +294,9 @@ static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure
 
     /*Set the CAN Bit Rate and Operating mode*/
     if (CAN_Open(base, cfg->baud_rate, u32CANMode) != cfg->baud_rate)
+    {
         goto exit_nu_can_configure;
+    }
 
     switch (cfg->mode)
     {
@@ -380,9 +379,9 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 
     case RT_CAN_CMD_SET_MODE:
         if ((argval == RT_CAN_MODE_NORMAL) ||
-                (argval == RT_CAN_MODE_LISTEN) ||
-                (argval == RT_CAN_MODE_LOOPBACK) ||
-                (argval == RT_CAN_MODE_LOOPBACKANLISTEN))
+            (argval == RT_CAN_MODE_LISTEN) ||
+            (argval == RT_CAN_MODE_LOOPBACK) ||
+            (argval == RT_CAN_MODE_LOOPBACKANLISTEN))
         {
             if (argval != can->config.mode)
             {
@@ -399,14 +398,14 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_BAUD:
     {
         if ((argval == CAN1MBaud) ||
-                (argval == CAN800kBaud) ||
-                (argval == CAN500kBaud) ||
-                (argval == CAN250kBaud) ||
-                (argval == CAN125kBaud) ||
-                (argval == CAN100kBaud) ||
-                (argval == CAN50kBaud) ||
-                (argval == CAN20kBaud) ||
-                (argval == CAN10kBaud))
+            (argval == CAN800kBaud) ||
+            (argval == CAN500kBaud) ||
+            (argval == CAN250kBaud) ||
+            (argval == CAN125kBaud) ||
+            (argval == CAN100kBaud) ||
+            (argval == CAN50kBaud) ||
+            (argval == CAN20kBaud) ||
+            (argval == CAN10kBaud))
         {
             if (argval != can->config.baud_rate)
             {
@@ -423,7 +422,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 
     case RT_CAN_CMD_SET_PRIV:
         if (argval != RT_CAN_MODE_PRIV &&
-                argval != RT_CAN_MODE_NOPRIV)
+            argval != RT_CAN_MODE_NOPRIV)
         {
             return -(RT_ERROR);
         }
@@ -458,7 +457,6 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 
     default:
         return -(RT_EINVAL);
-
     }
 
     return RT_EOK;
@@ -475,7 +473,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
     /* Every IF data register is written even when the payload DLC is short. */
-    STR_CANMSG_T tMsg = {0};
+    STR_CANMSG_T tMsg = { 0 };
     const struct rt_can_msg *pmsg;
     nu_can_t psNuCAN = (nu_can_t)can;
     /* One controller owns the hardware message objects and their IF shadow. */
@@ -662,7 +660,7 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
     RT_ASSERT(can);
     RT_ASSERT(buf);
 
-    pmsg = (struct rt_can_msg *) buf;
+    pmsg = (struct rt_can_msg *)buf;
 
     /* get data */
     if (CAN_Receive(psNuCAN->base, boxno, &tMsg) == FALSE)
@@ -687,15 +685,17 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 
     pmsg->ide = (tMsg.IdType == CAN_STD_ID) ? RT_CAN_STDID : RT_CAN_EXTID;
     pmsg->rtr = (tMsg.FrameType == CAN_DATA_FRAME) ? RT_CAN_DTR : RT_CAN_RTR;
-    pmsg->id  = tMsg.Id;
-    pmsg->len = tMsg.DLC ;
+    pmsg->id = tMsg.Id;
+    pmsg->len = tMsg.DLC;
     if (pmsg->len > sizeof(tMsg.Data))
     {
         pmsg->len = sizeof(tMsg.Data);
     }
 
     if (pmsg->data && pmsg->len)
+    {
         rt_memcpy(pmsg->data, &tMsg.Data[0], pmsg->len);
+    }
 
     return RT_EOK;
 }
@@ -741,4 +741,4 @@ static int rt_hw_can_init(void)
     return (int)ret;
 }
 INIT_DEVICE_EXPORT(rt_hw_can_init);
-#endif  //#if defined(BSP_USING_CAN)
+#endif //#if defined(BSP_USING_CAN)

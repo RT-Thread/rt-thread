@@ -27,7 +27,7 @@
 #endif
 
 #define RX_MB_COUNT 32
-static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
+static flexcan_frame_t frame[RX_MB_COUNT]; /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
 #if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
@@ -159,8 +159,8 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
 
     FLEXCAN_GetDefaultConfig(&config);
     config.baudRate = cfg->baud_rate;
-    config.maxMbNum = 64;               /* all series have 64 MB */
-    config.enableIndividMask = true;    /* one filter per MB */
+    config.maxMbNum = 64;            /* all series have 64 MB */
+    config.enableIndividMask = true; /* one filter per MB */
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -193,9 +193,9 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     FLEXCAN_Init(can->base, &config, GetCanSrcFreq(can->base));
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
     /* init RX_MB_COUNT RX MB to default status */
-    mbConfig.format = kFLEXCAN_FrameFormatStandard;  /* standard ID */
-    mbConfig.type = kFLEXCAN_FrameTypeData;          /* data frame */
-    mbConfig.id = FLEXCAN_ID_STD(0);                 /* default ID is 0 */
+    mbConfig.format = kFLEXCAN_FrameFormatStandard; /* standard ID */
+    mbConfig.type = kFLEXCAN_FrameTypeData;         /* data frame */
+    mbConfig.id = FLEXCAN_ID_STD(0);                /* default ID is 0 */
     for (i = 0; i < RX_MB_COUNT; i++)
     {
         /* the used MB index from 1 to RX_MB_COUNT */
@@ -307,7 +307,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
                     }
                 }
             }
-            else    /* use user specified hdr_bank */
+            else /* use user specified hdr_bank */
             {
                 if (filter_mask & (1U << item->hdr_bank))
                 {
@@ -502,7 +502,7 @@ static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t
     {
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->hdr_index = index;      /* one hdr filter per MB */
+    pmsg->hdr_index = index; /* one hdr filter per MB */
     pmsg->len = frame[index].length;
     pmsg->data[0] = frame[index].dataByte0;
     pmsg->data[1] = frame[index].dataByte1;
@@ -532,10 +532,10 @@ int rt_hw_can_init(void)
 
     config.privmode = 0;
     config.ticks = 50;
-    config.sndboxnumber = 16;             /* send Mailbox count */
-    config.msgboxsz = RX_MB_COUNT;        /* RX msg buffer count */
+    config.sndboxnumber = 16;      /* send Mailbox count */
+    config.msgboxsz = RX_MB_COUNT; /* RX msg buffer count */
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr = RX_MB_COUNT;          /* filter count,one filter per MB */
+    config.maxhdr = RX_MB_COUNT; /* filter count,one filter per MB */
 #endif
 
     for (i = 0; i < sizeof(flexcans) / sizeof(flexcans[0]); i++)

@@ -14,13 +14,12 @@
 
 #ifdef BSP_USING_CAN
 
-#define LOG_TAG    "drv_can"
+#define LOG_TAG "drv_can"
 #include <drv_log.h>
 
-
-#define RX_MB_COUNT     NS800RT7_CAN_RX_MB_COUNT
-#define TX_MB_COUNT     NS800RT7_CAN_TX_MB_COUNT  /* MB0 is dedicated TX */
-#define TOTAL_MB_COUNT  NS800RT7_CAN_TOTAL_MB_COUNT
+#define RX_MB_COUNT    NS800RT7_CAN_RX_MB_COUNT
+#define TX_MB_COUNT    NS800RT7_CAN_TX_MB_COUNT /* MB0 is dedicated TX */
+#define TOTAL_MB_COUNT NS800RT7_CAN_TOTAL_MB_COUNT
 
 #if !defined(BSP_USING_CAN1) && !defined(BSP_USING_CANFD1) && !defined(BSP_USING_CANFD2)
 #error "BSP_USING_CAN requires at least one CAN instance"
@@ -41,23 +40,20 @@ void CANFD2_1_IRQHandler(void);
 void CANFD2_2_IRQHandler(void);
 #endif
 
-
-static const struct ns800rt7_baud_rate_tab can_baud_rate_tab[] =
-{
-    {CAN1MBaud,   1000000},
-    {CAN800kBaud, 800000},
-    {CAN500kBaud, 500000},
-    {CAN250kBaud, 250000},
-    {CAN125kBaud, 125000},
-    {CAN100kBaud, 100000},
-    {CAN50kBaud,  50000},
-    {CAN20kBaud,  20000},
-    {CAN10kBaud,  10000}
+static const struct ns800rt7_baud_rate_tab can_baud_rate_tab[] = {
+    { CAN1MBaud, 1000000 },
+    { CAN800kBaud, 800000 },
+    { CAN500kBaud, 500000 },
+    { CAN250kBaud, 250000 },
+    { CAN125kBaud, 125000 },
+    { CAN100kBaud, 100000 },
+    { CAN50kBaud, 50000 },
+    { CAN20kBaud, 20000 },
+    { CAN10kBaud, 10000 }
 };
 
 #ifdef BSP_USING_CAN1
-static ns800rt7_can drv_can1 =
-{
+static ns800rt7_can drv_can1 = {
     .name = "can1",
     .instance = NS800RT7_CAN_INSTANCE_CAN1,
     .CanHandle.flexCanReg = (FLEXCANREG_TypeDef *)CAN1,
@@ -65,8 +61,8 @@ static ns800rt7_can drv_can1 =
     .irqn2 = CAN1_2_IRQn,
     .irq_handler = CAN1_1_IRQHandler,
     .err_irq_handler = CAN1_2_IRQHandler,
-    .tx_pin = {BSP_CAN1_TX_PIN},
-    .rx_pin = {BSP_CAN1_RX_PIN},
+    .tx_pin = { BSP_CAN1_TX_PIN },
+    .rx_pin = { BSP_CAN1_RX_PIN },
     .can_instance_idx = 0U,
     .can_ram_num = 1U,
     .fd_capable = RT_FALSE,
@@ -74,8 +70,7 @@ static ns800rt7_can drv_can1 =
 #endif
 
 #ifdef BSP_USING_CANFD1
-static ns800rt7_can drv_canfd1 =
-{
+static ns800rt7_can drv_canfd1 = {
     .name = "canfd1",
     .instance = NS800RT7_CAN_INSTANCE_CANFD1,
     .CanHandle.flexCanReg = (FLEXCANREG_TypeDef *)CANFD1,
@@ -83,8 +78,8 @@ static ns800rt7_can drv_canfd1 =
     .irqn2 = CANFD1_2_IRQn,
     .irq_handler = CANFD1_1_IRQHandler,
     .err_irq_handler = CANFD1_2_IRQHandler,
-    .tx_pin = {BSP_CANFD1_TX_PIN},
-    .rx_pin = {BSP_CANFD1_RX_PIN},
+    .tx_pin = { BSP_CANFD1_TX_PIN },
+    .rx_pin = { BSP_CANFD1_RX_PIN },
     .can_instance_idx = 1U,
     .can_ram_num = 4U,
     .fd_capable = RT_TRUE,
@@ -92,8 +87,7 @@ static ns800rt7_can drv_canfd1 =
 #endif
 
 #ifdef BSP_USING_CANFD2
-static ns800rt7_can drv_canfd2 =
-{
+static ns800rt7_can drv_canfd2 = {
     .name = "canfd2",
     .instance = NS800RT7_CAN_INSTANCE_CANFD2,
     .CanHandle.flexCanReg = (FLEXCANREG_TypeDef *)CANFD2,
@@ -101,16 +95,15 @@ static ns800rt7_can drv_canfd2 =
     .irqn2 = CANFD2_2_IRQn,
     .irq_handler = CANFD2_1_IRQHandler,
     .err_irq_handler = CANFD2_2_IRQHandler,
-    .tx_pin = {BSP_CANFD2_TX_PIN},
-    .rx_pin = {BSP_CANFD2_RX_PIN},
+    .tx_pin = { BSP_CANFD2_TX_PIN },
+    .rx_pin = { BSP_CANFD2_RX_PIN },
     .can_instance_idx = 2U,
     .can_ram_num = 4U,
     .fd_capable = RT_TRUE,
 };
 #endif
 
-static ns800rt7_can * const can_devices[] =
-{
+static ns800rt7_can * const can_devices[] = {
 #ifdef BSP_USING_CAN1
     &drv_can1,
 #endif
@@ -216,15 +209,17 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
 
     return 0; /* default baud is CAN1MBaud */
 }
 
 static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxMsgObj,
-                                   rt_uint32_t msg_id, rt_uint8_t is_ext_id,
-                                   rt_uint8_t brs)
+                                  rt_uint32_t msg_id, rt_uint8_t is_ext_id,
+                                  rt_uint8_t brs)
 {
     /* Generic owns the mailbox wait; do not sleep while its TX spinlock is held. */
     if (StateIdle != base->mbState[TxMsgObj->msgBufId])
@@ -241,7 +236,7 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
          * FLEXCANDRV_CfgMsgObj() and never touched again without this
          * step every frame goes out with the same ID (0x78). */
         uint32_t *msgBufPtr = (uint32_t *)FLEXCANDRV_GetMsgBufStartAddr(
-                                   &base->CanHandle, TxMsgObj->msgBufId);
+            &base->CanHandle, TxMsgObj->msgBufId);
         FLEXCANDRV_SetMsgId(msgBufPtr, msg_id, (bool)is_ext_id);
         FLEXCANDRV_SetMsgDLC(msgBufPtr, (FLEXCANDRV_DataLenCodeType)TxMsgObj->dlc);
 
@@ -263,8 +258,7 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
         }
         else
         {
-            msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] &= ~(MESSAGE_BUFFER_CS_EDL_MASK
-                                                       | MESSAGE_BUFFER_CS_BRS_MASK);
+            msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] &= ~(MESSAGE_BUFFER_CS_EDL_MASK | MESSAGE_BUFFER_CS_BRS_MASK);
         }
 
         FLEXCANDRV_SetTxMsg(&base->CanHandle, TxMsgObj);
@@ -278,18 +272,18 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
 static void _can_apply_bit_timing(FLEXCANDRV_BitTimingType *dst,
                                   const struct rt_can_bit_timing *src)
 {
-    dst->prescalerDiv    = src->prescaler;
+    dst->prescalerDiv = src->prescaler;
     dst->resyncJumpWidth = src->num_sjw;
-    dst->phaseSeg2       = src->num_seg2;
+    dst->phaseSeg2 = src->num_seg2;
 
     if (src->num_seg1 > src->num_seg2)
     {
-        dst->propSeg   = src->num_seg1 - src->num_seg2;
+        dst->propSeg = src->num_seg1 - src->num_seg2;
         dst->phaseSeg1 = src->num_seg2;
     }
     else
     {
-        dst->propSeg   = 0U;
+        dst->propSeg = 0U;
         dst->phaseSeg1 = src->num_seg1;
     }
 }
@@ -371,8 +365,8 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
                                      1);
         }
 #endif
-        drv_can->CanCfg.fdEnable         = true;
-        drv_can->CanCfg.fdISOEnable      = true;
+        drv_can->CanCfg.fdEnable = true;
+        drv_can->CanCfg.fdISOEnable = true;
         drv_can->CanCfg.msgBufDataLenSel = FLEXCANDRV_MB_SIZE_BYTE_64;
     }
     else
@@ -385,24 +379,24 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
                                      7500,
                                      2500,
                                      1);
-            drv_can->CanCfg.fdEnable    = true;
+            drv_can->CanCfg.fdEnable = true;
             drv_can->CanCfg.fdISOEnable = true;
         }
         else
         {
-            drv_can->CanCfg.fdEnable    = false;
+            drv_can->CanCfg.fdEnable = false;
             drv_can->CanCfg.fdISOEnable = false;
         }
         drv_can->CanCfg.msgBufDataLenSel = FLEXCANDRV_MB_SIZE_BYTE_8;
     }
 
-    drv_can->CanCfg.clkSrc               = FLEXCANDRV_CLKSRC_OSC;
-    drv_can->CanCfg.msgNum               = drv_can->FilterNum;
-    drv_can->CanCfg.msgCfg               = drv_can->FilterConfig;
+    drv_can->CanCfg.clkSrc = FLEXCANDRV_CLKSRC_OSC;
+    drv_can->CanCfg.msgNum = drv_can->FilterNum;
+    drv_can->CanCfg.msgCfg = drv_can->FilterConfig;
     drv_can->CanCfg.individualMaskEnable = true;
-    drv_can->CanCfg.rxMBGlobalMask       = 0xFFFFFFFF;
-    drv_can->CanCfg.loopbackEnable       = false;
-    drv_can->CanCfg.listenMode           = false;
+    drv_can->CanCfg.rxMBGlobalMask = 0xFFFFFFFF;
+    drv_can->CanCfg.loopbackEnable = false;
+    drv_can->CanCfg.listenMode = false;
 
     switch (cfg->mode)
     {
@@ -471,7 +465,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         Interrupt_disable(drv_can->irqn2);
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX || argval == RT_DEVICE_FLAG_INT_TX)
         {
             Interrupt_register(drv_can->irqn1, drv_can->irq_handler);
@@ -484,90 +478,90 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
+    {
+        struct rt_can_filter_config *filter_cfg;
+        rt_uint8_t i;
+
+        filter_cfg = (struct rt_can_filter_config *)arg;
+        if (filter_cfg == RT_NULL)
         {
-            struct rt_can_filter_config *filter_cfg;
-            rt_uint8_t i;
+            return -RT_ERROR;
+        }
 
-            filter_cfg = (struct rt_can_filter_config *)arg;
-            if (filter_cfg == RT_NULL)
-            {
-                return -RT_ERROR;
-            }
+        if (filter_cfg->actived != 1)
+        {
+            /* Deactivate filter: do nothing for now */
+            return RT_EOK;
+        }
 
-            if (filter_cfg->actived != 1)
-            {
-                /* Deactivate filter: do nothing for now */
-                return RT_EOK;
-            }
+        if (filter_cfg->count > RX_MB_COUNT)
+        {
+            return -RT_ERROR;
+        }
 
-            if (filter_cfg->count > RX_MB_COUNT)
-            {
-                return -RT_ERROR;
-            }
-
-            /* Write user filters starting from FilterConfig[TX_MB_COUNT],
+        /* Write user filters starting from FilterConfig[TX_MB_COUNT],
              * preserving FilterConfig[0] which is the TX mailbox (MB0).
              * This prevents TX MB configuration from being overwritten
              * by RX filter settings. */
-            for (i = 0; i < filter_cfg->count; i++)
+        for (i = 0; i < filter_cfg->count; i++)
+        {
+            struct rt_can_filter_item *item = &filter_cfg->items[i];
+            rt_uint8_t idx = (rt_uint8_t)(TX_MB_COUNT + i);
+
+            if (item->hdr_bank < -1 || item->hdr_bank >= (rt_int32_t)RX_MB_COUNT)
             {
-                struct rt_can_filter_item *item = &filter_cfg->items[i];
-                rt_uint8_t idx = (rt_uint8_t)(TX_MB_COUNT + i);
+                return -RT_ERROR;
+            }
 
-                if (item->hdr_bank < -1 || item->hdr_bank >= (rt_int32_t)RX_MB_COUNT)
-                {
-                    return -RT_ERROR;
-                }
-
-                /* Map user hdr_bank to hardware MB index, offsetting past TX MB0.
+            /* Map user hdr_bank to hardware MB index, offsetting past TX MB0.
                  * hdr_bank=-1 → auto-assign sequentially (MB1, MB2, ...)
                  * hdr_bank=N  → explicit hardware MB index (N still maps
                  *                to FilterConfig idx, via offset) */
-                drv_can->FilterConfig[idx].msgBufId  =
-                    (uint16_t)(item->hdr_bank >= 0
+            drv_can->FilterConfig[idx].msgBufId =
+                (uint16_t)(item->hdr_bank >= 0
                                ? (rt_uint32_t)(TX_MB_COUNT + (rt_uint16_t)item->hdr_bank)
                                : idx);
-                drv_can->FilterConfig[idx].msgBufLen = 1;
-                drv_can->FilterConfig[idx].msgId     = item->id;
-                drv_can->FilterConfig[idx].isExtMsgId = (item->ide == RT_CAN_EXTID);
-                drv_can->FilterConfig[idx].msgType    = FLEXCANDRV_MSGTYPE_RX; /* default RX */
-                drv_can->FilterConfig[idx].dlc        = DLC_BYTE_8;
+            drv_can->FilterConfig[idx].msgBufLen = 1;
+            drv_can->FilterConfig[idx].msgId = item->id;
+            drv_can->FilterConfig[idx].isExtMsgId = (item->ide == RT_CAN_EXTID);
+            drv_can->FilterConfig[idx].msgType = FLEXCANDRV_MSGTYPE_RX; /* default RX */
+            drv_can->FilterConfig[idx].dlc = DLC_BYTE_8;
 #ifdef RT_CAN_USING_CANFD
-                drv_can->FilterConfig[idx].isFd       =
-                    drv_can->fd_capable ? drv_can->device.config.enable_canfd : 0U;
+            drv_can->FilterConfig[idx].isFd =
+                drv_can->fd_capable ? drv_can->device.config.enable_canfd : 0U;
 #else
-                drv_can->FilterConfig[idx].isFd       = 0U;
+            drv_can->FilterConfig[idx].isFd = 0U;
 #endif
-                drv_can->FilterConfig[idx].intEnable  = true;
-                /* FLEXCAN stores standard IDs at ID-word bits 18-28,
+            drv_can->FilterConfig[idx].intEnable = true;
+            /* FLEXCAN stores standard IDs at ID-word bits 18-28,
                  * extended IDs at bits 0-28.  The RXIMR mask register
                  * is bit-aligned with the ID word, so standard-frame
                  * masks must be shifted left by 18 bits. */
-                if (item->ide == RT_CAN_EXTID)
-                {
-                    drv_can->FilterConfig[idx].individualMask =
-                        item->mask & 0x1FFFFFFFUL;
-                }
-                else
-                {
-                    drv_can->FilterConfig[idx].individualMask =
-                        (item->mask & 0x7FFUL) << MESSAGE_BUFFER_ID_STD_ID_SHIFT;
-                }
-                drv_can->FilterConfig[idx].rtrmask    = false;
-                drv_can->FilterConfig[idx].rtrfilter  = false;
+            if (item->ide == RT_CAN_EXTID)
+            {
+                drv_can->FilterConfig[idx].individualMask =
+                    item->mask & 0x1FFFFFFFUL;
             }
-
-            /* Update FilterNum to include TX MB + user filters */
-            drv_can->FilterNum = (rt_uint8_t)(TX_MB_COUNT + filter_cfg->count);
-
-            return _can_config(&drv_can->device, &drv_can->device.config);
+            else
+            {
+                drv_can->FilterConfig[idx].individualMask =
+                    (item->mask & 0x7FFUL) << MESSAGE_BUFFER_ID_STD_ID_SHIFT;
+            }
+            drv_can->FilterConfig[idx].rtrmask = false;
+            drv_can->FilterConfig[idx].rtrfilter = false;
         }
+
+        /* Update FilterNum to include TX MB + user filters */
+        drv_can->FilterNum = (rt_uint8_t)(TX_MB_COUNT + filter_cfg->count);
+
+        return _can_config(&drv_can->device, &drv_can->device.config);
+    }
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -579,16 +573,16 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != CAN1MBaud &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud)
+            argval != CAN800kBaud &&
+            argval != CAN500kBaud &&
+            argval != CAN250kBaud &&
+            argval != CAN125kBaud &&
+            argval != CAN100kBaud &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
+            argval != CAN10kBaud)
         {
             return -RT_ERROR;
         }
@@ -601,7 +595,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
 #ifdef RT_CAN_USING_CANFD
     case RT_CAN_CMD_SET_CANFD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval > 1)
         {
             return -RT_ERROR;
@@ -619,7 +613,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD_FD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == 0)
         {
             return -RT_ERROR;
@@ -637,43 +631,43 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BITTIMING:
+    {
+        struct rt_can_bit_timing_config *timing_cfg;
+        struct rt_can_bit_timing *rt_timing;
+
+        timing_cfg = (struct rt_can_bit_timing_config *)arg;
+        if (timing_cfg == RT_NULL || timing_cfg->items == RT_NULL)
         {
-            struct rt_can_bit_timing_config *timing_cfg;
-            struct rt_can_bit_timing *rt_timing;
-
-            timing_cfg = (struct rt_can_bit_timing_config *)arg;
-            if (timing_cfg == RT_NULL || timing_cfg->items == RT_NULL)
-            {
-                return -RT_ERROR;
-            }
-
-            if (timing_cfg->count < 1 || (!drv_can->fd_capable && timing_cfg->count > 1))
-            {
-                return -RT_ERROR;
-            }
-
-            if (drv_can->device.config.enable_canfd && timing_cfg->count < 2)
-            {
-                return -RT_ERROR;
-            }
-
-            drv_can->device.config.use_bit_timing = 1;
-
-            if (timing_cfg->count >= 1)
-            {
-                rt_timing = &timing_cfg->items[0];
-                drv_can->device.config.can_timing = *rt_timing;
-            }
-
-            if (timing_cfg->count >= 2)
-            {
-                rt_timing = &timing_cfg->items[1];
-                drv_can->device.config.canfd_timing = *rt_timing;
-            }
-
-            return _can_config(&drv_can->device, &drv_can->device.config);
+            return -RT_ERROR;
         }
-        break;
+
+        if (timing_cfg->count < 1 || (!drv_can->fd_capable && timing_cfg->count > 1))
+        {
+            return -RT_ERROR;
+        }
+
+        if (drv_can->device.config.enable_canfd && timing_cfg->count < 2)
+        {
+            return -RT_ERROR;
+        }
+
+        drv_can->device.config.use_bit_timing = 1;
+
+        if (timing_cfg->count >= 1)
+        {
+            rt_timing = &timing_cfg->items[0];
+            drv_can->device.config.can_timing = *rt_timing;
+        }
+
+        if (timing_cfg->count >= 2)
+        {
+            rt_timing = &timing_cfg->items[1];
+            drv_can->device.config.canfd_timing = *rt_timing;
+        }
+
+        return _can_config(&drv_can->device, &drv_can->device.config);
+    }
+    break;
 #endif /* RT_CAN_USING_CANFD */
     case RT_CAN_CMD_START:
         /* Controller starts automatically during _can_config().
@@ -699,7 +693,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 /* DLC / byte-length validation helpers classic CAN vs CAN-FD */
 #ifdef RT_CAN_USING_CANFD
 #ifndef CANFD_MAX_DLC
-#define CANFD_MAX_DLC            15U     /* per ISO 11898-1 */
+#define CANFD_MAX_DLC 15U /* per ISO 11898-1 */
 #endif
 
 /**
@@ -708,13 +702,12 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
  */
 static rt_uint8_t _can_len_to_dlc(rt_uint8_t len)
 {
-    static const rt_uint8_t len2dlc[65] =
-    {
-        0, 1, 2, 3, 4, 5, 6, 7, 8,  /* 0-8   bytes  DLC 0-8 */
-        9, 9, 9, 9,                  /* 9-12  bytes DLC 9 */
-        10, 10, 10, 10,              /* 13-16 bytes  DLC 10 */
-        11, 11, 11, 11,              /* 17-20 bytes  DLC 11 */
-        12, 12, 12, 12,              /* 21-24 bytes  DLC 12 */
+    static const rt_uint8_t len2dlc[65] = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8,      /* 0-8   bytes  DLC 0-8 */
+        9, 9, 9, 9,                     /* 9-12  bytes DLC 9 */
+        10, 10, 10, 10,                 /* 13-16 bytes  DLC 10 */
+        11, 11, 11, 11,                 /* 17-20 bytes  DLC 11 */
+        12, 12, 12, 12,                 /* 21-24 bytes  DLC 12 */
         13, 13, 13, 13, 13, 13, 13, 13, /* 25-32 bytes  DLC 13 */
         14, 14, 14, 14, 14, 14, 14, 14, /* 33-48 bytes  DLC 14 */
         14, 14, 14, 14, 14, 14, 14, 14, /* (continued) */
@@ -724,9 +717,9 @@ static rt_uint8_t _can_len_to_dlc(rt_uint8_t len)
     return len < 65 ? len2dlc[len] : (rt_uint8_t)CANFD_MAX_DLC;
 }
 
-#define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 64U)
+#define IS_CAN_LEN_VALID(LEN) ((LEN) <= 64U)
 #else
-#define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 8U)
+#define IS_CAN_LEN_VALID(LEN) ((LEN) <= 8U)
 #endif
 
 /**
@@ -751,8 +744,8 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     FLEXCANDRV_MsgObjType fdTxMsgObj;
     rt_uint8_t data_len;
 
-    hcan = (ns800rt7_can *) can->parent.user_data;
-    pmsg = (struct rt_can_msg *) buf;
+    hcan = (ns800rt7_can *)can->parent.user_data;
+    pmsg = (struct rt_can_msg *)buf;
 
     if (box_no >= TX_MB_COUNT || !IS_CAN_LEN_VALID(pmsg->len))
     {
@@ -780,7 +773,7 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);
     fdTxMsgObj.isFd = (pmsg->fd_frame != 0 && hcan->device.config.enable_canfd) ? true : false;
 #else
-    fdTxMsgObj.dlc = pmsg->len;  /* classic CAN: DLC == byte length (0-8) */
+    fdTxMsgObj.dlc = pmsg->len; /* classic CAN: DLC == byte length (0-8) */
 #endif
 
     /* Copy payload */
@@ -810,7 +803,7 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
  *         or other error code on failure.
  */
 static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                               rt_uint32_t *mailbox)
+                                           rt_uint32_t *mailbox)
 {
     ns800rt7_can *hcan;
     struct rt_can_msg *pmsg;
@@ -855,7 +848,7 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void
 #endif
 
     rt_memset(&fdTxMsgObj, 0, sizeof(fdTxMsgObj));
-    fdTxMsgObj.msgBufId = 0;  /* MB0 is the dedicated TX mailbox */
+    fdTxMsgObj.msgBufId = 0; /* MB0 is the dedicated TX mailbox */
 
     /* Convert byte length to hardware DLC code */
     data_len = pmsg->len;
@@ -892,16 +885,15 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 
     RT_ASSERT(can);
     hcan = (ns800rt7_can *)can->parent.user_data;
-    pmsg = (struct rt_can_msg *) buf;
+    pmsg = (struct rt_can_msg *)buf;
 
     /* Zero out the message, then fill from hardware frame buffer */
     rt_memset(pmsg, 0, sizeof(struct rt_can_msg));
-    pmsg->rxfifo    = (rt_uint32_t)fifo;
+    pmsg->rxfifo = (rt_uint32_t)fifo;
 
     /* Select the correct frame buffer: MB1:rx_frame[0], MB2:rx_frame[1] */
-    frame_idx = (fifo >= TX_MB_COUNT && fifo < TOTAL_MB_COUNT) ?
-                (rt_uint8_t)(fifo - TX_MB_COUNT) : 0U;
-    mb_idx   = (rt_uint8_t)fifo;  /* hardware MB index (1 or 2) */
+    frame_idx = (fifo >= TX_MB_COUNT && fifo < TOTAL_MB_COUNT) ? (rt_uint8_t)(fifo - TX_MB_COUNT) : 0U;
+    mb_idx = (rt_uint8_t)fifo; /* hardware MB index (1 or 2) */
 
     /* Set hdr_index to the filter bank index (0 for MB1, 1 for MB2).
      * When RT_CAN_USING_HDR is enabled, rt_hw_can_isr() asserts
@@ -912,7 +904,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     /* rx_frame[N].dlc is already converted from DLC code to byte length
      * by FLEXCANDRV_DLC2DataLen() inside FLEXCANDRV_GetRxMsg().
      * Store as byte length in the RT-Thread message len field. */
-    pmsg->id  = hcan->rx_frame[frame_idx].msgId;
+    pmsg->id = hcan->rx_frame[frame_idx].msgId;
     data_len = (rt_uint8_t)hcan->rx_frame[frame_idx].dlc;
     if (data_len > sizeof(pmsg->data))
     {
@@ -926,15 +918,17 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
      * CS word bits: 31=EDL(FD), 30=BRS, 21=IDE, 20=RTR */
     {
         uint32_t *msgBufPtr = (uint32_t *)FLEXCANDRV_GetMsgBufStartAddr(
-                                   &hcan->CanHandle, mb_idx);
+            &hcan->CanHandle, mb_idx);
         uint32_t cs_word = msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM];
         pmsg->ide = (cs_word & MESSAGE_BUFFER_CS_IDE_MASK)
-                        ? RT_CAN_EXTID : RT_CAN_STDID;
+                        ? RT_CAN_EXTID
+                        : RT_CAN_STDID;
         pmsg->rtr = (cs_word & MESSAGE_BUFFER_CS_RTR_MASK)
-                        ? RT_CAN_RTR : RT_CAN_DTR;
+                        ? RT_CAN_RTR
+                        : RT_CAN_DTR;
 #ifdef RT_CAN_USING_CANFD
         pmsg->fd_frame = (cs_word & MESSAGE_BUFFER_CS_EDL_MASK) ? 1 : 0;
-        pmsg->brs      = (cs_word & MESSAGE_BUFFER_CS_BRS_MASK) ? 1 : 0;
+        pmsg->brs = (cs_word & MESSAGE_BUFFER_CS_BRS_MASK) ? 1 : 0;
 #endif
     }
 
@@ -944,21 +938,20 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
-static const struct rt_can_ops _can_ops =
-{
-    .configure             = _can_config,
-    .control               = _can_control,
-    .sendmsg               = _can_sendmsg,
-    .recvmsg               = _can_recvmsg,
-    .sendmsg_nonblocking   = _can_sendmsg_nonblocking,
+static const struct rt_can_ops _can_ops = {
+    .configure = _can_config,
+    .control = _can_control,
+    .sendmsg = _can_sendmsg,
+    .recvmsg = _can_recvmsg,
+    .sendmsg_nonblocking = _can_sendmsg_nonblocking,
 };
 
-static uint8_t FLEXCANREG_GetMsgBufInterruptMask (FLEXCANREG_TypeDef *obj, uint32_t msgBufferIdx)
+static uint8_t FLEXCANREG_GetMsgBufInterruptMask(FLEXCANREG_TypeDef *obj, uint32_t msgBufferIdx)
 {
     uint32_t temp, temp1 = 0;
 
     temp1 = msgBufferIdx % 32;
-    temp  = 0x00000001UL << temp1;
+    temp = 0x00000001UL << temp1;
 
     if (msgBufferIdx > 95)
     {
@@ -995,7 +988,7 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
     uint32_t result;
 
     RT_ASSERT(can);
-    hcan = (ns800rt7_can *) can->parent.user_data;
+    hcan = (ns800rt7_can *)can->parent.user_data;
     RT_ASSERT(hcan);
 
     while (RT_TRUE)
@@ -1056,17 +1049,17 @@ static void _can_err_isr(struct rt_can_device *can)
 
 #ifdef RT_CAN_USING_CANFD
     /* Accumulate FD-specific error counters */
-    can->status.biterrcnt  += errStatus.bit1FastErr;
-    can->status.biterrcnt  += errStatus.bit0FastErr;
-    can->status.crcerrcnt  += errStatus.crcFastErr;
+    can->status.biterrcnt += errStatus.bit1FastErr;
+    can->status.biterrcnt += errStatus.bit0FastErr;
+    can->status.crcerrcnt += errStatus.crcFastErr;
     can->status.formaterrcnt += errStatus.formFastErr;
     can->status.bitpaderrcnt += errStatus.stuffFastErr;
 #endif
-    can->status.ackerrcnt  += errStatus.ackErr;
-    can->status.crcerrcnt  += errStatus.crcErr;
+    can->status.ackerrcnt += errStatus.ackErr;
+    can->status.crcerrcnt += errStatus.crcErr;
     can->status.formaterrcnt += errStatus.formErr;
     can->status.bitpaderrcnt += errStatus.stuffErr;
-    can->status.biterrcnt  += errStatus.bit1Err + errStatus.bit0Err;
+    can->status.biterrcnt += errStatus.bit1Err + errStatus.bit0Err;
 }
 
 #ifdef BSP_USING_CAN1
@@ -1121,41 +1114,41 @@ static void _can_default_filter_init(ns800rt7_can *drv_can, rt_uint8_t use_fd)
 {
     rt_memset(drv_can->FilterConfig, 0, sizeof(drv_can->FilterConfig));
 
-    drv_can->FilterConfig[0].msgBufId       = 0;
-    drv_can->FilterConfig[0].msgBufLen      = 1;
-    drv_can->FilterConfig[0].msgId          = 0x78;
-    drv_can->FilterConfig[0].isExtMsgId     = false;
-    drv_can->FilterConfig[0].msgType        = FLEXCANDRV_MSGTYPE_TX;
-    drv_can->FilterConfig[0].dlc            = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
-    drv_can->FilterConfig[0].isFd           = use_fd;
-    drv_can->FilterConfig[0].intEnable      = true;
+    drv_can->FilterConfig[0].msgBufId = 0;
+    drv_can->FilterConfig[0].msgBufLen = 1;
+    drv_can->FilterConfig[0].msgId = 0x78;
+    drv_can->FilterConfig[0].isExtMsgId = false;
+    drv_can->FilterConfig[0].msgType = FLEXCANDRV_MSGTYPE_TX;
+    drv_can->FilterConfig[0].dlc = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
+    drv_can->FilterConfig[0].isFd = use_fd;
+    drv_can->FilterConfig[0].intEnable = true;
     drv_can->FilterConfig[0].individualMask = 0xFFFFFFFF;
-    drv_can->FilterConfig[0].rtrmask        = false;
-    drv_can->FilterConfig[0].rtrfilter      = false;
+    drv_can->FilterConfig[0].rtrmask = false;
+    drv_can->FilterConfig[0].rtrfilter = false;
 
-    drv_can->FilterConfig[1].msgBufId       = 1;
-    drv_can->FilterConfig[1].msgBufLen      = 1;
-    drv_can->FilterConfig[1].msgId          = 0;
-    drv_can->FilterConfig[1].isExtMsgId     = false;
-    drv_can->FilterConfig[1].msgType        = FLEXCANDRV_MSGTYPE_RX;
-    drv_can->FilterConfig[1].dlc            = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
-    drv_can->FilterConfig[1].isFd           = use_fd;
-    drv_can->FilterConfig[1].intEnable      = true;
+    drv_can->FilterConfig[1].msgBufId = 1;
+    drv_can->FilterConfig[1].msgBufLen = 1;
+    drv_can->FilterConfig[1].msgId = 0;
+    drv_can->FilterConfig[1].isExtMsgId = false;
+    drv_can->FilterConfig[1].msgType = FLEXCANDRV_MSGTYPE_RX;
+    drv_can->FilterConfig[1].dlc = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
+    drv_can->FilterConfig[1].isFd = use_fd;
+    drv_can->FilterConfig[1].intEnable = true;
     drv_can->FilterConfig[1].individualMask = 0;
-    drv_can->FilterConfig[1].rtrmask        = false;
-    drv_can->FilterConfig[1].rtrfilter      = false;
+    drv_can->FilterConfig[1].rtrmask = false;
+    drv_can->FilterConfig[1].rtrfilter = false;
 
-    drv_can->FilterConfig[2].msgBufId       = 2;
-    drv_can->FilterConfig[2].msgBufLen      = 1;
-    drv_can->FilterConfig[2].msgId          = 0;
-    drv_can->FilterConfig[2].isExtMsgId     = true;
-    drv_can->FilterConfig[2].msgType        = FLEXCANDRV_MSGTYPE_RX;
-    drv_can->FilterConfig[2].dlc            = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
-    drv_can->FilterConfig[2].isFd           = use_fd;
-    drv_can->FilterConfig[2].intEnable      = true;
+    drv_can->FilterConfig[2].msgBufId = 2;
+    drv_can->FilterConfig[2].msgBufLen = 1;
+    drv_can->FilterConfig[2].msgId = 0;
+    drv_can->FilterConfig[2].isExtMsgId = true;
+    drv_can->FilterConfig[2].msgType = FLEXCANDRV_MSGTYPE_RX;
+    drv_can->FilterConfig[2].dlc = use_fd ? DLC_BYTE_64 : DLC_BYTE_8;
+    drv_can->FilterConfig[2].isFd = use_fd;
+    drv_can->FilterConfig[2].intEnable = true;
     drv_can->FilterConfig[2].individualMask = 0;
-    drv_can->FilterConfig[2].rtrmask        = false;
-    drv_can->FilterConfig[2].rtrfilter      = false;
+    drv_can->FilterConfig[2].rtrmask = false;
+    drv_can->FilterConfig[2].rtrfilter = false;
 
     drv_can->FilterNum = TOTAL_MB_COUNT;
 }
@@ -1172,7 +1165,7 @@ int rt_hw_can_init(void)
     config.sndboxnumber = TX_MB_COUNT;
     config.msgboxsz = RX_MB_COUNT;
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr = RX_MB_COUNT;          /* filter count,one filter per MB */
+    config.maxhdr = RX_MB_COUNT; /* filter count,one filter per MB */
 #endif
 
     for (i = 0; i < sizeof(can_devices) / sizeof(can_devices[0]); i++)
@@ -1189,7 +1182,7 @@ int rt_hw_can_init(void)
 #else
                                  0U
 #endif
-                                );
+        );
 
         drv_can->device.config = dev_config;
         ret = rt_hw_can_register(&drv_can->device, drv_can->name, &_can_ops, drv_can);

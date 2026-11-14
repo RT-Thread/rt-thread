@@ -21,12 +21,12 @@
 ****************************************************************************************/
 typedef struct hc32_mcan_config_struct
 {
-    char *name;                         /* MCAN instance name */
-    CM_MCAN_TypeDef *instance;          /* MCAN instance */
-    stc_mcan_init_t init_para;          /* MCAN initialisation parameters */
+    char *name;                /* MCAN instance name */
+    CM_MCAN_TypeDef *instance; /* MCAN instance */
+    stc_mcan_init_t init_para; /* MCAN initialisation parameters */
 
     uint32_t int0_sel;
-    struct hc32_irq_config int0_cfg;    /* MCAN interrupt line 0 configuration */
+    struct hc32_irq_config int0_cfg; /* MCAN interrupt line 0 configuration */
 #if defined(HC32F4A8)
     func_ptr_t irq_callback0;
 #endif
@@ -34,9 +34,9 @@ typedef struct hc32_mcan_config_struct
 
 typedef struct hc32_mcan_driver_struct
 {
-    hc32_mcan_config_t mcan;            /* MCAN configuration */
-    struct rt_can_device can_device;    /* inherit from rt can device */
-    uint32_t tx_request_mask;          /**< Physical FIFO buffer bit owned until real TX completion. */
+    hc32_mcan_config_t mcan;         /* MCAN configuration */
+    struct rt_can_device can_device; /* inherit from rt can device */
+    uint32_t tx_request_mask;        /**< Physical FIFO buffer bit owned until real TX completion. */
 } hc32_mcan_driver_t;
 
 typedef struct mcan_baud_rate_struct
@@ -79,10 +79,10 @@ typedef struct mcan_baud_rate_struct
 /****************************************************************************************
 * Interrupt definitions
 ****************************************************************************************/
-#define MCAN_RX_INT   (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
-#define MCAN_TX_INT   (MCAN_INT_TX_CPLT)
-#define MCAN_ERR_INT  (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
-                       MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
+#define MCAN_RX_INT  (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
+#define MCAN_TX_INT  (MCAN_INT_TX_CPLT)
+#define MCAN_ERR_INT (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
+                      MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
 #define MCAN_INT0_SEL (MCAN_RX_INT | MCAN_TX_INT | MCAN_ERR_INT)
 
 /****************************************************************************************
@@ -221,7 +221,7 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
  * @retval -RT_ERROR Hardware submission failure
  */
 static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
-                                          rt_uint32_t *mailbox);
+                                           rt_uint32_t *mailbox);
 
 /**
  * @brief Receive message from CAN
@@ -797,7 +797,7 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
 }
 
 static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
-                                          rt_uint32_t *mailbox)
+                                           rt_uint32_t *mailbox)
 {
     /* Preserve the underlying submit error without publishing a failed mailbox. */
     rt_ssize_t result;
