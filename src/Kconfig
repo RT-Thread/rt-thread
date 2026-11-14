@@ -477,4 +477,17 @@ config RT_BACKTRACE_LEVEL_MAX_NR
     int "Max number of backtrace level"
     default 32
 
+config RT_USING_KSYMS
+    bool "Enable kernel symbol table"
+    default n
+    help
+        Embed a compact GCC/ELF kernel function symbol table and use it to
+        resolve addresses printed by the kernel backtrace API.
+
+        This option is supported by the native SCons GCC/ELF build only.
+        Enabling it with another toolchain is a build error.
+
+        The symbol table consumes read-only memory. It is generated during
+        the GCC build and includes local, global, and weak functions.
+
 endmenu
