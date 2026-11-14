@@ -334,11 +334,19 @@ static void repeat_work_test01_fun(struct rt_work *work, void *work_data)
     *((int *)work_data) += 1;
 }
 
+static void hold_workqueue(struct rt_work *work, void *work_data)
+{
+    RT_UNUSED(work);
+    rt_completion_wait((struct rt_completion *)work_data, RT_WAITING_FOREVER);
+}
+
 static void repeat_work_test01(void)
 {
     struct rt_workqueue *queue;
     rt_uint8_t curr_priority;
     struct rt_work work;
+    struct rt_work blocker;
+    struct rt_completion release;
     volatile int work_flag = 0;
     rt_err_t err;
 
@@ -351,6 +359,11 @@ static void repeat_work_test01(void)
         return;
     }
     work_flag = 0;
+    /* Keep the target pending until both submissions finish, including on SMP. */
+    rt_completion_init(&release);
+    rt_work_init(&blocker, hold_workqueue, &release);
+    err = rt_workqueue_submit_work(queue, &blocker, 0);
+    uassert_int_equal(err, RT_EOK);
     rt_work_init(&work, repeat_work_test01_fun, (void *)&work_flag);
     /* Multiple submissions of the same work */
     err = rt_workqueue_submit_work(queue, &work, 0);
@@ -362,6 +375,7 @@ static void repeat_work_test01(void)
     {
         LOG_E("L:%d err. %d", __LINE__, err);
     }
+    rt_completion_done(&release);
     rt_thread_delay(100);
     /* Check if it was executed only once */
     uassert_int_equal(work_flag, 1);
@@ -415,14 +429,24 @@ static void repeat_work_test02(void)
 
 static struct rt_workqueue *queue_3;
 
+struct repeat_work_context
+{
+    int count;
+    struct rt_completion done;
+};
+
 static void repeat_work_test03_fun(struct rt_work *work, void *work_data)
 {
-    int *work_flag = (int *)work_data;
-    (*work_flag) += 1;
-    rt_kprintf("work_flag:%d\n", *work_flag);
-    if (*work_flag < 20)
+    struct repeat_work_context *context = work_data;
+    context->count += 1;
+    rt_kprintf("work_flag:%d\n", context->count);
+    if (context->count < 20)
     {
         rt_workqueue_submit_work(queue_3, work, 0);
+    }
+    else
+    {
+        rt_completion_done(&context->done);
     }
 }
 
@@ -430,7 +454,7 @@ static void repeat_work_test03(void)
 {
     rt_uint8_t curr_priority;
     struct rt_work work;
-    volatile int work_flag = 0;
+    struct repeat_work_context context;
     rt_err_t err;
 
     /* 1 priority higher than current test thread */
@@ -441,17 +465,21 @@ static void repeat_work_test03(void)
         LOG_E("queue create failed, L:%d", __LINE__);
         return;
     }
-    rt_work_init(&work, repeat_work_test03_fun, (void *)&work_flag);
+    context.count = 0;
+    rt_completion_init(&context.done);
+    rt_work_init(&work, repeat_work_test03_fun, &context);
     /* Submit work with high queue priority that will be executed immediately */
     err = rt_workqueue_submit_work(queue_3, &work, 0);
     uassert_int_equal(err, RT_EOK);
 
     /* Wait for the work to be executed 20 times with a timeout */
+    err = rt_completion_wait(&context.done, rt_tick_from_millisecond(5000));
+    uassert_int_equal(err, RT_EOK);
     err = rt_workqueue_cancel_work_sync(queue_3, &work);
     uassert_int_equal(err, RT_EOK);
 
     /* Check if the work was executed 20 times */
-    uassert_int_equal(work_flag, 20);
+    uassert_int_equal(context.count, 20);
 
     rt_workqueue_destroy(queue_3);
 }
