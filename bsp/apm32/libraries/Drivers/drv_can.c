@@ -14,51 +14,47 @@
 
 #if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2)
 
-#define LOG_TAG    "drv_can"
+#define LOG_TAG "drv_can"
 #include <drv_log.h>
 
 #ifdef BSP_USING_CAN1
-static struct apm32_can drv_can1 =
-{
+static struct apm32_can drv_can1 = {
     .name = "can1",
     .CANx = CAN1,
 };
 #endif
 
 #ifdef BSP_USING_CAN2
-static struct apm32_can drv_can2 =
-{
+static struct apm32_can drv_can2 = {
     .name = "can2",
     .CANx = CAN2,
 };
 #endif
 
 /* baud calculation example: PCLK1 / ((timeSegment1 + timeSegment2 + 1) * prescaler) = 36 / ((1 + 8 + 3) * 3) = 1MHz */
-#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1) || defined (SOC_SERIES_APM32S1)  /* APB1 36MHz(max) */
-static const struct apm32_baud_rate_tab can_baud_rate_tab[] =
-{
-    APM32_CAN_BAUD_DEF(CAN1MBaud,   CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 3),
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) /* APB1 36MHz(max) */
+static const struct apm32_baud_rate_tab can_baud_rate_tab[] = {
+    APM32_CAN_BAUD_DEF(CAN1MBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 3),
     APM32_CAN_BAUD_DEF(CAN800kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_5, CAN_TIME_SEGMENT2_3, 5),
     APM32_CAN_BAUD_DEF(CAN500kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 6),
     APM32_CAN_BAUD_DEF(CAN250kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 12),
     APM32_CAN_BAUD_DEF(CAN125kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 24),
     APM32_CAN_BAUD_DEF(CAN100kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 30),
-    APM32_CAN_BAUD_DEF(CAN50kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 60),
-    APM32_CAN_BAUD_DEF(CAN20kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 150),
-    APM32_CAN_BAUD_DEF(CAN10kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 300),
+    APM32_CAN_BAUD_DEF(CAN50kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 60),
+    APM32_CAN_BAUD_DEF(CAN20kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 150),
+    APM32_CAN_BAUD_DEF(CAN10kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_3, 300),
 };
-#elif defined (SOC_SERIES_APM32F4)  /* APB1 42MHz(max) */
-static const struct apm32_baud_rate_tab can_baud_rate_tab[] =
-{
-    APM32_CAN_BAUD_DEF(CAN1MBaud,   CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 3),
+#elif defined(SOC_SERIES_APM32F4) /* APB1 42MHz(max) */
+static const struct apm32_baud_rate_tab can_baud_rate_tab[] = {
+    APM32_CAN_BAUD_DEF(CAN1MBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 3),
     APM32_CAN_BAUD_DEF(CAN800kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_8, CAN_TIME_SEGMENT2_4, 4),
     APM32_CAN_BAUD_DEF(CAN500kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 6),
     APM32_CAN_BAUD_DEF(CAN250kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 12),
     APM32_CAN_BAUD_DEF(CAN125kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 24),
     APM32_CAN_BAUD_DEF(CAN100kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 30),
-    APM32_CAN_BAUD_DEF(CAN50kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 60),
-    APM32_CAN_BAUD_DEF(CAN20kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 150),
-    APM32_CAN_BAUD_DEF(CAN10kBaud,  CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 300),
+    APM32_CAN_BAUD_DEF(CAN50kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 60),
+    APM32_CAN_BAUD_DEF(CAN20kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 150),
+    APM32_CAN_BAUD_DEF(CAN10kBaud, CAN_SJW_1, CAN_TIME_SEGMENT1_9, CAN_TIME_SEGMENT2_4, 300),
 };
 #endif
 
@@ -70,7 +66,9 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
 
     return 0; /* default baud is CAN1MBaud */
@@ -93,10 +91,10 @@ static rt_err_t apm32_can_config(struct rt_can_device *can, struct can_configure
     CAN_ConfigStructInit(&drv_can->can_init);
 
     drv_can->can_init.autoBusOffManage = ENABLE;
-    drv_can->can_init.autoWakeUpMode   = DISABLE;
-    drv_can->can_init.nonAutoRetran    = DISABLE;
-    drv_can->can_init.rxFIFOLockMode   = DISABLE;
-    drv_can->can_init.txFIFOPriority   = ENABLE;
+    drv_can->can_init.autoWakeUpMode = DISABLE;
+    drv_can->can_init.nonAutoRetran = DISABLE;
+    drv_can->can_init.rxFIFOLockMode = DISABLE;
+    drv_can->can_init.txFIFOPriority = ENABLE;
 
     /* can mode config */
     switch (cfg->mode)
@@ -124,10 +122,10 @@ static rt_err_t apm32_can_config(struct rt_can_device *can, struct can_configure
 
     /* can baud config */
     baud_index = get_can_baud_index(cfg->baud_rate);
-    drv_can->can_init.syncJumpWidth    = can_baud_rate_tab[baud_index].syncJumpWidth;
-    drv_can->can_init.timeSegment1     = can_baud_rate_tab[baud_index].timeSegment1;
-    drv_can->can_init.timeSegment2     = can_baud_rate_tab[baud_index].timeSegment2;
-    drv_can->can_init.prescaler        = can_baud_rate_tab[baud_index].prescaler;
+    drv_can->can_init.syncJumpWidth = can_baud_rate_tab[baud_index].syncJumpWidth;
+    drv_can->can_init.timeSegment1 = can_baud_rate_tab[baud_index].timeSegment1;
+    drv_can->can_init.timeSegment2 = can_baud_rate_tab[baud_index].timeSegment2;
+    drv_can->can_init.prescaler = can_baud_rate_tab[baud_index].prescaler;
 
     /* init can */
     if (CAN_Config(drv_can->CANx, &drv_can->can_init) != SUCCESS)
@@ -159,7 +157,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             if (CAN1 == drv_can->CANx)
@@ -215,7 +213,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             CAN_EnableInterrupt(drv_can->CANx, CAN_INT_F0MP);
@@ -279,7 +277,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t id_l = 0;
         rt_uint32_t mask_h = 0;
         rt_uint32_t mask_l = 0;
-        rt_uint32_t mask_l_tail = 0;  //CAN_FxR2 bit [2:0]
+        rt_uint32_t mask_l_tail = 0; //CAN_FxR2 bit [2:0]
 
         if (RT_NULL == arg)
         {
@@ -315,7 +313,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
                     /* use user-defined filter bank settings */
                     drv_can->FilterConfig.filterNumber = filter_cfg->items[i].hdr_bank;
                 }
-                 /**
+                /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
                  * MASK   | CAN_FxR2[31:24] | CAN_FxR2[23:16] | CAN_FxR2[15:8] | CAN_FxR2[7:0]       |
                  * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
@@ -346,16 +344,18 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
                     id_h = ((filter_cfg->items[i].id << 18) >> 13) & 0xFFFF;
                     id_l = ((filter_cfg->items[i].id << 18) |
                             (filter_cfg->items[i].ide << 2) |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 21) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 21) | mask_l_tail) & 0xFFFF;
                 }
                 else if (filter_cfg->items[i].ide == RT_CAN_EXTID)
                 {
                     id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                    id_l = ((filter_cfg->items[i].id << 3)   |
-                            (filter_cfg->items[i].ide << 2)  |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                    id_l = ((filter_cfg->items[i].id << 3) |
+                            (filter_cfg->items[i].ide << 2) |
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 3) | mask_l_tail) & 0xFFFF;
                 }
@@ -378,11 +378,11 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     }
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -393,16 +393,16 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != CAN1MBaud &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud)
+            argval != CAN800kBaud &&
+            argval != CAN500kBaud &&
+            argval != CAN250kBaud &&
+            argval != CAN125kBaud &&
+            argval != CAN100kBaud &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
+            argval != CAN10kBaud)
         {
             return -RT_ERROR;
         }
@@ -413,9 +413,9 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_PRIV &&
-                argval != RT_CAN_MODE_NOPRIV)
+            argval != RT_CAN_MODE_NOPRIV)
         {
             return -RT_ERROR;
         }
@@ -425,18 +425,42 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
             return apm32_can_config(&drv_can->device, &drv_can->device.config);
         }
         break;
-    case RT_CAN_CMD_GET_STATUS:
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
         {
-            rt_uint32_t errtype;
-            errtype = drv_can->CANx->ERRSTS;
-            drv_can->device.status.rcverrcnt = errtype >> 24;
-            drv_can->device.status.snderrcnt = (errtype >> 16 & 0xFF);
-            drv_can->device.status.lasterrtype = errtype & 0x70;
-            drv_can->device.status.errcode = errtype & 0x07;
-
-            rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
+            /* Do not claim STOP while any hardware TX request is active. */
+            if ((drv_can->CANx->TXSTS & 0x1C000000U) != 0x1C000000U)
+            {
+                return -RT_EBUSY;
+            }
+            if (CAN_OperatingMode(drv_can->CANx, CAN_OPERATING_MODE_INIT) == 0U)
+            {
+                return -RT_ERROR;
+            }
+            /* Discard old terminal flags before a later START. */
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC0);
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC1);
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC2);
+        }
+        else if (CAN_OperatingMode(drv_can->CANx, CAN_OPERATING_MODE_NORMAL) == 0U)
+        {
+            return -RT_ERROR;
         }
         break;
+    case RT_CAN_CMD_ABORT_TX:
+        return -RT_ENOSYS;
+    case RT_CAN_CMD_GET_STATUS:
+    {
+        rt_uint32_t errtype;
+        errtype = drv_can->CANx->ERRSTS;
+        drv_can->device.status.rcverrcnt = errtype >> 24;
+        drv_can->device.status.snderrcnt = (errtype >> 16 & 0xFF);
+        drv_can->device.status.lasterrtype = errtype & 0x70;
+        drv_can->device.status.errcode = errtype & 0x07;
+
+        rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
+    }
+    break;
     }
 
     return RT_EOK;
@@ -444,7 +468,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
 
 static int can_send_rtmsg(CAN_T *CANx, struct rt_can_msg *pmsg, uint32_t mailbox_index)
 {
-    CAN_TxMessage_T CAN_TxMessage = {0};
+    CAN_TxMessage_T CAN_TxMessage = { 0 };
     CAN_TxMessage_T *TxMessage = &CAN_TxMessage;
 
     if (RT_CAN_STDID == pmsg->ide)
@@ -485,13 +509,13 @@ static int can_send_rtmsg(CAN_T *CANx, struct rt_can_msg *pmsg, uint32_t mailbox
 
     /* Set up the data field */
     CANx->sTxMailBox[mailbox_index].TXMDH = (((uint32_t)pmsg->data[7] << 24) |
-                                            ((uint32_t)pmsg->data[6] << 16)  |
-                                            ((uint32_t)pmsg->data[5] << 8)   |
-                                            ((uint32_t)pmsg->data[4]));
+                                             ((uint32_t)pmsg->data[6] << 16) |
+                                             ((uint32_t)pmsg->data[5] << 8) |
+                                             ((uint32_t)pmsg->data[4]));
     CANx->sTxMailBox[mailbox_index].TXMDL = (((uint32_t)pmsg->data[3] << 24) |
-                                            ((uint32_t)pmsg->data[2] << 16)  |
-                                            ((uint32_t)pmsg->data[1] << 8)   |
-                                            ((uint32_t)pmsg->data[0]));
+                                             ((uint32_t)pmsg->data[2] << 16) |
+                                             ((uint32_t)pmsg->data[1] << 8) |
+                                             ((uint32_t)pmsg->data[0]));
 
     /* Request transmission */
     CANx->sTxMailBox[mailbox_index].TXMID |= 0x00000001;
@@ -508,50 +532,89 @@ static int apm32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint
     drv_can = (struct apm32_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
 
-    /* Select one empty transmit mailbox */
+    /* Require an empty mailbox with no unreported TX terminal. */
     switch (box_num)
     {
-        case CAN_TX_MAILBIX_0:
-            if ((drv_can->CANx->TXSTS & 0x04000000) != 0x04000000)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
-            break;
-        case CAN_TX_MAILBIX_1:
-            if ((drv_can->CANx->TXSTS & 0x08000000) != 0x08000000)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
-            break;
-        case CAN_TX_MAILBIX_2:
-            if ((drv_can->CANx->TXSTS & 0x10000000) != 0x10000000)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
-            break;
-        default:
-            RT_ASSERT(0);
-            break;
+    case CAN_TX_MAILBIX_0:
+        if ((drv_can->CANx->TXSTS & 0x04000000) != 0x04000000 ||
+            CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC0))
+        {
+            return -RT_EBUSY;
+        }
+        break;
+    case CAN_TX_MAILBIX_1:
+        if ((drv_can->CANx->TXSTS & 0x08000000) != 0x08000000 ||
+            CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC1))
+        {
+            return -RT_EBUSY;
+        }
+        break;
+    case CAN_TX_MAILBIX_2:
+        if ((drv_can->CANx->TXSTS & 0x10000000) != 0x10000000 ||
+            CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC2))
+        {
+            return -RT_EBUSY;
+        }
+        break;
+    default:
+        return -RT_EINVAL;
     }
 
     /* Start send msg */
     return can_send_rtmsg(drv_can->CANx, ((struct rt_can_msg *)buf), box_num);
 }
 
+/**
+ * @brief Submit one frame immediately using an available hardware TX mailbox.
+ *
+ * Generic holds its TX lock while this callback selects and submits to a
+ * hardware mailbox. A blocking sender may still own a completed mailbox.
+ *
+ * @param[in] can Pointer to the CAN device.
+ * @param[in] buf Pointer to the CAN frame.
+ * @param[out] mailbox Hardware mailbox index selected on successful submission.
+ * @return RT_EOK on submission, -RT_EBUSY when unavailable, or another error.
+ */
+static rt_ssize_t apm32_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Candidate hardware mailbox number and its submission result. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(mailbox != RT_NULL);
+
+    /* sndchange also protects blocking owners waiting to consume their terminal. */
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num <= CAN_TX_MAILBIX_2; box_num++)
+    {
+        if ((can->status.sndchange & (1UL << box_num)) != 0U)
+        {
+            continue;
+        }
+        result = apm32_can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
+}
+
 static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct apm32_can *drv_can;
     struct rt_can_msg *pmsg;
-    CAN_RxMessage_T RxMessage = {0};
+    CAN_RxMessage_T RxMessage = { 0 };
 
     RT_ASSERT(can);
 
     drv_can = (struct apm32_can *)can->parent.user_data;
 
-    pmsg = (struct rt_can_msg *) buf;
+    pmsg = (struct rt_can_msg *)buf;
 
     CAN_RxMessage(drv_can->CANx, (CAN_RX_FIFO_T)fifo, &RxMessage);
 
@@ -600,19 +663,19 @@ static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t f
 #ifdef CAN2
     else if (drv_can->CANx == CAN2)
     {
-       pmsg->hdr_index = RxMessage.filterMatchIndex;
+        pmsg->hdr_index = RxMessage.filterMatchIndex;
     }
 #endif
 
     return RT_EOK;
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     apm32_can_config,
     apm32_can_control,
     apm32_can_sendmsg,
     apm32_can_recvmsg,
+    apm32_can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -679,34 +742,23 @@ static void _can_sce_isr(struct rt_can_device *can)
 
     switch ((errtype & 0x70) >> 4)
     {
-        case RT_CAN_BUS_BIT_PAD_ERR:
-            can->status.bitpaderrcnt++;
-            break;
-        case RT_CAN_BUS_FORMAT_ERR:
-            can->status.formaterrcnt++;
-            break;
-        case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
-            can->status.ackerrcnt++;
-            if (!READ_BIT(drv_can->CANx->TXSTS, 0x00000002))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-            }
-            else if (!READ_BIT(drv_can->CANx->TXSTS, 0x00000200))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-            }
-            else if (!READ_BIT(drv_can->CANx->TXSTS, 0x00020000))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-            }
-            break;
-        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-            can->status.biterrcnt++;
-            break;
-        case RT_CAN_BUS_CRC_ERR:
-            can->status.crcerrcnt++;
-            break;
+    case RT_CAN_BUS_BIT_PAD_ERR:
+        can->status.bitpaderrcnt++;
+        break;
+    case RT_CAN_BUS_FORMAT_ERR:
+        can->status.formaterrcnt++;
+        break;
+    /* An ACK error can be transient while hardware auto-retransmits. */
+    case RT_CAN_BUS_ACK_ERR: /* attention !!! test ack err's unit is transmit unit */
+        can->status.ackerrcnt++;
+        break;
+    case RT_CAN_BUS_IMPLICIT_BIT_ERR:
+    case RT_CAN_BUS_EXPLICIT_BIT_ERR:
+        can->status.biterrcnt++;
+        break;
+    case RT_CAN_BUS_CRC_ERR:
+        can->status.crcerrcnt++;
+        break;
     }
 
     can->status.lasterrtype = errtype & 0x70;
@@ -725,19 +777,41 @@ static void _can_tx_isr(struct rt_can_device *can)
     drv_can = (struct apm32_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
 
+    /* Publish each terminal before clearing REQC so it cannot retire a new owner. */
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC0))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00000002U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC0);
     }
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC1))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00000200U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC1);
     }
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC2))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00020000U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC2);
     }
 }
@@ -829,6 +903,8 @@ void CAN2_SCE_IRQHandler(void)
 int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
+    /* APM32 bxCAN exposes three dedicated transmit mailboxes. */
+    config.sndboxnumber = 3;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
@@ -838,7 +914,7 @@ int rt_hw_can_init(void)
 #endif
 #endif
     /* config default filter */
-    CAN_FilterConfig_T filterConf = {0};
+    CAN_FilterConfig_T filterConf = { 0 };
     filterConf.filterNumber = 0;
     filterConf.filterIdHigh = 0x0000;
     filterConf.filterIdLow = 0x0000;

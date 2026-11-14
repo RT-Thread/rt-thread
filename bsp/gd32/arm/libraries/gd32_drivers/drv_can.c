@@ -16,70 +16,64 @@
 
 #ifdef BSP_USING_CAN
 
-#define LOG_TAG    "can_drv"
+#define LOG_TAG "can_drv"
 #include <drv_log.h>
 
 #if defined(GD32F405) || defined(GD32F407) /* 42MHz(max) */
-static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
-{
-    {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 3},
-    {CAN800kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 5},
-    {CAN500kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 6},
-    {CAN250kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 12},
-    {CAN125kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 24},
-    {CAN100kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 30},
-    {CAN50kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 60},
-    {CAN20kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 150},
-    {CAN10kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 300},
+static const struct gd32_baudrate_tbl can_baudrate_tbl[] = {
+    { CAN1MBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 3 },
+    { CAN800kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 5 },
+    { CAN500kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 6 },
+    { CAN250kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 12 },
+    { CAN125kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 24 },
+    { CAN100kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 30 },
+    { CAN50kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 60 },
+    { CAN20kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 150 },
+    { CAN10kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 300 },
 };
-#elif defined(GD32F425) || defined(GD32F427) || defined(GD32F450) || defined(GD32F527)/* 50MHz(max) */
-static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
-{
-    {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 5},
-    {CAN800kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 4},
-    {CAN500kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 10},
-    {CAN250kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 20},
-    {CAN125kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 40},
-    {CAN100kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 50},
-    {CAN50kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 100},
-    {CAN20kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 250},
-    {CAN10kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 500},
+#elif defined(GD32F425) || defined(GD32F427) || defined(GD32F450) || defined(GD32F527) /* 50MHz(max) */
+static const struct gd32_baudrate_tbl can_baudrate_tbl[] = {
+    { CAN1MBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 5 },
+    { CAN800kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 4 },
+    { CAN500kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 10 },
+    { CAN250kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 20 },
+    { CAN125kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 40 },
+    { CAN100kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 50 },
+    { CAN50kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 100 },
+    { CAN20kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 250 },
+    { CAN10kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ, CAN_BT_BS2_1TQ, 500 },
 };
-#elif defined(GD32F470) /* 60MHz(max) */
-static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
-{
-    {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 4},
-    {CAN800kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 5},
-    {CAN500kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 8},
-    {CAN250kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 15},
-    {CAN125kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 30},
-    {CAN100kBaud,   CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 40},
-    {CAN50kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 75},
-    {CAN20kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 200},
-    {CAN10kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 375},
+#elif defined(GD32F470)                                                                /* 60MHz(max) */
+static const struct gd32_baudrate_tbl can_baudrate_tbl[] = {
+    { CAN1MBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 4 },
+    { CAN800kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 5 },
+    { CAN500kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 8 },
+    { CAN250kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 15 },
+    { CAN125kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 30 },
+    { CAN100kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 40 },
+    { CAN50kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 75 },
+    { CAN20kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 200 },
+    { CAN10kBaud, CAN_BT_SJW_1TQ, CAN_BT_BS1_13TQ, CAN_BT_BS2_2TQ, 375 },
 };
 #else
-    #error "CAN driver not implemented for selected device"
+#error "CAN driver not implemented for selected device"
 #endif
 
 #ifdef BSP_USING_CAN0
-static struct gd32_can_device dev_can0 =
-{
+static struct gd32_can_device dev_can0 = {
     .name = "can0",
     .can_x = CAN0,
 };
 #endif
 
 #ifdef BSP_USING_CAN1
-static struct gd32_can_device dev_can1 =
-{
+static struct gd32_can_device dev_can1 = {
     "can1",
     .can_x = CAN1,
 };
 #endif
 
-static const struct gd32_can gd32_can_gpio[] =
-{
+static const struct gd32_can gd32_can_gpio[] = {
 #ifdef BSP_USING_CAN0
     {
         .can_clk = RCU_CAN0,
@@ -99,7 +93,7 @@ static const struct gd32_can gd32_can_gpio[] =
         .tx_clk = RCU_GPIOH,
         .tx_pin = GET_PIN(H, 13),
 #else
-    #error "Select CAN0 tx pin"
+#error "Select CAN0 tx pin"
 #endif
 #if defined BSP_CAN0_RX_PA11
         .rx_clk = RCU_GPIOA,
@@ -114,7 +108,7 @@ static const struct gd32_can gd32_can_gpio[] =
         .rx_clk = RCU_GPIOI,
         .rx_pin = GET_PIN(I, 9),
 #else
-    #error "Select CAN0 rx pin"
+#error "Select CAN0 rx pin"
 #endif
     },
 #endif
@@ -133,7 +127,7 @@ static const struct gd32_can gd32_can_gpio[] =
         .tx_clk = RCU_GPIOB,
         .tx_pin = GET_PIN(B, 13),
 #else
-    #error "Select CAN1 tx pin"
+#error "Select CAN1 tx pin"
 #endif
 #if defined BSP_CAN1_RX_PB5
         .rx_clk = RCU_GPIOB,
@@ -142,7 +136,7 @@ static const struct gd32_can gd32_can_gpio[] =
         .rx_clk = RCU_GPIOB,
         .rx_pin = GET_PIN(B, 12),
 #else
-    #error "Select CAN1 rx pin"
+#error "Select CAN1 rx pin"
 #endif
     },
 #endif
@@ -248,7 +242,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
 #ifdef CAN0
@@ -310,7 +304,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             can_interrupt_enable(can_dev->can_x, CAN_INT_RFNE0);
@@ -377,7 +371,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t id_l = 0;
         rt_uint32_t mask_h = 0;
         rt_uint32_t mask_l = 0;
-        rt_uint32_t mask_l_tail = 0;  /*CAN_FxR2 bit [2:0]*/
+        rt_uint32_t mask_l_tail = 0; /*CAN_FxR2 bit [2:0]*/
 
         if (RT_NULL == arg)
         {
@@ -430,16 +424,18 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     id_h = ((filter_cfg->items[i].id << 18) >> 13) & 0xFFFF;
                     id_l = ((filter_cfg->items[i].id << 18) |
                             (filter_cfg->items[i].ide << 2) |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 21) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 21) | mask_l_tail) & 0xFFFF;
                 }
                 else if (filter_cfg->items[i].ide == RT_CAN_EXTID)
                 {
                     id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                    id_l = ((filter_cfg->items[i].id << 3)   |
-                            (filter_cfg->items[i].ide << 2)  |
-                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                    id_l = ((filter_cfg->items[i].id << 3) |
+                            (filter_cfg->items[i].ide << 2) |
+                            (filter_cfg->items[i].rtr << 1)) &
+                           0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 3) | mask_l_tail) & 0xFFFF;
                 }
@@ -449,7 +445,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 can_dev->filter_config.filter_mask_low = mask_l;
 
                 can_dev->filter_config.filter_mode = filter_cfg->items[i].mode;
-                can_dev->filter_config.filter_fifo_number = filter_cfg->items[i].rxfifo;/*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
+                can_dev->filter_config.filter_fifo_number = filter_cfg->items[i].rxfifo; /*rxfifo = CAN_RX_FIFO0/CAN_RX_FIFO1*/
                 /* Filter conf */
                 can_filter_init(&can_dev->filter_config);
             }
@@ -457,7 +453,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     }
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
             argval != RT_CAN_MODE_LISTEN &&
             argval != RT_CAN_MODE_LOOPBACK &&
@@ -472,16 +468,16 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != CAN1MBaud &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud)
+            argval != CAN800kBaud &&
+            argval != CAN500kBaud &&
+            argval != CAN250kBaud &&
+            argval != CAN125kBaud &&
+            argval != CAN100kBaud &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
+            argval != CAN10kBaud)
         {
             return -RT_ERROR;
         }
@@ -492,9 +488,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_PRIV &&
-                argval != RT_CAN_MODE_NOPRIV)
+            argval != RT_CAN_MODE_NOPRIV)
         {
             return -RT_ERROR;
         }
@@ -533,24 +529,21 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     switch (box_num)
     {
     case CAN_MAILBOX0:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME0)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME0 | CAN_TSTAT_MTF0)) != CAN_TSTAT_TME0)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX1:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME1)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME1 | CAN_TSTAT_MTF1)) != CAN_TSTAT_TME1)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX2:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME2)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME2 | CAN_TSTAT_MTF2)) != CAN_TSTAT_TME2)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     default:
@@ -585,26 +578,26 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
     if (RT_CAN_STDID == pmsg->ide)
     {
-        CAN_TMI(can_x, box_num) |= (uint32_t)(TMI_SFID(transmit_message.tx_sfid) | \
-                                    transmit_message.tx_ft);
+        CAN_TMI(can_x, box_num) |= (uint32_t)(TMI_SFID(transmit_message.tx_sfid) |
+                                              transmit_message.tx_ft);
     }
     else
     {
-        CAN_TMI(can_x, box_num) |= (uint32_t)(TMI_EFID(transmit_message.tx_efid) | \
-                                    transmit_message.tx_ff | \
-                                    transmit_message.tx_ft);
+        CAN_TMI(can_x, box_num) |= (uint32_t)(TMI_EFID(transmit_message.tx_efid) |
+                                              transmit_message.tx_ff |
+                                              transmit_message.tx_ft);
     }
     CAN_TMP(can_x, box_num) &= ~CAN_TMP_DLENC;
     CAN_TMP(can_x, box_num) |= transmit_message.tx_dlen;
 
-    CAN_TMDATA0(can_x, box_num) = TMDATA0_DB3(transmit_message.tx_data[3]) | \
-    TMDATA0_DB2(transmit_message.tx_data[2]) | \
-    TMDATA0_DB1(transmit_message.tx_data[1]) | \
-    TMDATA0_DB0(transmit_message.tx_data[0]);
-    CAN_TMDATA1(can_x, box_num) = TMDATA1_DB7(transmit_message.tx_data[7]) | \
-    TMDATA1_DB6(transmit_message.tx_data[6]) | \
-    TMDATA1_DB5(transmit_message.tx_data[5]) | \
-    TMDATA1_DB4(transmit_message.tx_data[4]);
+    CAN_TMDATA0(can_x, box_num) = TMDATA0_DB3(transmit_message.tx_data[3]) |
+                                  TMDATA0_DB2(transmit_message.tx_data[2]) |
+                                  TMDATA0_DB1(transmit_message.tx_data[1]) |
+                                  TMDATA0_DB0(transmit_message.tx_data[0]);
+    CAN_TMDATA1(can_x, box_num) = TMDATA1_DB7(transmit_message.tx_data[7]) |
+                                  TMDATA1_DB6(transmit_message.tx_data[6]) |
+                                  TMDATA1_DB5(transmit_message.tx_data[5]) |
+                                  TMDATA1_DB4(transmit_message.tx_data[4]);
 
     CAN_TMI(can_x, box_num) |= CAN_TMI_TEN;
 
@@ -655,7 +648,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 #ifdef CAN2
     if (can_x == CAN2)
     {
-       pmsg->hdr_index = receive_message.rx_fi;
+        pmsg->hdr_index = receive_message.rx_fi;
     }
 #endif
 
@@ -665,66 +658,65 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
 {
     rt_uint32_t freebox = 0;
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME0) != 0U)
+    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME0) != 0U)
     {
         freebox++;
     }
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME1) != 0U)
+    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME1) != 0U)
     {
         freebox++;
     }
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME2) != 0U)
+    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME2) != 0U)
     {
         freebox++;
     }
     return freebox;
 }
 
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Submit a frame once to an available Generic-visible GD32 TX mailbox.
+ *
+ * @param can Registered CAN device.
+ * @param buf Frame to submit.
+ * @param mailbox Receives the selected mailbox index on hardware acceptance.
+ * @return RT_EOK on acceptance, -RT_EBUSY if occupied, otherwise a submit error.
+ */
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                    rt_uint32_t *mailbox)
 {
     RT_ASSERT(can);
-
-    can_trasnmit_message_struct transmit_message;
-    can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
+    /* Controller base and Generic-visible candidate/result. */
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    rt_uint32_t index;
+    rt_ssize_t result;
 
-    if(_can_get_freebox(can_x) == 0)
+    if (_can_get_freebox(can_x) == 0)
     {
         return -RT_EBUSY;
     }
-    if (RT_CAN_STDID == pmsg->ide)
+
+    for (index = 0; index < can->config.sndboxnumber && index <= CAN_MAILBOX2; index++)
     {
-        transmit_message.tx_ff = CAN_FF_STANDARD;
-        transmit_message.tx_sfid = pmsg->id;
-    }
-    else
-    {
-        transmit_message.tx_ff = CAN_FF_EXTENDED;
-        transmit_message.tx_efid = pmsg->id;
+        if (can->status.sndchange & (1UL << index))
+        {
+            continue;
+        }
+        result = _can_sendmsg(can, buf, index);
+        if (result == RT_EOK)
+        {
+            *mailbox = index;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
     }
 
-    if (RT_CAN_DTR == pmsg->rtr)
-    {
-        transmit_message.tx_ft = CAN_FT_DATA;
-        memcpy(transmit_message.tx_data, pmsg->data, pmsg->len);
-    }
-    else
-    {
-        transmit_message.tx_ft = CAN_FT_REMOTE;
-    }
-
-    transmit_message.tx_dlen = pmsg->len;
-    if(can_message_transmit(can_x, &transmit_message) == CAN_NOMAILBOX)
-    {
-        return -RT_ERROR;
-    }
-
-    return RT_EOK;
+    return -RT_EBUSY;
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
     _can_sendmsg,
@@ -792,61 +784,40 @@ static void _can_ewmc_isr(struct rt_can_device *can)
 
     switch ((errtype & 0x70) >> 4)
     {
-        case RT_CAN_BUS_BIT_PAD_ERR:
-            can->status.bitpaderrcnt++;
-            break;
-        case RT_CAN_BUS_FORMAT_ERR:
-            can->status.formaterrcnt++;
-            break;
-        case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
-            can->status.ackerrcnt++;
-            if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
+    case RT_CAN_BUS_BIT_PAD_ERR:
+        can->status.bitpaderrcnt++;
+        break;
+    case RT_CAN_BUS_FORMAT_ERR:
+        can->status.formaterrcnt++;
+        break;
+    case RT_CAN_BUS_ACK_ERR:
+        can->status.ackerrcnt++;
+        /* Per-mailbox MTF flags belong to the TX interrupt, not the ACK error interrupt. */
+        if (!can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0) &&
+            !can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1) &&
+            !can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+        {
+            if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR0))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;
             }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
+            else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR1))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST1;
             }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+            else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE2))
             {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR2))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST2;
             }
-            else
-            {
-                if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;/*Abort the send request, trigger the TX interrupt,release completion quantity*/
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST1;
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE2))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST2;
-                }
-            }
-            break;
-        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-            can->status.biterrcnt++;
-            break;
-        case RT_CAN_BUS_CRC_ERR:
-            can->status.crcerrcnt++;
-            break;
+        }
+        break;
+    case RT_CAN_BUS_IMPLICIT_BIT_ERR:
+    case RT_CAN_BUS_EXPLICIT_BIT_ERR:
+        can->status.biterrcnt++;
+        break;
+    case RT_CAN_BUS_CRC_ERR:
+        can->status.crcerrcnt++;
+        break;
     }
 
     can->status.lasterrtype = errtype & 0x70;
@@ -860,44 +831,32 @@ static void _can_tx_isr(struct rt_can_device *can)
 {
     RT_ASSERT(can);
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
+    /* Snapshot all mailbox terminal bits before SDK clearing can affect its peers. */
+    rt_uint32_t tx_status = CAN_TSTAT(can_x);
 
-    if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
+    if (tx_status & CAN_TSTAT_MTF0)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR0))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 0 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR0) ? (RT_CAN_EVENT_TX_DONE | 0 << 8) : (RT_CAN_EVENT_TX_FAIL | 0 << 8));
+    }
+    if (tx_status & CAN_TSTAT_MTF1)
+    {
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR1) ? (RT_CAN_EVENT_TX_DONE | 1 << 8) : (RT_CAN_EVENT_TX_FAIL | 1 << 8));
+    }
+    if (tx_status & CAN_TSTAT_MTF2)
+    {
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR2) ? (RT_CAN_EVENT_TX_DONE | 2 << 8) : (RT_CAN_EVENT_TX_FAIL | 2 << 8));
+    }
+
+    if (tx_status & CAN_TSTAT_MTF0)
+    {
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
+    if (tx_status & CAN_TSTAT_MTF1)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR1))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 1 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+    if (tx_status & CAN_TSTAT_MTF2)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR2))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 2 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
     }
 }
@@ -1017,7 +976,7 @@ int rt_hw_can_init(void)
     gd32_can_gpio_init();
 
     /* config default filter */
-    can_filter_parameter_struct filter_config = {0};
+    can_filter_parameter_struct filter_config = { 0 };
     can_struct_para_init(CAN_FILTER_STRUCT, &filter_config);
 
     filter_config.filter_list_high = 0x0000;

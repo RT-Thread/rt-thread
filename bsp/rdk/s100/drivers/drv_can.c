@@ -19,54 +19,61 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-#define CAN_RET(_err, _msg) \
-    do { LOG_E("%s ret=%d", (_msg), (int)(_err)); return (_err); } while (0)
-#define CAN_RET_FMT(_err, _fmt, ...) \
-    do { LOG_E(_fmt " ret=%d", ##__VA_ARGS__, (int)(_err)); return (_err); } while (0)
+#define CAN_RET(_err, _msg)                      \
+    do                                           \
+    {                                            \
+        LOG_E("%s ret=%d", (_msg), (int)(_err)); \
+        return (_err);                           \
+    } while (0)
+#define CAN_RET_FMT(_err, _fmt, ...)                       \
+    do                                                     \
+    {                                                      \
+        LOG_E(_fmt " ret=%d", ##__VA_ARGS__, (int)(_err)); \
+        return (_err);                                     \
+    } while (0)
 
+#define S100_CAN_CLK_WORKAROUND_BASE   (0x2370007CU)
+#define S100_CAN_CLK_WORKAROUND_COUNT  (10U)
+#define S100_CAN_CLK_WORKAROUND_ENABLE (0x8000U)
 
-#define S100_CAN_CLK_WORKAROUND_BASE         (0x2370007CU)
-#define S100_CAN_CLK_WORKAROUND_COUNT        (10U)
-#define S100_CAN_CLK_WORKAROUND_ENABLE       (0x8000U)
+#define S100_MCU2CAN_STB_N_PIN  (6U)
+#define S100_CAN_DEFAULT_CLK_HZ (40000000UL)
 
-#define S100_MCU2CAN_STB_N_PIN               (6U)
-#define S100_CAN_DEFAULT_CLK_HZ              (40000000UL)
+#define S100_CAN5_BASE (0x23720000UL)
+#define S100_CAN6_BASE (0x23730000UL)
+#define S100_CAN7_BASE (0x23740000UL)
+#define S100_CAN8_BASE (0x23750000UL)
+#define S100_CAN9_BASE (0x23760000UL)
 
-#define S100_CAN5_BASE                         (0x23720000UL)
-#define S100_CAN6_BASE                         (0x23730000UL)
-#define S100_CAN7_BASE                         (0x23740000UL)
-#define S100_CAN8_BASE                         (0x23750000UL)
-#define S100_CAN9_BASE                         (0x23760000UL)
+#define S100_CAN5_IRQ (136U)
+#define S100_CAN6_IRQ (140U)
+#define S100_CAN7_IRQ (144U)
+#define S100_CAN8_IRQ (148U)
+#define S100_CAN9_IRQ (152U)
 
-#define S100_CAN5_IRQ                          (136U)
-#define S100_CAN6_IRQ                          (140U)
-#define S100_CAN7_IRQ                          (144U)
-#define S100_CAN8_IRQ                          (148U)
-#define S100_CAN9_IRQ                          (152U)
+#define S100_CAN_MAX_MB_NUM        (128U)
+#define S100_CAN_MAX_MB_INDEX      (55U)
+#define S100_CAN_BASIC_TX_MB_START (16U)
 
-#define S100_CAN_MAX_MB_NUM                    (128U)
-#define S100_CAN_MAX_MB_INDEX                  (55U)
-#define S100_CAN_BASIC_TX_MB_START             (16U)
+#define S100_CAN_DEFAULT_PRESDIV (1U)
+#define S100_CAN_DEFAULT_PROPSEG (7U)
+#define S100_CAN_DEFAULT_PSEG1   (8U)
+#define S100_CAN_DEFAULT_PSEG2   (4U)
+#define S100_CAN_DEFAULT_RJW     (2U)
 
-#define S100_CAN_DEFAULT_PRESDIV             (1U)
-#define S100_CAN_DEFAULT_PROPSEG             (7U)
-#define S100_CAN_DEFAULT_PSEG1               (8U)
-#define S100_CAN_DEFAULT_PSEG2               (4U)
-#define S100_CAN_DEFAULT_RJW                 (2U)
+#define S100_CAN_BASIC_TIMEOUT_LOOP (1000000U)
+#define S100_CAN_STD_ID_SHIFT       (18U)
+#define S100_CAN_STD_ID_MASK        (0x7FFU)
 
-#define S100_CAN_BASIC_TIMEOUT_LOOP          (1000000U)
-#define S100_CAN_STD_ID_SHIFT                (18U)
-#define S100_CAN_STD_ID_MASK                 (0x7FFU)
+#define S100_CAN_MB_CODE_TX_INACTIVE (0x8U)
+#define S100_CAN_MB_CODE_TX_DATA     (0xCU)
 
-#define S100_CAN_MB_CODE_TX_INACTIVE         (0x8U)
-#define S100_CAN_MB_CODE_TX_DATA             (0xCU)
+#define S100_CAN_ENHANCED_FILTER_STD_SHIFT1 (0U)
+#define S100_CAN_ENHANCED_FILTER_STD_SHIFT2 (16U)
+#define S100_CAN_ENHANCED_FILTER_FSCH_SHIFT (30U)
+#define S100_CAN_ENHANCED_FILTER_STD_MASK   (0x7FFU)
 
-#define S100_CAN_ENHANCED_FILTER_STD_SHIFT1  (0U)
-#define S100_CAN_ENHANCED_FILTER_STD_SHIFT2  (16U)
-#define S100_CAN_ENHANCED_FILTER_FSCH_SHIFT  (30U)
-#define S100_CAN_ENHANCED_FILTER_STD_MASK    (0x7FFU)
-
-#define S100_CAN_MB_CODE_SHIFT               24U
+#define S100_CAN_MB_CODE_SHIFT 24U
 
 struct s100_can_basic_frame
 {
@@ -113,8 +120,7 @@ struct s100_can_basic
     struct rt_can_device can_dev;
 };
 
-static struct s100_can_basic s100_can_basics[] =
-{
+static struct s100_can_basic s100_can_basics[] = {
 #ifdef BSP_USING_CAN5
     {
         .name = "can5",
@@ -692,7 +698,6 @@ static inline void s100_can_setclksrc(s100_can_regs_t *base, rt_bool_t enable)
     base->CTRL1 = (base->CTRL1 & ~FLEXCAN_CTRL1_CLKSRC_MASK) | FLEXCAN_CTRL1_CLKSRC(enable ? 1UL : 0UL);
 }
 
-
 static rt_bool_t s100_can_basic_is_enabled(s100_can_regs_t *base)
 {
     return (((base->MCR & FLEXCAN_MCR_MDIS_MASK) >> FLEXCAN_MCR_MDIS_SHIFT) != 0U) ? RT_FALSE : RT_TRUE;
@@ -806,8 +811,7 @@ static rt_err_t s100_can_basic_send_std(struct s100_can_basic *ctrl, rt_uint32_t
     code = (mb->cs >> S100_CAN_MB_CODE_SHIFT) & 0x0FU;
     if (code != S100_CAN_MB_CODE_TX_INACTIVE)
     {
-        CAN_RET_FMT(-RT_EBUSY, "send std mailbox busy boxno=%lu code=0x%lx",
-                    (unsigned long)boxno, (unsigned long)code);
+        return -RT_EBUSY;
     }
 
     for (i = 0U; i < 4U; i++)
@@ -956,10 +960,7 @@ static void s100_can_basic_irq_handler(int vector, void *param)
     {
         ctrl->regs->ESR1 = FLEXCAN_IP_ALL_INT;
 
-        if ((ctrl->irq_mask_flags & RT_DEVICE_CAN_INT_ERR) != 0U)
-        {
-            rt_hw_can_isr(&ctrl->can_dev, RT_CAN_EVENT_TX_FAIL | (0U << 8));
-        }
+        /* A controller error does not prove that TX mailbox zero has terminated. */
     }
 }
 
@@ -995,12 +996,12 @@ static rt_err_t s100_can_basic_configure(struct rt_can_device *can, struct can_c
     }
 
     rt_ringbuffer_init(&ctrl->state.rx_rb,
-            ctrl->state.rx_rb_pool,
-            sizeof(ctrl->state.rx_rb_pool));
+                       ctrl->state.rx_rb_pool,
+                       sizeof(ctrl->state.rx_rb_pool));
 
     ctrl->state.rx_overrun = 0U;
 
-    ret = s100_can_basic_init(ctrl,cfg);
+    ret = s100_can_basic_init(ctrl, cfg);
     if (ret != RT_EOK)
     {
         CAN_RET_FMT(ret, "configure init failed ctrl=%s", ctrl->name);
@@ -1095,9 +1096,9 @@ static rt_err_t s100_can_basic_control(struct rt_can_device *can, int cmd, void 
     case RT_CAN_CMD_START:
     {
         rt_uint32_t next_status = (rt_uint32_t)(rt_uintptr_t)arg;
-        if(next_status == RT_FALSE)
+        if (next_status == RT_FALSE)
         {
-            if(s100_can_basic_is_enabled(ctrl->regs))
+            if (s100_can_basic_is_enabled(ctrl->regs))
             {
                 return s100_can_basic_stop(ctrl->regs);
             }
@@ -1140,16 +1141,41 @@ static rt_ssize_t s100_can_basic_sendmsg(struct rt_can_device *can, const void *
     return s100_can_basic_send_std(ctrl, msg->id, msg->data, (rt_uint8_t)msg->len, boxno);
 }
 
-static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Submit a CAN frame to an available hardware TX mailbox without waiting.
+ * @param[in] can CAN device whose hardware mailboxes are scanned.
+ * @param[in] buf CAN frame to submit.
+ * @param[out] mailbox Generic slot (physical TX MB index is MB16 + slot) on success.
+ * @return RT_EOK on submission, -RT_EBUSY if all mailboxes are occupied, or an error.
+ */
+static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                                     rt_uint32_t *mailbox)
 {
+    /* Controller whose physical mailbox interrupt flags must be respected. */
+    struct s100_can_basic *ctrl = (struct s100_can_basic *)can->parent.user_data;
     rt_uint32_t boxno;
     rt_ssize_t ret;
 
     for (boxno = 0U; boxno < can->config.sndboxnumber; boxno++)
     {
+        /* FlexCAN message-buffer index is offset from the Generic mailbox slot. */
+        rt_uint32_t hw_mb = s100_can_basic_tx_box_to_mb(boxno);
+
+        if ((can->status.sndchange & (1UL << boxno)) != 0U)
+        {
+            continue;
+        }
+        /* A completed message is not reusable until the old TX IRQ is consumed. */
+        if ((hw_mb < 32U && (ctrl->regs->IFLAG1 & (1UL << hw_mb)) != 0U) ||
+            (hw_mb >= 32U && (ctrl->regs->IFLAG2 & (1UL << (hw_mb - 32U))) != 0U))
+        {
+            continue;
+        }
+
         ret = s100_can_basic_sendmsg(can, buf, boxno);
         if (ret == RT_EOK)
         {
+            *mailbox = boxno;
             return RT_EOK;
         }
 
@@ -1159,7 +1185,7 @@ static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, 
         }
     }
 
-    CAN_RET(-RT_EBUSY, "sendmsg nonblocking all mailboxes busy");
+    return -RT_EBUSY;
 }
 
 static rt_ssize_t s100_can_basic_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -1232,8 +1258,7 @@ static rt_ssize_t s100_can_basic_recvmsg(struct rt_can_device *can, void *buf, r
     return RT_EOK;
 }
 
-static const struct rt_can_ops s100_can_basic_ops =
-{
+static const struct rt_can_ops s100_can_basic_ops = {
     .configure = s100_can_basic_configure,
     .control = s100_can_basic_control,
     .sendmsg = s100_can_basic_sendmsg,
@@ -1260,7 +1285,7 @@ void s100_can_board_enable_transceiver(void)
     s100_gpio_write(S100_MCU2CAN_STB_N_PIN, 0U);
 }
 
-#define CAN_DEV_SND_BOX_MAX  32U
+#define CAN_DEV_SND_BOX_MAX 32U
 
 int rt_hw_can_init(void)
 {
@@ -1277,8 +1302,8 @@ int rt_hw_can_init(void)
 
         cfg.sndboxnumber = CAN_DEV_SND_BOX_MAX;
         LOG_W("sndboxnumber=%lu exceeds max, capped to %lu",
-            (unsigned long)requested,
-            (unsigned long)cfg.sndboxnumber);
+              (unsigned long)requested,
+              (unsigned long)cfg.sndboxnumber);
     }
 
 #ifdef RT_CAN_USING_HDR

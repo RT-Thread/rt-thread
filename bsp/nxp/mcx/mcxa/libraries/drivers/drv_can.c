@@ -17,10 +17,9 @@
 #include "fsl_clock.h"
 #include "fsl_flexcan.h"
 
-#define TX_MB_IDX      (0)
-#define RX_MB_IDX      (1)
-#define RX_MB_COUNT    (1)
-#define CAN_TX_WAIT_MS (2000U)
+#define TX_MB_IDX   (0)
+#define RX_MB_IDX   (1)
+#define RX_MB_COUNT (1)
 
 enum
 {
@@ -49,77 +48,6 @@ struct imxrt_can
 #endif
     rt_uint32_t filter_mask;
 };
-
-static void _can_dump_err(struct imxrt_can *can, const char *stage)
-{
-    uint32_t esr1 = can->base->ESR1;
-    uint32_t fltconf = (esr1 & CAN_ESR1_FLTCONF_MASK) >> CAN_ESR1_FLTCONF_SHIFT;
-    const char *flt = "active";
-
-    if (fltconf == 1U)
-    {
-        flt = "passive";
-    }
-    else if (fltconf >= 2U)
-    {
-        flt = "busoff";
-    }
-
-    rt_kprintf("%s: %s, MCR=0x%08x ESR1=0x%08x IFLAG1=0x%08x flt=%s",
-               can->name, stage, can->base->MCR, esr1, can->base->IFLAG1, flt);
-    if (0U != (esr1 & CAN_ESR1_ACKERR_MASK))
-    {
-        rt_kprintf(" ACKERR");
-    }
-    if (0U != (esr1 & CAN_ESR1_BIT1ERR_MASK))
-    {
-        rt_kprintf(" BIT1ERR");
-    }
-    if (0U != (esr1 & CAN_ESR1_BIT0ERR_MASK))
-    {
-        rt_kprintf(" BIT0ERR");
-    }
-    rt_kprintf("\n");
-}
-
-static void _can_recover_bus(struct imxrt_can *can)
-{
-    CAN_Type *base = can->base;
-    uint32_t fltconf = (base->ESR1 & CAN_ESR1_FLTCONF_MASK) >> CAN_ESR1_FLTCONF_SHIFT;
-
-    if (fltconf < 2U)
-    {
-        return;
-    }
-
-    (void)FLEXCAN_EnterFreezeMode(base);
-    base->MCR &= ~CAN_MCR_HALT_MASK;
-    (void)FLEXCAN_ExitFreezeMode(base);
-    FLEXCAN_ClearStatusFlags(base, (uint32_t)kFLEXCAN_BusOffIntFlag);
-}
-
-static void _can_setup_loopback_mb(struct imxrt_can *can)
-{
-    flexcan_rx_mb_config_t mb_config;
-
-    mb_config.format = kFLEXCAN_FrameFormatStandard;
-    mb_config.type = kFLEXCAN_FrameTypeData;
-    mb_config.id = FLEXCAN_ID_STD(0);
-
-    FLEXCAN_SetRxMbGlobalMask(can->base, 0U);
-    FLEXCAN_SetRxIndividualMask(can->base, RX_MB_IDX, 0U);
-
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled)
-    {
-        FLEXCAN_SetFDRxMbConfig(can->base, RX_MB_IDX, &mb_config, true);
-    }
-    else
-#endif
-    {
-        FLEXCAN_SetRxMbConfig(can->base, RX_MB_IDX, &mb_config, true);
-    }
-}
 
 #ifdef RT_CAN_USING_CANFD
 static rt_uint8_t _can_dlc2len(rt_uint8_t dlc)
@@ -285,20 +213,6 @@ static rt_bool_t _can_is_loopback(const struct can_configure *cfg)
            (cfg->mode == RT_CAN_MODE_LOOPBACKANLISTEN);
 }
 
-static void _can_abort_rx(struct imxrt_can *can)
-{
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled)
-    {
-        FLEXCAN_TransferFDAbortReceive(can->base, &can->handle, RX_MB_IDX);
-    }
-    else
-#endif
-    {
-        FLEXCAN_TransferAbortReceive(can->base, &can->handle, RX_MB_IDX);
-    }
-}
-
 static void _can_enable_periph_clock(struct imxrt_can *can)
 {
     clock_ip_name_t can_clocks[] = FLEXCAN_CLOCKS;
@@ -321,49 +235,6 @@ static void _can_safe_deinit(struct imxrt_can *can)
     }
 
     FLEXCAN_Deinit(base);
-}
-
-static status_t _can_wait_mb_tx_done(struct imxrt_can *can, uint8_t mb_idx)
-{
-    CAN_Type *base = can->base;
-    rt_tick_t start = rt_tick_get();
-    rt_tick_t timeout = rt_tick_from_millisecond(CAN_TX_WAIT_MS);
-
-    while (0U == FLEXCAN_GetMbStatusFlags(base, (uint64_t)1U << mb_idx))
-    {
-        if ((rt_tick_get() - start) >= timeout)
-        {
-            _can_dump_err(can, "tx timeout");
-            return kStatus_Timeout;
-        }
-        rt_thread_mdelay(1);
-    }
-
-    FLEXCAN_ClearMbStatusFlags(base, (uint64_t)1U << mb_idx);
-    return kStatus_Success;
-}
-
-static status_t _can_wait_mb_rx_done(CAN_Type *base, uint8_t mb_idx)
-{
-    rt_tick_t start = rt_tick_get();
-    rt_tick_t timeout = rt_tick_from_millisecond(CAN_TX_WAIT_MS);
-
-    while (0U == FLEXCAN_GetMbStatusFlags(base, (uint64_t)1U << mb_idx))
-    {
-        if ((rt_tick_get() - start) >= timeout)
-        {
-            return kStatus_Timeout;
-        }
-        rt_thread_mdelay(1);
-    }
-
-    FLEXCAN_ClearMbStatusFlags(base, (uint64_t)1U << mb_idx);
-    return kStatus_Success;
-}
-
-static void _can_loopback_post_rx(struct imxrt_can *can)
-{
-    rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_RX_IND | RX_MB_IDX << 8);
 }
 
 static void _can_setup_mode(flexcan_config_t *config, const struct can_configure *cfg)
@@ -458,6 +329,20 @@ void CAN1_IRQHandler(void)
 }
 #endif
 
+/**
+ * @brief Forward hardware RX and TX terminal events to the Generic CAN layer.
+ *
+ * TX_DONE is generated only for MB0's SDK transfer-completion event. A remote
+ * request transitions MB0 into an SDK receive-wait state after transmission;
+ * clear that state before retiring the Generic TX owner. Controller error
+ * status alone does not prove a per-frame TX_FAIL terminal.
+ *
+ * @param base FlexCAN controller generating the interrupt.
+ * @param handle SDK transfer handle owning the mailbox state.
+ * @param status SDK transfer event.
+ * @param result Physical mailbox index for RX/TX events.
+ * @param userData Pointer to this CAN instance.
+ */
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint64_t result, void *userData)
 {
     struct imxrt_can *can;
@@ -493,7 +378,18 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
         break;
 
     case kStatus_FLEXCAN_TxIdle:
-        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | result << 8);
+        if (result == TX_MB_IDX)
+        {
+            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | TX_MB_IDX << 8);
+        }
+        break;
+    case kStatus_FLEXCAN_TxSwitchToRx:
+        if (result == TX_MB_IDX)
+        {
+            /* A remote request was sent. Do not retain MB0 waiting for its response. */
+            FLEXCAN_TransferAbortReceive(base, handle, TX_MB_IDX);
+            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | TX_MB_IDX << 8);
+        }
         break;
     default:
         break;
@@ -584,14 +480,18 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
 
     can->filter_mask = 0;
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
-    if (_can_is_loopback(cfg))
+#ifdef RT_CAN_USING_CANFD
+    if (can->fd_enabled)
     {
-        _can_setup_loopback_mb(can);
+        FLEXCAN_SetFDTxMbConfig(can->base, TX_MB_IDX, true);
     }
     else
+#endif
     {
-        _can_start_rx(can);
+        FLEXCAN_SetTxMbConfig(can->base, TX_MB_IDX, true);
     }
+    /* Keep RX armed in normal and loopback modes; TX no longer owns its lifecycle. */
+    _can_start_rx(can);
     _can_enable_controller_irq(can);
 
     return res;
@@ -826,113 +726,77 @@ static void _can_parse_fd_frame(struct rt_can_msg *msg, const flexcan_fd_frame_t
 }
 #endif
 
+/**
+ * @brief Submit a single FlexCAN frame to hardware MB0 without waiting for TX completion.
+ *
+ * Generic CAN holds the IRQ-save TX lock while calling this function and owns
+ * mailbox waiting and timeout. The SDK copies the stack frame to MB0 before
+ * returning; its IRQ callback later delivers the TX_DONE terminal. No bus-off
+ * recovery, RX abort or frame-completion polling is permitted here.
+ *
+ * @param can_dev RT-Thread CAN device whose TX MB0 is used.
+ * @param buf Pointer to the frame to transmit.
+ * @param boxno Generic-visible TX mailbox, which must be zero.
+ * @return RT_EOK if accepted, -RT_EBUSY if MB0 is occupied, -RT_EINVAL for an
+ *         invalid mailbox, or -RT_ERROR for controller failure or bus-off.
+ */
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
-    struct rt_can_msg *msg;
-    status_t ret = kStatus_Fail;
-    rt_uint8_t hw_mb = TX_MB_IDX;
+    const struct rt_can_msg *msg;
+    status_t ret;
+    /* SDK transfer descriptor for the single Generic-visible hardware TX MB0. */
+    flexcan_mb_transfer_t txXfer;
 
     RT_ASSERT(can_dev != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
+    if (boxno != TX_MB_IDX)
+    {
+        return -RT_EINVAL;
+    }
+
     can = (struct imxrt_can *)can_dev->parent.user_data;
-    msg = (struct rt_can_msg *)buf;
-    RT_UNUSED(boxno);
+    msg = (const struct rt_can_msg *)buf;
 
-    if (!_can_is_loopback(&can_dev->config))
+    /* Do not enter the SDK freeze-mode recovery loop under Generic's IRQ-save TX lock. */
+    if (((can->base->ESR1 & CAN_ESR1_FLTCONF_MASK) >> CAN_ESR1_FLTCONF_SHIFT) >= 2U)
     {
-        _can_recover_bus(can);
+        return -RT_ERROR;
     }
 
-    if (!_can_is_loopback(&can_dev->config))
-    {
-        _can_abort_rx(can);
-    }
-    else
-    {
-        _can_setup_loopback_mb(can);
-    }
-
+    txXfer.mbIdx = TX_MB_IDX;
 #ifdef RT_CAN_USING_CANFD
     if (can->fd_enabled && msg->fd_frame)
     {
         flexcan_fd_frame_t tx_frame;
 
-        FLEXCAN_ClearMbStatusFlags(can->base, ((uint64_t)1U << hw_mb) | ((uint64_t)1U << RX_MB_IDX));
-        FLEXCAN_SetFDTxMbConfig(can->base, hw_mb, true);
         _can_fill_fd_frame(&tx_frame, msg);
-
-        if (FLEXCAN_WriteFDTxMb(can->base, hw_mb, &tx_frame) != kStatus_Success)
-        {
-            ret = kStatus_Fail;
-        }
-        else
-        {
-            ret = _can_wait_mb_tx_done(can, hw_mb);
-        }
-
-        if (ret == kStatus_Success && _can_is_loopback(&can_dev->config))
-        {
-            ret = _can_wait_mb_rx_done(can->base, RX_MB_IDX);
-            if (ret == kStatus_Success)
-            {
-                ret = FLEXCAN_ReadFDRxMb(can->base, RX_MB_IDX, &can->framefd[0]);
-                if (ret == kStatus_Success)
-                {
-                    _can_loopback_post_rx(can);
-                }
-            }
-        }
+        txXfer.framefd = &tx_frame;
+        txXfer.frame = RT_NULL;
+        ret = FLEXCAN_TransferFDSendNonBlocking(can->base, &can->handle, &txXfer);
     }
     else
 #endif
     {
         flexcan_frame_t tx_frame;
 
-        FLEXCAN_ClearMbStatusFlags(can->base, ((uint64_t)1U << hw_mb) | ((uint64_t)1U << RX_MB_IDX));
-        FLEXCAN_SetTxMbConfig(can->base, hw_mb, true);
         _can_fill_classic_frame(&tx_frame, msg);
-
-        if (FLEXCAN_WriteTxMb(can->base, hw_mb, &tx_frame) != kStatus_Success)
-        {
-            ret = kStatus_Fail;
-        }
-        else
-        {
-            ret = _can_wait_mb_tx_done(can, hw_mb);
-        }
-
-        if (ret == kStatus_Success && _can_is_loopback(&can_dev->config))
-        {
-            ret = _can_wait_mb_rx_done(can->base, RX_MB_IDX);
-            if (ret == kStatus_Success)
-            {
-                ret = FLEXCAN_ReadRxMb(can->base, RX_MB_IDX, &can->frame[0]);
-                if (ret == kStatus_Success)
-                {
-                    _can_loopback_post_rx(can);
-                }
-            }
-        }
+        txXfer.frame = &tx_frame;
+#ifdef RT_CAN_USING_CANFD
+        txXfer.framefd = RT_NULL;
+#endif
+        ret = FLEXCAN_TransferSendNonBlocking(can->base, &can->handle, &txXfer);
     }
 
     if (ret == kStatus_Success)
     {
-        if (!_can_is_loopback(&can_dev->config))
-        {
-            _can_start_rx(can);
-        }
-
-        rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_DONE | boxno << 8);
         return RT_EOK;
     }
-
-    if (ret == kStatus_Timeout)
+    if (ret == kStatus_FLEXCAN_TxBusy || ret == kStatus_Fail)
     {
-        _can_dump_err(can, "tx fail");
+        return -RT_EBUSY;
     }
-
     return -RT_ERROR;
 }
 
@@ -970,71 +834,24 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint
     return 0;
 }
 
-static uint8_t FLEXCAN_GetFirstValidMb(CAN_Type *base)
+/**
+ * @brief Submit a frame via the shared MB0 path for Generic nonblocking TX.
+ *
+ * @param can_dev RT-Thread CAN device.
+ * @param buf Pointer to the frame to submit.
+ * @param mailbox Receives the physical mailbox index on successful submission only.
+ * @return The immediate submission status from _can_sendmsg().
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
 {
-    uint8_t firstValidMbNum;
+    /* Preserve the submission result while both TX APIs share hardware MB0. */
+    rt_ssize_t ret = _can_sendmsg(can_dev, buf, TX_MB_IDX);
 
-    if (0U != (base->MCR & CAN_MCR_RFEN_MASK))
+    if (ret == RT_EOK)
     {
-        firstValidMbNum = (uint8_t)((base->CTRL2 & CAN_CTRL2_RFFN_MASK) >> CAN_CTRL2_RFFN_SHIFT);
-        firstValidMbNum = ((firstValidMbNum + 1U) * 2U) + 6U;
+        *mailbox = TX_MB_IDX;
     }
-    else
-    {
-        firstValidMbNum = 0U;
-    }
-
-    return firstValidMbNum;
-}
-
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const void *buf)
-{
-    struct imxrt_can *can;
-    struct rt_can_msg *msg;
-    status_t ret;
-    rt_uint32_t boxno;
-
-    RT_ASSERT(can_dev != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
-
-    can = (struct imxrt_can *)can_dev->parent.user_data;
-    msg = (struct rt_can_msg *)buf;
-    boxno = FLEXCAN_GetFirstValidMb(can->base);
-
-    if (boxno == 0xFF)
-    {
-        return -RT_EBUSY;
-    }
-
-#ifdef RT_CAN_USING_CANFD
-    if (can->fd_enabled && msg->fd_frame)
-    {
-        flexcan_mb_transfer_t txXfer;
-        flexcan_fd_frame_t tx_frame;
-
-        FLEXCAN_SetFDTxMbConfig(can->base, boxno, true);
-        _can_fill_fd_frame(&tx_frame, msg);
-        txXfer.mbIdx = boxno;
-        txXfer.framefd = &tx_frame;
-        txXfer.frame = RT_NULL;
-        ret = FLEXCAN_TransferFDSendNonBlocking(can->base, &can->handle, &txXfer);
-    }
-    else
-#endif
-    {
-        flexcan_mb_transfer_t txXfer;
-        flexcan_frame_t tx_frame;
-
-        _can_fill_classic_frame(&tx_frame, msg);
-        txXfer.mbIdx = boxno;
-        txXfer.frame = &tx_frame;
-#ifdef RT_CAN_USING_CANFD
-        txXfer.framefd = RT_NULL;
-#endif
-        ret = FLEXCAN_TransferSendNonBlocking(can->base, &can->handle, &txXfer);
-    }
-
-    return (ret == kStatus_Success) ? RT_EOK : -RT_ERROR;
+    return ret;
 }
 
 static struct rt_can_ops imxrt_can_ops = {

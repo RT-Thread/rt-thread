@@ -31,8 +31,8 @@
 
 /* FDCAN Message RAM configuration */
 #if defined(SOC_SERIES_N32H7xx)
-#define FDCAN_MSG_RAM_BASE1               ((uint32_t)0x30050000U)  /* SRAM5 BANK1: FDCAN1~4 */
-#define FDCAN_MSG_RAM_BASE2               ((uint32_t)0x30054000U)  /* SRAM5 BANK2: FDCAN5~8 */
+#define FDCAN_MSG_RAM_BASE1               ((uint32_t)0x30050000U) /* SRAM5 BANK1: FDCAN1~4 */
+#define FDCAN_MSG_RAM_BASE2               ((uint32_t)0x30054000U) /* SRAM5 BANK2: FDCAN5~8 */
 #define FDCAN_MSG_RAM_OFFSET_PER_INSTANCE ((uint32_t)0x400U)
 #elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
 /* FDCAN1/2/3 share one configurable continuous Message RAM array. */
@@ -55,15 +55,15 @@ static uint32_t _fdcan_msg_ram[BSP_FDCAN_MSG_RAM_WORDS];
  *\*\note   40MHz FDCAN kernel clock.
  */
 static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] = {
-    { CAN1MBaud, 1, 8, 29, 10 },  /* 1Mbps   : 40M / (1  * (29+10+1)) = 1.000M */
-    { CAN800kBaud, 1, 8, 37, 12 },  /* 800kbps : 40M / (1  * (37+12+1)) = 800k  */
-    { CAN500kBaud, 1, 8, 59, 20 },  /* 500kbps : 40M / (1  * (59+20+1)) = 500k  */
-    { CAN250kBaud, 2, 8, 63, 16 },  /* 250kbps : 40M / (2  * (63+16+1)) = 250k  */
+    { CAN1MBaud, 1, 8, 29, 10 },   /* 1Mbps   : 40M / (1  * (29+10+1)) = 1.000M */
+    { CAN800kBaud, 1, 8, 37, 12 }, /* 800kbps : 40M / (1  * (37+12+1)) = 800k  */
+    { CAN500kBaud, 1, 8, 59, 20 }, /* 500kbps : 40M / (1  * (59+20+1)) = 500k  */
+    { CAN250kBaud, 2, 8, 63, 16 }, /* 250kbps : 40M / (2  * (63+16+1)) = 250k  */
     { CAN125kBaud, 5, 8, 55, 8 },  /* 125kbps : 40M / (5  * (55+8+1))  = 125k  */
     { CAN100kBaud, 8, 8, 41, 8 },  /* 100kbps : 40M / (8  * (41+8+1))  = 100k  */
     { CAN50kBaud, 16, 8, 41, 8 },  /* 50kbps  : 40M / (16 * (41+8+1))  = 50k   */
     { CAN20kBaud, 40, 8, 41, 8 },  /* 20kbps  : 40M / (40 * (41+8+1))  = 20k   */
-    { CAN10kBaud, 100, 8, 31, 8 },  /* 10kbps  : 40M / (100* (31+8+1))  = 10k   */
+    { CAN10kBaud, 100, 8, 31, 8 }, /* 10kbps  : 40M / (100* (31+8+1))  = 10k   */
 };
 
 /**
@@ -75,10 +75,10 @@ static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] = {
     { CAN1MBaud * 8, 1, 1, 3, 1 },  /* 8Mbps   : 40M / (1  * (3+1+1))  = 8M    */
     { CAN1MBaud * 5, 1, 2, 5, 2 },  /* 5Mbps   : 40M / (1  * (5+2+1))  = 5M    */
     { CAN1MBaud * 4, 1, 2, 7, 2 },  /* 4Mbps   : 40M / (1  * (7+2+1))  = 4M    */
-    { CAN1MBaud * 2, 1, 4, 15, 4 },  /* 2Mbps   : 40M / (1  * (15+4+1)) = 2M    */
-    { CAN1MBaud, 1, 8, 31, 8 },  /* 1Mbps   : 40M / (1  * (31+8+1)) = 1M    */
-    { CAN800kBaud, 2, 5, 19, 5 },  /* 800kbps : 40M / (2  * (19+5+1)) = 800k  */
-    { CAN500kBaud, 4, 4, 15, 4 },  /* 500kbps : 40M / (4  * (15+4+1)) = 500k  */
+    { CAN1MBaud * 2, 1, 4, 15, 4 }, /* 2Mbps   : 40M / (1  * (15+4+1)) = 2M    */
+    { CAN1MBaud, 1, 8, 31, 8 },     /* 1Mbps   : 40M / (1  * (31+8+1)) = 1M    */
+    { CAN800kBaud, 2, 5, 19, 5 },   /* 800kbps : 40M / (2  * (19+5+1)) = 800k  */
+    { CAN500kBaud, 4, 4, 15, 4 },   /* 500kbps : 40M / (4  * (15+4+1)) = 500k  */
 };
 
 struct n32_fdcan_resource_config
@@ -605,6 +605,12 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
 
     p_drv = (struct n32_fdcan *)can->parent.user_data;
     RT_ASSERT(p_drv != RT_NULL);
+
+    /* Reconfiguring Message RAM while TX is still owned would lose its terminal. */
+    if (p_drv->tx_pending_mask != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     _fdcan_get_resource_config(p_drv->fdcan_x, p_drv->config, &resource);
     if (_fdcan_validate_resource_config(&resource) != RT_EOK)
@@ -1152,15 +1158,13 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
  *============================================================================*/
 
 /**
- *\*\name   _fdcan_sendmsg.
- *\*\fun    Send a CAN message using a dedicated TX Buffer (blocking mode).
- *\*\param  can :
- *\*\          Pointer to RT-Thread CAN device structure
- *\*\param  buf :
- *\*\          Pointer to the CAN message to be sent
- *\*\param  box_no :
- *\*\          TX Buffer index (0 ~ configured TxBufferSize-1)
- *\*\return RT_EOK on success, or negative error code on failure
+ * @brief Submit a CAN message immediately to a specified dedicated TX Buffer.
+ * @param[inout] can RT-Thread CAN device.
+ * @param[in] buf CAN message to submit.
+ * @param[in] box_no Physical TX Buffer index in the configured range.
+ * @return RT_EOK on success, -RT_EINVAL for an invalid buffer index,
+ *         -RT_EBUSY if Generic or hardware still owns that buffer,
+ *         or a negative hardware submission error.
  */
 static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_no)
 {
@@ -1225,7 +1229,16 @@ static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_
 
     /* FDCAN_TX_BUFFER0 is the single-bit mask for buffer 0; shift it to get
      * the mask for an arbitrary buffer index. */
+    if (box_no >= p_drv->init_struct.TxBufferSize)
+    {
+        return -RT_EINVAL;
+    }
     rt_uint32_t buf_bit = FDCAN_TX_BUFFER0 << box_no;
+    if ((p_drv->tx_pending_mask & buf_bit) ||
+        FDCAN_CheckTxBufRequest(p_drv->fdcan_x, buf_bit) != RESET)
+    {
+        return -RT_EBUSY;
+    }
     status = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
                                     p_msg->data, buf_bit);
     if (status != SUCCESS)
@@ -1336,16 +1349,15 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
  *============================================================================*/
 
 /**
- *\*\name   _fdcan_sendmsg_nonblocking.
- *\*\fun    Send a CAN message in non-blocking mode.
- *\*\       Checks for a free dedicated TX Buffer, sends immediately, and returns.
- *\*\param  can :
- *\*\          Pointer to RT-Thread CAN device structure
- *\*\param  buf :
- *\*\          Pointer to the CAN message to be sent
- *\*\return RT_EOK on success, -RT_EBUSY if no TX Buffer is available
+ * @brief Submit a CAN frame to an unowned dedicated TX Buffer without waiting.
+ * @param[inout] can RT-Thread CAN device.
+ * @param[in] buf CAN message to submit.
+ * @param[out] mailbox The physical TX Buffer index on successful submission only.
+ * @return RT_EOK on success, -RT_EBUSY if all buffers are owned, -RT_EINVAL
+ *         for a null mailbox pointer, or a negative hardware submission error.
  */
-static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                             rt_uint32_t *mailbox)
 {
     struct n32_fdcan *p_drv;
     struct rt_can_msg *p_msg;
@@ -1354,6 +1366,10 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
+    if (mailbox == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
 
     p_drv = (struct n32_fdcan *)can->parent.user_data;
     RT_ASSERT(p_drv != RT_NULL);
@@ -1361,7 +1377,10 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
     /* Scan dedicated TX Buffers for a free one */
     for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
     {
-        if (FDCAN_CheckTxBufRequest(p_drv->fdcan_x, FDCAN_TX_BUFFER0 << i) == RESET)
+        /* Candidate physical buffer mask is also its Generic ownership bit. */
+        rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
+        if (!(p_drv->tx_pending_mask & bit) &&
+            FDCAN_CheckTxBufRequest(p_drv->fdcan_x, bit) == RESET)
         {
             free_buf = (int32_t)i;
             break;
@@ -1398,6 +1417,7 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
     /* Request transmission */
     FDCAN_EnableTxBufferRequest(p_drv->fdcan_x, buf_bit);
     p_drv->tx_pending_mask |= buf_bit;
+    *mailbox = (rt_uint32_t)free_buf;
 
     return RT_EOK;
 }
@@ -1461,49 +1481,17 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
     {
         FDCAN_ClearFlag(fdcan, FDCAN_FLAG_TX_COMPLETE);
 
-        /* Determine which TX Buffer completed. FDCAN_CheckBufTxResult()
-         * reads TXBTO which is a sticky snapshot of TXBRP — bits
-         * accumulate across multiple completions, so after the first
-         * successful send the ISR would forever report buffer 0 even
-         * when buffer 1 or 2 actually just finished.  Instead walk
-         * our software pending mask and look for buffers whose TXBRP
-         * was just cleared by the hardware (pending → !pending). */
-        rt_uint32_t buffer_idx = 0;
-        rt_bool_t found = RT_FALSE;
-
+        /* TXBTO identifies successful buffers; TXBRP alone may also clear on
+         * cancellation. Retire every completed buffer in this IRQ, not just one. */
         for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
         {
             rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-            if ((p_drv->tx_pending_mask & bit) && !(fdcan->TXBRP & bit))
+            if ((p_drv->tx_pending_mask & bit) && (fdcan->TXBTO & bit) &&
+                !(fdcan->TXBRP & bit))
             {
                 p_drv->tx_pending_mask &= ~bit;
-                buffer_idx = i;
-                found = RT_TRUE;
-                break;
+                rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_DONE | (i << 8));
             }
-        }
-
-        /* Fallback: if no buffer matched the TXBRP transition (should
-         * not normally happen), report buffer 0 rather than silently
-         * dropping the event. */
-        if (!found)
-        {
-            for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
-            {
-                rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-                if (p_drv->tx_pending_mask & bit)
-                {
-                    p_drv->tx_pending_mask &= ~bit;
-                    buffer_idx = i;
-                    found = RT_TRUE;
-                    break;
-                }
-            }
-        }
-
-        if (found)
-        {
-            rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_DONE | (buffer_idx << 8));
         }
     }
 

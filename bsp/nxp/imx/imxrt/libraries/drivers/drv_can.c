@@ -27,7 +27,7 @@
 #endif
 
 #define RX_MB_COUNT 32
-static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
+static flexcan_frame_t frame[RX_MB_COUNT]; /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
 #if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
@@ -130,12 +130,8 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
         break;
 
     case kStatus_FLEXCAN_WakeUp:
-
     case kStatus_FLEXCAN_ErrorStatus:
-        if ((result >= 47) && (result <= 63))
-        {
-            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_FAIL | (63 - result) << 8);
-        }
+        /* Error-status result is controller-wide, not a mailbox terminal index. */
         break;
 
     case kStatus_FLEXCAN_TxSwitchToRx:
@@ -163,8 +159,8 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
 
     FLEXCAN_GetDefaultConfig(&config);
     config.baudRate = cfg->baud_rate;
-    config.maxMbNum = 64;               /* all series have 64 MB */
-    config.enableIndividMask = true;    /* one filter per MB */
+    config.maxMbNum = 64;            /* all series have 64 MB */
+    config.enableIndividMask = true; /* one filter per MB */
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -197,9 +193,9 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
     FLEXCAN_Init(can->base, &config, GetCanSrcFreq(can->base));
     FLEXCAN_TransferCreateHandle(can->base, &can->handle, flexcan_callback, can);
     /* init RX_MB_COUNT RX MB to default status */
-    mbConfig.format = kFLEXCAN_FrameFormatStandard;  /* standard ID */
-    mbConfig.type = kFLEXCAN_FrameTypeData;          /* data frame */
-    mbConfig.id = FLEXCAN_ID_STD(0);                 /* default ID is 0 */
+    mbConfig.format = kFLEXCAN_FrameFormatStandard; /* standard ID */
+    mbConfig.type = kFLEXCAN_FrameTypeData;         /* data frame */
+    mbConfig.id = FLEXCAN_ID_STD(0);                /* default ID is 0 */
     for (i = 0; i < RX_MB_COUNT; i++)
     {
         /* the used MB index from 1 to RX_MB_COUNT */
@@ -311,7 +307,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
                     }
                 }
             }
-            else    /* use user specified hdr_bank */
+            else /* use user specified hdr_bank */
             {
                 if (filter_mask & (1U << item->hdr_bank))
                 {
@@ -377,6 +373,11 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
 
     /* use the last 16 MB to send msg */
     sendMB = 63 - boxno;
+    /* SDK mailbox state must be idle before SetTxMbConfig resets its contents. */
+    if (can->handle.mbState[sendMB] != (uint8_t)kFLEXCAN_StateIdle)
+    {
+        return -RT_EBUSY;
+    }
     FLEXCAN_SetTxMbConfig(can->base, sendMB, true);
 
     if (RT_CAN_STDID == msg->ide)
@@ -424,9 +425,48 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     case kStatus_FLEXCAN_TxBusy:
         ret = -RT_EBUSY;
         break;
+    default:
+        ret = -RT_ERROR;
+        break;
     }
 
     return (rt_ssize_t)ret;
+}
+
+/**
+ * @brief Submit once through an idle FlexCAN transmit mailbox without waiting.
+ *
+ * @param can_dev Registered CAN device.
+ * @param buf Frame to submit.
+ * @param mailbox Receives the Generic-visible mailbox index on acceptance.
+ * @return RT_EOK if submitted, -RT_EBUSY if no mailbox is free, otherwise a submit error.
+ */
+static rt_ssize_t can_send_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Generic-visible mailbox candidate and hardware submit result. */
+    rt_uint32_t index;
+    rt_ssize_t result;
+
+    for (index = 0; index < can_dev->config.sndboxnumber; index++)
+    {
+        /* Blocking owners retain sndchange until their waiter reclaims the slot. */
+        if (can_dev->status.sndchange & (1UL << index))
+        {
+            continue;
+        }
+        result = can_send(can_dev, buf, index);
+        if (result == RT_EOK)
+        {
+            *mailbox = index;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
 }
 
 static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
@@ -462,7 +502,7 @@ static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t
     {
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->hdr_index = index;      /* one hdr filter per MB */
+    pmsg->hdr_index = index; /* one hdr filter per MB */
     pmsg->len = frame[index].length;
     pmsg->data[0] = frame[index].dataByte0;
     pmsg->data[1] = frame[index].dataByte1;
@@ -481,6 +521,7 @@ static struct rt_can_ops imxrt_can_ops = {
     .control = can_control,
     .sendmsg = can_send,
     .recvmsg = can_recv,
+    .sendmsg_nonblocking = can_send_nonblocking,
 };
 
 int rt_hw_can_init(void)
@@ -491,10 +532,10 @@ int rt_hw_can_init(void)
 
     config.privmode = 0;
     config.ticks = 50;
-    config.sndboxnumber = 16;             /* send Mailbox count */
-    config.msgboxsz = RX_MB_COUNT;        /* RX msg buffer count */
+    config.sndboxnumber = 16;      /* send Mailbox count */
+    config.msgboxsz = RX_MB_COUNT; /* RX msg buffer count */
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr = RX_MB_COUNT;          /* filter count,one filter per MB */
+    config.maxhdr = RX_MB_COUNT; /* filter count,one filter per MB */
 #endif
 
     for (i = 0; i < sizeof(flexcans) / sizeof(flexcans[0]); i++)
