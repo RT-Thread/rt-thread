@@ -71,18 +71,18 @@
 #define NUM_TQ_MAX_FOR_CANFD_DATA        (TSEG1_MAX_FOR_CANFD_DATA + TSEG2_MAX_FOR_CANFD_DATA)
 
 #define IS_VALID_BAUD_RATE_CANFD_ARBITRATION(baud) IS_VALID_BAUD_RATE_CAN2_0(baud)
-#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)        (baud == (CAN10kBaud) || baud == (CAN20kBaud) ||   \
-                                                    baud == (CAN50kBaud) || baud == (CAN100kBaud) ||  \
-                                                    baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
-                                                    baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
-                                                    baud == (CAN1MBaud) ||                            \
-                                                    baud == (CANFD_DATA_BAUD_2M) ||                   \
-                                                    baud == (CANFD_DATA_BAUD_4M) ||                   \
-                                                    baud == (CANFD_DATA_BAUD_5M) ||                   \
-                                                    baud == (CANFD_DATA_BAUD_8M))
-#define IS_CAN_FRAME(frame)                        ((frame) == CAN_FRAME_CLASSIC || \
-                                                    (frame) == CAN_FRAME_ISO_FD ||  \
-                                                    (frame) == CAN_FRAME_NON_ISO_FD)
+#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)        (baud == (CAN10kBaud) || baud == (CAN20kBaud) || \
+                                             baud == (CAN50kBaud) || baud == (CAN100kBaud) ||       \
+                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) ||      \
+                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) ||      \
+                                             baud == (CAN1MBaud) ||                                 \
+                                             baud == (CANFD_DATA_BAUD_2M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_4M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_5M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_8M))
+#define IS_CAN_FRAME(frame) ((frame) == CAN_FRAME_CLASSIC || \
+                             (frame) == CAN_FRAME_ISO_FD ||  \
+                             (frame) == CAN_FRAME_NON_ISO_FD)
 
 #define CAN_BIT_TIMING_CANFD_ARBITRATION (1U << 1)
 #define CAN_BIT_TIMING_CANFD_DATA        (1U << 2)
@@ -103,7 +103,6 @@
 #define CAN2_INT_SRC     (INT_SRC_CAN2_HOST)
 #define CAN3_INT_SRC     (INT_SRC_CAN3_HOST)
 #endif
-
 
 enum
 {
@@ -767,7 +766,6 @@ static rt_err_t _config_can_bit_timing(can_device *p_can_dev, void *arg)
     }
     return rt_ret;
 }
-
 
 static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
 {

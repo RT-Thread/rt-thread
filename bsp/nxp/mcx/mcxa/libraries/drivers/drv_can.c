@@ -17,9 +17,9 @@
 #include "fsl_clock.h"
 #include "fsl_flexcan.h"
 
-#define TX_MB_IDX      (0)
-#define RX_MB_IDX      (1)
-#define RX_MB_COUNT    (1)
+#define TX_MB_IDX   (0)
+#define RX_MB_IDX   (1)
+#define RX_MB_COUNT (1)
 
 enum
 {

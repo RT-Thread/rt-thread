@@ -42,9 +42,8 @@
 #include <rthw.h>
 
 /* CAN Driver Configuration Constants */
-#define CAN_SENDBOX_NUM (1U)            /* Number of hardware transmission buffers */
-#define CAN_FILTER_NUM_MAX (16U)        /* Maximum number of hardware filters */
-
+#define CAN_SENDBOX_NUM    (1U)  /* Number of hardware transmission buffers */
+#define CAN_FILTER_NUM_MAX (16U) /* Maximum number of hardware filters */
 
 /*
  * Interrupt Priority Configuration Macros
@@ -80,10 +79,10 @@
 
 #define CAN_IRQ_PRI_VAL(n) CAN_IRQ_PRI_VAL_##n
 
-#define CAN_UNITED   (0UL)
-#define CAN_INITED   (1UL)
-#define CAN_RUNNING  (2UL)
-#define CAN_STOPPED  (3UL)
+#define CAN_UNITED  (0UL)
+#define CAN_INITED  (1UL)
+#define CAN_RUNNING (2UL)
+#define CAN_STOPPED (3UL)
 
 /*
  * CAN Device Definition Macro
@@ -93,31 +92,29 @@
  * @param n CAN controller number (0-3)
  */
 #ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
-#define CAN_DEVICE_DEFINE(n)                                  \
-    static hpm_can_t dev_can##n =                             \
-    {                                                         \
-        .can_base = HPM_CAN##n,                               \
-        .name = "can" #n,                                     \
-        .irq_num = IRQn_CAN##n,                               \
-        .fifo_index = n,                                      \
-        .clk_name = clock_can##n,                             \
-        .irq_priority = CAN_IRQ_PRI_VAL(n),                   \
-    };                                                        \
-    SDK_DECLARE_EXT_ISR_M(IRQn_CAN##n, can##n##_isr);         \
-    void can##n##_isr(void)                                   \
-    {                                                         \
-        hpm_can_isr(&dev_can##n);                             \
+#define CAN_DEVICE_DEFINE(n)                          \
+    static hpm_can_t dev_can##n = {                   \
+        .can_base = HPM_CAN##n,                       \
+        .name = "can" #n,                             \
+        .irq_num = IRQn_CAN##n,                       \
+        .fifo_index = n,                              \
+        .clk_name = clock_can##n,                     \
+        .irq_priority = CAN_IRQ_PRI_VAL(n),           \
+    };                                                \
+    SDK_DECLARE_EXT_ISR_M(IRQn_CAN##n, can##n##_isr); \
+    void can##n##_isr(void)                           \
+    {                                                 \
+        hpm_can_isr(&dev_can##n);                     \
     }
 #else
-#define CAN_DEVICE_DEFINE(n)                                  \
-    static hpm_can_t dev_can##n =                             \
-    {                                                         \
-        .can_base = HPM_CAN##n,                               \
-        .name = "can" #n,                                     \
-        .irq_num = IRQn_CAN##n,                               \
-        .fifo_index = n,                                      \
-        .clk_name = clock_can##n,                             \
-        .irq_priority = CAN_IRQ_PRI_VAL(n),                   \
+#define CAN_DEVICE_DEFINE(n)                \
+    static hpm_can_t dev_can##n = {         \
+        .can_base = HPM_CAN##n,             \
+        .name = "can" #n,                   \
+        .irq_num = IRQn_CAN##n,             \
+        .fifo_index = n,                    \
+        .clk_name = clock_can##n,           \
+        .irq_priority = CAN_IRQ_PRI_VAL(n), \
     };
 #endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
@@ -127,13 +124,13 @@
  */
 
 /* Macro to extract CAN driver context from RT-Thread device structure */
-#define CAN_GET_DRV(can) \
-    hpm_can_t *drv_can = (hpm_can_t*) can->parent.user_data; \
+#define CAN_GET_DRV(can)                                     \
+    hpm_can_t *drv_can = (hpm_can_t *)can->parent.user_data; \
     RT_ASSERT(drv_can)
 
 /* Interrupt mask definitions for different CAN event types */
-#define CAN_RX_IRQ_MASK (CAN_EVENT_RECEIVE | CAN_EVENT_RX_BUF_ALMOST_FULL | CAN_EVENT_RX_BUF_FULL | CAN_EVENT_RX_BUF_OVERRUN)
-#define CAN_TX_IRQ_MASK (CAN_EVENT_TX_PRIMARY_BUF | CAN_EVENT_TX_SECONDARY_BUF)
+#define CAN_RX_IRQ_MASK  (CAN_EVENT_RECEIVE | CAN_EVENT_RX_BUF_ALMOST_FULL | CAN_EVENT_RX_BUF_FULL | CAN_EVENT_RX_BUF_OVERRUN)
+#define CAN_TX_IRQ_MASK  (CAN_EVENT_TX_PRIMARY_BUF | CAN_EVENT_TX_SECONDARY_BUF)
 #define CAN_ERR_IRQ_MASK (CAN_ERROR_ARBITRATION_LOST_INT_ENABLE | CAN_ERROR_PASSIVE_INT_ENABLE | CAN_ERROR_BUS_ERROR_INT_ENABLE)
 
 /**
@@ -144,17 +141,17 @@
  */
 typedef struct _hpm_can_struct
 {
-    CAN_Type *can_base;                                     /**< CAN hardware base address */
-    const char *name;                                       /**< CAN device name (e.g., "can0", "can1") */
-    rt_int32_t irq_num;                                        /**< CAN interrupt number */
-    rt_uint8_t irq_priority;                                   /**< CAN interrupt priority */
-    clock_name_t clk_name;                                  /**< CAN clock source name */
-    rt_uint32_t fifo_index;                                    /**< FIFO index (used for RT-Thread framework compatibility) */
-    can_config_t can_config;                                /**< HPM CAN hardware configuration */
-    struct rt_can_device can_dev;                           /**< RT-Thread CAN device structure */
-    rt_uint32_t filter_num;                                    /**< Number of active hardware filters */
-    can_filter_config_t filter_list[CAN_FILTER_NUM_MAX];    /**< Array of hardware filter configurations */
-    rt_uint8_t can_stat;                /**< CAN status */
+    CAN_Type *can_base;                                  /**< CAN hardware base address */
+    const char *name;                                    /**< CAN device name (e.g., "can0", "can1") */
+    rt_int32_t irq_num;                                  /**< CAN interrupt number */
+    rt_uint8_t irq_priority;                             /**< CAN interrupt priority */
+    clock_name_t clk_name;                               /**< CAN clock source name */
+    rt_uint32_t fifo_index;                              /**< FIFO index (used for RT-Thread framework compatibility) */
+    can_config_t can_config;                             /**< HPM CAN hardware configuration */
+    struct rt_can_device can_dev;                        /**< RT-Thread CAN device structure */
+    rt_uint32_t filter_num;                              /**< Number of active hardware filters */
+    can_filter_config_t filter_list[CAN_FILTER_NUM_MAX]; /**< Array of hardware filter configurations */
+    rt_uint8_t can_stat;                                 /**< CAN status */
 } hpm_can_t;
 
 /* ============================================================================
@@ -287,28 +284,26 @@ CAN_DEVICE_DEFINE(3)
 /* Array of CAN device pointers - used for initialization and management */
 static hpm_can_t *hpm_cans[] = {
 #if defined(HPM_CAN0_BASE) && defined(BSP_USING_CAN0)
-        &dev_can0,
+    &dev_can0,
 #endif
 #if defined(HPM_CAN1_BASE) && defined(BSP_USING_CAN1)
-        &dev_can1,
+    &dev_can1,
 #endif
 #if defined(HPM_CAN2_BASE) && defined(BSP_USING_CAN2)
-        &dev_can2,
+    &dev_can2,
 #endif
 #if defined(HPM_CAN3_BASE) && defined(BSP_USING_CAN3)
-        &dev_can3,
+    &dev_can3,
 #endif
-        };
+};
 
 /* RT-Thread CAN operations structure - defines the interface between RT-Thread and this driver */
 static const struct rt_can_ops hpm_can_ops = {
-        .configure = hpm_can_configure,    /* Configure CAN controller */
-        .control = hpm_can_control,        /* Control CAN device operations */
-        .sendmsg = hpm_can_sendmsg,        /* Send CAN message */
-        .recvmsg = hpm_can_recvmsg,        /* Receive CAN message */
+    .configure = hpm_can_configure, /* Configure CAN controller */
+    .control = hpm_can_control,     /* Control CAN device operations */
+    .sendmsg = hpm_can_sendmsg,     /* Send CAN message */
+    .recvmsg = hpm_can_recvmsg,     /* Receive CAN message */
 };
-
-
 
 /* ============================================================================
  * Function Implementations
@@ -361,7 +356,7 @@ static void hpm_can_isr(int vector, hpm_can_t *hpm_can)
     {
         /* Get the specific error type and update error counters */
         uint8_t err_kind = can_get_last_error_kind(hpm_can->can_base);
-        switch(err_kind)
+        switch (err_kind)
         {
         case CAN_KIND_OF_ERROR_ACK_ERROR:
             hpm_can->can_dev.status.ackerrcnt++;
@@ -432,7 +427,6 @@ static rt_err_t hpm_can_configure(struct rt_can_device *can, struct can_configur
 #endif
     }
 
-
     switch (cfg->mode)
     {
     case RT_CAN_MODE_NORMAL:
@@ -476,81 +470,92 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        arg_val = (uint32_t) arg;
+        arg_val = (uint32_t)arg;
         intc_m_disable_irq(drv_can->irq_num);
-        if (arg_val & RT_DEVICE_FLAG_INT_RX) {
+        if (arg_val & RT_DEVICE_FLAG_INT_RX)
+        {
             drv_can->can_config.irq_txrx_enable_mask &= (uint8_t)~CAN_RX_IRQ_MASK;
             can_disable_tx_rx_irq(drv_can->can_base, CAN_RX_IRQ_MASK);
         }
-        if (arg_val & RT_DEVICE_FLAG_INT_TX) {
+        if (arg_val & RT_DEVICE_FLAG_INT_TX)
+        {
             drv_can->can_config.irq_txrx_enable_mask &= (uint8_t)~CAN_TX_IRQ_MASK;
             can_disable_tx_rx_irq(drv_can->can_base, CAN_TX_IRQ_MASK);
         }
-        if (arg_val & RT_DEVICE_CAN_INT_ERR) {
+        if (arg_val & RT_DEVICE_CAN_INT_ERR)
+        {
             uint8_t irq_txrx_mask = CAN_EVENT_ERROR;
             drv_can->can_config.irq_txrx_enable_mask &= (uint8_t)~irq_txrx_mask;
             drv_can->can_config.irq_error_enable_mask &= (uint8_t)~CAN_ERR_IRQ_MASK;
             can_disable_tx_rx_irq(drv_can->can_base, irq_txrx_mask);
             can_disable_error_irq(drv_can->can_base, CAN_ERR_IRQ_MASK);
-        } else {
+        }
+        else
+        {
             err = -RT_ERROR;
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        arg_val = (uint32_t) arg;
-        if (arg_val & RT_DEVICE_FLAG_INT_RX) {
+        arg_val = (uint32_t)arg;
+        if (arg_val & RT_DEVICE_FLAG_INT_RX)
+        {
             drv_can->can_config.irq_txrx_enable_mask |= CAN_RX_IRQ_MASK;
             can_enable_tx_rx_irq(drv_can->can_base, CAN_RX_IRQ_MASK);
             intc_m_enable_irq_with_priority(drv_can->irq_num, drv_can->irq_priority);
         }
-        if (arg_val & RT_DEVICE_FLAG_INT_TX) {
+        if (arg_val & RT_DEVICE_FLAG_INT_TX)
+        {
             drv_can->can_config.irq_txrx_enable_mask |= CAN_TX_IRQ_MASK;
             can_enable_tx_rx_irq(drv_can->can_base, CAN_TX_IRQ_MASK);
             intc_m_enable_irq_with_priority(drv_can->irq_num, drv_can->irq_priority);
         }
-        if (arg_val & RT_DEVICE_CAN_INT_ERR) {
+        if (arg_val & RT_DEVICE_CAN_INT_ERR)
+        {
             uint8_t irq_txrx_mask = CAN_EVENT_ERROR;
             drv_can->can_config.irq_txrx_enable_mask |= irq_txrx_mask;
             drv_can->can_config.irq_error_enable_mask |= CAN_ERR_IRQ_MASK;
             can_enable_tx_rx_irq(drv_can->can_base, irq_txrx_mask);
             can_enable_error_irq(drv_can->can_base, CAN_ERR_IRQ_MASK);
             intc_m_enable_irq_with_priority(drv_can->irq_num, drv_can->irq_priority);
-        } else {
+        }
+        else
+        {
             err = -RT_ERROR;
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
+    {
+        /* Convert the RT-Thread Filter format to the filter format supported by HPM CAN */
+        struct rt_can_filter_config *filter = (struct rt_can_filter_config *)arg;
+        if (filter != NULL)
         {
-            /* Convert the RT-Thread Filter format to the filter format supported by HPM CAN */
-            struct rt_can_filter_config *filter = (struct rt_can_filter_config*)arg;
-            if (filter != NULL)
+            drv_can->filter_num = filter->count;
+            RT_ASSERT(filter->count <= CAN_FILTER_NUM_MAX);
+            for (uint32_t i = 0; i < filter->count; i++)
             {
-                drv_can->filter_num = filter->count;
-                RT_ASSERT(filter->count <= CAN_FILTER_NUM_MAX);
-                for (uint32_t i=0; i<filter->count; i++)
-                {
-                    drv_can->filter_list[i].index = i;
-                    drv_can->filter_list[i].enable = (filter->actived != 0U) ? true : false;
-                    drv_can->filter_list[i].code = filter->items[i].id;
-                    drv_can->filter_list[i].id_mode = (filter->items[i].ide != 0U) ? can_filter_id_mode_extended_frames : can_filter_id_mode_standard_frames;
-                    drv_can->filter_list[i].mask = (~filter->items[i].mask) & ~(7UL <<29);
-                }
+                drv_can->filter_list[i].index = i;
+                drv_can->filter_list[i].enable = (filter->actived != 0U) ? true : false;
+                drv_can->filter_list[i].code = filter->items[i].id;
+                drv_can->filter_list[i].id_mode = (filter->items[i].ide != 0U) ? can_filter_id_mode_extended_frames : can_filter_id_mode_standard_frames;
+                drv_can->filter_list[i].mask = (~filter->items[i].mask) & ~(7UL << 29);
             }
-            else
-            {
-                drv_can->filter_num = 0;
-            }
-            err = hpm_can_configure(can, &drv_can->can_dev.config);
-#ifdef RT_CAN_USING_HDR
-            if (filter == RT_NULL) {
-                /*if use RT_CAN_USING_HDR, but if want to receive everything without filtering, use default filter, need to return NO-RT-OK status*/
-                err = -RT_ETRAP;
-            }
-#endif
         }
-        break;
+        else
+        {
+            drv_can->filter_num = 0;
+        }
+        err = hpm_can_configure(can, &drv_can->can_dev.config);
+#ifdef RT_CAN_USING_HDR
+        if (filter == RT_NULL)
+        {
+            /*if use RT_CAN_USING_HDR, but if want to receive everything without filtering, use default filter, need to return NO-RT-OK status*/
+            err = -RT_ETRAP;
+        }
+#endif
+    }
+    break;
     case RT_CAN_CMD_SET_MODE:
-        arg_val = (uint32_t) arg;
+        arg_val = (uint32_t)arg;
         if ((arg_val != RT_CAN_MODE_NORMAL) && (arg_val != RT_CAN_MODE_LISTEN) && (arg_val != RT_CAN_MODE_LOOPBACK))
         {
             err = -RT_ERROR;
@@ -564,7 +569,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
 
         break;
     case RT_CAN_CMD_SET_BAUD:
-        arg_val = (uint32_t) arg;
+        arg_val = (uint32_t)arg;
         if (arg_val != drv_can->can_dev.config.baud_rate)
         {
             drv_can->can_dev.config.baud_rate = arg_val;
@@ -573,7 +578,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
 #ifdef RT_CAN_USING_CANFD
     case RT_CAN_CMD_SET_CANFD:
-        arg_val = (uint32_t) arg;
+        arg_val = (uint32_t)arg;
         if (arg_val != drv_can->can_dev.config.enable_canfd)
         {
             drv_can->can_dev.config.enable_canfd = arg_val;
@@ -581,7 +586,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD_FD:
-        arg_val = (uint32_t) arg;
+        arg_val = (uint32_t)arg;
         if (arg_val != drv_can->can_dev.config.baud_rate_fd)
         {
             drv_can->can_dev.config.baud_rate_fd = arg_val;
@@ -589,24 +594,24 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BITTIMING:
+    {
+        struct rt_can_bit_timing_config *timing_configs = (struct rt_can_bit_timing_config *)arg;
+        if ((timing_configs == RT_NULL) || (timing_configs->count < 1) || (timing_configs->count > 2))
         {
-            struct rt_can_bit_timing_config *timing_configs = (struct rt_can_bit_timing_config*)arg;
-            if ((timing_configs == RT_NULL) || (timing_configs->count < 1) || (timing_configs->count > 2))
-            {
-                return -RT_ERROR;
-            }
-
-            if (timing_configs->count != 0U)
-            {
-                drv_can->can_dev.config.can_timing = timing_configs->items[0];
-            }
-            if (timing_configs->count == 2)
-            {
-                drv_can->can_dev.config.canfd_timing = timing_configs->items[1];
-            }
-            err = hpm_can_configure(can, &drv_can->can_dev.config);
+            return -RT_ERROR;
         }
-        break;
+
+        if (timing_configs->count != 0U)
+        {
+            drv_can->can_dev.config.can_timing = timing_configs->items[0];
+        }
+        if (timing_configs->count == 2)
+        {
+            drv_can->can_dev.config.canfd_timing = timing_configs->items[1];
+        }
+        err = hpm_can_configure(can, &drv_can->can_dev.config);
+    }
+    break;
 #endif
     case RT_CAN_CMD_SET_PRIV:
         arg_val = (uint32_t)arg;
@@ -626,13 +631,19 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     case RT_CAN_CMD_START:
         arg_val = (rt_uint32_t)arg;
-        if (arg_val == 0) {
+        if (arg_val == 0)
+        {
             can_deinit(drv_can->can_base);
             drv_can->can_stat = CAN_STOPPED;
-        } else {
-            if (can_init(drv_can->can_base, &drv_can->can_config, clock_get_frequency(drv_can->clk_name)) != status_success) {
+        }
+        else
+        {
+            if (can_init(drv_can->can_base, &drv_can->can_config, clock_get_frequency(drv_can->clk_name)) != status_success)
+            {
                 err = -RT_ERROR;
-            } else {
+            }
+            else
+            {
                 drv_can->can_stat = CAN_RUNNING;
             }
         }
@@ -647,9 +658,10 @@ static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32
 
     CAN_GET_DRV(can);
 
-    struct rt_can_msg *can_msg = (struct rt_can_msg *) buf;
+    struct rt_can_msg *can_msg = (struct rt_can_msg *)buf;
 
-    if ((drv_can->can_stat == CAN_UNITED) || (drv_can->can_stat == CAN_STOPPED)) {
+    if ((drv_can->can_stat == CAN_UNITED) || (drv_can->can_stat == CAN_STOPPED))
+    {
         return -RT_ERROR;
     }
 
@@ -693,7 +705,7 @@ static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32
     }
     tx_buf.dlc = can_msg->len;
 
-   if (can_msg->priv != 0U)
+    if (can_msg->priv != 0U)
     {
         if (can_is_primary_transmit_buffer_full(drv_can->can_base))
         {
@@ -737,25 +749,31 @@ static int hpm_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t box
 
     rt_can_msg_t can_msg = (rt_can_msg_t)buf;
 
-    if (can_is_data_available_in_receive_buffer(drv_can->can_base)) {
+    if (can_is_data_available_in_receive_buffer(drv_can->can_base))
+    {
         can_receive_buf_t rx_buf;
         hpm_stat_t status = can_read_received_message(drv_can->can_base, &rx_buf);
-        if (status != status_success) {
+        if (status != status_success)
+        {
             return -RT_ERROR;
         }
 
-        if (rx_buf.extend_id != 0) {
+        if (rx_buf.extend_id != 0)
+        {
             can_msg->ide = RT_CAN_EXTID;
         }
-        else {
+        else
+        {
             can_msg->ide = RT_CAN_STDID;
         }
         can_msg->id = rx_buf.id;
 
-        if (rx_buf.remote_frame != 0) {
+        if (rx_buf.remote_frame != 0)
+        {
             can_msg->rtr = RT_CAN_RTR;
         }
-        else {
+        else
+        {
             can_msg->rtr = RT_CAN_DTR;
         }
 #ifdef RT_CAN_USING_CANFD
@@ -764,7 +782,8 @@ static int hpm_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t box
 #endif
         can_msg->len = rx_buf.dlc;
         uint32_t msg_len = can_get_data_bytes_from_dlc(can_msg->len);
-        for(uint32_t i = 0; i < msg_len; i++) {
+        for (uint32_t i = 0; i < msg_len; i++)
+        {
             can_msg->data[i] = rx_buf.data[i];
         }
 #ifdef RT_CAN_USING_HDR
@@ -773,7 +792,8 @@ static int hpm_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t box
         can->hdr[can_msg->hdr_index].connected = 1;
 #endif
     }
-    else {
+    else
+    {
         return -RT_EEMPTY;
     }
 
@@ -807,34 +827,38 @@ static uint8_t can_get_data_bytes_from_dlc(uint32_t dlc)
     uint32_t data_bytes = 0;
 
     dlc &= 0xFU;
-    if (dlc <= 8U) {
+    if (dlc <= 8U)
+    {
         data_bytes = dlc;
-    } else {
-        switch (dlc) {
-            case can_payload_size_12:
-                data_bytes = 12U;
-                break;
-            case can_payload_size_16:
-                data_bytes = 16U;
-                break;
-            case can_payload_size_20:
-                data_bytes = 20U;
-                break;
-            case can_payload_size_24:
-                data_bytes = 24U;
-                break;
-            case can_payload_size_32:
-                data_bytes = 32U;
-                break;
-            case can_payload_size_48:
-                data_bytes = 48U;
-                break;
-            case can_payload_size_64:
-                data_bytes = 64U;
-                break;
-            default:
-                /* Code should never touch here */
-                break;
+    }
+    else
+    {
+        switch (dlc)
+        {
+        case can_payload_size_12:
+            data_bytes = 12U;
+            break;
+        case can_payload_size_16:
+            data_bytes = 16U;
+            break;
+        case can_payload_size_20:
+            data_bytes = 20U;
+            break;
+        case can_payload_size_24:
+            data_bytes = 24U;
+            break;
+        case can_payload_size_32:
+            data_bytes = 32U;
+            break;
+        case can_payload_size_48:
+            data_bytes = 48U;
+            break;
+        case can_payload_size_64:
+            data_bytes = 64U;
+            break;
+        default:
+            /* Code should never touch here */
+            break;
         }
     }
 
@@ -858,12 +882,12 @@ int rt_hw_can_init(void)
 {
     /* Set up default CAN configuration */
     struct can_configure config = CANDEFAULTCONFIG;
-    config.privmode = RT_CAN_MODE_NOPRIV;      /* Disable private mode by default */
-    config.sndboxnumber = CAN_SENDBOX_NUM;     /* Set number of send mailboxes */
-    config.ticks = 50;                         /* Set timeout ticks */
+    config.privmode = RT_CAN_MODE_NOPRIV;  /* Disable private mode by default */
+    config.sndboxnumber = CAN_SENDBOX_NUM; /* Set number of send mailboxes */
+    config.ticks = 50;                     /* Set timeout ticks */
 
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr = 16;                        /* Set maximum number of hardware filters */
+    config.maxhdr = 16; /* Set maximum number of hardware filters */
 #endif
 
     /* Initialize each available CAN controller */
@@ -871,7 +895,7 @@ int rt_hw_can_init(void)
     {
         /* Set default configuration */
         hpm_cans[i]->can_dev.config = config;
-        hpm_cans[i]->filter_num = 0;           /* No filters active initially */
+        hpm_cans[i]->filter_num = 0;        /* No filters active initially */
         hpm_cans[i]->can_stat = CAN_UNITED; /* Set initial status */
 
         /* Get default hardware configuration from HPM SDK */

@@ -14,11 +14,11 @@
 
 #ifdef BSP_USING_CAN
 #if !defined(BSP_USING_CAN)
-    #error "Please define at least one BSP_USING_CAN"
+#error "Please define at least one BSP_USING_CAN"
 #endif
 
-#define CAN_UMASK_MODE      0
-#define CAN_MASK_MODE       1
+#define CAN_UMASK_MODE 0
+#define CAN_MASK_MODE  1
 /** @brief Final hardware Message Object reserved for one Generic TX mailbox. */
 #define HT32_CAN_TX_MSG_NUM MSG_OBJ_TOTAL_NUM
 
@@ -46,33 +46,31 @@ struct ht32_can_filter_config
 /* CAN Object Structures */
 struct ht32_can
 {
-    char *name;                                 /* Equipment name */
-    HT_CAN_TypeDef *can_x;                      /* peripheral base address */
-    struct can_configure cfg;                   /* CAN Configuration Structure */
-    struct rt_can_device device;                /* Inherited device options */
-    struct ht32_can_filter_config filter_cfg;   /* Filter Table Configuration */
+    char *name;                               /* Equipment name */
+    HT_CAN_TypeDef *can_x;                    /* peripheral base address */
+    struct can_configure cfg;                 /* CAN Configuration Structure */
+    struct rt_can_device device;              /* Inherited device options */
+    struct ht32_can_filter_config filter_cfg; /* Filter Table Configuration */
 };
 /* CAN Baud Rate Mapping Table */
-static const struct ht32_baud_rate can_baud_rate_tab[] =
-{
-    {CAN1MBaud, 1000000},
-    {CAN800kBaud, 800000},
-    {CAN500kBaud, 500000},
-    {CAN250kBaud, 250000},
-    {CAN125kBaud, 125000},
-    {CAN100kBaud, 100000},
-    {CAN50kBaud, 50000},
-    {CAN20kBaud, 20000},
-    {CAN10kBaud, 10000},
+static const struct ht32_baud_rate can_baud_rate_tab[] = {
+    { CAN1MBaud, 1000000 },
+    { CAN800kBaud, 800000 },
+    { CAN500kBaud, 500000 },
+    { CAN250kBaud, 250000 },
+    { CAN125kBaud, 125000 },
+    { CAN100kBaud, 100000 },
+    { CAN50kBaud, 50000 },
+    { CAN20kBaud, 20000 },
+    { CAN10kBaud, 10000 },
 };
 /* CAN Object Information */
-static struct ht32_can ht32_can_config =
-{
-    .name           = BSP_USING_CAN_NAME,
-    .can_x          = HT_CAN0,
-    .cfg            = {0},
-    .device         = RT_NULL,
-    .filter_cfg     = {0},
+static struct ht32_can ht32_can_config = {
+    .name = BSP_USING_CAN_NAME,
+    .can_x = HT_CAN0,
+    .cfg = { 0 },
+    .device = RT_NULL,
+    .filter_cfg = { 0 },
 };
 /**
   * @brief Configure a default RX filter without occupying the dedicated TX object.
@@ -110,7 +108,9 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].rt_baud_rate == baud)
+        {
             return can_baud_rate_tab[index].us_baus_rate;
+        }
     }
     return 0;
 }
@@ -128,7 +128,7 @@ static rt_uint32_t config_can_struct(uint32_t can_ck,
                                      uint32_t can_buad,
                                      uint8_t mode,
                                      ControlStatus nart,
-                                     CAN_InitTypeDef* CAN_InitStruct)
+                                     CAN_InitTypeDef *CAN_InitStruct)
 {
     uint8_t cf0_nbt = 0;
     uint32_t nominal_bit_time = 0;
@@ -148,12 +148,12 @@ static rt_uint32_t config_can_struct(uint32_t can_ck,
     {
         return 0;
     }
-    CAN_InitStruct->CAN_BRPrescaler     = (can_ck / (can_buad * nominal_bit_time));
-    CAN_InitStruct->CAN_SJW             = HTCFG_CAN_CF0_BIT_TIME_SJW;
-    CAN_InitStruct->CAN_TSEG1           = (nominal_bit_time - (nominal_bit_time * HTCFG_CAN_CF0_SAMPLE_POINT) / 100);
-    CAN_InitStruct->CAN_TSEG0           = (nominal_bit_time - 1 - CAN_InitStruct->CAN_TSEG1);
-    CAN_InitStruct->CAN_NART            = nart;
-    CAN_InitStruct->CAN_Mode            = mode;
+    CAN_InitStruct->CAN_BRPrescaler = (can_ck / (can_buad * nominal_bit_time));
+    CAN_InitStruct->CAN_SJW = HTCFG_CAN_CF0_BIT_TIME_SJW;
+    CAN_InitStruct->CAN_TSEG1 = (nominal_bit_time - (nominal_bit_time * HTCFG_CAN_CF0_SAMPLE_POINT) / 100);
+    CAN_InitStruct->CAN_TSEG0 = (nominal_bit_time - 1 - CAN_InitStruct->CAN_TSEG1);
+    CAN_InitStruct->CAN_NART = nart;
+    CAN_InitStruct->CAN_Mode = mode;
     return 1;
 }
 /**
@@ -164,19 +164,19 @@ static rt_uint32_t config_can_struct(uint32_t can_ck,
   */
 static rt_err_t ht32_can_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
-    CKCU_PeripClockConfig_TypeDef CKCUClock = {{ 0 }};
+    CKCU_PeripClockConfig_TypeDef CKCUClock = { { 0 } };
     struct ht32_can *can_instance = RT_NULL;
     rt_uint32_t can_baud = 0;
     rt_uint8_t can_mode = 0;
-    CAN_InitTypeDef CAN_InitStruct = {0};
+    CAN_InitTypeDef CAN_InitStruct = { 0 };
 
     RT_ASSERT(can);
     RT_ASSERT(cfg);
     can_instance = (struct ht32_can *)can->parent.user_data;
     RT_ASSERT(can_instance != RT_NULL);
 
-    CKCUClock.Bit.AFIO             = 1;
-    CKCUClock.Bit.CAN0             = 1;
+    CKCUClock.Bit.AFIO = 1;
+    CKCUClock.Bit.CAN0 = 1;
     CKCU_PeripClockConfig(CKCUClock, ENABLE);
 
     ht32_can_gpio_init(can_instance->can_x);
@@ -246,10 +246,10 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_CLR_INT:/* Clear Interrupt */
+    case RT_DEVICE_CTRL_CLR_INT: /* Clear Interrupt */
     {
-        argval = (rt_uint32_t) arg;
-        if (argval == RT_DEVICE_FLAG_INT_RX)        /* receive interruptions */
+        argval = (rt_uint32_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX) /* receive interruptions */
         {
             if (CAN_GetFlagStatus(can_instance->can_x, CAN_FLAG_RXOK))
             {
@@ -257,7 +257,7 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
                 CAN_ClearFlag(can_instance->can_x, CAN_FLAG_RXOK);
             }
         }
-        else if (argval == RT_DEVICE_FLAG_INT_TX)   /* Send Interrupt */
+        else if (argval == RT_DEVICE_FLAG_INT_TX) /* Send Interrupt */
         {
             if (CAN_GetFlagStatus(can_instance->can_x, CAN_FLAG_TXOK))
             {
@@ -265,7 +265,7 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
                 CAN_ClearFlag(can_instance->can_x, CAN_FLAG_TXOK);
             }
         }
-        else if (argval == RT_DEVICE_CAN_INT_ERR)   /* false interruption */
+        else if (argval == RT_DEVICE_CAN_INT_ERR) /* false interruption */
         {
             /* Error Process*/
             CAN_LastErrorCode_TypeDef lec = CAN_GetLastErrorCode(can_instance->can_x);
@@ -281,27 +281,27 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     }
-    case RT_DEVICE_CTRL_SET_INT:/* Setting Up Interruptions */
+    case RT_DEVICE_CTRL_SET_INT: /* Setting Up Interruptions */
     {
-        argval = (rt_uint32_t) arg;
-        if (argval == RT_DEVICE_FLAG_INT_RX)        /* interrupt receive mode */
+        argval = (rt_uint32_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX) /* interrupt receive mode */
         {
             LOG_W("Configuring Receive Interrupts!\r\n");
             CAN_IntConfig(can_instance->can_x, CAN_INT_EIE | CAN_INT_SIE | CAN_INT_IE, ENABLE);
             NVIC_EnableIRQ(CAN0_IRQn);
         }
-        else if (argval == RT_DEVICE_FLAG_INT_TX)   /* interrupt transmission mode */
+        else if (argval == RT_DEVICE_FLAG_INT_TX) /* interrupt transmission mode */
         {
             LOG_W("Configuring Transmit Interrupts!\r\n");
             NVIC_EnableIRQ(CAN0_IRQn);
         }
-        else if (argval == RT_DEVICE_CAN_INT_ERR)   /* false interruption */
+        else if (argval == RT_DEVICE_CAN_INT_ERR) /* false interruption */
         {
             LOG_W("Configuration error interrupt!\r\n");
         }
         break;
     }
-    case RT_CAN_CMD_SET_FILTER:/* Configuring the Hardware Filter Table */
+    case RT_CAN_CMD_SET_FILTER: /* Configuring the Hardware Filter Table */
     {
         int i = 0;
         uint8_t filter_num = 0;
@@ -397,18 +397,18 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     }
-    case RT_CAN_CMD_SET_BAUD:/* Setting the baud rate */
+    case RT_CAN_CMD_SET_BAUD: /* Setting the baud rate */
     {
-        argval = (rt_uint32_t) arg;
-        if (argval != CAN1MBaud   &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud)
+        argval = (rt_uint32_t)arg;
+        if (argval != CAN1MBaud &&
+            argval != CAN800kBaud &&
+            argval != CAN500kBaud &&
+            argval != CAN250kBaud &&
+            argval != CAN125kBaud &&
+            argval != CAN100kBaud &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
+            argval != CAN10kBaud)
         {
             return -RT_ERROR;
         }
@@ -419,13 +419,13 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     }
-    case RT_CAN_CMD_SET_MODE:/* Setting the CAN Operating Mode */
+    case RT_CAN_CMD_SET_MODE: /* Setting the CAN Operating Mode */
     {
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -436,17 +436,17 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     }
-    case RT_CAN_CMD_GET_STATUS:/* Get CAN device status */
+    case RT_CAN_CMD_GET_STATUS: /* Get CAN device status */
     {
         rt_uint32_t errtype;
 
         errtype = can_instance->can_x->ECR;
-        can_instance->device.status.rcverrcnt    = ((errtype >> 8) & 0x7f);
-        can_instance->device.status.snderrcnt    = (errtype & 0xff);
+        can_instance->device.status.rcverrcnt = ((errtype >> 8) & 0x7f);
+        can_instance->device.status.snderrcnt = (errtype & 0xff);
 
         errtype = can_instance->can_x->SR;
-        can_instance->device.status.lasterrtype  = (errtype & 0x07);
-        can_instance->device.status.errcode      = ((errtype >> 5) & 0x07);
+        can_instance->device.status.lasterrtype = (errtype & 0x07);
+        can_instance->device.status.errcode = ((errtype >> 5) & 0x07);
 
         rt_memcpy(arg, &can_instance->device.status, sizeof(can_instance->device.status));
         break;
@@ -467,8 +467,8 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
 rt_ssize_t ht32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
     struct ht32_can *can_instance = RT_NULL;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    struct ht32_can_msg_type tx_msg = {0};
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    struct ht32_can_msg_type tx_msg = { 0 };
     /* Either hardware IF can submit the dedicated Message Object without waiting. */
     HT_CANIF_TypeDef *tx_if;
 
@@ -584,9 +584,9 @@ rt_ssize_t ht32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t bo
     uint8_t i = 0;
     uint32_t msgnum = 0;
     CAN_RxStatus_TypeDef rx_status;
-    struct ht32_can_msg_type rx_msg = {0};
+    struct ht32_can_msg_type rx_msg = { 0 };
     struct ht32_can *can_instance = RT_NULL;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(pmsg != RT_NULL);
@@ -651,12 +651,11 @@ rt_ssize_t ht32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t bo
     return -1;
 }
 /* Mapping CAN interfaces */
-static const struct rt_can_ops ht32_can_ops =
-{
-    .configure          = ht32_can_configure,       /* CAN Configuration Functions */
-    .control            = ht32_can_control,         /* CAN Control Functions */
-    .sendmsg            = ht32_can_sendmsg,         /* CAN Transmit Data */
-    .recvmsg            = ht32_can_recvmsg,         /* CAN Receive Data */
+static const struct rt_can_ops ht32_can_ops = {
+    .configure = ht32_can_configure, /* CAN Configuration Functions */
+    .control = ht32_can_control,     /* CAN Control Functions */
+    .sendmsg = ht32_can_sendmsg,     /* CAN Transmit Data */
+    .recvmsg = ht32_can_recvmsg,     /* CAN Receive Data */
 };
 
 /**
@@ -665,7 +664,6 @@ static const struct rt_can_ops ht32_can_ops =
  */
 int rt_hw_can_init(void)
 {
-
     struct can_configure config = CANDEFAULTCONFIG;
     config.mode = BSP_USING_CAN_MODE;
     config.baud_rate = BSP_USING_CAN_BAUD;

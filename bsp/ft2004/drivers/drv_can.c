@@ -25,17 +25,17 @@
 #define RTHW_CAN_SEND(_can) rt_sem_release(&_can->recv_semaphore);
 
 #ifdef BSP_USING_CAN0
-struct ft2004_can drv_can0 =
-    {
-        .name = _CAN0_NAME,
-        .can_handle.Config.InstanceId = 0};
+struct ft2004_can drv_can0 = {
+    .name = _CAN0_NAME,
+    .can_handle.Config.InstanceId = 0
+};
 #endif
 
 #ifdef BSP_USING_CAN1
-struct ft2004_can drv_can1 =
-    {
-        .name = _CAN1_NAME,
-        .can_handle.Config.InstanceId = 1};
+struct ft2004_can drv_can1 = {
+    .name = _CAN1_NAME,
+    .can_handle.Config.InstanceId = 1
+};
 #endif
 
 static void _can_recv_irq(void *args)
@@ -92,14 +92,13 @@ static void rt_hw_inner_can_isr(int irqno, void *param)
     if (irq & (FCAN_INTR_EIS_MASK | FCAN_INTR_RFIS_MASK |
                FCAN_INTR_BOIS_MASK | FCAN_INTR_PEIS_MASK | FCAN_INTR_PWIS_MASK))
     {
-        FCan_SetBit(base, FCAN_INTR_OFFSET, FCAN_INTR_EIC_MASK | FCAN_INTR_RFIC_MASK |
-                    FCAN_INTR_BOIC_MASK | FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK);
+        FCan_SetBit(base, FCAN_INTR_OFFSET, FCAN_INTR_EIC_MASK | FCAN_INTR_RFIC_MASK | FCAN_INTR_BOIC_MASK | FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK);
     }
 }
 
 static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg)
 {
-    struct FCan_Bittiming bit_timing = {0};
+    struct FCan_Bittiming bit_timing = { 0 };
     struct ft2004_can *drv_can;
     RT_ASSERT(can);
     RT_ASSERT(cfg);
@@ -176,7 +175,8 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     {
         id = ((pmsg->id & CAN_EFF_MASK) << FCAN_IDR_ID2_SHIFT) & FCAN_IDR_ID2_MASK;
         id |= (((pmsg->id & CAN_EFF_MASK) >> (CAN_EFF_ID_BITS - CAN_SFF_ID_BITS))
-               << FCAN_IDR_ID1_SHIFT) & FCAN_IDR_ID1_MASK;
+               << FCAN_IDR_ID1_SHIFT) &
+              FCAN_IDR_ID1_MASK;
         id |= FCAN_IDR_IDE_MASK | FCAN_IDR_SRR_MASK;
         if (RT_CAN_RTR == pmsg->rtr)
         {
@@ -213,7 +213,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 {
     struct ft2004_can *drv_can;
     struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
-    struct FCan_Frame recv_frame = {0};
+    struct FCan_Frame recv_frame = { 0 };
 
     RT_ASSERT(can);
     drv_can = (struct ft2004_can *)can->parent.user_data;
@@ -247,13 +247,12 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
-static const struct rt_can_ops _can_ops =
-    {
-        _can_config,
-        _can_control,
-        _can_sendmsg,
-        _can_recvmsg,
-        RT_NULL,
+static const struct rt_can_ops _can_ops = {
+    _can_config,
+    _can_control,
+    _can_sendmsg,
+    _can_recvmsg,
+    RT_NULL,
 };
 
 int rt_hw_can_init(void)
@@ -301,7 +300,8 @@ struct can_test_struct
 };
 
 static struct can_test_struct can0_test_obj = {
-    .name = _CAN0_NAME};
+    .name = _CAN0_NAME
+};
 
 void can_recv_irq(void *param)
 {
@@ -347,7 +347,9 @@ int rt_can0_test(void)
                            rt_can_test_loopback_thread_entry, &can0_test_obj,
                            1024, 16, 20);
     if (tid != RT_NULL)
+    {
         rt_thread_startup(tid);
+    }
 
     return 0;
 }
