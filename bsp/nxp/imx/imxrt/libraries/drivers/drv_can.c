@@ -130,12 +130,8 @@ static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t 
         break;
 
     case kStatus_FLEXCAN_WakeUp:
-
     case kStatus_FLEXCAN_ErrorStatus:
-        if ((result >= 47) && (result <= 63))
-        {
-            rt_hw_can_isr(&can->can_dev, RT_CAN_EVENT_TX_FAIL | (63 - result) << 8);
-        }
+        /* Error-status result is controller-wide, not a mailbox terminal index. */
         break;
 
     case kStatus_FLEXCAN_TxSwitchToRx:
@@ -377,6 +373,11 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
 
     /* use the last 16 MB to send msg */
     sendMB = 63 - boxno;
+    /* SDK mailbox state must be idle before SetTxMbConfig resets its contents. */
+    if (can->handle.mbState[sendMB] != (uint8_t)kFLEXCAN_StateIdle)
+    {
+        return -RT_EBUSY;
+    }
     FLEXCAN_SetTxMbConfig(can->base, sendMB, true);
 
     if (RT_CAN_STDID == msg->ide)
@@ -424,9 +425,48 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     case kStatus_FLEXCAN_TxBusy:
         ret = -RT_EBUSY;
         break;
+    default:
+        ret = -RT_ERROR;
+        break;
     }
 
     return (rt_ssize_t)ret;
+}
+
+/**
+ * @brief Submit once through an idle FlexCAN transmit mailbox without waiting.
+ *
+ * @param can_dev Registered CAN device.
+ * @param buf Frame to submit.
+ * @param mailbox Receives the Generic-visible mailbox index on acceptance.
+ * @return RT_EOK if submitted, -RT_EBUSY if no mailbox is free, otherwise a submit error.
+ */
+static rt_ssize_t can_send_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Generic-visible mailbox candidate and hardware submit result. */
+    rt_uint32_t index;
+    rt_ssize_t result;
+
+    for (index = 0; index < can_dev->config.sndboxnumber; index++)
+    {
+        /* Blocking owners retain sndchange until their waiter reclaims the slot. */
+        if (can_dev->status.sndchange & (1UL << index))
+        {
+            continue;
+        }
+        result = can_send(can_dev, buf, index);
+        if (result == RT_EOK)
+        {
+            *mailbox = index;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
 }
 
 static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
@@ -481,6 +521,7 @@ static struct rt_can_ops imxrt_can_ops = {
     .control = can_control,
     .sendmsg = can_send,
     .recvmsg = can_recv,
+    .sendmsg_nonblocking = can_send_nonblocking,
 };
 
 int rt_hw_can_init(void)

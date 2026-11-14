@@ -360,7 +360,15 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     can_frame.candlc = pmsg->len ;
 
     memcpy(can_frame.data, pmsg->data, 8);
-    return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : -RT_ERROR;
+    switch (FCanSend(&drv_can->can_handle, &can_frame))
+    {
+        case FCAN_SUCCESS:
+            return RT_EOK;
+        case FCAN_TX_FIFO_FULL_ERR:
+            return -RT_EBUSY;
+        default:
+            return -RT_ERROR;
+    }
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)

@@ -1104,24 +1104,21 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     switch (box_num)
     {
     case CAN_MAILBOX0:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME0)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME0 | CAN_TSTAT_MTF0)) != CAN_TSTAT_TME0)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX1:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME1)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME1 | CAN_TSTAT_MTF1)) != CAN_TSTAT_TME1)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_MAILBOX2:
-        if (!CAN_STAT(can_x) & CAN_TSTAT_TME2)
+        if ((CAN_TSTAT(can_x) & (CAN_TSTAT_TME2 | CAN_TSTAT_MTF2)) != CAN_TSTAT_TME2)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     default:
@@ -1282,11 +1279,11 @@ rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
     {
         freebox++;
     }
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME1) != 0U)
+    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME1) != 0U)
     {
         freebox++;
     }
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME2) != 0U)
+    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME2) != 0U)
     {
         freebox++;
     }
@@ -1294,7 +1291,16 @@ rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
     return freebox;
 }
 
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Submit a frame once to an available Generic-visible GD32 TX mailbox.
+ *
+ * @param can Registered CAN device.
+ * @param buf Frame to submit.
+ * @param mailbox Receives the selected mailbox index on hardware acceptance.
+ * @return RT_EOK on acceptance, -RT_EBUSY if occupied, otherwise a submit error.
+ */
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                   rt_uint32_t *mailbox)
 {
     RT_ASSERT(can);
     RT_ASSERT(buf);
@@ -1323,37 +1329,30 @@ rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
     can_trasnmit_message_struct transmit_message;
     can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    rt_uint32_t index;
+    rt_ssize_t result;
 
-    if(_can_get_freebox(can_x) == 0)
+    if (_can_get_freebox(can_x) == 0)
     {
         return -RT_EBUSY;
     }
-    if (RT_CAN_STDID == pmsg->ide)
-    {
-        transmit_message.tx_ff = CAN_FF_STANDARD;
-        transmit_message.tx_sfid = pmsg->id;
-    }
-    else
-    {
-        transmit_message.tx_ff = CAN_FF_EXTENDED;
-        transmit_message.tx_efid = pmsg->id;
-    }
 
-    if (RT_CAN_DTR == pmsg->rtr)
+    for (index = 0; index < can->config.sndboxnumber && index <= CAN_MAILBOX2; index++)
     {
-        transmit_message.tx_ft = CAN_FT_DATA;
-        memcpy(transmit_message.tx_data, pmsg->data, pmsg->len);
-    }
-    else
-    {
-        transmit_message.tx_ft = CAN_FT_REMOTE;
-    }
-
-    transmit_message.tx_dlen = pmsg->len;
-    if(can_message_transmit(can_x, &transmit_message) == CAN_NOMAILBOX)
-    {
-        return -RT_ERROR;
+        if (can->status.sndchange & (1UL << index))
+        {
+            continue;
+        }
+        result = _can_sendmsg(can, buf, index);
+        if (result == RT_EOK)
+        {
+            *mailbox = index;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
     }
 
     return RT_EOK;
@@ -1503,10 +1502,13 @@ static void _can_ewmc_isr(struct rt_can_device *can)
 
     switch ((errtype & 0x70) >> 4)
     {
-        case RT_CAN_BUS_BIT_PAD_ERR:
+        errtype = CAN_ERR1(can_x);
+        if ((errtype & (CAN_ERR1_STFERR | CAN_ERR1_STFFERR)) != 0U)
+        {
             can->status.bitpaderrcnt++;
-            break;
-        case RT_CAN_BUS_FORMAT_ERR:
+        }
+        if ((errtype & (CAN_ERR1_FMERR | CAN_ERR1_FMFERR)) != 0U)
+        {
             can->status.formaterrcnt++;
             break;
         case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
@@ -1537,9 +1539,9 @@ static void _can_ewmc_isr(struct rt_can_device *can)
             }
             else
             {
-                if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))/*IF AutoRetransmission = ENABLE,ACK ERR handler*/
+                if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))
                 {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;/*Abort the send request, trigger the TX interrupt,release completion quantity*/
+                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;
                 }
                 else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
                 {
@@ -1572,6 +1574,8 @@ static void _can_tx_isr(struct rt_can_device *can)
 {
     RT_ASSERT(can);
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
+    /* Snapshot all mailbox terminal bits before SDK clearing can affect its peers. */
+    rt_uint32_t tx_status = CAN_TSTAT(can_x);
 
 #if defined(SOC_SERIES_GD32H77x_H78X)
     struct gd32_can_device *can_dev = (struct gd32_can_device *)can->parent.user_data;

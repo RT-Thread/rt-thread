@@ -38,7 +38,7 @@
 {                                              \
     CAN1MBaud,           /* 1M bits/s       */ \
     RT_CANMSG_BOX_SZ,    /* message box max size */ \
-    RT_CANSND_BOX_NUM,   /* message box number   */ \
+    1,                   /* TX Buffer 0 is the only Generic-visible mailbox */ \
     RT_CAN_MODE_NORMAL,  /* Normal mode     */ \
     0,                   /* privmode        */ \
     0,                   /* reserved        */ \
@@ -205,12 +205,12 @@ static void nu_canfd_isr(int vector, void *param)
     /* Status Change interrupt*/
     /**************************/
 
-    if (u32Status & CANFD_IR_TC_Msk)
+    if ((u32Status & CANFD_IR_TC_Msk) &&
+        (psNuCANFD->int_flag & RT_DEVICE_FLAG_INT_TX) &&
+        (base->TXBTO & 1UL) && !(base->TXBRP & 1UL))
     {
-        if (psNuCANFD->int_flag & RT_DEVICE_FLAG_INT_TX)
-        {
-            rt_hw_can_isr(&psNuCANFD->dev, RT_CAN_EVENT_TX_DONE);
-        }
+        /* TXBTO[0] identifies the completed dedicated buffer; TC alone is global. */
+        rt_hw_can_isr(&psNuCANFD->dev, RT_CAN_EVENT_TX_DONE);
     }
 
     if (u32Status & (CANFD_IR_RF0N_Msk | CANFD_IR_RF1N_Msk))
@@ -228,7 +228,9 @@ static void nu_canfd_isr(int vector, void *param)
 
     if (u32Status & (CANFD_IR_TEFF_Msk | CANFD_IR_TOO_Msk))
     {
-        rt_hw_can_isr(&psNuCANFD->dev, RT_CAN_EVENT_TX_FAIL);
+        /* Event FIFO overflow / controller timeout is not a per-buffer TX terminal. */
+        LOG_E("[%s] CANFD status: 0x%08x", psNuCANFD->name,
+              u32Status & (CANFD_IR_TEFF_Msk | CANFD_IR_TOO_Msk));
     }
 
     /**************************/
@@ -519,76 +521,75 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
+/**
+ * @brief Submit one classic CAN frame to dedicated TX Buffer 0 without polling.
+ *
+ * The Nuvoton transmit helpers wait for TXBRP or an idle bus, which is unsafe
+ * while Generic CAN holds its IRQ-save TX lock. The Message RAM layout and
+ * single idle-state check follow the corresponding vendor CANFD_TransmitDMsg().
+ *
+ * @param can Registered CAN device.
+ * @param buf Frame supplied by Generic CAN.
+ * @param boxno Generic-visible hardware mailbox (only zero is supported).
+ * @return RT_EOK after TXBAR accepts the request, -RT_EBUSY if hardware is busy,
+ *         -RT_EINVAL for an invalid mailbox, or -RT_ERROR for an invalid frame.
+ */
 static int nu_canfd_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
-    CANFD_FD_MSG_T sTxMsg;
-    struct rt_can_msg *pmsg;
+    /* Controller registers and the dedicated TX Buffer 0 Message RAM element. */
     nu_canfd_t psNuCANFD = (nu_canfd_t)can;
+    CANFD_T *base;
+    CANFD_BUF_T *psTxBuffer;
+    /* Frame content is owned by Generic CAN until this immediate submit returns. */
+    const struct rt_can_msg *pmsg = (const struct rt_can_msg *)buf;
 
     RT_ASSERT(can);
     RT_ASSERT(buf);
+    base = psNuCANFD->base;
 
-    pmsg = (struct rt_can_msg *) buf;
-
-    if (pmsg->ide == RT_CAN_STDID && IS_CAN_STDID(pmsg->id))
+    if (boxno != 0U)
     {
-        /* Standard ID (11 bits)*/
-        sTxMsg.u32Id = pmsg->id;
-        sTxMsg.eIdType = eCANFD_SID;
-    }
-    else if (pmsg->ide == RT_CAN_EXTID && IS_CAN_EXTID(pmsg->id))
-    {
-        /* Extended ID (29 bits)*/
-        sTxMsg.u32Id = pmsg->id;
-        sTxMsg.eIdType = eCANFD_XID;
-    }
-    else
-    {
-        goto exit_nu_canfd_sendmsg;
+        return -RT_EINVAL;
     }
 
-    sTxMsg.bBitRateSwitch = 0;
-
-    if (pmsg->rtr == RT_CAN_DTR)
+    if (!((pmsg->ide == RT_CAN_STDID && IS_CAN_STDID(pmsg->id)) ||
+          (pmsg->ide == RT_CAN_EXTID && IS_CAN_EXTID(pmsg->id))) ||
+        (pmsg->rtr != RT_CAN_DTR && pmsg->rtr != RT_CAN_RTR) ||
+        !IS_CAN_DLC(pmsg->len))
     {
-        /* Data frame */
-        sTxMsg.eFrmType = eCANFD_DATA_FRM;
-    }
-    else if (pmsg->rtr == RT_CAN_RTR)
-    {
-        /* Remote frame */
-        sTxMsg.eFrmType = eCANFD_REMOTE_FRM;
-    }
-    else
-    {
-        goto exit_nu_canfd_sendmsg;
+        return -RT_ERROR;
     }
 
-    /* Check the parameters */
-    if (IS_CAN_DLC(pmsg->len))
+    if (base->TXBRP & 1UL)
     {
-        sTxMsg.u32DLC = pmsg->len;
-    }
-    else
-    {
-        goto exit_nu_canfd_sendmsg;
+        return -RT_EBUSY;
     }
 
+    psTxBuffer = (CANFD_BUF_T *)((uint32_t)base + CANFD_SRAM_BASE_ADDR + (base->TXBC & 0xFFFFUL));
+    /* M_CAN T0: XTD=bit30, RTR=bit29; standard ID occupies bits 28:18. */
+    psTxBuffer->u32Id = (pmsg->ide == RT_CAN_EXTID) ?
+                        ((1UL << 30) | pmsg->id) : (pmsg->id << 18);
+    if (pmsg->rtr == RT_CAN_RTR)
+    {
+        psTxBuffer->u32Id |= (1UL << 29);
+    }
+
+    /* M_CAN T1: classic CAN DLC in bits 19:16, without FDF/BRS/event FIFO. */
+    psTxBuffer->u32Config = ((uint32_t)pmsg->len << 16);
     if (pmsg->len > 0)
     {
-        rt_memcpy(&sTxMsg.au8Data[0], pmsg->data, pmsg->len);
+        rt_memcpy(psTxBuffer->au8Data, pmsg->data, pmsg->len);
     }
 
-    if (!CANFD_TransmitTxMsg(psNuCANFD->base, 0, &sTxMsg))
+    /* Retain the vendor's silicon-specific idle requirement without waiting. */
+    if (((inpw((uint32_t *)(SYS_BASE + 0x1F0)) & 0x0F000000UL) == 0UL) &&
+        (CANFD_GET_COMMUNICATION_STATE(base) != eCANFD_IDLE))
     {
-        goto exit_nu_canfd_sendmsg;
+        return -RT_EBUSY;
     }
 
+    base->TXBAR = 1UL;
     return RT_EOK;
-
-exit_nu_canfd_sendmsg:
-
-    return -(RT_ERROR);
 }
 
 static int nu_canfd_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)

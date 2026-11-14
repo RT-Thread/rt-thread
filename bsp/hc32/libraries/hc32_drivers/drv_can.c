@@ -996,6 +996,10 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     rt_memcpy(&stc_tx_frame.au8Data, pmsg->data, msg_len);
 
     ll_ret = CAN_FillTxFrame(p_can_dev->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
+    if (ll_ret == LL_ERR_BUSY || ll_ret == LL_ERR_BUF_FULL)
+    {
+        return -RT_EBUSY;
+    }
     if (ll_ret != LL_OK)
     {
         return -RT_ERROR;
@@ -1006,9 +1010,32 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return RT_EOK;
 }
 
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Attempt immediate transmission through the single primary TX buffer.
+ * @param[in] can CAN device whose primary transmit buffer is selected.
+ * @param[in] buf CAN frame to submit.
+ * @param[out] mailbox Physical mailbox index (zero) when accepted.
+ * @return RT_EOK on submission, -RT_EBUSY if occupied, or another error.
+ */
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
 {
-    return _can_sendmsg(can, buf, 0);
+    /* The Generic blocking waiter retains mailbox ownership after hardware completion. */
+    can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
+    /* Preserve the hardware submission result before publishing the mailbox number. */
+    rt_ssize_t result;
+
+    if ((can->status.sndchange & 1UL) != 0U ||
+        CAN_GetStatus(p_can_dev->instance, CAN_FLAG_PTB_TX) == SET)
+    {
+        return -RT_EBUSY;
+    }
+
+    result = _can_sendmsg(can, buf, 0U);
+    if (result == RT_EOK)
+    {
+        *mailbox = 0U;
+    }
+    return result;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)

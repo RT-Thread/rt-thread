@@ -357,6 +357,11 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno
 
     pbxcan = ((struct ls1c_bxcan *) can->parent.user_data)->reg;
 
+    if (!(pbxcan->SR & CAN_SR_TBS))
+    {
+        return -RT_EBUSY;
+    }
+
     TxMessage.StdId = pmsg->id;
     TxMessage.ExtId = pmsg->id;
     TxMessage.RTR = pmsg->rtr;
@@ -428,13 +433,14 @@ void ls1c_can0_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan0 int RX happened!\r\n");
     }
     /*发送中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_TI)
+    if (( status  & CAN_IR_TI) == CAN_IR_TI)
     {
-       rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_TX_DONE | 0 << 8);
+       rt_hw_can_isr(&bxcan0, (CANx->SR & CAN_SR_TCS) ?
+                         RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL);
        rt_kprintf("\r\nCan0 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
+    if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
     {
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan0 int RX OF happened!\r\n");
@@ -468,13 +474,14 @@ void ls1c_can1_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan1 int RX happened!\r\n");
     }
     /*发送中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_TI)
+    if (( status  & CAN_IR_TI) == CAN_IR_TI)
     {
-       rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 0 << 8);
+       rt_hw_can_isr(&bxcan1, (CANx->SR & CAN_SR_TCS) ?
+                         RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL);
        rt_kprintf("\r\nCan1 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
+    if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
     {
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan1 int RX OF happened!\r\n");

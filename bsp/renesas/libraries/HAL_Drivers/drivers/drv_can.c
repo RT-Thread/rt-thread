@@ -515,6 +515,8 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
     can_frame_t g_can_tx_frame;
     struct rt_can_msg *msg_rt = (struct rt_can_msg *)buf;
     rt_uint8_t payload_length;
+    /* Immediate FSP submission result. */
+    fsp_err_t result;
     RT_ASSERT(can_dev != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
@@ -567,7 +569,12 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
     can = rt_container_of(can_dev, struct ra_can, can_dev);
     RT_ASSERT(boxno < can->config->num_of_mailboxs);
 
-    if (R_CAN_Write(can->config->p_api_ctrl, boxno, &g_can_tx_frame) != FSP_SUCCESS)
+    result = R_CAN_Write(can->config->p_api_ctrl, boxno, &g_can_tx_frame);
+    if (result == FSP_ERR_CAN_TRANSMIT_NOT_READY)
+    {
+        return -RT_EBUSY;
+    }
+    if (result != FSP_SUCCESS)
     {
         return -RT_ERROR;
     }

@@ -226,29 +226,10 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
                                    rt_uint32_t msg_id, rt_uint8_t is_ext_id,
                                    rt_uint8_t brs)
 {
-    /* Check if Message Buffer is idle.
-     * In loopback mode the controller may generate a spurious TX-done event
-     * right after FLEXCANDRV_Configure, leaving the software state in limbo.
-     * If the MB is not idle, wait briefly for the ISR to catch up. */
+    /* Generic owns the mailbox wait; do not sleep while its TX spinlock is held. */
     if (StateIdle != base->mbState[TxMsgObj->msgBufId])
     {
-        rt_uint32_t retry;
-        for (retry = 0; retry < 50; retry++)
-        {
-            rt_thread_mdelay(1);
-            if (StateIdle == base->mbState[TxMsgObj->msgBufId])
-            {
-                break;
-            }
-        }
-
-        if (StateIdle != base->mbState[TxMsgObj->msgBufId])
-        {
-            LOG_E("sendBlocking: MB%u not idle, state=%u",
-                  (unsigned int)TxMsgObj->msgBufId,
-                  (unsigned int)base->mbState[TxMsgObj->msgBufId]);
-            return -RT_EBUSY;
-        }
+        return -RT_EBUSY;
     }
 
     {
@@ -823,21 +804,31 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
  *
  * @param[in] can A pointer to the CAN device structure.
  * @param[in] buf A pointer to the `rt_can_msg` to be sent.
+ * @param[out] mailbox Physical TX mailbox index when the frame is accepted.
  *
  * @return `RT_EOK` on success, `-RT_EBUSY` if TX mailbox is busy,
  *         or other error code on failure.
  */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                               rt_uint32_t *mailbox)
 {
     ns800rt7_can *hcan;
     struct rt_can_msg *pmsg;
     FLEXCANDRV_MsgObjType fdTxMsgObj;
     rt_uint8_t data_len;
+    /* Capture submission status before publishing the single hardware mailbox index. */
+    rt_ssize_t status;
 
     RT_ASSERT(can);
     RT_ASSERT(buf);
     hcan = (ns800rt7_can *)can->parent.user_data;
     pmsg = (struct rt_can_msg *)buf;
+
+    /* A blocking sender can still own MB0 after its hardware terminal. */
+    if ((can->status.sndchange & 1UL) != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     /* Check if TX MB (MB0) is idle */
     if (StateIdle != hcan->mbState[0])
@@ -877,13 +868,18 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void
 
     rt_memcpy(fdTxMsgObj.data, pmsg->data, data_len);
 
-    return _can_sendBlocking(hcan, &fdTxMsgObj,
-                             pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
+    status = _can_sendBlocking(hcan, &fdTxMsgObj,
+                               pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
 #ifdef RT_CAN_USING_CANFD
-                             (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
+                               (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
 #else
-                             0U);
+                               0U);
 #endif
+    if (status == RT_EOK)
+    {
+        *mailbox = 0U;
+    }
+    return status;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)

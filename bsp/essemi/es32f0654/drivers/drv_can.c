@@ -364,35 +364,28 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         switch (1 << box_num)
         {
         case CAN_TX_MAILBOX_0:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM0) != SET)
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM0) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M0REQC))
             {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case CAN_TX_MAILBOX_1:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM1) != SET)
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM1) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC))
             {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case CAN_TX_MAILBOX_2:
-            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM2) != SET)
+            if (ald_can_get_flag_status(h_can, CAN_FLAG_TXM2) != SET ||
+                ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC))
             {
-                /* Change CAN state */
-                h_can->state = CAN_STATE_ERROR;
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         default:
-            RT_ASSERT(0);
-            break;
+            return -RT_EINVAL;
         }
 
         if (RT_CAN_STDID == pmsg->ide)
@@ -454,6 +447,48 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     }
 }
 
+/**
+ * @brief Submit one CAN frame to an available hardware TX mailbox.
+ *
+ * @param[in] can CAN device used for transmission.
+ * @param[in] buf Frame to submit without waiting for completion.
+ * @param[out] mailbox Hardware mailbox index on successful submission.
+ * @return RT_EOK on hardware acceptance, -RT_EBUSY if all mailboxes are busy,
+ *         or another negative error code on failure.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Candidate mailbox index and result of its submission. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
+
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num < 3U; box_num++)
+    {
+        /* A blocking owner may still be consuming this mailbox's terminal. */
+        if ((can->status.sndchange & (1UL << box_num)) != 0U)
+        {
+            continue;
+        }
+
+        result = _can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
+}
+
 static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     can_handle_t *h_can;
@@ -512,6 +547,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -604,7 +640,7 @@ void CAN0_Handler(void)
         /* Clear transmission status flag M0REQC */
         ald_can_clear_flag_status(h_can, CAN_FLAG_M0REQC);
     }
-    else if (ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
+    if (ald_can_get_flag_status(h_can, CAN_FLAG_M1REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
     {
         if (ald_can_get_flag_status(h_can, CAN_FLAG_M1TXC))
         {
@@ -616,9 +652,9 @@ void CAN0_Handler(void)
         }
         ald_can_clear_flag_status(h_can, CAN_FLAG_M1REQC);
     }
-    else if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
+    if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC) && ald_can_get_it_status(h_can, CAN_IT_TXM))
     {
-        if (ald_can_get_flag_status(h_can, CAN_FLAG_M2REQC))
+        if (ald_can_get_flag_status(h_can, CAN_FLAG_M2TXC))
         {
             rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_DONE | 2 << 8);
         }
@@ -643,12 +679,6 @@ void CAN0_Handler(void)
             break;
         case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
             can.device.status.ackerrcnt++;
-            if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-                rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-            else if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-                rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-            else if (!READ_BIT(can.CanHandle.perh->TXSTAT, CAN_FLAG_M0TXC))
-                rt_hw_can_isr(&can.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
             break;
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
         case RT_CAN_BUS_EXPLICIT_BIT_ERR:
