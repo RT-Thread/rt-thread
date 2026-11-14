@@ -1,0 +1,4 @@
+from building import *
+
+group = DefineGroup('Applications', ['main.c'], depend=[''])
+Return('group')
