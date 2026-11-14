@@ -95,6 +95,7 @@ static void _workqueue_thread_entry(void *parameter)
         /* we have work to do with. */
         work = rt_list_entry(queue->work_list.next, struct rt_work, list);
         rt_list_remove(&(work->list));
+        rt_list_init(&(work->list));
         queue->work_current  = work;
         work->flags         &= ~RT_WORK_STATE_PENDING;
         work->workqueue      = RT_NULL;
@@ -112,6 +113,8 @@ static void _workqueue_thread_entry(void *parameter)
     }
 }
 
+static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
+
 static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
@@ -120,10 +123,16 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
     struct rt_work *work_tmp;
     rt_list_t      *list_tmp;
 
+    if (work->workqueue != RT_NULL && work->workqueue != queue)
+    {
+        _workqueue_cancel_work(work->workqueue, work);
+    }
+
     level = rt_spin_lock_irqsave(&(queue->spinlock));
-    /* remove list */
+    /* remove list and reset delayed state */
     rt_list_remove(&(work->list));
-    work->flags = 0;
+    rt_list_init(&(work->list));
+    work->flags &= ~RT_WORK_STATE_SUBMITTING;
 
     if (ticks == 0)
     {
@@ -172,6 +181,7 @@ static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_wor
 
     level = rt_spin_lock_irqsave(&(queue->spinlock));
     rt_list_remove(&(work->list));
+    rt_list_init(&(work->list));
     work->flags     = 0;
     err             = queue->work_current != work ? RT_EOK : -RT_EBUSY;
     work->workqueue = RT_NULL;
