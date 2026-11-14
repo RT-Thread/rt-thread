@@ -1,0 +1,38 @@
+config SOC_D213
+    bool
+    default y
+    select AIC_SOC_D21X
+    select ARCH_CPU_64BIT
+    select ARCH_RISCV
+    select ARCH_RISCV64
+    select ARCH_RISCV_FPU
+    select ARCH_RISCV_FPU_D
+    select ARCH_RISCV_M_MODE
+    select RT_USING_RISCV_NEW_COMMON
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+
+menu "Board options"
+
+config BSP_USING_UART0
+    bool "Enable UART0 console"
+    depends on RT_USING_SERIAL_V1
+    default y
+    help
+        UART0 on PA.0/PA.1. Transmit is polled; a polling thread supplies
+        the serial-v1 receive FIFO. UART hardware interrupts and DMA are
+        not supported in this initial BSP.
+
+config BSP_UART_CLK_FREQ
+    int "Bootloader-configured UART0 input clock (Hz)"
+    range 1843200 200000000
+    default 48000000
+
+config BSP_CLINT_FREQ
+    int "Bootloader-configured CLINT timebase (Hz)"
+    range 1000000 100000000
+    default 4000000
+
+endmenu

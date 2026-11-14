@@ -886,6 +886,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [ri5cy](rv32m1_vega/ri5cy) | ✅ | ✅ | - | - | - | - |
 | [rv32m1_sdk_riscv](rv32m1_vega/rv32m1_sdk_riscv) | ✅ | ✅ | - | - | - | - |
 
+#### ⚪ ArtInChip
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
+|----------|------|------|-----|-----|-----|-----|
+| [d213ecv-demo-v4-0](artinchip/d213ecv-demo-v4-0) | - | ✅ | - | - | - | - |
+
 ---
 
 ### AVR Architecture Series

@@ -1,0 +1,6 @@
+config AIC_SOC_D21X
+    bool
+    default n
+    help
+        Selects the ArtInChip D21x SoC layer. This initial port supports
+        D213 only; other family members require separate validation.
