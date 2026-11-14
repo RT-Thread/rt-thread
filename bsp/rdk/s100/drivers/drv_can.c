@@ -806,8 +806,7 @@ static rt_err_t s100_can_basic_send_std(struct s100_can_basic *ctrl, rt_uint32_t
     code = (mb->cs >> S100_CAN_MB_CODE_SHIFT) & 0x0FU;
     if (code != S100_CAN_MB_CODE_TX_INACTIVE)
     {
-        CAN_RET_FMT(-RT_EBUSY, "send std mailbox busy boxno=%lu code=0x%lx",
-                    (unsigned long)boxno, (unsigned long)code);
+        return -RT_EBUSY;
     }
 
     for (i = 0U; i < 4U; i++)
@@ -956,10 +955,7 @@ static void s100_can_basic_irq_handler(int vector, void *param)
     {
         ctrl->regs->ESR1 = FLEXCAN_IP_ALL_INT;
 
-        if ((ctrl->irq_mask_flags & RT_DEVICE_CAN_INT_ERR) != 0U)
-        {
-            rt_hw_can_isr(&ctrl->can_dev, RT_CAN_EVENT_TX_FAIL | (0U << 8));
-        }
+        /* A controller error does not prove that TX mailbox zero has terminated. */
     }
 }
 
@@ -1140,16 +1136,41 @@ static rt_ssize_t s100_can_basic_sendmsg(struct rt_can_device *can, const void *
     return s100_can_basic_send_std(ctrl, msg->id, msg->data, (rt_uint8_t)msg->len, boxno);
 }
 
-static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+/**
+ * @brief Submit a CAN frame to an available hardware TX mailbox without waiting.
+ * @param[in] can CAN device whose hardware mailboxes are scanned.
+ * @param[in] buf CAN frame to submit.
+ * @param[out] mailbox Generic slot (physical TX MB index is MB16 + slot) on success.
+ * @return RT_EOK on submission, -RT_EBUSY if all mailboxes are occupied, or an error.
+ */
+static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
+                                                     rt_uint32_t *mailbox)
 {
+    /* Controller whose physical mailbox interrupt flags must be respected. */
+    struct s100_can_basic *ctrl = (struct s100_can_basic *)can->parent.user_data;
     rt_uint32_t boxno;
     rt_ssize_t ret;
 
     for (boxno = 0U; boxno < can->config.sndboxnumber; boxno++)
     {
+        /* FlexCAN message-buffer index is offset from the Generic mailbox slot. */
+        rt_uint32_t hw_mb = s100_can_basic_tx_box_to_mb(boxno);
+
+        if ((can->status.sndchange & (1UL << boxno)) != 0U)
+        {
+            continue;
+        }
+        /* A completed message is not reusable until the old TX IRQ is consumed. */
+        if ((hw_mb < 32U && (ctrl->regs->IFLAG1 & (1UL << hw_mb)) != 0U) ||
+            (hw_mb >= 32U && (ctrl->regs->IFLAG2 & (1UL << (hw_mb - 32U))) != 0U))
+        {
+            continue;
+        }
+
         ret = s100_can_basic_sendmsg(can, buf, boxno);
         if (ret == RT_EOK)
         {
+            *mailbox = boxno;
             return RT_EOK;
         }
 
@@ -1159,7 +1180,7 @@ static rt_ssize_t s100_can_basic_sendmsg_nonblocking(struct rt_can_device *can, 
         }
     }
 
-    CAN_RET(-RT_EBUSY, "sendmsg nonblocking all mailboxes busy");
+    return -RT_EBUSY;
 }
 
 static rt_ssize_t s100_can_basic_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)

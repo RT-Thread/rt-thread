@@ -588,6 +588,36 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             return _can_config(&can_instance->device, &can_instance->device.config);
         }
         break;
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            if (!can_instance->config.can_x->tsts_bit.tm0ef ||
+                !can_instance->config.can_x->tsts_bit.tm1ef ||
+                !can_instance->config.can_x->tsts_bit.tm2ef)
+            {
+                return -RT_EBUSY;
+            }
+            if (can_operating_mode_set(can_instance->config.can_x, CAN_OPERATINGMODE_FREEZE) != SUCCESS)
+            {
+                return -RT_ERROR;
+            }
+            can_flag_clear(can_instance->config.can_x, CAN_TM0TCF_FLAG);
+            can_flag_clear(can_instance->config.can_x, CAN_TM1TCF_FLAG);
+            can_flag_clear(can_instance->config.can_x, CAN_TM2TCF_FLAG);
+        }
+        else if (can_operating_mode_set(can_instance->config.can_x, CAN_OPERATINGMODE_COMMUNICATE) != SUCCESS)
+        {
+            return -RT_ERROR;
+        }
+        break;
+    case RT_CAN_CMD_ABORT_TX:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval > CAN_TX_MAILBOX2)
+        {
+            return -RT_EINVAL;
+        }
+        can_transmit_cancel(can_instance->config.can_x, (can_tx_mailbox_num_type)argval);
+        break;
     case RT_CAN_CMD_GET_STATUS:
     {
         rt_uint32_t errtype;
@@ -611,34 +641,45 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     hcan = &((struct at32_can *) can->parent.user_data)->config;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     can_tx_message_type tx_message;
+    /* Register bank for the specific mailbox selected by Generic CAN. */
+    can_type *can_x = hcan->can_x;
+    /* Aligned data words for the two 32-bit TX data registers. */
+    rt_uint32_t tx_words[2];
 
-    /* check select mailbox is empty */
+    if (box_num > CAN_TX_MAILBOX2 || pmsg->len > 8U)
+    {
+        return -RT_EINVAL;
+    }
+#ifdef RT_CAN_USING_CANFD
+    if (pmsg->fd_frame != 0U)
+    {
+        return -RT_EINVAL;
+    }
+#endif
+
+    /* A completed mailbox remains busy until its previous terminal is reported. */
     switch (box_num)
     {
-      case CAN_TX_MAILBOX0:
-        if (hcan->can_x->tsts_bit.tm0ef != 1)
+    case CAN_TX_MAILBOX0:
+        if (!can_x->tsts_bit.tm0ef || can_x->tsts_bit.tm0tcf)
         {
-            /* return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_TX_MAILBOX1:
-        if (hcan->can_x->tsts_bit.tm1ef != 1)
+        if (!can_x->tsts_bit.tm1ef || can_x->tsts_bit.tm1tcf)
         {
-            /* return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case CAN_TX_MAILBOX2:
-        if (hcan->can_x->tsts_bit.tm2ef != 1)
+        if (!can_x->tsts_bit.tm2ef || can_x->tsts_bit.tm2tcf)
         {
-            /* return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     default:
-        RT_ASSERT(0);
-        break;
+        return -RT_EINVAL;
     }
 
     if (RT_CAN_STDID == pmsg->ide)
@@ -673,9 +714,62 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     tx_message.data[6] = (uint32_t)pmsg->data[6];
     tx_message.data[7] = (uint32_t)pmsg->data[7];
 
-    can_message_transmit(hcan->can_x, &tx_message);
+    /* The SDK can_message_transmit() picks another empty mailbox; use the
+       requested hardware mailbox to keep Generic ownership and IRQs aligned. */
+    can_x->tx_mailbox[box_num].tmi &= 0x00000001U;
+    can_x->tx_mailbox[box_num].tmi_bit.tmidsel = tx_message.id_type;
+    if (tx_message.id_type == CAN_ID_STANDARD)
+    {
+        can_x->tx_mailbox[box_num].tmi_bit.tmsid = tx_message.standard_id;
+    }
+    else
+    {
+        can_x->tx_mailbox[box_num].tmi |= tx_message.extended_id << 3;
+    }
+    can_x->tx_mailbox[box_num].tmi_bit.tmfrsel = tx_message.frame_type;
+    can_x->tx_mailbox[box_num].tmc_bit.tmdtbl = tx_message.dlc;
+    /* AT32 is little-endian; copy into aligned RAM before 32-bit MMIO stores. */
+    rt_memcpy(tx_words, tx_message.data, sizeof(tx_words));
+    can_x->tx_mailbox[box_num].tmdtl = tx_words[0];
+    can_x->tx_mailbox[box_num].tmdth = tx_words[1];
+    can_x->tx_mailbox[box_num].tmi_bit.tmsr = TRUE;
 
     return RT_EOK;
+}
+
+/**
+ * @brief Submit a frame to an available dedicated hardware TX mailbox.
+ * @param[in] can CAN controller device.
+ * @param[in] buf Frame to submit immediately without a software queue.
+ * @param[out] mailbox Receives the selected hardware mailbox on success.
+ * @return RT_EOK, -RT_EBUSY if all mailboxes are busy, or another negative error.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Candidate mailbox number and the result of its submit attempt. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(mailbox != RT_NULL);
+
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num <= CAN_TX_MAILBOX2; box_num++)
+    {
+        if (can->status.sndchange & (1UL << box_num))
+        {
+            continue;
+        }
+        result = _can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -724,6 +818,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -803,7 +898,7 @@ void CAN1_TX_IRQ_HANDLER(void)
         /* write 0 to clear transmission status flag */
         can_flag_clear(hcan->can_x, CAN_TM0TCF_FLAG);
     }
-    else if (can_flag_get(hcan->can_x, CAN_TM1TCF_FLAG) == SET)
+    if (can_flag_get(hcan->can_x, CAN_TM1TCF_FLAG) == SET)
     {
         if (hcan->can_x->tsts_bit.tm1tsf == 1)
         {
@@ -816,7 +911,7 @@ void CAN1_TX_IRQ_HANDLER(void)
         /* write 0 to clear transmission status flag */
         can_flag_clear(hcan->can_x, CAN_TM1TCF_FLAG);
     }
-    else if (can_flag_get(hcan->can_x, CAN_TM2TCF_FLAG) == SET)
+    if (can_flag_get(hcan->can_x, CAN_TM2TCF_FLAG) == SET)
     {
         if (hcan->can_x->tsts_bit.tm2tsf == 1)
         {
@@ -875,12 +970,6 @@ void CAN1_SE_IRQ_HANDLER(void)
         break;
     case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
         can_instance1.device.status.ackerrcnt++;
-        if (!(can_instance1.config.can_x->tsts_bit.tm0tsf == 1))
-            rt_hw_can_isr(&can_instance1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!(can_instance1.config.can_x->tsts_bit.tm1tsf == 1))
-            rt_hw_can_isr(&can_instance1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!(can_instance1.config.can_x->tsts_bit.tm2tsf == 1))
-            rt_hw_can_isr(&can_instance1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -933,7 +1022,7 @@ void CAN2_TX_IRQHandler(void)
         /* write 0 to clear transmission status flag rqcpx */
         can_flag_clear(hcan->can_x, CAN_TM0TCF_FLAG);
     }
-    else if (can_flag_get(hcan->can_x, CAN_TM1TCF_FLAG) == SET)
+    if (can_flag_get(hcan->can_x, CAN_TM1TCF_FLAG) == SET)
     {
         if (hcan->can_x->tsts_bit.tm1tsf == 1)
         {
@@ -946,7 +1035,7 @@ void CAN2_TX_IRQHandler(void)
         /* write 0 to clear transmission status flag rqcpx */
         can_flag_clear(hcan->can_x, CAN_TM1TCF_FLAG);
     }
-    else if (can_flag_get(hcan->can_x, CAN_TM2TCF_FLAG) == SET)
+    if (can_flag_get(hcan->can_x, CAN_TM2TCF_FLAG) == SET)
     {
         if (hcan->can_x->tsts_bit.tm2tsf == 1)
         {
@@ -1005,12 +1094,6 @@ void CAN2_SE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         can_instance2.device.status.ackerrcnt++;
-        if (!(can_instance2.config.can_x->tsts_bit.tm0tsf == 1))
-            rt_hw_can_isr(&can_instance2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!(can_instance2.config.can_x->tsts_bit.tm1tsf == 1))
-            rt_hw_can_isr(&can_instance2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!(can_instance2.config.can_x->tsts_bit.tm2tsf == 1))
-            rt_hw_can_isr(&can_instance2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -1034,6 +1117,7 @@ void CAN2_SE_IRQHandler(void)
 int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
+    config.sndboxnumber = 3;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR

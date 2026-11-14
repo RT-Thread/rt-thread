@@ -425,6 +425,30 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
             return apm32_can_config(&drv_can->device, &drv_can->device.config);
         }
         break;
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            /* Do not claim STOP while any hardware TX request is active. */
+            if ((drv_can->CANx->TXSTS & 0x1C000000U) != 0x1C000000U)
+            {
+                return -RT_EBUSY;
+            }
+            if (CAN_OperatingMode(drv_can->CANx, CAN_OPERATING_MODE_INIT) == 0U)
+            {
+                return -RT_ERROR;
+            }
+            /* Discard old terminal flags before a later START. */
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC0);
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC1);
+            CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC2);
+        }
+        else if (CAN_OperatingMode(drv_can->CANx, CAN_OPERATING_MODE_NORMAL) == 0U)
+        {
+            return -RT_ERROR;
+        }
+        break;
+    case RT_CAN_CMD_ABORT_TX:
+        return -RT_ENOSYS;
     case RT_CAN_CMD_GET_STATUS:
         {
             rt_uint32_t errtype;
@@ -508,37 +532,76 @@ static int apm32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint
     drv_can = (struct apm32_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
 
-    /* Select one empty transmit mailbox */
+    /* Require an empty mailbox with no unreported TX terminal. */
     switch (box_num)
     {
         case CAN_TX_MAILBIX_0:
-            if ((drv_can->CANx->TXSTS & 0x04000000) != 0x04000000)
+            if ((drv_can->CANx->TXSTS & 0x04000000) != 0x04000000 ||
+                CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC0))
             {
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case CAN_TX_MAILBIX_1:
-            if ((drv_can->CANx->TXSTS & 0x08000000) != 0x08000000)
+            if ((drv_can->CANx->TXSTS & 0x08000000) != 0x08000000 ||
+                CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC1))
             {
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case CAN_TX_MAILBIX_2:
-            if ((drv_can->CANx->TXSTS & 0x10000000) != 0x10000000)
+            if ((drv_can->CANx->TXSTS & 0x10000000) != 0x10000000 ||
+                CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC2))
             {
-                /* Return function status */
-                return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         default:
-            RT_ASSERT(0);
-            break;
+            return -RT_EINVAL;
     }
 
     /* Start send msg */
     return can_send_rtmsg(drv_can->CANx, ((struct rt_can_msg *)buf), box_num);
+}
+
+/**
+ * @brief Submit one frame immediately using an available hardware TX mailbox.
+ *
+ * Generic holds its TX lock while this callback selects and submits to a
+ * hardware mailbox. A blocking sender may still own a completed mailbox.
+ *
+ * @param[in] can Pointer to the CAN device.
+ * @param[in] buf Pointer to the CAN frame.
+ * @param[out] mailbox Hardware mailbox index selected on successful submission.
+ * @return RT_EOK on submission, -RT_EBUSY when unavailable, or another error.
+ */
+static rt_ssize_t apm32_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Candidate hardware mailbox number and its submission result. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(mailbox != RT_NULL);
+
+    /* sndchange also protects blocking owners waiting to consume their terminal. */
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num <= CAN_TX_MAILBIX_2; box_num++)
+    {
+        if ((can->status.sndchange & (1UL << box_num)) != 0U)
+        {
+            continue;
+        }
+        result = apm32_can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
 }
 
 static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -613,6 +676,7 @@ static const struct rt_can_ops _can_ops =
     apm32_can_control,
     apm32_can_sendmsg,
     apm32_can_recvmsg,
+    apm32_can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -685,20 +749,9 @@ static void _can_sce_isr(struct rt_can_device *can)
         case RT_CAN_BUS_FORMAT_ERR:
             can->status.formaterrcnt++;
             break;
+        /* An ACK error can be transient while hardware auto-retransmits. */
         case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
             can->status.ackerrcnt++;
-            if (!READ_BIT(drv_can->CANx->TXSTS, 0x00000002))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-            }
-            else if (!READ_BIT(drv_can->CANx->TXSTS, 0x00000200))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-            }
-            else if (!READ_BIT(drv_can->CANx->TXSTS, 0x00020000))
-            {
-                rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-            }
             break;
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
         case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -725,19 +778,41 @@ static void _can_tx_isr(struct rt_can_device *can)
     drv_can = (struct apm32_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
 
+    /* Publish each terminal before clearing REQC so it cannot retire a new owner. */
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC0))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00000002U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC0);
     }
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC1))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00000200U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC1);
     }
     if (CAN_ReadStatusFlag(drv_can->CANx, CAN_FLAG_REQC2))
     {
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        if ((drv_can->CANx->TXSTS & 0x00020000U) != 0U)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
+        }
         CAN_ClearStatusFlag(drv_can->CANx, CAN_FLAG_REQC2);
     }
 }
@@ -829,6 +904,8 @@ void CAN2_SCE_IRQHandler(void)
 int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
+    /* APM32 bxCAN exposes three dedicated transmit mailboxes. */
+    config.sndboxnumber = 3;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR

@@ -49,7 +49,6 @@
  * Configuration Constants
  * ============================================================================ */
 
-#define CAN_SEND_WAIT_MS_MAX   (1000U) /* CAN maximum wait time for transmission */
 #define CAN_SENDBOX_NUM        (1U)    /* CAN Hardware Transmission buffer number */
 #define CAN_STD_FILTER_NUM_MAX (128U)  /* std Filter number */
 #define CAN_EXT_FILTER_NUM_MAX (64U)   /* ext Filter number */
@@ -158,7 +157,7 @@ typedef struct _hpm_can_struct {
     mcan_filter_elem_t std_can_filters[CAN_STD_FILTER_NUM_MAX]; /**< Standard ID filter array */
     rt_uint32_t ext_filter_num;           /**< Number of configured extended ID filters */
     mcan_filter_elem_t ext_can_filters[CAN_EXT_FILTER_NUM_MAX]; /**< Extended ID filter array */
-    rt_uint32_t can_tx_fifo_index;       /**< CAN TX FIFO index */
+    rt_uint32_t can_tx_fifo_index;       /**< TX FIFO index + 1 while pending; zero when idle. */
     rt_uint8_t can_stat;                /**< CAN status */
 } hpm_can_t;
 
@@ -234,9 +233,10 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg);
  * @param[in] can Pointer to RT-Thread CAN device structure
  * @param[in] buf Pointer to CAN message buffer
  * @param[in] boxno Mailbox number (not used in this implementation)
- * @return RT_EOK on success, -RT_ETIMEOUT on timeout, -RT_EFULL if buffer full
+ * @return RT_EOK on submission, -RT_EBUSY while busy, or another error code
  */
 static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
+static rt_ssize_t hpm_mcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
 
 /**
  * @brief Receive CAN message
@@ -485,6 +485,7 @@ static const struct rt_can_ops hpm_can_ops = {
     .control = hpm_mcan_control,      /**< Control MCAN device operations */
     .sendmsg = hpm_mcan_sendmsg,      /**< Send CAN message */
     .recvmsg = hpm_mcan_recvmsg,      /**< Receive CAN message */
+    .sendmsg_nonblocking = hpm_mcan_sendmsg_nonblocking,
 };
 
 /* ============================================================================
@@ -572,6 +573,9 @@ static void hpm_mcan_isr(int vector, hpm_can_t *hpm_can)
 
     /* Clear all processed interrupt flags */
     mcan_clear_interrupt_flags(hpm_can->can_base, flags);
+    if ((flags & MCAN_EVENT_TRANSMIT) != 0U) {
+        hpm_can->can_tx_fifo_index = 0U;
+    }
 }
 
 /* ============================================================================
@@ -942,6 +946,8 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
             /* Stop CAN (enter Init Mode) */
             mcan_enter_init_mode(drv_can->can_base);
             drv_can->can_stat = CAN_STOPPED;
+            /* A controller stop invalidates any pending TX FIFO element. */
+            drv_can->can_tx_fifo_index = 0U;
         } else {
             /* 1. Clear all TX buffers */
             for (uint32_t i = 0; i < MCAN_TXBUF_SIZE_CAN_DEFAULT; i++) {
@@ -976,7 +982,7 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
  * @param[in] can Pointer to RT-Thread CAN device structure
  * @param[in] buf Pointer to CAN message buffer
  * @param[in] boxno Mailbox number (not used in this implementation)
- * @return RT_EOK on success, -RT_ETIMEOUT on timeout, -RT_EFULL if buffer full
+ * @return RT_EOK on submission, -RT_EBUSY while busy, or another error code
  */
 static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
@@ -988,6 +994,9 @@ static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, r
     struct rt_can_msg *can_msg = (struct rt_can_msg *)buf;
     if ((drv_can->can_stat == CAN_UNITED) || (drv_can->can_stat == CAN_STOPPED)) {
         return -RT_ERROR;
+    }
+    if (drv_can->can_tx_fifo_index != 0U || mcan_is_txfifo_full(drv_can->can_base)) {
+        return -RT_EBUSY;
     }
 
     /* Initialize transmission frame structure */
@@ -1029,23 +1038,39 @@ static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, r
     }
     tx_frame.dlc = can_msg->len;
 
-    /* Wait for transmission buffer to become available */
-    uint32_t delay_cnt = 0;
-    while (mcan_is_txfifo_full(drv_can->can_base)) {
-        rt_thread_mdelay(1);
-        delay_cnt++;
-        if (delay_cnt >= CAN_SEND_WAIT_MS_MAX) {
-            return -RT_ETIMEOUT;
-        }
-    }
-
     /* Transmit through TX FIFO to avoid overwriting a still-pending dedicated buffer. */
-    hpm_stat_t status = mcan_transmit_via_txfifo_nonblocking(drv_can->can_base, &tx_frame, &drv_can->can_tx_fifo_index);
+    /* Physical FIFO index returned by the SDK. */
+    uint32_t fifo_index;
+    hpm_stat_t status = mcan_transmit_via_txfifo_nonblocking(drv_can->can_base, &tx_frame, &fifo_index);
     if (status != status_success) {
-        return -RT_EFULL;
+        return (status == status_mcan_txfifo_full) ? -RT_EBUSY : -RT_EFULL;
     }
+    drv_can->can_tx_fifo_index = fifo_index + 1U;
 
     return RT_EOK;
+}
+
+/**
+ * @brief Submit once using logical TX slot 0 without Generic software queuing.
+ *
+ * @param[in] can CAN device.
+ * @param[in] buf Frame to submit.
+ * @param[out] mailbox Logical TX slot, set to 0 on successful submission.
+ * @return RT_EOK on acceptance, -RT_EBUSY while busy, or a submission error.
+ */
+static rt_ssize_t hpm_mcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Immediate hardware submission result. */
+    rt_ssize_t result;
+
+    if ((can->status.sndchange & 1UL) != 0U) {
+        return -RT_EBUSY;
+    }
+    result = hpm_mcan_sendmsg(can, buf, 0U);
+    if (result == RT_EOK) {
+        *mailbox = 0U;
+    }
+    return result;
 }
 
 /**

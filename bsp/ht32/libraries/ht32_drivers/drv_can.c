@@ -19,6 +19,8 @@
 
 #define CAN_UMASK_MODE      0
 #define CAN_MASK_MODE       1
+/** @brief Final hardware Message Object reserved for one Generic TX mailbox. */
+#define HT32_CAN_TX_MSG_NUM MSG_OBJ_TOTAL_NUM
 
 struct ht32_can_msg_type
 {
@@ -73,13 +75,18 @@ static struct ht32_can ht32_can_config =
     .filter_cfg     = {0},
 };
 /**
-  * @brief Default Filter Table Configuration
-  * @param can_instance:CAN object
-  * @retval
+  * @brief Configure a default RX filter without occupying the dedicated TX object.
+  * @param can_instance CAN device context and filter allocation.
+  * @return RT_EOK when configured, or -RT_EINVAL if the RX filter overlaps TX.
   */
-static rt_uint32_t cfg_can_default_filter(struct ht32_can *can_instance)
+static rt_err_t cfg_can_default_filter(struct ht32_can *can_instance)
 {
     uint8_t filter_num = BSP_USING_CAN_MSG_NUM;
+    /* CAN_SetRxMsg(..., 1) occupies two objects; reserve the last one for TX. */
+    if (filter_num >= HT32_CAN_TX_MSG_NUM - 2U)
+    {
+        return -RT_EINVAL;
+    }
     can_instance->filter_cfg.filter_flag |= 1 << filter_num;
     can_instance->filter_cfg.filter_mag[filter_num].MsgNum = filter_num + 1;
     can_instance->filter_cfg.filter_mag[filter_num].IdType = (CAN_IdType_Enum)BSP_USING_CAN_ID_MODE;
@@ -150,9 +157,10 @@ static rt_uint32_t config_can_struct(uint32_t can_ck,
     return 1;
 }
 /**
-  * @brief CAN Configuration Functions
-  * @param
-  * @retval
+  * @brief Configure the CAN controller and its default RX filter.
+  * @param can Registered CAN device.
+  * @param cfg Requested CAN settings.
+  * @return RT_EOK on success, or a negative error on invalid settings or RX allocation.
   */
 static rt_err_t ht32_can_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
@@ -212,14 +220,19 @@ static rt_err_t ht32_can_configure(struct rt_can_device *can, struct can_configu
     CAN_Init(can_instance->can_x, &CAN_InitStruct);
 
     /* Configuring the Default Filter for CAN */
-    cfg_can_default_filter(can_instance);
+    if (cfg_can_default_filter(can_instance) != RT_EOK)
+    {
+        return -RT_EINVAL;
+    }
 
     return RT_EOK;
 }
 /**
-  * @brief CAN Control Functions
-  * @param
-  * @retval
+  * @brief Control CAN interrupts, filters, modes and status.
+  * @param can Registered CAN device.
+  * @param cmd CAN device control command.
+  * @param arg Command-specific arguments.
+  * @return RT_EOK on success, or a negative error for unsupported or invalid settings.
   */
 rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
 {
@@ -280,6 +293,7 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         else if (argval == RT_DEVICE_FLAG_INT_TX)   /* interrupt transmission mode */
         {
             LOG_W("Configuring Transmit Interrupts!\r\n");
+            NVIC_EnableIRQ(CAN0_IRQn);
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)   /* false interruption */
         {
@@ -295,14 +309,17 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
         if (RT_NULL == arg)
         {
             /* default filter config */
-            cfg_can_default_filter(can_instance);
+            if (cfg_can_default_filter(can_instance) != RT_EOK)
+            {
+                return -RT_EINVAL;
+            }
         }
         else
         {
             filter_cfg = (struct rt_can_filter_config *)arg;
-            if (filter_cfg->count > MSG_OBJ_TOTAL_NUM)
+            if (filter_cfg->count > HT32_CAN_TX_MSG_NUM - 2U)
             {
-                LOG_W("Filter list length exceeds the limit(max 32)!");
+                LOG_W("Filter list exceeds the available RX message objects!");
                 return -RT_ERROR;
             }
             for (i = 0; i < filter_cfg->count; i++)
@@ -314,9 +331,9 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
                 }
                 else
                 {
-                    if (filter_cfg->items[i].hdr_bank > MSG_OBJ_TOTAL_NUM)
+                    if (filter_cfg->items[i].hdr_bank >= HT32_CAN_TX_MSG_NUM - 2U)
                     {
-                        LOG_W("Filter List Number Out of Limits(1-32)!");
+                        LOG_W("RX filter overlaps the reserved TX message object!");
                         return -RT_ERROR;
                     }
                     else
@@ -440,19 +457,49 @@ rt_err_t ht32_can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 /**
-  * @brief CAN sends data
-  * @param
-  * @retval
+  * @brief Immediately submit one CAN frame through hardware Message Object 32.
+  * @param can Registered CAN device.
+  * @param buf Frame to submit.
+  * @param boxno Generic TX mailbox index; only mailbox zero is supported.
+  * @return RT_EOK when hardware accepts the request, -RT_EBUSY when occupied,
+  *         -RT_EINVAL for another mailbox, or -RT_ERROR on invalid frame/state.
   */
 rt_ssize_t ht32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
     struct ht32_can *can_instance = RT_NULL;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     struct ht32_can_msg_type tx_msg = {0};
+    /* Either hardware IF can submit the dedicated Message Object without waiting. */
+    HT_CANIF_TypeDef *tx_if;
 
     RT_ASSERT(can != RT_NULL);
     can_instance = (struct ht32_can *)can->parent.user_data;
     RT_ASSERT(can_instance != RT_NULL);
+    if (boxno != 0U)
+    {
+        return -RT_EINVAL;
+    }
+    if (can_instance->can_x->SR & CAN_FLAG_BOFF)
+    {
+        return -RT_ERROR;
+    }
+    /* Message Object 32 is TRR1[15]; never overwrite an active hardware TX. */
+    if (can_instance->can_x->TRR1 & (1UL << (HT32_CAN_TX_MSG_NUM - 17U)))
+    {
+        return -RT_EBUSY;
+    }
+    if (!(can_instance->can_x->IF0.CREQ & CAN_FLAG_IF_BUSY))
+    {
+        tx_if = &can_instance->can_x->IF0;
+    }
+    else if (!(can_instance->can_x->IF1.CREQ & CAN_FLAG_IF_BUSY))
+    {
+        tx_if = &can_instance->can_x->IF1;
+    }
+    else
+    {
+        return -RT_EBUSY;
+    }
 
     /* Standard and Extended Frames */
     if (CAN_STD_ID == pmsg->ide)
@@ -498,10 +545,32 @@ rt_ssize_t ht32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint3
     tx_msg.data[6] = pmsg->data[6];
     tx_msg.data[7] = pmsg->data[7];
 
-    /* Waiting tx Msg idle */
-    while (CAN_TransmitStatus(can_instance->can_x, &tx_msg.cfg_msg) == 0);
-    /* Loopback data */
-    CAN_Transmit(can_instance->can_x, &tx_msg.cfg_msg, tx_msg.data, tx_msg.data_len);
+    /* Request TX in the same IF transfer as the frame; never poll the IF BUSY bit. */
+    tx_if->CMASK = CAN_IF_CMASK_WRRD | CAN_IF_CMASK_ARB | CAN_IF_CMASK_CONTROL |
+                   CAN_IF_CMASK_TXRQSTNEWDAT | CAN_IF_CMASK_DATAA | CAN_IF_CMASK_DATAB;
+    if (tx_msg.cfg_msg.IdType == CAN_STD_ID)
+    {
+        tx_if->ARB0 = 0;
+        tx_if->ARB1 = ((tx_msg.cfg_msg.Id & CAN_STD_FRAME_Msk) << 2) |
+                      CAN_IF_ARB1_DIR | CAN_IF_ARB1_MSGVAL;
+    }
+    else
+    {
+        tx_if->ARB0 = tx_msg.cfg_msg.Id & CAN_EXT_FRAME_LSB_Msk;
+        tx_if->ARB1 = ((tx_msg.cfg_msg.Id >> 16) & CAN_EXT_FRAME_MSB_Msk) |
+                      CAN_IF_ARB1_DIR | CAN_IF_ARB1_XTD | CAN_IF_ARB1_MSGVAL;
+    }
+    if (tx_msg.cfg_msg.FrameType == CAN_REMOTE_FRAME)
+    {
+        tx_if->ARB1 &= ~CAN_IF_ARB1_DIR;
+    }
+    tx_if->DA0R = ((uint16_t)tx_msg.data[1] << 8) | tx_msg.data[0];
+    tx_if->DA1R = ((uint16_t)tx_msg.data[3] << 8) | tx_msg.data[2];
+    tx_if->DB0R = ((uint16_t)tx_msg.data[5] << 8) | tx_msg.data[4];
+    tx_if->DB1R = ((uint16_t)tx_msg.data[7] << 8) | tx_msg.data[6];
+    tx_if->MCR = CAN_IF_MCR_NEWDAT | CAN_IF_MCR_TXRQST | CAN_IF_MCR_TXIE |
+                 (tx_msg.data_len & CAN_IF_MCR_DLC_Msk);
+    tx_if->CREQ = HT32_CAN_TX_MSG_NUM;
 
     return RT_EOK;
 }
@@ -590,6 +659,10 @@ static const struct rt_can_ops ht32_can_ops =
     .recvmsg            = ht32_can_recvmsg,         /* CAN Receive Data */
 };
 
+/**
+ * @brief Register the HT32 controller with one framework-visible TX mailbox.
+ * @return RT_EOK following the device registration attempt.
+ */
 int rt_hw_can_init(void)
 {
 
@@ -597,6 +670,7 @@ int rt_hw_can_init(void)
     config.mode = BSP_USING_CAN_MODE;
     config.baud_rate = BSP_USING_CAN_BAUD;
     config.privmode = RT_CAN_MODE_NOPRIV;
+    config.sndboxnumber = 1;
     config.ticks = 50;
 
 #ifdef RT_CAN_USING_HDR
@@ -612,26 +686,40 @@ int rt_hw_can_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_can_init);
 
+/**
+ * @brief Report the dedicated TX object terminal and dispatch RX/error events.
+ *
+ * Hardware Message Object 32 is the only Generic TX mailbox. A controller-wide
+ * TXOK alone can also represent remote-frame auto-response, so the object
+ * interrupt and cleared transmit-request state must both be checked.
+ */
 void CAN0_IRQHandler(void)
 {
     CAN_LastErrorCode_TypeDef lec;
+    /* Snapshot Message Object 32's TX terminal before clearing message interrupts. */
+    rt_bool_t tx_done;
     rt_interrupt_enter();
+    tx_done = (ht32_can_config.can_x->IPR1 & (1UL << (HT32_CAN_TX_MSG_NUM - 17U))) != 0U &&
+              (ht32_can_config.can_x->TRR1 & (1UL << (HT32_CAN_TX_MSG_NUM - 17U))) == 0U &&
+              CAN_GetFlagStatus(ht32_can_config.can_x, CAN_FLAG_TXOK);
+    CAN_ClearAllMsgPendingFlag(ht32_can_config.can_x);
     /* Recover from Bus off state. */
     if (CAN_GetFlagStatus(ht32_can_config.can_x, CAN_FLAG_BOFF))
     {
         CAN_BusOffRecovery(ht32_can_config.can_x);
     }
-    /* Transmit message finished */
+    /* TXOK also covers remote-frame responses; only the dedicated TX object completes Generic TX. */
     if (CAN_GetFlagStatus(ht32_can_config.can_x, CAN_FLAG_TXOK))
     {
-        rt_hw_can_isr(&ht32_can_config.device, RT_CAN_EVENT_TX_DONE);
         CAN_ClearFlag(ht32_can_config.can_x, CAN_FLAG_TXOK);
+    }
+    if (tx_done)
+    {
+        rt_hw_can_isr(&ht32_can_config.device, RT_CAN_EVENT_TX_DONE);
     }
     /* Message received. */
     if (CAN_GetFlagStatus(ht32_can_config.can_x, CAN_FLAG_RXOK))
     {
-        /* Clear all message objects' interrupt pending flag */
-        CAN_ClearAllMsgPendingFlag(ht32_can_config.can_x);
         rt_hw_can_isr(&ht32_can_config.device, RT_CAN_EVENT_RX_IND);
         CAN_ClearFlag(ht32_can_config.can_x, CAN_FLAG_RXOK);
     }

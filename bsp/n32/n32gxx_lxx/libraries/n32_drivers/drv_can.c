@@ -719,33 +719,74 @@ static int sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_n
     switch (box_num)
     {
         case 0:
-            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM0) != CAN_TSTS_TMEM0)
+            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM0) != CAN_TSTS_TMEM0 ||
+                CAN_GetFlagSTS(drv_can->CANx, CAN_FLAG_RQCPM0))
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case 1:
-            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM1) != CAN_TSTS_TMEM1)
+            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM1) != CAN_TSTS_TMEM1 ||
+                CAN_GetFlagSTS(drv_can->CANx, CAN_FLAG_RQCPM1))
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         case 2:
-            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM2) != CAN_TSTS_TMEM2)
+            if ((drv_can->CANx->TSTS & CAN_TSTS_TMEM2) != CAN_TSTS_TMEM2 ||
+                CAN_GetFlagSTS(drv_can->CANx, CAN_FLAG_RQCPM2))
             {
-                    /* Return function status */
-                    return -RT_ERROR;
+                return -RT_EBUSY;
             }
             break;
         default:
-            RT_ASSERT(0);
-            break;
+            return -RT_EINVAL;
     }
 
     // Start send msg
     return can_sendmsg_rtmsg(drv_can->CANx, ((struct rt_can_msg *)buf), box_num);
+}
+
+/**
+ * @brief Submit a CAN frame to a free hardware TX mailbox without waiting.
+ *
+ * @param[in] can CAN device used for transmission.
+ * @param[in] buf CAN frame to submit.
+ * @param[out] mailbox Selected hardware mailbox when submission succeeds.
+ * @return RT_EOK on acceptance, -RT_EBUSY when all usable mailboxes are busy,
+ *         or another negative error code on failure.
+ */
+static rt_ssize_t sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Hardware mailbox candidate and submission status. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
+
+    for (box_num = 0; box_num < can->config.sndboxnumber && box_num < 3U; box_num++)
+    {
+        /* Do not reuse a mailbox whose blocking owner has not retired. */
+        if (can->status.sndchange & (1UL << box_num))
+        {
+            continue;
+        }
+
+        result = sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
 }
 
 static int can_recvmsg_rtmsg(CAN_Module *CANx, struct rt_can_msg *pmsg, uint32_t FIFONum)
@@ -878,6 +919,7 @@ static const struct rt_can_ops canops =
     control,
     sendmsg,
     recvmsg,
+    sendmsg_nonblocking,
 };
 
 static void can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -936,22 +978,28 @@ static void can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
 #ifdef BSP_USING_CAN1
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
+    /* Hardware completion result for the mailbox currently being retired. */
+    rt_uint32_t tx_event;
+
     rt_interrupt_enter();
 
     if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM0))
     {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        tx_event = (drv_can1.CANx->TSTS & CAN_TSTS_TXOKM0) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM0);
+        rt_hw_can_isr(&drv_can1.device, tx_event | (0x00 << 8));
     }
     if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM1))
     {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        tx_event = (drv_can1.CANx->TSTS & CAN_TSTS_TXOKM1) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM1);
+        rt_hw_can_isr(&drv_can1.device, tx_event | (0x01 << 8));
     }
     if (CAN_GetFlagSTS(drv_can1.CANx, CAN_FLAG_RQCPM2))
     {
-        rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        tx_event = (drv_can1.CANx->TSTS & CAN_TSTS_TXOKM2) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can1.CANx, CAN_FLAG_RQCPM2);
+        rt_hw_can_isr(&drv_can1.device, tx_event | (0x02 << 8));
     }
     rt_interrupt_leave();
 }
@@ -998,18 +1046,6 @@ void CAN1_SCE_IRQHandler(void)
 
         case RT_CAN_BUS_ACK_ERR:
             drv_can1.device.status.ackerrcnt++;
-            if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM0))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-            }
-            else if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM1))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-            }
-            else if (!READ_BIT(drv_can1.CANx->TSTS, CAN_TSTS_TXOKM2))
-            {
-                rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-            }
             break;
 
         case RT_CAN_BUS_IMPLICIT_BIT_ERR:
@@ -1036,21 +1072,27 @@ void CAN1_SCE_IRQHandler(void)
 #ifdef BSP_USING_CAN2
 void CAN2_TX_IRQHandler(void)
 {
+    /* Hardware completion result for the mailbox currently being retired. */
+    rt_uint32_t tx_event;
+
     rt_interrupt_enter();
     if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM0))
     {
+        tx_event = (drv_can2.CANx->TSTS & CAN_TSTS_TXOKM0) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM0);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        rt_hw_can_isr(&drv_can2.device, tx_event | (0x00 << 8));
     }
     if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM1))
     {
+        tx_event = (drv_can2.CANx->TSTS & CAN_TSTS_TXOKM1) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM1);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        rt_hw_can_isr(&drv_can2.device, tx_event | (0x01 << 8));
     }
     if (CAN_GetFlagSTS(drv_can2.CANx, CAN_FLAG_RQCPM2))
     {
+        tx_event = (drv_can2.CANx->TSTS & CAN_TSTS_TXOKM2) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can2.CANx, CAN_FLAG_RQCPM2);
-        rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        rt_hw_can_isr(&drv_can2.device, tx_event | (0x02 << 8));
     }
     rt_interrupt_leave();
 }
@@ -1097,18 +1139,6 @@ void CAN2_SCE_IRQHandler(void)
 
             case RT_CAN_BUS_ACK_ERR:
                 drv_can2.device.status.ackerrcnt++;
-                if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM0))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                else if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM1))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                else if (!READ_BIT(drv_can2.CANx->TSTS, CAN_TSTS_TXOKM2))
-                {
-                    rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
                 break;
 
             case RT_CAN_BUS_IMPLICIT_BIT_ERR:
@@ -1136,21 +1166,27 @@ void CAN2_SCE_IRQHandler(void)
 #ifdef BSP_USING_CAN
 void CAN_TX_IRQHandler(void)
 {
+    /* Hardware completion result for the mailbox currently being retired. */
+    rt_uint32_t tx_event;
+
     rt_interrupt_enter();
     if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM0))
     {
+        tx_event = (drv_can.CANx->TSTS & CAN_TSTS_TXOKM0) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM0);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
+        rt_hw_can_isr(&drv_can.device, tx_event | (0x00 << 8));
     }
     if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM1))
     {
+        tx_event = (drv_can.CANx->TSTS & CAN_TSTS_TXOKM1) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM1);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
+        rt_hw_can_isr(&drv_can.device, tx_event | (0x01 << 8));
     }
     if (CAN_GetFlagSTS(drv_can.CANx, CAN_FLAG_RQCPM2))
     {
+        tx_event = (drv_can.CANx->TSTS & CAN_TSTS_TXOKM2) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
         CAN_ClearFlag(drv_can.CANx, CAN_FLAG_RQCPM2);
-        rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
+        rt_hw_can_isr(&drv_can.device, tx_event | (0x02 << 8));
     }
     rt_interrupt_leave();
 }
@@ -1197,18 +1233,6 @@ void CAN_SCE_IRQHandler(void)
 
             case RT_CAN_BUS_ACK_ERR:
                 drv_can.device.status.ackerrcnt++;
-                if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM0))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                else if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM1))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                else if (!READ_BIT(drv_can.CANx->TSTS, CAN_TSTS_TXOKM2))
-                {
-                    rt_hw_can_isr(&drv_can.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
                 break;
 
             case RT_CAN_BUS_IMPLICIT_BIT_ERR:

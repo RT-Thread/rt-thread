@@ -61,6 +61,7 @@ struct nu_can
     IRQn_Type irqn;
     uint32_t rstidx;
     uint32_t int_flag;
+    rt_uint32_t tx_pending; /**< Accepted physical TX message objects awaiting a terminal IRQ. */
 };
 typedef struct nu_can *nu_can_t;
 
@@ -68,6 +69,7 @@ typedef struct nu_can *nu_can_t;
 static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure *cfg);
 static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg);
 static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
+static rt_ssize_t nu_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
 static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 static void nu_can_isr(nu_can_t can);
 
@@ -107,6 +109,7 @@ static const struct rt_can_ops nu_can_ops =
     .configure = nu_can_configure,
     .control = nu_can_control,
     .sendmsg = nu_can_sendmsg,
+    .sendmsg_nonblocking = nu_can_sendmsg_nonblocking,
     .recvmsg = nu_can_recvmsg,
 };
 
@@ -158,6 +161,10 @@ void CAN2_IRQHandler(void)
 
 /* Private Variables ------------------------------------------------------------*/
 
+/**
+ * @brief Dispatch status and hardware message-object terminal interrupts.
+ * @param psNuCAN Registered CAN instance that owns pending TX objects.
+ */
 static void nu_can_isr(nu_can_t psNuCAN)
 {
     /* Get base address of CAN register */
@@ -165,6 +172,9 @@ static void nu_can_isr(nu_can_t psNuCAN)
 
     /* Get interrupt event */
     uint32_t u32IIDRstatus = CAN_GET_INT_PENDING_STATUS(base) & CAN_IIDR_INTID_Msk;
+    /* BASIC uses IF0/IF1 and has a global TXOK indication, not a message-object index. */
+    rt_bool_t basic = ((base->CON & CAN_CON_TEST_Msk) != 0U) &&
+                      ((base->TEST & CAN_TEST_BASIC_Msk) != 0U);
 
     /* Check Status Interrupt Flag (Error status Int and Status change Int) */
     if (u32IIDRstatus == 0x00008000)
@@ -175,25 +185,21 @@ static void nu_can_isr(nu_can_t psNuCAN)
         if (base->STATUS & CAN_STATUS_TXOK_Msk)
         {
             base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
-#ifndef RT_CAN_USING_HDR
-            if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX)
+            if (basic && (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX) &&
+                (psNuCAN->tx_pending & 1U))
             {
-                /*Using as Lisen,Loopback,Loopback+Lisen mode*/
+                psNuCAN->tx_pending &= ~1U;
                 rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
             }
-#endif
         }
 
         if (base->STATUS & CAN_STATUS_RXOK_Msk)
         {
             base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
-#ifndef RT_CAN_USING_HDR
-            if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX)
+            if (basic && (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX))
             {
-                /*Using as Lisen,Loopback,Loopback+Lisen mode*/
                 rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND);
             }
-#endif
         }
 
         /**************************/
@@ -223,18 +229,27 @@ static void nu_can_isr(nu_can_t psNuCAN)
     /*IntId: 0x0001-0x0020, Number of Message Object which caused the interrupt.*/
     else if (u32IIDRstatus > 0 && u32IIDRstatus <= 32)
     {
-        if ((psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX) &&
-                (u32IIDRstatus <= RX_MSG_ID_INDEX))
+        /* IIDR object numbers are one-based; Generic mailbox indices are zero-based. */
+        rt_uint32_t boxno = u32IIDRstatus - 1U;
+        if (boxno < RX_MSG_ID_INDEX)
         {
-            /*Message RAM 0~RX_MSG_ID_INDEX for CAN Tx using*/
-            rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
+            /* Acknowledge this object before publishing its terminal to Generic. */
+            CAN_CLR_INT_PENDING_BIT(base, boxno);
+            if ((psNuCAN->int_flag & RT_DEVICE_FLAG_INT_TX) &&
+                (psNuCAN->tx_pending & (1UL << boxno)))
+            {
+                psNuCAN->tx_pending &= ~(1UL << boxno);
+                rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE | (boxno << 8));
+            }
         }
-        else if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX)
+        else
         {
-            /*Message RAM RX_MSG_ID_INDEX~31 for CAN Rx using*/
-            rt_hw_can_isr(&psNuCAN->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));
+            if (psNuCAN->int_flag & RT_DEVICE_FLAG_INT_RX)
+            {
+                rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND | (boxno << 8));
+            }
+            CAN_CLR_INT_PENDING_BIT(base, boxno);
         }
-        CAN_CLR_INT_PENDING_BIT(base, (u32IIDRstatus - 1));     /* Clear Interrupt Pending */
     }
 #endif
 }
@@ -278,6 +293,12 @@ static void nu_can_ie(nu_can_t psNuCAN)
     }
 }
 
+/**
+ * @brief Configure CAN hardware only after all accepted TX requests have retired.
+ * @param can RT-Thread CAN device.
+ * @param cfg Requested CAN bit timing and operating mode.
+ * @return RT_EOK, -RT_EBUSY for in-flight TX, or a hardware configuration error.
+ */
 static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
     nu_can_t psNuCAN  = (nu_can_t)can;
@@ -288,6 +309,12 @@ static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure
 
     /* Get base address of CAN register */
     CAN_T *base = psNuCAN->base;
+
+    /* Reinitialization must not erase a mailbox still owned by Generic. */
+    if (psNuCAN->tx_pending != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     /* Reset this module */
     SYS_ResetModule(psNuCAN->rstidx);
@@ -463,81 +490,195 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
+/**
+ * @brief Submit one classic CAN frame without waiting for a CAN IF transfer or a bus terminal.
+ * @param can RT-Thread device whose Generic TX ownership is held by the caller.
+ * @param buf CAN frame to submit.
+ * @param boxno Physical message object (normal mode); only zero in BASIC mode.
+ * @return RT_EOK if the hardware request is issued, -RT_EBUSY if unavailable,
+ *         or -RT_ERROR/-RT_EINVAL for invalid input.
+ */
 static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
-    STR_CANMSG_T tMsg;
-    struct rt_can_msg *pmsg;
+    /* Every IF data register is written even when the payload DLC is short. */
+    STR_CANMSG_T tMsg = {0};
+    const struct rt_can_msg *pmsg;
     nu_can_t psNuCAN = (nu_can_t)can;
+    /* One controller owns the hardware message objects and their IF shadow. */
+    CAN_T *base;
+    /* A successful request retains this message object until the corresponding IRQ. */
+    rt_uint32_t pending_bit;
+    /* BASIC mode uses a single IF0 slot, unlike the normal message object bank. */
+    rt_bool_t basic;
 
     RT_ASSERT(can);
     RT_ASSERT(buf);
 
-    pmsg = (struct rt_can_msg *) buf;
+    base = psNuCAN->base;
+    pmsg = (const struct rt_can_msg *)buf;
+
+    if (boxno >= can->config.sndboxnumber || boxno >= RX_MSG_ID_INDEX)
+    {
+        return -RT_EINVAL;
+    }
+
+    basic = ((base->CON & CAN_CON_TEST_Msk) != 0U) &&
+            ((base->TEST & CAN_TEST_BASIC_Msk) != 0U);
+    if (basic && boxno != 0U)
+    {
+        return -RT_EBUSY;
+    }
+    if (basic && (base->TEST & CAN_TEST_SILENT_Msk) != 0U &&
+        (base->TEST & CAN_TEST_LBACK_Msk) == 0U)
+    {
+        return -RT_EBUSY;
+    }
+
+    pending_bit = 1UL << boxno;
+    if ((psNuCAN->tx_pending & pending_bit) != 0U ||
+        (base->IF[0].CREQ & CAN_IF_CREQ_BUSY_Msk) != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     if (pmsg->ide == RT_CAN_STDID && IS_CAN_STDID(pmsg->id))
     {
-        /* Standard ID (11 bits)*/
         tMsg.IdType = CAN_STD_ID;
-        tMsg.Id  = pmsg->id ;
     }
     else if (pmsg->ide == RT_CAN_EXTID && IS_CAN_EXTID(pmsg->id))
     {
-        /* Extended ID (29 bits)*/
         tMsg.IdType = CAN_EXT_ID;
-        tMsg.Id = pmsg->id ;
     }
     else
     {
-        goto exit_nu_can_sendmsg;
+        return -RT_ERROR;
     }
+    tMsg.Id = pmsg->id;
 
     if (pmsg->rtr == RT_CAN_DTR)
     {
-        /* Data frame */
         tMsg.FrameType = CAN_DATA_FRAME;
     }
     else if (pmsg->rtr == RT_CAN_RTR)
     {
-        /* Remote frame */
         tMsg.FrameType = CAN_REMOTE_FRAME;
     }
     else
     {
-        goto exit_nu_can_sendmsg;
+        return -RT_ERROR;
     }
 
-    /* Check the parameters */
-    if (IS_CAN_DLC(pmsg->len))
+    if (!IS_CAN_DLC(pmsg->len))
     {
-        tMsg.DLC = pmsg->len;
+        return -RT_ERROR;
+    }
+    tMsg.DLC = pmsg->len;
+    if (tMsg.FrameType == CAN_DATA_FRAME && tMsg.DLC != 0U)
+    {
+        rt_memcpy(tMsg.Data, pmsg->data, tMsg.DLC);
+    }
+
+    /* Mirror the vendor frame encoding, but merge SetTxMsg and TriggerTxMsg
+       into one IF write request (CMASK.TxRqst/NewDat) without their busy loops. */
+    if (!basic)
+    {
+        base->IF[0].CMASK = CAN_IF_CMASK_WRRD_Msk | CAN_IF_CMASK_MASK_Msk |
+                            CAN_IF_CMASK_ARB_Msk | CAN_IF_CMASK_CONTROL_Msk |
+                            CAN_IF_CMASK_DATAA_Msk | CAN_IF_CMASK_DATAB_Msk |
+                            CAN_IF_CMASK_TXRQSTNEWDAT_Msk;
+    }
+
+    if (tMsg.IdType == CAN_STD_ID)
+    {
+        base->IF[0].ARB1 = 0U;
+        base->IF[0].ARB2 = ((tMsg.Id & 0x7FFU) << 2);
     }
     else
     {
-        goto exit_nu_can_sendmsg;
+        base->IF[0].ARB1 = tMsg.Id & 0xFFFFU;
+        base->IF[0].ARB2 = ((tMsg.Id & 0x1FFF0000U) >> 16) | CAN_IF_ARB2_XTD_Msk;
     }
-
-    if (pmsg->data && pmsg->len)
+    if (!basic)
     {
-        rt_memcpy(&tMsg.Data[0], pmsg->data, pmsg->len);
+        base->IF[0].ARB2 |= CAN_IF_ARB2_MSGVAL_Msk;
+    }
+    if (tMsg.FrameType == CAN_DATA_FRAME)
+    {
+        base->IF[0].ARB2 |= CAN_IF_ARB2_DIR_Msk;
     }
     else
     {
-        goto exit_nu_can_sendmsg;
+        base->IF[0].ARB2 &= ~CAN_IF_ARB2_DIR_Msk;
     }
 
-    /* Configure Msg RAM and send the Msg in the RAM. */
-    if (CAN_Transmit(psNuCAN->base, MSG(boxno), &tMsg) == FALSE)
+    if (basic)
     {
-        goto exit_nu_can_sendmsg;
+        base->IF[0].MCON = (base->IF[0].MCON & ~CAN_IF_MCON_DLC_Msk) | tMsg.DLC;
     }
+    else
+    {
+        base->IF[0].MCON = CAN_IF_MCON_NEWDAT_Msk | tMsg.DLC |
+                           CAN_IF_MCON_TXIE_Msk | CAN_IF_MCON_EOB_Msk;
+    }
+    base->IF[0].DAT_A1 = ((uint32_t)tMsg.Data[1] << 8) | tMsg.Data[0];
+    base->IF[0].DAT_A2 = ((uint32_t)tMsg.Data[3] << 8) | tMsg.Data[2];
+    base->IF[0].DAT_B1 = ((uint32_t)tMsg.Data[5] << 8) | tMsg.Data[4];
+    base->IF[0].DAT_B2 = ((uint32_t)tMsg.Data[7] << 8) | tMsg.Data[6];
 
+    base->STATUS &= ~CAN_STATUS_TXOK_Msk;
+    if (basic)
+    {
+        base->IF[0].CREQ |= CAN_IF_CREQ_BUSY_Msk;
+    }
+    else
+    {
+        base->IF[0].CREQ = MSG(boxno) + 1U;
+    }
+    psNuCAN->tx_pending |= pending_bit;
     return RT_EOK;
-
-exit_nu_can_sendmsg:
-
-    return -(RT_ERROR);
 }
 
+/**
+ * @brief Submit through an available physical message object without sleeping.
+ * @param can RT-Thread CAN device.
+ * @param buf CAN frame to submit.
+ * @param mailbox Receives the physical message object index only on success.
+ * @return RT_EOK on acceptance, -RT_EBUSY if none available, or an input error.
+ */
+static rt_ssize_t nu_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Generic reports the selected message object in TX_DONE/TX_FAIL events. */
+    rt_uint32_t boxno;
+    /* Preserve invalid input errors instead of reporting mailbox exhaustion. */
+    rt_ssize_t result;
+
+    RT_ASSERT(can);
+    RT_ASSERT(buf);
+    RT_ASSERT(mailbox);
+
+    for (boxno = 0; boxno < can->config.sndboxnumber; boxno++)
+    {
+        result = nu_can_sendmsg(can, buf, boxno);
+        if (result == RT_EOK)
+        {
+            *mailbox = boxno;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
+}
+
+/**
+ * @brief Read one classic CAN frame and map its hardware RX filter if present.
+ * @param can RT-Thread CAN device.
+ * @param buf Output CAN message.
+ * @param boxno Hardware RX message object or BASIC-mode zero.
+ * @return RT_EOK on valid RX data, or a negative hardware read error.
+ */
 static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
 {
     STR_CANMSG_T tMsg;
@@ -557,9 +698,17 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
     }
 
 #ifdef RT_CAN_USING_HDR
-    /* Hardware filter messages are valid */
-    pmsg->hdr_index = boxno - RX_MSG_ID_INDEX;
-    can->hdr[pmsg->hdr_index].connected = 1;
+    /* BASIC RX is not associated with a hardware message-object filter. */
+    if ((psNuCAN->base->CON & CAN_CON_TEST_Msk) != 0U &&
+        (psNuCAN->base->TEST & CAN_TEST_BASIC_Msk) != 0U)
+    {
+        pmsg->hdr_index = -1;
+    }
+    else
+    {
+        pmsg->hdr_index = boxno - RX_MSG_ID_INDEX;
+        can->hdr[pmsg->hdr_index].connected = 1;
+    }
 #endif
 
     pmsg->ide = (tMsg.IdType == CAN_STD_ID) ? RT_CAN_STDID : RT_CAN_EXTID;
@@ -578,7 +727,8 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 }
 
 /**
- * Hardware CAN Initialization
+ * @brief Register CAN controllers with physically valid Generic TX capacities.
+ * @return Result of CAN device registration.
  */
 static int rt_hw_can_init(void)
 {
@@ -588,6 +738,16 @@ static int rt_hw_can_init(void)
     for (i = (CAN_START + 1); i < CAN_CNT; i++)
     {
         nu_can_arr[i].dev.config = nu_can_default_config;
+#ifdef RT_CAN_USING_HDR
+        /* Object indices [0, RX_MSG_ID_INDEX) are reserved for TX. */
+        if (nu_can_arr[i].dev.config.sndboxnumber > RX_MSG_ID_INDEX)
+        {
+            nu_can_arr[i].dev.config.sndboxnumber = RX_MSG_ID_INDEX;
+        }
+#else
+        /* When hardware filtering is disabled the BSP uses BASIC mode. */
+        nu_can_arr[i].dev.config.sndboxnumber = 1U;
+#endif /* RT_CAN_USING_HDR */
 
 #ifdef RT_CAN_USING_HDR
         nu_can_arr[i].dev.config.maxhdr = RT_CANMSG_BOX_SZ;

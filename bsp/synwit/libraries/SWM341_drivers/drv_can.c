@@ -328,6 +328,11 @@ static int swm_can_sendmsg(struct rt_can_device *can_device, const void *buf, rt
     can_dev = (struct swm_can_device *)can_device->parent.user_data;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
 
+    if (!(can_dev->can_cfg->CANx->SR & CAN_SR_TXBR_Msk))
+    {
+        return -RT_EBUSY;
+    }
+
     if (RT_CAN_STDID == pmsg->ide)
     {
         can_dev->can_cfg->CANx->FRAME.DATA[0] = pmsg->id >> 3;
@@ -469,9 +474,10 @@ static void swm_can_isr(struct rt_can_device *can_device)
     {
         rt_hw_can_isr(can_device, RT_CAN_EVENT_RXOF_IND);
     }
-    else if (int_sr & CAN_IF_TXBR_Msk)
+    if (int_sr & CAN_IF_TXBR_Msk)
     {
-        rt_hw_can_isr(can_device, RT_CAN_EVENT_TX_DONE);
+        rt_hw_can_isr(can_device, (can_dev->can_cfg->CANx->SR & CAN_SR_TXOK_Msk) ?
+                              RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL);
     }
     else if (int_sr & CAN_IE_ERRWARN_Msk)
     {

@@ -444,6 +444,30 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             return _can_config(&can_instance->device, &can_instance->device.config);
         }
         break;
+    case RT_CAN_CMD_START:
+        if ((rt_ubase_t)arg == 0U)
+        {
+            /* Controller reset discards pending STB requests and suppresses old terminals. */
+            can_software_reset(can_instance->can_x, TRUE);
+            if (can_instance->can_x->ctrlstat_bit.reset != TRUE)
+            {
+                return -RT_ERROR;
+            }
+            can_flag_clear(can_instance->can_x, CAN_TSIF_FLAG);
+            can_flag_clear(can_instance->can_x, CAN_AIF_FLAG);
+        }
+        else if (can_instance->can_x->ctrlstat_bit.reset == TRUE)
+        {
+            return _can_config(can, &can->config);
+        }
+        break;
+    case RT_CAN_CMD_ABORT_TX:
+        if ((rt_ubase_t)arg != 0U)
+        {
+            return -RT_EINVAL;
+        }
+        can_transmit_abort(can_instance->can_x, CAN_ABORT_TRANSMIT_STB);
+        break;
     case RT_CAN_CMD_GET_STATUS:
         errtype = can_instance->can_x->err;
         can_instance->device.status.rcverrcnt = errtype >> 24;
@@ -454,6 +478,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
 #ifdef RT_CAN_USING_CANFD
     case RT_CAN_CMD_SET_CANFD:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
         if(can_instance->enable_canfd != argval)
         {
             can_instance->enable_canfd = (rt_uint32_t) argval;
@@ -491,7 +516,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 can_instance->device.config.canfd_timing = timing_configs->items[1];
             }
-            _can_config(&can_instance->device, &can_instance->device.config);
+            return _can_config(&can_instance->device, &can_instance->device.config);
         }
         break;
 #endif
@@ -502,9 +527,32 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     rt_uint8_t copy_length = 0;
-    can_txbuf_type tx_message;
+    can_txbuf_type tx_message = {0};
+    /* Distinguish a frame already on the bus from an empty software STB. */
+    can_transmit_status_type tx_status;
     struct at32_can *can_instance = rt_container_of(can, struct at32_can, device);
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+
+    /* STB has three FIFO stages but no separate Generic terminal per stage. */
+    if (box_num != 0U)
+    {
+        return -RT_EINVAL;
+    }
+    if (can_instance->can_x->ctrlstat_bit.reset != FALSE ||
+        can_instance->can_x->ctrlstat_bit.stby != FALSE)
+    {
+        return -RT_ERROR;
+    }
+    can_transmit_status_get(can_instance->can_x, &tx_status);
+    if (can_stb_status_get(can_instance->can_x) != CAN_STB_STATUS_EMPTY ||
+        tx_status.current_tstat == CAN_TSTAT_ONGOING ||
+        tx_status.current_tstat == CAN_TSTAT_LOST_ARBITRATION ||
+        tx_status.current_tstat == CAN_TSTAT_DISTURBED ||
+        can_flag_get(can_instance->can_x, CAN_TSIF_FLAG) != RESET ||
+        can_flag_get(can_instance->can_x, CAN_AIF_FLAG) != RESET)
+    {
+        return -RT_EBUSY;
+    }
 
     tx_message.id = pmsg->id;
     if (RT_CAN_STDID == pmsg->ide)
@@ -529,12 +577,18 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     {
         tx_message.fd_format = CAN_FORMAT_FD;
         tx_message.fd_rate_switch = (can_rate_switch_type)pmsg->brs;
-        RT_ASSERT(pmsg->len <= 15);
+        if (pmsg->len > 15U)
+        {
+            return -RT_EINVAL;
+        }
     }
     else
 #endif
     {
-        RT_ASSERT(pmsg->len <= 8);
+        if (pmsg->len > 8U)
+        {
+            return -RT_EINVAL;
+        }
     }
 
 #ifdef RT_CAN_USING_CANFD
@@ -546,9 +600,42 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     rt_memcpy(&tx_message.data[0], &pmsg->data[0], copy_length);
     /* set up the dlc */
     tx_message.data_length = (can_data_length_type)pmsg->len;
-    can_txbuf_write(can_instance->can_x, CAN_TXBUF_STB, &tx_message);
-    can_txbuf_transmit(can_instance->can_x, CAN_TRANSMIT_STB_ALL);
+
+    if (can_txbuf_write(can_instance->can_x, CAN_TXBUF_STB, &tx_message) != SUCCESS)
+    {
+        return -RT_EBUSY;
+    }
+    if (can_txbuf_transmit(can_instance->can_x, CAN_TRANSMIT_STB_ALL) != SUCCESS)
+    {
+        (void)can_stb_clear(can_instance->can_x, CAN_CLEAR_STB_ALL);
+        return -RT_ERROR;
+    }
     return RT_EOK;
+}
+
+/**
+ * @brief Submit one CAN frame immediately through the single Generic STB mailbox.
+ * @param[in] can CAN controller device.
+ * @param[in] buf Frame to submit without software queuing.
+ * @param[out] mailbox Receives logical mailbox 0 on successful submission.
+ * @return RT_EOK, -RT_EBUSY when occupied, or another negative error.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
+{
+    /* Result from the immediate hardware submission attempt. */
+    rt_ssize_t result;
+
+    RT_ASSERT(mailbox != RT_NULL);
+    if ((can->status.sndchange & 1UL) != 0U)
+    {
+        return -RT_EBUSY;
+    }
+    result = _can_sendmsg(can, buf, 0);
+    if (result == RT_EOK)
+    {
+        *mailbox = 0U;
+    }
+    return result;
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -594,6 +681,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can)
@@ -631,11 +719,24 @@ static void _can_tx_isr(struct rt_can_device *can)
 {
     struct at32_can *can_instance = rt_container_of(can, struct at32_can, device);
 
-    /* transmit buffer be completed */
-    if(can_interrupt_flag_get(can_instance->can_x, CAN_TSIF_FLAG) != RESET)
+    /* Both flags can coincide if an abort races with successful transmission. */
+    if (can_interrupt_flag_get(can_instance->can_x, CAN_TSIF_FLAG) != RESET ||
+        can_interrupt_flag_get(can_instance->can_x, CAN_AIF_FLAG) != RESET)
     {
+        /* Hardware status for the completed STB request. */
+        can_transmit_status_type tx_status;
+
+        can_transmit_status_get(can_instance->can_x, &tx_status);
+        if (tx_status.final_tstat == CAN_TSTAT_TRANSMITTED)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE);
+        }
+        else
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL);
+        }
         can_flag_clear(can_instance->can_x, CAN_TSIF_FLAG);
-        rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE);
+        can_flag_clear(can_instance->can_x, CAN_AIF_FLAG);
     }
 }
 
@@ -656,7 +757,7 @@ void _can_err_isr(struct rt_can_device *can)
         break;
     case RT_CAN_BUS_ACK_ERR:
         can_instance->device.status.ackerrcnt++;
-        rt_hw_can_isr(&can_instance->device, RT_CAN_EVENT_TX_FAIL);
+        break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
         can_instance->device.status.biterrcnt++;
@@ -776,6 +877,7 @@ int rt_hw_can_init(void)
     obj_num = sizeof(can_config) / sizeof(struct at32_can);
     struct can_configure config = CANDEFAULTCONFIG;
 
+    config.sndboxnumber = 1;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR

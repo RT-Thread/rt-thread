@@ -42,7 +42,6 @@
 #include <rthw.h>
 
 /* CAN Driver Configuration Constants */
-#define CAN_SEND_WAIT_MS_MAX (1000U)    /* Maximum wait time for transmission (ms) */
 #define CAN_SENDBOX_NUM (1U)            /* Number of hardware transmission buffers */
 #define CAN_FILTER_NUM_MAX (16U)        /* Maximum number of hardware filters */
 
@@ -202,9 +201,9 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg);
  * @param [in] can Pointer to RT-Thread CAN device structure
  * @param [in] buf Pointer to CAN message structure
  * @param [in] boxno Mailbox number (not used in this implementation)
- * @retval RT_EOK Message sent successfully
- * @retval -RT_ETIMEOUT Transmission timeout
- * @retval -RT_EFULL Transmission buffer full
+ * @retval RT_EOK Message accepted by the CAN controller
+ * @retval -RT_EBUSY Transmission buffer full
+ * @retval -RT_EFULL Other SDK submission failure
  */
 static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
 
@@ -694,20 +693,17 @@ static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32
     }
     tx_buf.dlc = can_msg->len;
 
-    uint32_t delay_cnt = 0;
-
    if (can_msg->priv != 0U)
     {
-        while (can_is_primary_transmit_buffer_full(drv_can->can_base))
+        if (can_is_primary_transmit_buffer_full(drv_can->can_base))
         {
-            rt_thread_mdelay(1);
-            delay_cnt++;
-            if (delay_cnt >= CAN_SEND_WAIT_MS_MAX)
-            {
-                return -RT_ETIMEOUT;
-            }
+            return -RT_EBUSY;
         }
         hpm_stat_t status = can_send_message_nonblocking(drv_can->can_base, &tx_buf);
+        if (status == status_can_tx_fifo_full)
+        {
+            return -RT_EBUSY;
+        }
         if (status != status_success)
         {
             return -RT_EFULL;
@@ -715,16 +711,15 @@ static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32
     }
     else
     {
-        while (can_is_secondary_transmit_buffer_full(drv_can->can_base))
+        if (can_is_secondary_transmit_buffer_full(drv_can->can_base))
         {
-            rt_thread_mdelay(1);
-            delay_cnt++;
-            if (delay_cnt >= CAN_SEND_WAIT_MS_MAX)
-            {
-                return -RT_ETIMEOUT;
-            }
+            return -RT_EBUSY;
         }
         hpm_stat_t status = can_send_message_nonblocking(drv_can->can_base, &tx_buf);
+        if (status == status_can_tx_fifo_full)
+        {
+            return -RT_EBUSY;
+        }
         if (status != status_success)
         {
             return -RT_EFULL;
