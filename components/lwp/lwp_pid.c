@@ -58,7 +58,10 @@
 #define PID_MAX 10000
 
 #define PID_CT_ASSERT(name, x) \
-    struct assert_##name {char ary[2 * (x) - 1];}
+    struct assert_##name       \
+    {                          \
+        char ary[2 * (x) - 1]; \
+    }
 
 PID_CT_ASSERT(pid_min_nr, RT_LWP_MAX_NR > 1);
 PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR < PID_MAX);
@@ -131,7 +134,9 @@ void lwp_pid_lock_release(void)
 {
     /* should never failed */
     if (lwp_mutex_release_safe(&pid_mtx) != RT_EOK)
+    {
         RT_ASSERT(0);
+    }
 }
 
 /**
@@ -200,8 +205,7 @@ pid_t lwp_pid_get_last(void)
 int lwp_pid_for_each(int (*cb)(pid_t pid, void *data), void *data)
 {
     int error;
-    struct pid_foreach_param buf =
-    {
+    struct pid_foreach_param buf = {
         .cb = cb,
         .data = data,
     };
@@ -303,7 +307,7 @@ static void lwp_pid_put_locked(pid_t pid)
         return;
     }
 
-    p  = lwp_avl_find(pid, lwp_pid_root);
+    p = lwp_avl_find(pid, lwp_pid_root);
     if (p)
     {
         p->data = RT_NULL;
@@ -314,21 +318,21 @@ static void lwp_pid_put_locked(pid_t pid)
 }
 
 #ifdef RT_USING_DFS_PROCFS
-    /**
+/**
      * @brief Free the proc dentry for the given LWP
      *
      * @param[in] lwp The LWP whose proc dentry is to be freed
      */
-    rt_inline void _free_proc_dentry(rt_lwp_t lwp)
-    {
-        char pid_str[64] = {0};
+rt_inline void _free_proc_dentry(rt_lwp_t lwp)
+{
+    char pid_str[64] = { 0 };
 
-        rt_snprintf(pid_str, 64, "%d", lwp->pid);
-        pid_str[63] = 0;
-        proc_remove_dentry(pid_str, 0);
-    }
+    rt_snprintf(pid_str, 64, "%d", lwp->pid);
+    pid_str[63] = 0;
+    proc_remove_dentry(pid_str, 0);
+}
 #else
-    #define _free_proc_dentry(lwp)
+#define _free_proc_dentry(lwp)
 #endif
 
 /**
@@ -401,7 +405,7 @@ static void lwp_pid_set_lwp_locked(pid_t pid, struct rt_lwp *lwp)
 {
     struct lwp_avl_struct *p;
 
-    p  = lwp_avl_find(pid, lwp_pid_root);
+    p = lwp_avl_find(pid, lwp_pid_root);
     if (p)
     {
         p->data = lwp;
@@ -519,6 +523,7 @@ int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
             if (node)
             {
                 rt_atomic_add(&object->lwp_ref_count, 1);
+                rt_atomic_add(&object->lwp_owner_count, 1);
                 node->avl_key = (avl_key_t)object;
                 lwp_avl_insert(node, &lwp->object_root);
                 ret = 0;
@@ -526,6 +531,306 @@ int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
         }
         lwp_user_object_unlock(lwp);
     }
+    return ret;
+}
+
+struct lwp_timer_callback_data
+{
+    rt_list_t node;
+    struct rt_spinlock lock;
+    rt_sem_t sem;
+    rt_size_t ref_count;
+    rt_bool_t deleted;
+};
+
+static RT_DEFINE_SPINLOCK(_lwp_timer_cb_lock);
+static rt_list_t _lwp_timer_cb_list = RT_LIST_OBJECT_INIT(_lwp_timer_cb_list);
+
+void *lwp_timer_callback_data_alloc(rt_sem_t sem)
+{
+    struct lwp_timer_callback_data *data;
+    rt_base_t level;
+
+    data = rt_malloc(sizeof(*data));
+    if (data)
+    {
+        rt_list_init(&data->node);
+        rt_spin_lock_init(&data->lock);
+        data->sem = sem;
+        data->ref_count = 1;
+        data->deleted = RT_FALSE;
+
+        level = rt_spin_lock_irqsave(&_lwp_timer_cb_lock);
+        rt_list_insert_after(&_lwp_timer_cb_list, &data->node);
+        rt_spin_unlock_irqrestore(&_lwp_timer_cb_lock, level);
+    }
+
+    return data;
+}
+
+void lwp_timer_callback_data_free(void *parameter)
+{
+    struct lwp_timer_callback_data *data = parameter;
+    rt_base_t level;
+    rt_sem_t sem = RT_NULL;
+    rt_bool_t free_now = RT_FALSE;
+
+    if (!data)
+    {
+        return;
+    }
+
+    level = rt_spin_lock_irqsave(&_lwp_timer_cb_lock);
+    data->deleted = RT_TRUE;
+
+    {
+        rt_base_t dlevel = rt_spin_lock_irqsave(&data->lock);
+        sem = data->sem;
+        data->sem = RT_NULL;
+        rt_spin_unlock_irqrestore(&data->lock, dlevel);
+    }
+
+    data->ref_count--;
+    if (data->ref_count == 0)
+    {
+        rt_list_remove(&data->node);
+        free_now = RT_TRUE;
+    }
+    rt_spin_unlock_irqrestore(&_lwp_timer_cb_lock, level);
+
+    if (sem)
+    {
+        lwp_user_object_put((rt_object_t)sem);
+    }
+
+    if (free_now)
+    {
+        rt_free(data);
+    }
+}
+
+void lwp_timer_callback(void *parameter)
+{
+    struct lwp_timer_callback_data *data = (struct lwp_timer_callback_data *)parameter;
+    rt_base_t level;
+    rt_sem_t sem = RT_NULL;
+    rt_bool_t valid = RT_FALSE;
+
+    if (!data)
+    {
+        return;
+    }
+
+    level = rt_spin_lock_irqsave(&_lwp_timer_cb_lock);
+    {
+        struct lwp_timer_callback_data *iter;
+        rt_list_for_each_entry(iter, &_lwp_timer_cb_list, node)
+        {
+            if (iter == data)
+            {
+                if (!data->deleted)
+                {
+                    data->ref_count++;
+                    valid = RT_TRUE;
+                }
+                break;
+            }
+        }
+    }
+    rt_spin_unlock_irqrestore(&_lwp_timer_cb_lock, level);
+
+    if (!valid)
+    {
+        return;
+    }
+
+    level = rt_spin_lock_irqsave(&data->lock);
+    sem = data->sem;
+    if (sem)
+    {
+        rt_atomic_add(&sem->parent.parent.lwp_ref_count, 1);
+    }
+    rt_spin_unlock_irqrestore(&data->lock, level);
+
+    if (sem)
+    {
+        rt_sem_release(sem);
+        lwp_user_object_put((rt_object_t)sem);
+    }
+
+    level = rt_spin_lock_irqsave(&_lwp_timer_cb_lock);
+    data->ref_count--;
+    if (data->ref_count == 0)
+    {
+        rt_list_remove(&data->node);
+        rt_spin_unlock_irqrestore(&_lwp_timer_cb_lock, level);
+        rt_free(data);
+    }
+    else
+    {
+        rt_spin_unlock_irqrestore(&_lwp_timer_cb_lock, level);
+    }
+}
+
+rt_sem_t lwp_timer_callback_data_get(rt_timer_t timer)
+{
+    struct lwp_timer_callback_data *data = timer->parameter;
+    rt_base_t level;
+    rt_sem_t sem;
+
+    level = rt_spin_lock_irqsave(&data->lock);
+    sem = data->sem;
+    rt_spin_unlock_irqrestore(&data->lock, level);
+
+    return sem;
+}
+
+rt_sem_t lwp_timer_callback_data_swap(rt_timer_t timer, rt_sem_t sem)
+{
+    struct lwp_timer_callback_data *data = timer->parameter;
+    rt_base_t level;
+    rt_sem_t old_sem;
+
+    level = rt_spin_lock_irqsave(&data->lock);
+    old_sem = data->sem;
+    data->sem = sem;
+    rt_spin_unlock_irqrestore(&data->lock, level);
+
+    return old_sem;
+}
+
+/**
+ * @brief Close an object and resume its waiters when its last owner is gone
+ *
+ * The closing transition and the suspend queue operation use the same IPC
+ * spinlock as the blocking paths. A caller that obtained an in-flight
+ * reference before the close therefore either queues before this wakeup or
+ * observes the closing flag and returns -RT_ERROR without queuing.
+ *
+ * @param[in] object The object whose suspended threads are resumed
+ */
+static void _object_close_and_wakeup(rt_object_t object)
+{
+    rt_base_t level;
+
+    switch (object->type)
+    {
+#ifdef RT_USING_SEMAPHORE
+    case RT_Object_Class_Semaphore:
+    {
+        rt_sem_t sem = (rt_sem_t)object;
+
+        level = rt_spin_lock_irqsave(&sem->spinlock);
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        rt_susp_list_resume_all(&sem->parent.suspend_thread, RT_ERROR);
+        rt_spin_unlock_irqrestore(&sem->spinlock, level);
+        break;
+    }
+#endif /* RT_USING_SEMAPHORE */
+#ifdef RT_USING_MUTEX
+    case RT_Object_Class_Mutex:
+    {
+        rt_mutex_t mutex = (rt_mutex_t)object;
+
+        level = rt_spin_lock_irqsave(&mutex->spinlock);
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        rt_susp_list_resume_all(&mutex->parent.suspend_thread, RT_ERROR);
+        rt_spin_unlock_irqrestore(&mutex->spinlock, level);
+        break;
+    }
+#endif /* RT_USING_MUTEX */
+#ifdef RT_USING_EVENT
+    case RT_Object_Class_Event:
+    {
+        rt_event_t event = (rt_event_t)object;
+
+        level = rt_spin_lock_irqsave(&event->spinlock);
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        rt_susp_list_resume_all(&event->parent.suspend_thread, RT_ERROR);
+        rt_spin_unlock_irqrestore(&event->spinlock, level);
+        break;
+    }
+#endif /* RT_USING_EVENT */
+#ifdef RT_USING_MAILBOX
+    case RT_Object_Class_MailBox:
+    {
+        rt_mailbox_t mb = (rt_mailbox_t)object;
+
+        level = rt_spin_lock_irqsave(&mb->spinlock);
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        rt_susp_list_resume_all(&mb->parent.suspend_thread, RT_ERROR);
+        rt_susp_list_resume_all(&mb->suspend_sender_thread, RT_ERROR);
+        rt_spin_unlock_irqrestore(&mb->spinlock, level);
+        break;
+    }
+#endif /* RT_USING_MAILBOX */
+#ifdef RT_USING_MESSAGEQUEUE
+    case RT_Object_Class_MessageQueue:
+    {
+        rt_mq_t mq = (rt_mq_t)object;
+
+        level = rt_spin_lock_irqsave(&mq->spinlock);
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        rt_susp_list_resume_all(&mq->parent.suspend_thread, RT_ERROR);
+        rt_susp_list_resume_all(&mq->suspend_sender_thread, RT_ERROR);
+        rt_spin_unlock_irqrestore(&mq->spinlock, level);
+        break;
+    }
+#endif /* RT_USING_MESSAGEQUEUE */
+    default:
+        /* timers and custom objects keep no suspended thread list */
+        rt_atomic_or(&object->lwp_flags, RT_LWP_OBJECT_FLAG_CLOSING);
+        break;
+    }
+}
+
+/**
+ * @brief Destroy a kernel object when its last reference is gone
+ *
+ * @param[in] object The object to be destroyed
+ *
+ * @return rt_err_t Returns 0 on success, or -1 on failure
+ */
+static rt_err_t _object_destroy(rt_object_t object)
+{
+    rt_err_t ret = -1;
+
+    switch (object->type)
+    {
+    case RT_Object_Class_Semaphore:
+        ret = rt_sem_delete((rt_sem_t)object);
+        break;
+    case RT_Object_Class_Mutex:
+        ret = rt_mutex_delete((rt_mutex_t)object);
+        break;
+    case RT_Object_Class_Event:
+        ret = rt_event_delete((rt_event_t)object);
+        break;
+    case RT_Object_Class_MailBox:
+        ret = rt_mb_delete((rt_mailbox_t)object);
+        break;
+    case RT_Object_Class_MessageQueue:
+        ret = rt_mq_delete((rt_mq_t)object);
+        break;
+    case RT_Object_Class_Timer:
+    {
+        void *callback_data = ((rt_timer_t)object)->parameter;
+
+        ret = rt_timer_delete((rt_timer_t)object);
+        if (ret == RT_EOK)
+        {
+            lwp_timer_callback_data_free(callback_data);
+        }
+        break;
+    }
+    case RT_Object_Class_Custom:
+        ret = rt_custom_object_destroy(object);
+        break;
+    default:
+        LOG_E("input object type(%d) error", object->type);
+        break;
+    }
+
     return ret;
 }
 
@@ -547,40 +852,20 @@ static rt_err_t _object_node_delete(struct rt_lwp *lwp, struct lwp_avl_struct *n
         return ret;
     }
     object = (rt_object_t)node->avl_key;
-    object->lwp_ref_count--;
-    if (object->lwp_ref_count == 0)
+    if (rt_atomic_dec_and_test(&object->lwp_owner_count))
+    {
+        /* Shared objects stay open for the other LWPs. Only the final owner
+         * closes the object and wakes all current waiters. */
+        _object_close_and_wakeup(object);
+    }
+    if (rt_atomic_dec_and_test(&object->lwp_ref_count))
     {
         /* remove from kernel object list */
-        switch (object->type)
-        {
-        case RT_Object_Class_Semaphore:
-            ret = rt_sem_delete((rt_sem_t)object);
-            break;
-        case RT_Object_Class_Mutex:
-            ret = rt_mutex_delete((rt_mutex_t)object);
-            break;
-        case RT_Object_Class_Event:
-            ret = rt_event_delete((rt_event_t)object);
-            break;
-        case RT_Object_Class_MailBox:
-            ret = rt_mb_delete((rt_mailbox_t)object);
-            break;
-        case RT_Object_Class_MessageQueue:
-            ret = rt_mq_delete((rt_mq_t)object);
-            break;
-        case RT_Object_Class_Timer:
-            ret = rt_timer_delete((rt_timer_t)object);
-            break;
-        case RT_Object_Class_Custom:
-            ret = rt_custom_object_destroy(object);
-            break;
-        default:
-            LOG_E("input object type(%d) error", object->type);
-            break;
-        }
+        ret = _object_destroy(object);
     }
     else
     {
+        /* still referenced by another LWP or an in-flight syscall */
         ret = 0;
     }
     lwp_avl_remove(node, &lwp->object_root);
@@ -610,6 +895,61 @@ rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object)
         lwp_user_object_unlock(lwp);
     }
     return ret;
+}
+
+/**
+ * @brief Resolve a user object handle and hold a reference to it
+ *
+ * The handle must point to a kernel object registered in the object list of the
+ * calling LWP. Objects living in the user address space are rejected before the
+ * AVL lookup, and the type field is only read after the object is known to be a
+ * valid registered object, so a forged handle can never reach the kernel
+ * implementation of the IPC primitives.
+ *
+ * @param[in] lwp The LWP the handle is expected to belong to
+ * @param[in] object The object handle supplied by the user
+ * @param[in] type The expected object class
+ *
+ * @return The object with a reference held on success, or RT_NULL on failure.
+ *         The reference must be released with lwp_user_object_put().
+ *
+ * @note Abnormal termination: the in-flight reference is tracked via
+ *       thread->pending_object during blocking calls and reclaimed on
+ *       thread exit/deletion, ensuring no kernel heap leak.
+ */
+rt_object_t lwp_user_object_get(struct rt_lwp *lwp, rt_object_t object, rt_uint8_t type)
+{
+    rt_object_t found = RT_NULL;
+
+    if (!lwp || !object || lwp_in_user_space((char *)object))
+    {
+        return RT_NULL;
+    }
+
+    lwp_user_object_lock(lwp);
+    if (lwp_avl_find((avl_key_t)object, lwp->object_root) &&
+        (rt_object_get_type(object) == type) &&
+        !(rt_atomic_load(&object->lwp_flags) & RT_LWP_OBJECT_FLAG_CLOSING))
+    {
+        rt_atomic_add(&object->lwp_ref_count, 1);
+        found = object;
+    }
+    lwp_user_object_unlock(lwp);
+
+    return found;
+}
+
+/**
+ * @brief Release a reference obtained by lwp_user_object_get()
+ *
+ * @param[in] object The object whose reference is released
+ */
+void lwp_user_object_put(rt_object_t object)
+{
+    if (object && rt_atomic_dec_and_test(&object->lwp_ref_count))
+    {
+        _object_destroy(object);
+    }
 }
 
 /**
@@ -699,7 +1039,9 @@ rt_lwp_t lwp_create(rt_base_t flags)
         rt_mutex_init(&new_lwp->lwp_lock, "lwp_lock", RT_IPC_FLAG_PRIO);
 
         if (flags & LWP_CREATE_FLAG_NOTRACE_EXEC)
+        {
             new_lwp->did_exec = RT_TRUE;
+        }
 
         /* lwp with pid */
         if (flags & LWP_CREATE_FLAG_ALLOC_PID)
@@ -721,7 +1063,7 @@ rt_lwp_t lwp_create(rt_base_t flags)
             }
             lwp_pid_lock_release();
         }
-        rt_memset(&new_lwp->rt_rusage,0, sizeof(new_lwp->rt_rusage));
+        rt_memset(&new_lwp->rt_rusage, 0, sizeof(new_lwp->rt_rusage));
 
         if (flags & LWP_CREATE_FLAG_INIT_USPACE)
         {
@@ -748,7 +1090,7 @@ rt_lwp_t lwp_create(rt_base_t flags)
  *
  * @note when reference is 0, a lwp can be released
  */
-void lwp_free(struct rt_lwp* lwp)
+void lwp_free(struct rt_lwp *lwp)
 {
     rt_processgroup_t group = RT_NULL;
 
@@ -768,7 +1110,9 @@ void lwp_free(struct rt_lwp* lwp)
     rt_free(lwp->exe_file);
     group = lwp_pgrp_find(lwp_pgid_get_byprocess(lwp));
     if (group)
+    {
         lwp_pgrp_remove(group, lwp);
+    }
 
     LWP_LOCK(lwp);
 
@@ -809,7 +1153,7 @@ void lwp_free(struct rt_lwp* lwp)
         {
             LOG_D("lwp text free: %p", lwp->text_entry);
 #ifndef ARCH_MM_MMU
-            rt_free((void*)lwp->text_entry);
+            rt_free((void *)lwp->text_entry);
 #endif /* not defined ARCH_MM_MMU */
             lwp->text_entry = RT_NULL;
         }
@@ -846,8 +1190,7 @@ void lwp_free(struct rt_lwp* lwp)
  *       - Deletes the thread
  *       - Enters infinite loop (noreturn function)
  */
-rt_inline rt_noreturn
-void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
+rt_inline rt_noreturn void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
 {
     LWP_LOCK(lwp);
     lwp->rt_rusage.ru_stime.tv_sec += thread->system_time / RT_TICK_PER_SECOND;
@@ -867,7 +1210,7 @@ void _thread_exit(rt_lwp_t lwp, rt_thread_t thread)
 
     rt_thread_delete(thread);
     rt_schedule();
-    while (1) ;
+    while (1);
 }
 
 /**
@@ -911,7 +1254,7 @@ void lwp_exit(rt_lwp_t lwp, lwp_status_t status)
     if (!lwp)
     {
         LOG_W("%s: lwp should not be null", __func__);
-        return ;
+        return;
     }
 
     thread = rt_thread_self();
@@ -1073,12 +1416,12 @@ int lwp_ref_dec(struct rt_lwp *lwp)
  *       the caller already holds the necessary locks. It's a lower-level version
  *       of lwp_from_pid() that doesn't handle locking internally.
  */
-struct rt_lwp* lwp_from_pid_raw_locked(pid_t pid)
+struct rt_lwp *lwp_from_pid_raw_locked(pid_t pid)
 {
     struct lwp_avl_struct *p;
     struct rt_lwp *lwp = RT_NULL;
 
-    p  = lwp_avl_find(pid, lwp_pid_root);
+    p = lwp_avl_find(pid, lwp_pid_root);
     if (p)
     {
         lwp = (struct rt_lwp *)p->data;
@@ -1098,9 +1441,9 @@ struct rt_lwp* lwp_from_pid_raw_locked(pid_t pid)
  *       - If pid is non-zero, calls lwp_from_pid_raw_locked()
  *       - If pid is zero, returns the current LWP via lwp_self()
  */
-struct rt_lwp* lwp_from_pid_locked(pid_t pid)
+struct rt_lwp *lwp_from_pid_locked(pid_t pid)
 {
-    struct rt_lwp* lwp;
+    struct rt_lwp *lwp;
     lwp = pid ? lwp_from_pid_raw_locked(pid) : lwp_self();
     return lwp;
 }
@@ -1112,7 +1455,7 @@ struct rt_lwp* lwp_from_pid_locked(pid_t pid)
  *
  * @return pid_t The PID of the LWP, or 0 if lwp is NULL
  */
-pid_t lwp_to_pid(struct rt_lwp* lwp)
+pid_t lwp_to_pid(struct rt_lwp *lwp)
 {
     if (!lwp)
     {
@@ -1128,17 +1471,17 @@ pid_t lwp_to_pid(struct rt_lwp* lwp)
  *
  * @return char* Pointer to the process name (without path) if found, or RT_NULL if not found
  */
-char* lwp_pid2name(int32_t pid)
+char *lwp_pid2name(int32_t pid)
 {
     struct rt_lwp *lwp;
-    char* process_name = RT_NULL;
+    char *process_name = RT_NULL;
 
     lwp_pid_lock_take();
     lwp = lwp_from_pid_locked(pid);
     if (lwp)
     {
         process_name = strrchr(lwp->cmd, '/');
-        process_name = process_name? process_name + 1: lwp->cmd;
+        process_name = process_name ? process_name + 1 : lwp->cmd;
     }
     lwp_pid_lock_release();
 
@@ -1160,7 +1503,7 @@ pid_t lwp_name2pid(const char *name)
     int idx;
     pid_t pid = 0;
     rt_thread_t main_thread;
-    char* process_name = RT_NULL;
+    char *process_name = RT_NULL;
     rt_sched_lock_level_t slvl;
 
     lwp_pid_lock_take();
@@ -1172,7 +1515,7 @@ pid_t lwp_name2pid(const char *name)
         if (lwp)
         {
             process_name = strrchr(lwp->exe_file, '/');
-            process_name = process_name? process_name + 1: lwp->cmd;
+            process_name = process_name ? process_name + 1 : lwp->cmd;
             if (!rt_strncmp(name, process_name, RT_NAME_MAX))
             {
                 main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
@@ -1258,7 +1601,9 @@ static rt_err_t _stats_and_reap_child(rt_lwp_t child, rt_thread_t cur_thr,
     }
 
     if (ustatus)
+    {
         lwp_data_put(self_lwp, ustatus, &lwp_stat, sizeof(*ustatus));
+    }
 
     return RT_EOK;
 }
@@ -1318,8 +1663,8 @@ static sysret_t _query_event_from_lwp(rt_lwp_t child, rt_thread_t cur_thr, rt_lw
  * @note Verifies child-parent relationship and checks for termination/stopped state
  */
 static pid_t _verify_child_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp,
-                                       pid_t wait_pid, int options, int *ustatus,
-                                       struct rusage *uru)
+                                    pid_t wait_pid, int options, int *ustatus,
+                                    struct rusage *uru)
 {
     sysret_t rc;
     struct rt_lwp *child;
@@ -1328,11 +1673,17 @@ static pid_t _verify_child_and_reap(rt_thread_t cur_thr, rt_lwp_t self_lwp,
     lwp_pid_lock_take();
     child = lwp_from_pid_locked(wait_pid);
     if (!child)
+    {
         rc = -EINVAL;
+    }
     else if (child->parent != self_lwp)
+    {
         rc = -ESRCH;
+    }
     else
+    {
         rc = wait_pid;
+    }
 
     lwp_pid_lock_release();
 
@@ -1374,11 +1725,15 @@ static pid_t _reap_any_child_pid(rt_thread_t cur_thr, rt_lwp_t self_lwp, pid_t p
     while (child)
     {
         if (pair_pgid && child->pgid != pair_pgid)
+        {
             continue;
+        }
 
         rc = _query_event_from_lwp(child, cur_thr, self_lwp, options, ustatus);
         if (rc > 0)
+        {
             break;
+        }
 
         child = child->sibling;
     }
@@ -1414,7 +1769,8 @@ rt_err_t lwp_waitpid_kick(rt_lwp_t parent, rt_lwp_t self_lwp)
  * @note This structure is used to manage wait queue entries for processes waiting
  *       for child process status changes.
  */
-struct waitpid_handle {
+struct waitpid_handle
+{
     struct rt_wqueue_node wq_node; /**< Wait queue node for process status change notifications */
     int options;                   /**< Wait options (e.g., WNOHANG, WUNTRACED) */
     rt_lwp_t waker_lwp;            /**< LWP that triggered the wakeup */
@@ -1479,18 +1835,28 @@ static int _waitq_filter(struct rt_wqueue_node *wait_node, void *key)
     if (can_accept_evt)
     {
         if ((options & WEXITED) && waker_lwp->terminated)
+        {
             can_accept_evt = 1;
+        }
         else if ((options & WSTOPPED) && WIFSTOPPED(waker_lwp->lwp_status))
+        {
             can_accept_evt = 1;
+        }
         else if ((options & WCONTINUED) && WIFCONTINUED(waker_lwp->lwp_status))
+        {
             can_accept_evt = 1;
+        }
         else
+        {
             can_accept_evt = 0;
+        }
     }
 
     /* setup message for waiter if accepted */
     if (can_accept_evt)
+    {
         handle->waker_lwp = waker_lwp;
+    }
 
     /* 0 if event is accepted, otherwise discard */
     return !can_accept_evt;
@@ -1697,7 +2063,7 @@ pid_t lwp_waitpid(const pid_t pid, int *status, int options, struct rusage *ru)
         }
     }
 
-    LOG_D("waitpid() => %d, *status=0x%x", rc, status ? *status:0);
+    LOG_D("waitpid() => %d, *status=0x%x", rc, status ? *status : 0);
     return rc;
 }
 
@@ -1745,50 +2111,74 @@ static void object_split(int len)
  *       - Remaining tick count and error code
  *       - Thread name
  */
-static void print_thread_info(struct rt_thread* thread, int maxlen)
+static void print_thread_info(struct rt_thread *thread, int maxlen)
 {
     rt_uint8_t *ptr;
     rt_uint8_t stat;
 
 #ifdef RT_USING_SMP
     if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
+    {
         rt_kprintf("%3d %3d ", RT_SCHED_CTX(thread).oncpu, RT_SCHED_PRIV(thread).current_priority);
+    }
     else
+    {
         rt_kprintf("N/A %3d ", RT_SCHED_PRIV(thread).current_priority);
+    }
 #else
     rt_kprintf("%3d ", RT_SCHED_PRIV(thread).current_priority);
 #endif /*RT_USING_SMP*/
 
     stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
-    if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-    else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
-    else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
-    else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
-    else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");
+    if (stat == RT_THREAD_READY)
+    {
+        rt_kprintf(" ready  ");
+    }
+    else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+    {
+        rt_kprintf(" suspend");
+    }
+    else if (stat == RT_THREAD_INIT)
+    {
+        rt_kprintf(" init   ");
+    }
+    else if (stat == RT_THREAD_CLOSE)
+    {
+        rt_kprintf(" close  ");
+    }
+    else if (stat == RT_THREAD_RUNNING)
+    {
+        rt_kprintf(" running");
+    }
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
-    while (*ptr == '#')ptr--;
+    while (*ptr == '#')
+    {
+        ptr--;
+    }
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-            ((rt_uint32_t)thread->sp - (rt_uint32_t)thread->stack_addr),
-            thread->stack_size,
-            ((rt_uint32_t)ptr - (rt_uint32_t)thread->stack_addr) * 100 / thread->stack_size,
-            thread->remaining_tick,
-            thread->error);
+               ((rt_uint32_t)thread->sp - (rt_uint32_t)thread->stack_addr),
+               thread->stack_size,
+               ((rt_uint32_t)ptr - (rt_uint32_t)thread->stack_addr) * 100 / thread->stack_size,
+               thread->remaining_tick,
+               thread->error);
 #else
     ptr = (rt_uint8_t *)thread->stack_addr;
-    while (*ptr == '#')ptr++;
+    while (*ptr == '#')
+    {
+        ptr++;
+    }
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d",
-            (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
-            thread->stack_size,
-            (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100
-            / thread->stack_size,
-            RT_SCHED_PRIV(thread).remaining_tick,
-            thread->error);
+               (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
+               thread->stack_size,
+               (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100 / thread->stack_size,
+               RT_SCHED_PRIV(thread).remaining_tick,
+               thread->error);
 #endif
-    rt_kprintf("   %-.*s\n",rt_strlen(thread->parent.name), thread->parent.name);
+    rt_kprintf("   %-.*s\n", rt_strlen(thread->parent.name), thread->parent.name);
 }
 
 /**
@@ -1821,12 +2211,28 @@ long list_process(void)
     maxlen = RT_NAME_MAX;
 #ifdef RT_USING_SMP
     rt_kprintf("%-*.s %-*.s %-*.s cpu pri  status      sp     stack size max used left tick  error %-*.s\n", 4, "PID", 4, "TID", maxlen, item_title, maxlen, "cmd");
-    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
-    rt_kprintf(                  "--- ---  ------- ---------- ---------- -------- ---------- -----");rt_kprintf(" ");object_split(maxlen);rt_kprintf("\n");
+    object_split(4);
+    rt_kprintf(" ");
+    object_split(4);
+    rt_kprintf(" ");
+    object_split(maxlen);
+    rt_kprintf(" ");
+    rt_kprintf("--- ---  ------- ---------- ---------- -------- ---------- -----");
+    rt_kprintf(" ");
+    object_split(maxlen);
+    rt_kprintf("\n");
 #else
     rt_kprintf("%-*.s %-*.s %-*.s pri  status      sp     stack size max used left tick  error\n", 4, "PID", 4, "TID", maxlen, item_title, maxlen, "cmd");
-    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
-    rt_kprintf(                  "---  ------- ---------- ---------- -------- ---------- -----");rt_kprintf(" ");object_split(maxlen);rt_kprintf("\n");
+    object_split(4);
+    rt_kprintf(" ");
+    object_split(4);
+    rt_kprintf(" ");
+    object_split(maxlen);
+    rt_kprintf(" ");
+    rt_kprintf("---  ------- ---------- ---------- -------- ---------- -----");
+    rt_kprintf(" ");
+    object_split(maxlen);
+    rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
     count = rt_object_get_length(RT_Object_Class_Thread);
@@ -1840,7 +2246,7 @@ long list_process(void)
 
             if (index > 0)
             {
-                for (index = 0; index <count; index++)
+                for (index = 0; index < count; index++)
                 {
                     struct rt_thread th;
 
@@ -1897,7 +2303,7 @@ MSH_CMD_EXPORT(list_process, list process);
  *       - kill <pid> -s <signal>
  *       Default signal is SIGKILL (9)
  */
-static void cmd_kill(int argc, char** argv)
+static void cmd_kill(int argc, char **argv)
 {
     int pid;
     int sig = SIGKILL;
@@ -1931,7 +2337,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_kill, kill, send a signal to a process);
  * @note Sends SIGKILL signal to all processes with the specified name.
  *       Requires at least 2 arguments (command name + process name)
  */
-static void cmd_killall(int argc, char** argv)
+static void cmd_killall(int argc, char **argv)
 {
     int pid;
     if (argc < 2)
@@ -1940,7 +2346,7 @@ static void cmd_killall(int argc, char** argv)
         return;
     }
 
-    while((pid = lwp_name2pid(argv[1])) > 0)
+    while ((pid = lwp_name2pid(argv[1])) > 0)
     {
         lwp_pid_lock_take();
         lwp_signal_kill(lwp_from_pid_raw_locked(pid), SIGKILL, SI_USER, 0);
@@ -2343,7 +2749,7 @@ int lwp_setaffinity(int tid, int cpu)
  *
  * @note Requires exactly 2 arguments: pid (process ID) and cpu (CPU core number)
  */
-static void cmd_cpu_bind(int argc, char** argv)
+static void cmd_cpu_bind(int argc, char **argv)
 {
     int pid;
     int cpu;

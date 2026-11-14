@@ -56,6 +56,14 @@
 #include <rtdbg.h>
 
 #define GET_MESSAGEBYTE_ADDR(msg) ((struct rt_mq_message *)msg + 1)
+
+#ifdef RT_USING_SMART
+static rt_bool_t _ipc_object_is_closing(rt_object_t object)
+{
+    return (rt_atomic_load(&object->lwp_flags) & RT_LWP_OBJECT_FLAG_CLOSING) != 0;
+}
+#endif /* RT_USING_SMART */
+
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
@@ -573,6 +581,14 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
     RT_DEBUG_SCHEDULER_AVAILABLE(1);
 
     level = rt_spin_lock_irqsave(&(sem->spinlock));
+
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&sem->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(sem->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
 
     LOG_D("thread %s take sem:%s, which value is: %d",
           rt_thread_self()->parent.name,
@@ -1338,6 +1354,14 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
     thread = rt_thread_self();
 
     rt_spin_lock(&(mutex->spinlock));
+
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mutex->parent.parent))
+    {
+        rt_spin_unlock(&(mutex->spinlock));
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
@@ -2157,6 +2181,14 @@ static rt_err_t _rt_event_recv(rt_event_t event,
 
     level = rt_spin_lock_irqsave(&(event->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&event->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(event->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* check event set */
     if (option & RT_EVENT_FLAG_AND)
     {
@@ -2628,6 +2660,14 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     /* disable interrupt */
     level = rt_spin_lock_irqsave(&(mb->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mb->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* for non-blocking call */
     if (mb->entry == mb->size && timeout == 0)
     {
@@ -2638,6 +2678,13 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     /* mailbox is full */
     while (mb->entry == mb->size)
     {
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mb->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
         /* reset error number in thread */
         thread->error = -RT_EINTR;
 
@@ -2688,6 +2735,14 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         }
 
         level = rt_spin_lock_irqsave(&(mb->spinlock));
+
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mb->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -2910,6 +2965,14 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
 
     level = rt_spin_lock_irqsave(&(mb->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mb->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* for non-blocking call */
     if (mb->entry == 0 && timeout == 0)
     {
@@ -2921,6 +2984,13 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     /* mailbox is empty */
     while (mb->entry == 0)
     {
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mb->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
         /* reset error number in thread */
         thread->error = -RT_EINTR;
 
@@ -2972,6 +3042,14 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
             return thread->error;
         }
         level = rt_spin_lock_irqsave(&(mb->spinlock));
+
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mb->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -3462,6 +3540,14 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mq->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* get a free list, there must be an empty item */
     msg = (struct rt_mq_message *)mq->msg_queue_free;
     /* for non-blocking call */
@@ -3475,6 +3561,13 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     /* message queue is full */
     while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mq->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
         /* reset error number in thread */
         thread->error = -RT_EINTR;
 
@@ -3525,6 +3618,14 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         }
         level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mq->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
+
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
         {
@@ -3552,6 +3653,16 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 
     /* disable interrupt */
     level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mq->parent.parent))
+    {
+        msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+        mq->msg_queue_free = msg;
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
 #ifdef RT_USING_MESSAGEQUEUE_PRIORITY
     msg->prio = prio;
     if (mq->msg_queue_head == RT_NULL)
@@ -3734,6 +3845,14 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mq->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* get a free list, there must be an empty item */
     msg = (struct rt_mq_message *)mq->msg_queue_free;
     /* message queue is full */
@@ -3857,6 +3976,14 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+#ifdef RT_USING_SMART
+    if (_ipc_object_is_closing(&mq->parent.parent))
+    {
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_SMART */
+
     /* for non-blocking call */
     if (mq->entry == 0 && timeout == 0)
     {
@@ -3868,6 +3995,13 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     /* message queue is empty */
     while (mq->entry == 0)
     {
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mq->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
         /* reset error number in thread */
         thread->error = -RT_EINTR;
 
@@ -3916,11 +4050,20 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         /* recv message */
         if (thread->error != RT_EOK)
         {
-            /* return error */
-            return thread->error;
+            /* rt_susp_list_resume_all() preserves positive delete errors;
+             * receive returns a negative error, never a bogus message length. */
+            return thread->error > 0 ? -thread->error : thread->error;
         }
 
         level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+#ifdef RT_USING_SMART
+        if (_ipc_object_is_closing(&mq->parent.parent))
+        {
+            rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+            return -RT_ERROR;
+        }
+#endif /* RT_USING_SMART */
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
