@@ -258,6 +258,40 @@ menu "On-chip Peripheral Drivers"
         string
         default "swspi2" if RT_USING_SOFT_SPI2
 
+    menuconfig BSP_USING_PM
+        bool "Enable CH32V208 power management"
+        select RT_USING_PM
+        depends on !BSP_USING_RTC
+        default n
+
+        if BSP_USING_PM
+            choice BSP_PM_RTC_CLK_SEL
+                prompt "PM RTC clock source"
+                default BSP_PM_USING_LSI
+
+                config BSP_PM_USING_LSI
+                    bool "LSI (calibrated against HCLK)"
+
+                config BSP_PM_USING_LSE
+                    bool "LSE (32.768 kHz crystal)"
+            endchoice
+
+            config BSP_PM_BOOT_DELAY
+                int "Delay before enabling STOP (seconds)"
+                range 0 60
+                default 10
+
+            config BSP_PM_PARK_UNUSED_GPIO
+                bool "Park unused GPIO as analog inputs and disable SWJ"
+                depends on BSP_PM_BOOT_DELAY >= 10
+                default n
+                help
+                  Apply the PM measurement board's pin masks after the
+                  reflash window. Keep PA0, UART1 and the crystal pins.
+                  Adapt the masks before using other peripherals or GPIO
+                  wake sources.
+        endif
+
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
