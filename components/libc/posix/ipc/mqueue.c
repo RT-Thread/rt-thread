@@ -117,8 +117,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         name++;
     }
 
-    int len = rt_strlen(name);
-    if (len > RT_NAME_MAX)
+    if (rt_strnlen(name, RT_NAME_MAX + 1) > RT_NAME_MAX)
     {
         rt_set_errno(ENAMETOOLONG);
         return (mqd_t)(-1);
@@ -161,9 +160,9 @@ mqd_t mq_open(const char *name, int oflag, ...)
         return (mqd_t)(-1);
     }
 
-    const char* mq_path = "/dev/mqueue/";
-    char mq_name[RT_NAME_MAX + 12] = {0};
-    rt_sprintf(mq_name, "%s%s", mq_path, name);
+    static const char mq_path[] = "/dev/mqueue/";
+    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = { 0 };
+    rt_snprintf(mq_name, sizeof(mq_name), "%s%s", mq_path, name);
     mq_fd = open(mq_name, oflag);
 
     return (mqd_t)(mq_fd);
@@ -468,9 +467,14 @@ int mq_unlink(const char *name)
     {
         name++;
     }
-    const char *mq_path = "/dev/mqueue/";
-    char mq_name[RT_NAME_MAX + 12] = {0};
-    rt_sprintf(mq_name, "%s%s", mq_path, name);
+    if (rt_strnlen(name, RT_NAME_MAX + 1) > RT_NAME_MAX)
+    {
+        rt_set_errno(ENAMETOOLONG);
+        return -1;
+    }
+    static const char mq_path[] = "/dev/mqueue/";
+    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = { 0 };
+    rt_snprintf(mq_name, sizeof(mq_name), "%s%s", mq_path, name);
     return unlink(mq_name);
 }
 RTM_EXPORT(mq_unlink);
