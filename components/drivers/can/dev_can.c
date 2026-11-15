@@ -301,7 +301,6 @@ out_unlock:
     return result;
 }
 
-
 /**
  * @brief Perform final CAN software teardown after the application has stopped TX producers.
  *
@@ -520,7 +519,6 @@ static rt_err_t _can_validate_filter(struct rt_can_device *can,
 
     return RT_EOK;
 }
-
 
 /**
  * @brief Execute a controller-management command from a TX-idle/RX-paused boundary.

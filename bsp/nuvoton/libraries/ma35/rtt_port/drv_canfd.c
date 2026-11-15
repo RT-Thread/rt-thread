@@ -564,7 +564,7 @@ static int nu_canfd_sendmsg(struct rt_can_device *can, const void *buf, rt_uint3
         return -RT_EBUSY;
     }
 
-    psTxBuffer = (CANFD_BUF_T *)((uint32_t)base + CANFD_SRAM_BASE_ADDR + (base->TXBC & 0xFFFFUL));
+    psTxBuffer = (CANFD_BUF_T *)(CANFD_SRAM_BASE_ADDR(base) + (base->TXBC & 0xFFFFUL));
     /* M_CAN T0: XTD=bit30, RTR=bit29; standard ID occupies bits 28:18. */
     psTxBuffer->u32Id = (pmsg->ide == RT_CAN_EXTID) ? ((1UL << 30) | pmsg->id) : (pmsg->id << 18);
     if (pmsg->rtr == RT_CAN_RTR)

@@ -373,8 +373,8 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
 
     /* use the last 16 MB to send msg */
     sendMB = 63 - boxno;
-    /* SDK mailbox state must be idle before SetTxMbConfig resets its contents. */
-    if (can->handle.mbState[sendMB] != (uint8_t)kFLEXCAN_StateIdle)
+    /* The SDK-private MB idle state is 0; it is not exported by fsl_flexcan.h. */
+    if (can->handle.mbState[sendMB] != (uint8_t)0U)
     {
         return -RT_EBUSY;
     }

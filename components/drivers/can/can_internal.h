@@ -65,28 +65,28 @@
 /** Framework-visible hardware TX mailbox ownership and blocking wait state. */
 enum rt_can_tx_slot_state
 {
-    RT_CAN_TX_SLOT_FREE = 0, /**< No pending request or blocking waiter owns this mailbox. */
-    RT_CAN_TX_SLOT_ACTIVE,  /**< Hardware accepted the blocking frame; terminal is pending. */
+    RT_CAN_TX_SLOT_FREE = 0,    /**< No pending request or blocking waiter owns this mailbox. */
+    RT_CAN_TX_SLOT_ACTIVE,      /**< Hardware accepted the blocking frame; terminal is pending. */
     RT_CAN_TX_SLOT_NONBLOCKING, /**< Non-blocking frame is pending in this mailbox. */
     RT_CAN_TX_SLOT_TIMED_OUT,   /**< Caller timed out; hardware still owns the frame. */
-    RT_CAN_TX_SLOT_DONE,    /**< TX_DONE arrived; the blocking waiter still owns cleanup. */
-    RT_CAN_TX_SLOT_FAILED,  /**< TX_FAIL arrived; the blocking waiter still owns cleanup. */
+    RT_CAN_TX_SLOT_DONE,        /**< TX_DONE arrived; the blocking waiter still owns cleanup. */
+    RT_CAN_TX_SLOT_FAILED,      /**< TX_FAIL arrived; the blocking waiter still owns cleanup. */
 };
 
 /** Per-mailbox TX ownership; completion is used only for blocking submissions. */
 struct rt_can_tx_slot
 {
-    struct rt_completion completion;       /**< Wakes the owner on this mailbox terminal. */
-    enum rt_can_tx_slot_state state;       /**< Blocking/NB ownership and terminal result. */
-    rt_bool_t pending;                    /**< Hardware terminal still required for this mailbox. */
+    struct rt_completion completion; /**< Wakes the owner on this mailbox terminal. */
+    enum rt_can_tx_slot_state state; /**< Blocking/NB ownership and terminal result. */
+    rt_bool_t pending;               /**< Hardware terminal still required for this mailbox. */
 };
 
 /** Generic CAN TX runtime. Per-mailbox ownership is protected by can->tx_lock. */
 struct rt_can_tx
 {
-    struct rt_can_tx_slot *slots;           /**< Fixed slot array, one per visible mailbox. */
-    struct rt_semaphore wait_sem;           /**< Bounded TX-state-change notification. */
-    rt_bool_t accepting;                    /**< Whether normal TX admission is open. */
+    struct rt_can_tx_slot *slots; /**< Fixed slot array, one per visible mailbox. */
+    struct rt_semaphore wait_sem; /**< Bounded TX-state-change notification. */
+    rt_bool_t accepting;          /**< Whether normal TX admission is open. */
 };
 
 /**
