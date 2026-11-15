@@ -38,8 +38,8 @@ static rt_ssize_t blk_dev_read(rt_device_t dev, rt_off_t sector,
 {
     struct rt_blk_device *blk = to_blk(dev);
 
-    if (sector <= blk->sector_start + blk->sector_count &&
-        sector_count <= blk->sector_count)
+    if (sector >= 0 && (rt_size_t)sector <= blk->sector_count &&
+        sector_count <= blk->sector_count - (rt_size_t)sector)
     {
         return rt_device_read(&blk->disk->parent,
                 blk->sector_start + sector, buffer, sector_count);
@@ -53,8 +53,8 @@ static rt_ssize_t blk_dev_write(rt_device_t dev, rt_off_t sector,
 {
     struct rt_blk_device *blk = to_blk(dev);
 
-    if (sector <= blk->sector_start + blk->sector_count &&
-        sector_count <= blk->sector_count)
+    if (sector >= 0 && (rt_size_t)sector <= blk->sector_count &&
+        sector_count <= blk->sector_count - (rt_size_t)sector)
     {
         return rt_device_write(&blk->disk->parent,
                 blk->sector_start + sector, buffer, sector_count);
