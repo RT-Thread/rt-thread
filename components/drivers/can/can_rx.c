@@ -605,5 +605,4 @@ rt_err_t rt_can_rx_commit_filter(struct rt_can_device *can,
     return RT_EOK;
 }
 
-
 #endif /* RT_CAN_USING_HDR */

@@ -101,7 +101,6 @@ static rt_bool_t _tx_idle_locked(struct rt_can_device *can, struct rt_can_tx *tx
     return RT_TRUE;
 }
 
-
 /**
  * @brief Allocate the simplified TX runtime and publish it under tx_lock.
  *
