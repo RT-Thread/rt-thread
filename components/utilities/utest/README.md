@@ -16,7 +16,7 @@
 
 ### 2. 本地测试
 
-1. 在 `bsp\qemu-vexpress-a9` 目录下打开 `menuconfig`，使能对应的测试用例，如下：
+1. 在 `bsp/qemu-vexpress-a9` 目录下打开 `menuconfig`，使能对应的测试用例，如下：
 
 ```
 RT-Thread Utestcases  --->
@@ -27,7 +27,7 @@ RT-Thread Utestcases  --->
 
 2. 保存并退出，输入 scons 编译当前 bsp。
 
-3. 输入 .\qemu.bat 运行当前 bsp，在 msh 环境下执行 utest_run 命令，验证代码运行是否正常。
+3. 输入 `./qemu.sh`（Windows 下为 `qemu.bat`）运行当前 bsp，在 msh 环境下执行 `utest_run` 命令，验证代码运行是否正常。
 
 ```
 msh />utest_run
