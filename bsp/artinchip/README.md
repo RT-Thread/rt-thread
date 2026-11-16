@@ -27,4 +27,4 @@ Board wiring and memory layout are configured in the board directory. Shared D21
 
 The BSP uses the RT-Thread RISC-V common port for startup, context switching, FPU state, interrupts and system ticks. It provides UART0 with the required clock, reset and pin configuration. The bootloader initializes DDR, PLLs and memory/cache attributes before starting RT-Thread.
 
-See the [board README](d213ecv-demo-v4-0/README.md) for independent builds, configuration, loader requirements, validation status and source attribution.
+See the [board README](d213ecv-demo-v4-0/README.md) for build instructions, configuration, bootloader requirements and UART usage.

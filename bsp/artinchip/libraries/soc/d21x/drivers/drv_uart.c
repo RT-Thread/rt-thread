@@ -23,6 +23,7 @@ struct aic_uart
     int irq;
     const char *name;
     rt_bool_t rx_enabled;
+    rt_uint64_t tx_timeout_ticks;
 };
 
 static struct aic_uart uart0 = {
@@ -30,6 +31,7 @@ static struct aic_uart uart0 = {
     .clock_reg = AIC_CMU_UART0,
     .irq = AIC_UART0_IRQ,
     .name = "uart0",
+    .tx_timeout_ticks = BSP_CLINT_FREQ / 10,
 };
 static struct rt_thread rx_thread;
 rt_align(RT_ALIGN_SIZE) static rt_uint8_t rx_stack[1024];
@@ -38,8 +40,8 @@ static rt_err_t aic_uart_configure(struct rt_serial_device *serial,
                                    struct serial_configure *cfg)
 {
     struct aic_uart *uart = serial->parent.user_data;
-    rt_uint32_t divisor, lcr, old_lcr;
-    rt_uint64_t deadline;
+    rt_uint32_t divisor, lcr, old_lcr, frame_bits;
+    rt_uint64_t deadline, tx_timeout;
     rt_err_t ret = -RT_EIO;
     rt_base_t level;
 
@@ -74,6 +76,18 @@ static rt_err_t aic_uart_configure(struct rt_serial_device *serial,
     if (!divisor || divisor > 0xffff)
     {
         return -RT_EINVAL;
+    }
+
+    /* TFNF needs one FIFO slot, not an empty FIFO. Allow two actual frame
+     * times, rounded up, with the existing 100 ms minimum for fast rates. */
+    frame_bits = 1 + cfg->data_bits + (cfg->parity != PARITY_NONE) +
+                 (cfg->stop_bits == STOP_BITS_2 ? 2 : 1);
+    tx_timeout = (16ULL * divisor * frame_bits * BSP_CLINT_FREQ + BSP_UART_CLK_FREQ - 1) /
+                 BSP_UART_CLK_FREQ;
+    tx_timeout *= 2;
+    if (tx_timeout < BSP_CLINT_FREQ / 10)
+    {
+        tx_timeout = BSP_CLINT_FREQ / 10;
     }
 
     deadline = riscv_timer_rdtime() + BSP_CLINT_FREQ / 10;
@@ -116,6 +130,7 @@ static rt_err_t aic_uart_configure(struct rt_serial_device *serial,
         goto restore_lcr;
     }
     aic_write32(uart->base + UART_MCR, 0);
+    uart->tx_timeout_ticks = tx_timeout;
     ret = RT_EOK;
     goto out;
 
@@ -149,13 +164,13 @@ static int aic_uart_putc(struct rt_serial_device *serial, char c)
     struct aic_uart *uart = serial->parent.user_data;
 
     /* Bound a stalled transmitter without depending on scheduler state. */
-    rt_uint64_t deadline = riscv_timer_rdtime() + BSP_CLINT_FREQ / 10;
+    rt_uint64_t start = riscv_timer_rdtime();
 
     /* Like the vendor hal_usart_putchar, wait for room in the TX FIFO.
      * LSR.THRE reports the TX threshold, not whether a byte can be queued. */
     while (!(aic_read32(uart->base + UART_USR) & UART_USR_TFNF))
     {
-        if (riscv_timer_rdtime() >= deadline)
+        if (riscv_timer_rdtime() - start >= uart->tx_timeout_ticks)
         {
             return -1;
         }

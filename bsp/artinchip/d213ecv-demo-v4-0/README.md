@@ -2,36 +2,37 @@
 
 [English](README.md) | [中文](README_zh.md)
 
-## Hardware
+## Overview
 
-- Board: ArtInChip D213ECV-DEMO-V4-0.
-- SoC: D213ECV, T-Head C906, RV64GC (IMAFDC), single hart, M-mode.
-- Memory: 128 MiB DDR3 at `0x40000000`.
-- Console: UART0, PA.0 TX / PA.1 RX, 115200 baud, 8N1, no flow control.
-- [Official board information](https://aicdoc.artinchip.com/topics/product/d213ecV4.html).
+This BSP supports the ArtInChip D213ECV-DEMO-V4-0 development board with RT-Thread running in M-mode on a single T-Head C906 core.
 
-| Function | Support |
-|----------|-------------|
-| Startup, scheduler, double-precision FPU context | RT-Thread RISC-V common port |
-| System tick | D213 CLINT comparator and time CSR, common timer core |
-| Interrupt controller | Common PLIC driver, D213 priority-enable setup |
-| Clock/reset | GPIO and UART0 gates only; loader retains PLL/DDR ownership |
-| UART0 | Serial-v1, polling TX and a thread feeding the standard RX FIFO |
-| FinSH/MSH, heap, device framework | Enabled by default |
+| Item | Description |
+|------|-------------|
+| SoC | ArtInChip D213ECV |
+| CPU | T-Head C906, RV64GC |
+| Memory | 128 MiB DDR3 at `0x40000000` |
+| Console | UART0, PA.0 (TX) / PA.1 (RX), 115200 baud, 8N1, no flow control |
 
-The UART adapter keeps the UART0 PLIC line masked and polls RX at a nominal 1 ms interval. The RX thread runs one priority level above FinSH so console output cannot starve polling; the default serial receive buffer is 512 bytes. It is intended for an interactive console; sustained transfers or long scheduling delays can lose received data. UART hardware interrupts and DMA are not supported. Selecting serial-v2 disables the UART0 option because this adapter uses the serial-v1 API.
+See the [official board documentation](https://aicdoc.artinchip.com/topics/product/d213ecV4.html) for hardware details.
 
-## UART configuration
+## Supported features
 
-UART0 is enabled by default with `BSP_USING_UART0`. It uses PA.0 TX / PA.1 RX (function 5) and retains the loader-configured input clock, 48 MHz by default.
+| Feature | Description |
+|---------|-------------|
+| Kernel port | RT-Thread RISC-V common port, including double-precision FPU context switching |
+| System tick | CLINT timer, 1000 Hz tick by default |
+| Interrupt controller | PLIC |
+| UART0 | Serial-v1, polling TX and thread-based polling RX |
+| FinSH/MSH | Enabled by default |
+| Heap and device framework | Enabled by default |
 
-Use `RT_DEVICE_CTRL_CONFIG` with `struct serial_configure` before opening the port. The adapter accepts 5–8 data bits, no/odd/even parity, and one or two stop bits. Five data bits with two stop bits is rejected: the hardware would produce 1.5 stop bits, which serial-v1 cannot express. Unsupported formats, flow control, inverted/MSB-first operation and divisors outside 1–65535 return `-RT_EINVAL` before changing registers. Configuration clears FIFOs, waits up to 100 ms for the controller to become idle and checks LCR readback before accessing the divisor registers. A busy timeout returns `-RT_ETIMEOUT`; rejected LCR writes return `-RT_EIO`. Baud rates use the nearest integer divisor; the resulting baud error depends on the input clock and requested rate.
+UART0 is intended for an interactive console. Sustained input or long scheduling delays may cause data loss. UART hardware interrupts, DMA and flow control are not supported. The BSP provides the clock, reset and pin configuration required by UART0; DDR and PLL initialization are handled by the bootloader.
 
-Open with `RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX` to use the framework's receive FIFO and callback, or use polling reads without `INT_RX`. Here `INT_RX` selects the serial-v1 buffered interface; hardware IRQ reception remains disabled. Closing the device disables buffered reception. Reconfiguration resets the hardware FIFOs, so configure only with traffic stopped. DMA and RS-485 direction control are not provided.
+## Build and configuration
 
-## Build independently
+Install Python 3, SCons, kconfiglib and a GNU bare-metal RISC-V toolchain supporting RV64GC and the `lp64d` ABI. GCC 10.2.0 is recommended.
 
-Install Python 3, SCons, kconfiglib and a GNU bare-metal RISC-V toolchain providing `riscv64-unknown-elf-*`, RV64GC and the `lp64d` ABI:
+From the repository root:
 
 ```sh
 python -m pip install scons kconfiglib
@@ -41,60 +42,50 @@ scons --pyconfig-silent
 scons -j8
 ```
 
-On PowerShell, set the toolchain path with:
+On PowerShell, use `$env:RTT_EXEC_PATH = 'C:/path/to/riscv-toolchain/bin'` to set the toolchain path. The default compiler prefix is `riscv64-unknown-elf-`; set `RTT_CC_PREFIX` if your toolchain uses a different prefix. The compiler can also be located through PATH.
 
-```powershell
-$env:RTT_EXEC_PATH = 'C:/path/to/riscv-toolchain/bin'
-scons --pyconfig-silent
-scons -j8
-```
+The build produces `rtthread.elf`, `rtthread.bin` and `rtthread.map`.
 
-The compiler can also be added to PATH. Set `RTT_CC_PREFIX` when using a different toolchain prefix. The build produces `rtthread.elf`, `rtthread.bin` and `rtthread.map`.
-
-Local builds use Xuantie V2.6.1 (GCC 10.2.0); CI uses RT-Thread's public GCC 10.2.0 RISC-V toolchain. For GCC 12 and later, `rtconfig.py` adds explicit `zicsr_zifencei` to the ISA string. Those newer toolchains have not been validated for this BSP.
-
-## Configuration and distribution
-
-The default `.config` enables UART0/Serial-v1, MSH, heap and the base kernel, with a 1000 Hz system tick. Configure the project and generate `rtconfig.h` with:
+To change the configuration, run:
 
 ```sh
 scons --menuconfig
 scons --pyconfig-silent
 scons -j8
-scons --dist
 ```
 
-Board options include UART0 selection, the UART input clock (default 48 MHz) and the CLINT timebase (default 4 MHz). Set the frequency values to match the bootloader configuration; these options do not change hardware dividers. Generate `rtconfig.h` with the configuration tools above.
+Generate `rtconfig.h` with the configuration tools rather than editing it directly.
 
-Extract `dist/project.zip` into a separate directory and unset `RTT_ROOT`. Run the same configuration and build commands in the extracted `project/` directory. The archive contains the BSP, its libraries, RT-Thread sources and build tools.
+| Board option | Default | Description |
+|--------------|---------|-------------|
+| `BSP_USING_UART0` | Enabled | UART0 console; requires Serial-v1 |
+| `BSP_UART_CLK_FREQ` | 48000000 | UART0 input clock in Hz |
+| `BSP_CLINT_FREQ` | 4000000 | CLINT timebase in Hz |
 
-## Memory and startup requirements
+The clock settings must match the bootloader configuration; they do not change hardware clock dividers. Serial-v2 is not supported by the UART0 driver.
 
-| Region | Address / purpose |
-|--------|-------------------|
-| DDR3 | `0x40000000..0x47ffffff`, 128 MiB |
-| RT-Thread | `0x40000000..0x477fffff`, 120 MiB |
-| Loader reservation | `0x47800000..0x47ffffff`, upper 8 MiB |
-| Binary load address / ELF entry | `0x40000000` |
+UTest is disabled by default. To use it, enable `RT_USING_UTESTCASES` and select the required test cases in menuconfig, then regenerate the configuration and rebuild.
 
-The heap starts after static sections and the early stack, and ends at `0x47800000`. The early common-port stack is 16-byte aligned; the interrupt stack resides in BSS. Linker assertions check section ordering, stack alignment and heap bounds.
+To export a standalone project, run `scons --dist`. Extract `dist/project.zip`, unset `RTT_ROOT` if it is set, and run the same configuration and build commands in the extracted `project/` directory.
 
-An ArtInChip-compatible external loader must:
+## Download and run
 
-1. Initialize DDR, PLLs, bus clocks and CPU memory/cache attributes.
-2. Configure UART0 for a 48 MHz input clock and provide a 4 MHz timebase, or use matching BSP frequency settings.
-3. Load the image at `0x40000000`, clean loaded data and synchronize the instruction cache if caches are enabled.
-4. Enter the first instruction on hart 0 in M-mode, with interrupts disabled, MMIO non-cacheable, no active DMA and no outstanding claimed PLIC IRQs.
+This BSP requires an external ArtInChip-compatible bootloader. Package `rtthread.bin` in the FIT or firmware format expected by that bootloader, using a matching partition layout.
 
-The BSP retains the bootloader's DDR, PLL, UART0 clock-divider and cache configuration. The RISC-V common port handles startup and PLIC claim/complete; board initialization sets up the C906, peripheral gates and timer access.
+| Region | Address range |
+|--------|---------------|
+| RT-Thread, including heap | `0x40000000`–`0x477fffff` (120 MiB) |
+| Bootloader reservation | `0x47800000`–`0x47ffffff` (8 MiB) |
+| Binary load address and ELF entry | `0x40000000` |
 
-## Load and use the console
+Before entering RT-Thread, the bootloader must:
 
-Package `rtthread.bin` in the FIT or firmware format required by your ArtInChip bootloader, then load it at `0x40000000`. Use a bootloader with DDR initialization and a matching partition layout.
+1. Initialize DDR, PLLs, bus clocks and CPU memory/cache attributes, with MMIO mapped as non-cacheable.
+2. Provide the UART0 input clock and CLINT timebase specified in the BSP configuration.
+3. Load the image at `0x40000000`, clean the loaded data from the data cache and synchronize the instruction cache if caches are enabled.
+4. Enter the image on hart 0 in M-mode with interrupts disabled, no active DMA and no outstanding claimed PLIC interrupts.
 
-For a `demo128-nand` full image on 2 KiB-page NAND, keep the assembled `bootloader.aic` within 411,648 bytes, including PBP, headers and resources. This is the SPL page-table limit. Use the existing bootloader and partition layout for an OS-only update.
-
-After loading, connect UART0 at 115200 8N1. Expected output includes:
+Connect a serial terminal to UART0 using 115200 baud, 8 data bits, no parity, 1 stop bit and no flow control. After boot, the console displays:
 
 ```text
 RT-Thread Operating System
@@ -102,46 +93,19 @@ D213ECV-DEMO-V4-0
 msh >
 ```
 
-| Command | Purpose |
-|---------|---------|
-| `help` | List shell commands |
-| `version` | Show RT-Thread version |
-| `ps` or `list thread` | List threads |
-| `list device` | List registered devices; the default exposes `uart0` |
-| `list timer` | List timers and the current tick |
-| `free` | Show heap usage |
+Use `help` to list shell commands, `ps` to view threads, `free` to view heap usage, and `list device` to view registered devices. The default configuration registers `uart0`.
 
-The default thread list includes `tshell`, `uart0rx` and `tidle0` after the startup application exits.
+## UART usage
 
-## Validation status
+UART0 is enabled by default. To change its format, use `RT_DEVICE_CTRL_CONFIG` with `struct serial_configure` before opening the device. Supported formats are 5–8 data bits, no/odd/even parity, and one or two stop bits, except for 5 data bits with two stop bits. The available baud rates depend on the configured input clock and the hardware divisor range of 1–65535.
 
-The UART0 image built on November 14, 2026 at 02:39:03 reached MSH on the board. Serial logs confirm repeated `help`, `list device`, `list timer` and `ps` commands, with only `uart0` registered. The receive thread runs at priority 19, above the shell at priority 20. Board testing also confirmed stable MSH startup after a full power cycle and repeated command entry while `help` and `ps` output was in progress.
+Open with `RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX` for buffered reception and receive callbacks. In this driver, `INT_RX` uses a polling thread rather than hardware interrupts. Polling reads are available when opened without `INT_RX`.
 
-| Check | Result |
-|-------|--------|
-| Default UART0 configuration and independent SCons build | Passed with GCC 10.2.0 |
-| No-UART and serial-v2 exclusion configurations | Passed with GCC 10.2.0 |
-| Dist export and independent rebuild outside the repository | Passed with GCC 10.2.0 |
-| UART0 formats, parameter validation, TX timeout, RX close/reopen and DLAB protection | Host MMIO simulation passed; 21 valid formats |
-| SPI-NAND loader handoff, FIT CRC32 and RT-Thread startup | Passed on the previous UART0 revision |
-| UART0 TX/RX, repeated MSH `help` and `ps` | Confirmed by current image board logs |
-| MSH `version` and `free` | Passed on the previous UART0 revision |
-| Device/timer enumeration | Current image reports only `uart0`, receive-thread timer and current tick |
-| Full power-cycle startup and command input during `help` / `ps` output | Passed on the current UART0 image |
-| Tick accuracy, preemption and repeated wakeup | Pending |
-| Heap stress/alignment and FPU/FCSR preservation under preemption/IRQs | Pending |
-| Controlled external PLIC delivery/complete, reset cycles and soak | Pending |
+Stop traffic before reconfiguring the device because configuration clears the hardware FIFOs. Transmit waits have a timeout; check the returned byte count for short writes. RS-485 direction control is not supported.
 
-## Source and license
+## References and license
 
-The BSP is licensed under Apache-2.0.
+- [ArtInChip board documentation](https://aicdoc.artinchip.com/topics/product/d213ecV4.html)
+- [ArtInChip Luban-Lite SDK](https://gitee.com/artinchip/luban-lite), the source of the SoC definitions and hardware initialization sequences used by this BSP.
 
-SoC/register definitions, hardware sequences and board pinmux derive from the public [ArtInChip Luban-Lite SDK](https://gitee.com/artinchip/luban-lite). The following table lists the vendor source paths:
-
-| BSP content | SDK source | License |
-|-------------|------------|---------|
-| D213 addresses and CMU gate/reset bits | `bsp/artinchip/sys/d21x/include/aic_soc.h`, `aic_clk_id.h` | Apache-2.0 |
-| C906 and PLIC setup | `bsp/artinchip/sys/d21x/system.c` | Apache-2.0 |
-| UART registers/programming | `bsp/artinchip/hal/uart/aic_hal_uart.c` | Apache-2.0 |
-| GPIO pin configuration | `bsp/artinchip/hal/gpio/aic_hal_gpio.c`, `target/d21x/demo128-nand/pinmux.c` | Apache-2.0 |
-| Gate/reset sequencing | `bsp/artinchip/hal/cmu/aic_hal_clk.c` | Apache-2.0 |
+The BSP is licensed under Apache-2.0. Copyright and license notices are retained in the source files.

@@ -27,4 +27,4 @@ artinchip/
 
 BSP 使用 RT-Thread RISC-V common port 完成启动、上下文切换、FPU 状态保存、中断处理和系统定时，提供 UART0 及所需的时钟、复位和引脚配置。Bootloader 在启动 RT-Thread 前完成 DDR、PLL 和内存/Cache 属性初始化。
 
-独立构建、配置、loader 要求、验证状态和源码归属见 [开发板说明](d213ecv-demo-v4-0/README_zh.md)。
+构建方法、配置、Bootloader 要求和 UART 使用方法见 [开发板说明](d213ecv-demo-v4-0/README_zh.md)。
