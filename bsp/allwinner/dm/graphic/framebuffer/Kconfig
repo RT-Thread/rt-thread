@@ -1,0 +1,33 @@
+config RT_GRAPHIC_FB_SUNXI_DE
+    bool "Allwinner Sunxi DE0/TCON0 framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_HEAP
+    default n
+    help
+      Enable the Allwinner DE0 and TCON0 framebuffer. The F101 backend can
+      drive a parallel RGB, single-link LVDS, or MIPI-DSI video
+      output selected by allwinner,output in the device tree.
+      The enabled device tree node must supply display-timings, a default
+      pinctrl state, and allwinner,tcon-dclk-div. A MIPI-DSI panel must use
+      rgb888 video mode and describe dsi,lanes. Panel power and backlight
+      remain board concerns.
+
+config RT_GRAPHIC_FB_SUN50I_H616_DE33
+    bool "Allwinner H616 DE33 HDMI framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_HEAP
+    default n
+    help
+      Enable the H616 DE33 mixer, TCON-TV, and DW-HDMI framebuffer path.
+      This backend is separate from the F101 DE0/TCON0 driver. It uses the
+      timing supplied by display-timings when present; otherwise it starts in
+      the conservative CEA-861 1280x720@60 mode, reads the connected sink's
+      base EDID over DDC, and applies its preferred detailed timing. HDMI
+      audio is provided separately by the AHUB/I2S driver.

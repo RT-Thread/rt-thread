@@ -1,0 +1,35 @@
+config RT_HWCRYPTO_SUNXI_CE
+    bool "Allwinner Sunxi CE 0.6 crypto engine"
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HWCRYPTO
+    depends on RT_USING_OFW
+    depends on RT_USING_RESET
+    select RT_HWCRYPTO_USING_AES
+    select RT_HWCRYPTO_USING_AES_CBC
+    select RT_HWCRYPTO_USING_AES_CTR
+    select RT_HWCRYPTO_USING_RNG
+    default n
+    help
+      Enable the PIO-backed Allwinner CE 0.6 driver. It provides AES ECB,
+      CBC and CTR operations plus the CE pseudo-random-number generator.
+
+      Hash algorithms are deliberately not selected here: this CE revision
+      exposes only one-shot hashing while RT-Thread's hwcrypto hash API is
+      streaming.
+
+config RT_HWCRYPTO_SUN50I_H616_CE
+    bool "Allwinner H616 CE task-DMA crypto engine"
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HWCRYPTO
+    depends on RT_USING_OFW
+    depends on RT_USING_RESET
+    select RT_HWCRYPTO_USING_AES
+    select RT_HWCRYPTO_USING_AES_CBC
+    select RT_HWCRYPTO_USING_RNG
+    default n
+    help
+      Enable H616's task-descriptor DMA Crypto Engine. It supports AES ECB
+      and CBC with 128-, 192-, or 256-bit keys plus the H616 TRNG. This is a
+      separate CE generation from the F101 PIO engine.

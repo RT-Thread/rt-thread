@@ -1,0 +1,24 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+h264 = os.path.join(cwd, 'h264')
+
+cpppath = [cwd, h264, os.path.join(cwd, '..', '..', 'include')]
+src = ['vdec-sun252i.c']
+
+if GetDepend(['RT_SOC_SUNXI_H264_DEC']):
+    src += [
+        'h264/h264_bitstream.c',
+        'h264/h264_syntax.c',
+        'h264/h264_frame_pool.c',
+        'h264/h264_dpb.c',
+        'h264/h264_decoder.c',
+        'h264/h264_hw.c',
+        'h264/vdec-h264.c',
+    ]
+if (GetDepend('RT_SOC_SUNXI_JPEG_DEC') or GetDepend('RT_SOC_SUNXI_JPEG_ENC') or
+        GetDepend('RT_SOC_SUNXI_PNG_DEC')):
+    src += ['mjpeg/mjpeg-sunxi.c']
+group = DefineGroup('Vdec', src, depend = [''], CPPPATH = cpppath)
+Return('group')

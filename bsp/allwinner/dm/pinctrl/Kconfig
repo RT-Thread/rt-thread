@@ -1,0 +1,14 @@
+config RT_PINCTRL_SUN50I_H616
+    bool "Allwinner H616 main pin controller"
+    depends on RT_USING_PINCTRL && RT_USING_OFW
+    default n
+    help
+      Provide main PIO GPIO and UART/TWI/MMC/SPI pin multiplexing.
+      Includes main PIO interrupts and always-on R_PIO pin multiplexing.
+      Keep firmware-programmed bank supply voltages unchanged.
+
+config RT_PINCTRL_SUN252I_F101
+    bool "Allwinner Sun252i F101 pin controller"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_OFW
+    default n

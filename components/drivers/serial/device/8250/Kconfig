@@ -5,6 +5,7 @@ menuconfig RT_SERIAL_8250
 config RT_SERIAL_8250_DW
     bool "Synopsys DesignWare 8250"
     depends on RT_SERIAL_8250
+    depends on RT_USING_RESET
     default n
 
 config RT_SERIAL_8250_PCI

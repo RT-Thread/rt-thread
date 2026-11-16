@@ -1,0 +1,8 @@
+config RT_NVMEM_SUNXI_SID
+    bool "Allwinner Sunxi SID eFuse"
+    depends on RT_USING_NVMEM
+    default n
+    help
+      Enable read-only access to the Allwinner SID eFuse controller.
+
+      Programming eFuse bits is intentionally not exposed by this driver.

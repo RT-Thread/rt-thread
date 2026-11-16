@@ -1,0 +1,54 @@
+import os
+import sys
+import glob
+import rtconfig
+
+from rtconfig import RTT_ROOT
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import dtc
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+DefaultEnvironment(tools=[])
+env = Environment(tools=['mingw'],
+    AS=rtconfig.AS, ASFLAGS=rtconfig.AFLAGS,
+    CC=rtconfig.CC, CCFLAGS=rtconfig.CFLAGS,
+    CXX=rtconfig.CXX, CXXFLAGS=rtconfig.CXXFLAGS,
+    AR=rtconfig.AR, ARFLAGS='-rc',
+    LINK=rtconfig.LINK, LINKFLAGS=rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+env.Append(CPPPATH=[os.path.join(os.getcwd(), 'board')])
+
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+
+if GetDepend('RT_USING_BUILTIN_FDT'):
+    if os.getenv('DTC_PATH'):
+        os.environ['PATH'] = os.path.dirname(os.getenv('DTC_PATH')) + \
+                os.pathsep + os.environ['PATH']
+
+    dtb_name = GetDepend('RT_BUILTIN_FDT_PATH').strip('"')
+    dts_name = os.path.splitext(dtb_name)[0] + '.dts'
+    dtb_path = os.path.join(os.getcwd(), dtb_name)
+
+    # dtc.py tracks the root DTS only, while this board uses a shared DTSI.
+    # Invalidate its generated output whenever a local include has changed.
+    if os.path.exists(dtb_path):
+        dts_dir = os.path.dirname(dtb_path)
+        dtsi_paths = glob.glob(os.path.join(dts_dir, '**', '*.dtsi'),
+                recursive=True)
+        dtsi_paths.append(os.path.join(os.getcwd(), 'rtconfig.h'))
+        if any(os.path.getmtime(path) > os.path.getmtime(dtb_path)
+                for path in dtsi_paths):
+            os.remove(dtb_path)
+
+    dtc.dts_to_dtb(RTT_ROOT, [dts_name],
+            include_paths=[os.getcwd(), os.path.join(os.getcwd(), '../dm/include')])
+
+DoBuilding(TARGET, objs)
