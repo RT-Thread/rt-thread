@@ -412,10 +412,14 @@ def MDK5Project(env, target, script):
                 os.remove(log_file_path)
             log_thread = threading.Thread(target=monitor_log_file, args=(log_file_path,))
             log_thread.start()
-            cmd = 'UV4.exe -b '+ uvprojx_name +' -q -j0 -t '+ active_target_name +' -o '+log_file_path
+            import subprocess
+            cmd = [
+                'UV4.exe', '-b', uvprojx_name, '-q', '-j0',
+                '-t', active_target_name, '-o', log_file_path,
+            ]
             print('Start to build keil project')
-            print(cmd)
-            os.system(cmd)
+            print(subprocess.list2cmdline(cmd))
+            subprocess.run(cmd, check=False)
         else:
             print('UV4.exe is not available, please check your keil installation')
 
