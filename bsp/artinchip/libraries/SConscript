@@ -1,0 +1,4 @@
+from building import *
+
+group = SConscript('soc/d21x/SConscript')
+Return('group')
