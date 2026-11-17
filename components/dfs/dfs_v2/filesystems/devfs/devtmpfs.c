@@ -114,6 +114,7 @@ __next_dir:
 static int _get_subdir(const char *path, char *name, rt_size_t name_size)
 {
     const char *subpath = path;
+    char *name_start = name;
     rt_size_t name_len = 0;
 
     if (path == RT_NULL || name == RT_NULL || name_size == 0)
@@ -127,7 +128,7 @@ static int _get_subdir(const char *path, char *name, rt_size_t name_size)
     {
         if (name_len + 1 >= name_size)
         {
-            name[0] = '\0';
+            *name_start = '\0';
             return -ENAMETOOLONG;
         }
         *name = *subpath;

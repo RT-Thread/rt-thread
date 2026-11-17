@@ -81,8 +81,9 @@ static rt_bool_t tc_guard_intact(const rt_uint8_t *guard)
 
 /*
  * Build "<mnt>/<len x 'A'>" into tc_path and return its length.
- * The mount point is taken from RT_UTEST_DFS_MNT_PATH so the test works for
- * whatever filesystem/mount point the utest configuration uses.
+ * The mount point is fixed to /dev (TC_MNT_PATH) because devtmpfs is always
+ * mounted there by devtmpfs_init(); RT_UTEST_DFS_MNT_PATH selects where the
+ * generic DFS API tests mount their own filesystem and does not apply here.
  */
 static rt_size_t tc_build_path(rt_size_t len)
 {
