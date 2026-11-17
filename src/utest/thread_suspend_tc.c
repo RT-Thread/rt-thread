@@ -16,6 +16,23 @@
 #define THREAD_TIMESLICE     5
 #define TEST_THREAD_PRIORITY 25
 
+#ifdef RT_USING_SMP
+static rt_ubase_t saved_bind_cpu;
+#endif
+
+static rt_err_t start_test_thread(rt_thread_t thread)
+{
+#ifdef RT_USING_SMP
+    /* Forced suspend cannot target a thread running on another CPU. */
+    rt_err_t result = rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+#endif
+    return rt_thread_startup(thread);
+}
+
 /* Global variables for normal usage test */
 static rt_thread_t target_thread = RT_NULL;
 static rt_thread_t monitor_thread = RT_NULL;
@@ -203,8 +220,8 @@ static void test_suspend_force_normal_usage(void)
     uassert_not_null(monitor_thread);
 
     /* Start threads */
-    rt_thread_startup(target_thread);
-    rt_thread_startup(monitor_thread);
+    uassert_int_equal(start_test_thread(target_thread), RT_EOK);
+    uassert_int_equal(start_test_thread(monitor_thread), RT_EOK);
 
     /* Wait for test completion */
     rt_sem_take(sync_sem, RT_WAITING_FOREVER);
@@ -257,7 +274,7 @@ static void test_suspend_force_api_basic(void)
 
     uassert_not_null(api_thread);
 
-    rt_thread_startup(api_thread);
+    uassert_int_equal(start_test_thread(api_thread), RT_EOK);
     rt_thread_mdelay(50); /* Wait for thread to start */
 
     uassert_true(thread_started);
@@ -315,7 +332,7 @@ static void test_suspend_force_not_started_thread(void)
     uassert_true(resume_result == -RT_EINVAL);
 
     /* Now start the thread to see if it works normally */
-    rt_err_t startup_result = rt_thread_startup(not_started_thread);
+    rt_err_t startup_result = start_test_thread(not_started_thread);
     uassert_true(startup_result == RT_EOK);
 
     /* Wait a bit to see if thread starts normally */
@@ -352,14 +369,14 @@ static void test_suspend_force_deadlock_risk(void)
     holder_thread = rt_thread_create("holder", mutex_holder_thread, RT_NULL,
                                      THREAD_STACK_SIZE, UTEST_THR_PRIORITY, THREAD_TIMESLICE);
     uassert_not_null(holder_thread);
-    rt_thread_startup(holder_thread);
+    uassert_int_equal(start_test_thread(holder_thread), RT_EOK);
 
     /* Create and start waiter thread */
     waiter_thread = rt_thread_create("waiter", mutex_waiter_thread, RT_NULL,
                                      THREAD_STACK_SIZE, UTEST_THR_PRIORITY + 1, THREAD_TIMESLICE);
     uassert_not_null(waiter_thread);
     /* Now start waiter thread, it will try to acquire mutex held by suspended thread */
-    rt_thread_startup(waiter_thread);
+    uassert_int_equal(start_test_thread(waiter_thread), RT_EOK);
 
     /* Wait for holder to get mutex */
     int timeout = 100; /* 1 second timeout */
@@ -425,7 +442,18 @@ static void test_suspend_force_deadlock_risk(void)
 
 static rt_err_t utest_tc_init(void)
 {
+#ifdef RT_USING_SMP
+    rt_thread_t self = rt_thread_self();
+    rt_sched_lock_level_t level;
+
+    rt_sched_lock(&level);
+    saved_bind_cpu = RT_SCHED_CTX(self).bind_cpu;
+    rt_sched_unlock(level);
+    /* Keep the controller and its targets on the same CPU. */
+    return rt_thread_control(self, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+#else
     return RT_EOK;
+#endif
 }
 
 static rt_err_t utest_tc_cleanup(void)
@@ -464,7 +492,11 @@ static rt_err_t utest_tc_cleanup(void)
     /* Give system time to complete cleanup */
     rt_thread_mdelay(50);
 
+#ifdef RT_USING_SMP
+    return rt_thread_control(rt_thread_self(), RT_THREAD_CTRL_BIND_CPU, (void *)saved_bind_cpu);
+#else
     return RT_EOK;
+#endif
 }
 
 static void testcase(void)

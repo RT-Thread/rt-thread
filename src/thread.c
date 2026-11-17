@@ -116,6 +116,15 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
 }
 #endif
 
+static rt_err_t _thread_mark_defunct(rt_thread_t thread)
+{
+    /*
+     * Claim cleanup once before mutex cleanup and defunct enqueue.
+     * Only thread initialization clears it for a new lifetime.
+     */
+    return rt_atomic_exchange(&thread->defunct, RT_TRUE) ? -RT_ERROR : RT_EOK;
+}
+
 static void _thread_exit(void)
 {
     struct rt_thread *thread;
@@ -128,10 +137,13 @@ static void _thread_exit(void)
 
     rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    if (_thread_mark_defunct(thread) == RT_EOK)
+    {
+        _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+    }
 
     rt_exit_critical_safe(critical_level);
 
@@ -233,6 +245,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* error and flags */
     thread->error = RT_EOK;
+    rt_atomic_store(&thread->defunct, RT_FALSE);
 
     /* lock init */
 #ifdef RT_USING_SMP
@@ -518,10 +531,17 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 
     error = rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    if (error == RT_EOK)
+    {
+        error = _thread_mark_defunct(thread);
+        if (error == RT_EOK)
+        {
+            _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+            /* insert to defunct thread list */
+            rt_thread_defunct_enqueue(thread);
+        }
+    }
 
     rt_exit_critical_safe(critical_level);
     return error;
