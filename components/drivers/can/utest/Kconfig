@@ -197,4 +197,17 @@ if RT_UTEST_CAN
 
 endif
 
+if RT_USING_CAN
+
+    config RT_UTEST_CAN_FRAMEWORK
+        bool "CAN Framework Test (simulated ops)"
+        default n
+        help
+            Register a virtual CAN controller with simulated ops and verify the
+            Generic CAN lifecycle, TX admission and error paths, non-blocking TX
+            terminal retirement and the RX FIFO path. No CAN controller,
+            transceiver or bus is required.
+
+endif
+
 endmenu

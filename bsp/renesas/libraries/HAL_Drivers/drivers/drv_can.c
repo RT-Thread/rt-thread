@@ -16,8 +16,7 @@
 #define RA_CAN_USING_DYNAMIC_CANFD_TIMING
 #endif
 
-static struct ra_can_config can_config[] =
-{
+static struct ra_can_config can_config[] = {
 #ifdef BSP_USING_CAN0
     CAN0_CONFIG,
 #endif
@@ -38,78 +37,59 @@ enum
 #endif
 };
 
-static struct ra_can can_obj[sizeof(can_config) / sizeof(can_config[0])] = {0};
+static struct ra_can can_obj[sizeof(can_config) / sizeof(can_config[0])] = { 0 };
 
 #ifndef RA_CAN_USING_DYNAMIC_CANFD_TIMING
-static const struct ra_baud_rate_tab can_baud_rate_tab[] =
-{
-    {CAN1MBaud, 3, 6, 3, 1 + 4},
-    {CAN800kBaud, 4, 15, 5, 1 + 2},
-    {CAN500kBaud, 4, 14, 5, 1 + 4},
-    {CAN250kBaud, 4, 14, 5, 1 + 9},
-    {CAN125kBaud, 4, 14, 5, 1 + 19},
-    {CAN100kBaud, 4, 14, 5, 1 + 24},
-    {CAN50kBaud, 4, 14, 5, 1 + 49},
-    {CAN20kBaud, 4, 14, 5, 1 + 124},
-    {CAN10kBaud, 4, 14, 5, 1 + 249}
+static const struct ra_baud_rate_tab can_baud_rate_tab[] = {
+    { CAN1MBaud, 3, 6, 3, 1 + 4 },
+    { CAN800kBaud, 4, 15, 5, 1 + 2 },
+    { CAN500kBaud, 4, 14, 5, 1 + 4 },
+    { CAN250kBaud, 4, 14, 5, 1 + 9 },
+    { CAN125kBaud, 4, 14, 5, 1 + 19 },
+    { CAN100kBaud, 4, 14, 5, 1 + 24 },
+    { CAN50kBaud, 4, 14, 5, 1 + 49 },
+    { CAN20kBaud, 4, 14, 5, 1 + 124 },
+    { CAN10kBaud, 4, 14, 5, 1 + 249 }
 };
 #endif
 
 #if defined(BSP_USING_CANFD)
 
-#define can_instance_ctrl_t         canfd_instance_ctrl_t
+#define can_instance_ctrl_t canfd_instance_ctrl_t
 
-#define R_CAN_Open                  R_CANFD_Open
-#define R_BSP_IrqStatusClear        R_BSP_IrqClearPending
-#define R_CAN_ModeTransition        R_CANFD_ModeTransition
-#define R_CAN_InfoGet               R_CANFD_InfoGet
-#define R_CAN_Write                 R_CANFD_Write
-#define R_CAN_Close                 R_CANFD_Close
+#define R_CAN_Open           R_CANFD_Open
+#define R_BSP_IrqStatusClear R_BSP_IrqClearPending
+#define R_CAN_ModeTransition R_CANFD_ModeTransition
+#define R_CAN_InfoGet        R_CANFD_InfoGet
+#define R_CAN_Write          R_CANFD_Write
+#define R_CAN_Close          R_CANFD_Close
 
-#define can0_callback               canfd0_callback
-#define can1_callback               canfd1_callback
+#define can0_callback canfd0_callback
+#define can1_callback canfd1_callback
 
 #ifdef BSP_USING_CAN0
-const canfd_afl_entry_t p_canfd0_afl[CANFD_CFG_AFL_CH0_RULE_NUM] =
-{
-    {
-        .id =
-        {
-            .id         = 0x00,
-            .frame_type = CAN_FRAME_TYPE_DATA,
-            .id_mode    = CAN_ID_MODE_STANDARD
-        },
-        .destination =
-        {
-            .minimum_dlc       = CANFD_MINIMUM_DLC_0,
-            .rx_buffer         = CANFD_RX_MB_NONE,
-            .fifo_select_flags = CANFD_RX_FIFO_0
-        }
-    },
+const canfd_afl_entry_t p_canfd0_afl[CANFD_CFG_AFL_CH0_RULE_NUM] = {
+    { .id = {
+          .id = 0x00,
+          .frame_type = CAN_FRAME_TYPE_DATA,
+          .id_mode = CAN_ID_MODE_STANDARD },
+      .destination = { .minimum_dlc = CANFD_MINIMUM_DLC_0, .rx_buffer = CANFD_RX_MB_NONE, .fifo_select_flags = CANFD_RX_FIFO_0 } },
 };
 #endif
 
 #ifdef BSP_USING_CAN1
-const canfd_afl_entry_t p_canfd1_afl[CANFD_CFG_AFL_CH1_RULE_NUM] =
-{
-    {
-        .id =
-        {
-            .id         = 0x01,
-            .frame_type = CAN_FRAME_TYPE_DATA,
-            .id_mode    = CAN_ID_MODE_STANDARD
-        },
-        .destination =
-        {
-            .minimum_dlc       = CANFD_MINIMUM_DLC_1,
-            .rx_buffer         = CANFD_RX_MB_NONE,
+const canfd_afl_entry_t p_canfd1_afl[CANFD_CFG_AFL_CH1_RULE_NUM] = {
+    { .id = {
+          .id = 0x01,
+          .frame_type = CAN_FRAME_TYPE_DATA,
+          .id_mode = CAN_ID_MODE_STANDARD },
+      .destination = { .minimum_dlc = CANFD_MINIMUM_DLC_1, .rx_buffer = CANFD_RX_MB_NONE,
 #if defined(BSP_FEATURE_CANFD_NUM_INSTANCES) && BSP_FEATURE_CANFD_NUM_INSTANCES > 1
-            .fifo_select_flags = CANFD_RX_FIFO_0
+                       .fifo_select_flags = CANFD_RX_FIFO_0
 #else
-            .fifo_select_flags = CANFD_RX_FIFO_1
+                       .fifo_select_flags = CANFD_RX_FIFO_1
 #endif
-        }
-    },
+      } },
 };
 #endif
 
@@ -124,7 +104,9 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (can_baud_rate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
 
     return 0; /* default baud is CAN1MBaud */
@@ -208,7 +190,7 @@ static rt_err_t ra_canfd_timing_calculate(can_bit_timing_cfg_t *timing,
 
         total_tq = clock_hz / denominator;
         if (total_tq < 8 ||
-                total_tq > max_time_segment_1 + max_time_segment_2 + 1)
+            total_tq > max_time_segment_1 + max_time_segment_2 + 1)
         {
             continue;
         }
@@ -217,8 +199,8 @@ static rt_err_t ra_canfd_timing_calculate(can_bit_timing_cfg_t *timing,
         time_segment_1 = sample_tq - 1;
         time_segment_2 = total_tq - sample_tq;
         if (time_segment_1 > max_time_segment_1 ||
-                time_segment_2 > max_time_segment_2 ||
-                time_segment_1 <= time_segment_2 || time_segment_2 == 0)
+            time_segment_2 > max_time_segment_2 ||
+            time_segment_1 <= time_segment_2 || time_segment_2 == 0)
         {
             continue;
         }
@@ -281,7 +263,7 @@ static rt_bool_t ra_can_other_rx_irq_enabled(struct ra_can *can)
         struct rt_can_device *can_dev = &can_obj[index].can_dev;
 
         if (&can_obj[index] != can && can_dev->can_rx != RT_NULL &&
-                (can_dev->parent.open_flag & RT_DEVICE_FLAG_INT_RX))
+            (can_dev->parent.open_flag & RT_DEVICE_FLAG_INT_RX))
         {
             return RT_TRUE;
         }
@@ -399,16 +381,16 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != CAN1MBaud &&
-                argval != CAN800kBaud &&
-                argval != CAN500kBaud &&
-                argval != CAN250kBaud &&
-                argval != CAN125kBaud &&
-                argval != CAN100kBaud &&
-                argval != CAN50kBaud  &&
-                argval != CAN20kBaud  &&
-                argval != CAN10kBaud)
+            argval != CAN800kBaud &&
+            argval != CAN500kBaud &&
+            argval != CAN250kBaud &&
+            argval != CAN125kBaud &&
+            argval != CAN100kBaud &&
+            argval != CAN50kBaud &&
+            argval != CAN20kBaud &&
+            argval != CAN10kBaud)
         {
             return -RT_ERROR;
         }
@@ -421,10 +403,10 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK)
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK)
         {
             return -RT_ERROR;
         }
@@ -474,8 +456,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
 #if defined(BSP_USING_CANFD)
 static rt_err_t ra_can_dlc_to_length(rt_uint8_t dlc, rt_uint8_t *length)
 {
-    static const rt_uint8_t dlc_to_length[] =
-    {
+    static const rt_uint8_t dlc_to_length[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64
     };
 
@@ -490,8 +471,7 @@ static rt_err_t ra_can_dlc_to_length(rt_uint8_t dlc, rt_uint8_t *length)
 
 static rt_err_t ra_can_length_to_dlc(rt_uint8_t length, rt_uint8_t *dlc)
 {
-    static const rt_uint8_t dlc_to_length[] =
-    {
+    static const rt_uint8_t dlc_to_length[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64
     };
     rt_uint8_t index;
@@ -515,6 +495,8 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
     can_frame_t g_can_tx_frame;
     struct rt_can_msg *msg_rt = (struct rt_can_msg *)buf;
     rt_uint8_t payload_length;
+    /* Immediate FSP submission result. */
+    fsp_err_t result;
     RT_ASSERT(can_dev != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
@@ -525,7 +507,7 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
 #if defined(BSP_USING_CANFD)
 #ifdef BSP_USING_CANFD
     if ((!msg_rt->fd_frame && (msg_rt->len > 8 || msg_rt->brs)) ||
-            (msg_rt->fd_frame && msg_rt->rtr))
+        (msg_rt->fd_frame && msg_rt->rtr))
     {
         return -RT_EINVAL;
     }
@@ -567,7 +549,12 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
     can = rt_container_of(can_dev, struct ra_can, can_dev);
     RT_ASSERT(boxno < can->config->num_of_mailboxs);
 
-    if (R_CAN_Write(can->config->p_api_ctrl, boxno, &g_can_tx_frame) != FSP_SUCCESS)
+    result = R_CAN_Write(can->config->p_api_ctrl, boxno, &g_can_tx_frame);
+    if (result == FSP_ERR_CAN_TRANSMIT_NOT_READY)
+    {
+        return -RT_EBUSY;
+    }
+    if (result != FSP_SUCCESS)
     {
         return -RT_ERROR;
     }
@@ -587,7 +574,9 @@ rt_ssize_t ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t 
     can = rt_container_of(can_dev, struct ra_can, can_dev);
     RT_ASSERT(boxno < can->config->num_of_mailboxs);
     if (can->callback_args->mailbox != boxno)
+    {
         return 0;
+    }
 
     msg_ra = &can->callback_args->frame;
     payload_length = msg_ra->data_length_code;
@@ -623,8 +612,7 @@ rt_ssize_t ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t 
     memcpy(msg_rt->data, msg_ra->data, payload_length);
     return sizeof(struct rt_can_msg);
 }
-const struct rt_can_ops ra_can_ops =
-{
+const struct rt_can_ops ra_can_ops = {
     .configure = ra_can_configure,
     .control = ra_can_control,
     .sendmsg = ra_can_sendmsg,
@@ -642,7 +630,7 @@ void can0_callback(can_callback_args_t *p_args)
         break;
     case CAN_EVENT_RX_COMPLETE:
         if (can_obj[CAN0_INDEX].can_dev.can_rx != RT_NULL &&
-                (can_obj[CAN0_INDEX].can_dev.parent.open_flag & RT_DEVICE_FLAG_INT_RX))
+            (can_obj[CAN0_INDEX].can_dev.parent.open_flag & RT_DEVICE_FLAG_INT_RX))
         {
             can_obj[CAN0_INDEX].callback_args = p_args;
             rt_hw_can_isr(&can_obj[CAN0_INDEX].can_dev, RT_CAN_EVENT_RX_IND | p_args->mailbox << 8);
@@ -651,15 +639,15 @@ void can0_callback(can_callback_args_t *p_args)
     case CAN_EVENT_TX_ABORTED:
         rt_hw_can_isr(&can_obj[CAN0_INDEX].can_dev, RT_CAN_EVENT_TX_FAIL | p_args->mailbox << 8);
         break;
-    case CAN_EVENT_MAILBOX_MESSAGE_LOST:    //overwrite/overrun error event
-    case CAN_EVENT_BUS_RECOVERY:            //Bus recovery error event
-    case CAN_EVENT_ERR_BUS_OFF:             //error Bus Off event
-    case CAN_EVENT_ERR_PASSIVE:             //error passive event
-    case CAN_EVENT_ERR_WARNING:             //error warning event
-    case CAN_EVENT_ERR_BUS_LOCK:            //error bus lock
-    case CAN_EVENT_ERR_CHANNEL:             //error channel
-    case CAN_EVENT_ERR_GLOBAL:              //error global
-    case CAN_EVENT_TX_FIFO_EMPTY:           //error transmit FIFO is empty
+    case CAN_EVENT_MAILBOX_MESSAGE_LOST: //overwrite/overrun error event
+    case CAN_EVENT_BUS_RECOVERY:         //Bus recovery error event
+    case CAN_EVENT_ERR_BUS_OFF:          //error Bus Off event
+    case CAN_EVENT_ERR_PASSIVE:          //error passive event
+    case CAN_EVENT_ERR_WARNING:          //error warning event
+    case CAN_EVENT_ERR_BUS_LOCK:         //error bus lock
+    case CAN_EVENT_ERR_CHANNEL:          //error channel
+    case CAN_EVENT_ERR_GLOBAL:           //error global
+    case CAN_EVENT_TX_FIFO_EMPTY:        //error transmit FIFO is empty
     {
         break;
     }
@@ -681,7 +669,7 @@ void can1_callback(can_callback_args_t *p_args)
         break;
     case CAN_EVENT_RX_COMPLETE:
         if (can_obj[CAN1_INDEX].can_dev.can_rx != RT_NULL &&
-                (can_obj[CAN1_INDEX].can_dev.parent.open_flag & RT_DEVICE_FLAG_INT_RX))
+            (can_obj[CAN1_INDEX].can_dev.parent.open_flag & RT_DEVICE_FLAG_INT_RX))
         {
             can_obj[CAN1_INDEX].callback_args = p_args;
             rt_hw_can_isr(&can_obj[CAN1_INDEX].can_dev, RT_CAN_EVENT_RX_IND | p_args->mailbox << 8);
@@ -690,14 +678,14 @@ void can1_callback(can_callback_args_t *p_args)
     case CAN_EVENT_TX_ABORTED:
         rt_hw_can_isr(&can_obj[CAN1_INDEX].can_dev, RT_CAN_EVENT_TX_FAIL | p_args->mailbox << 8);
         break;
-    case CAN_EVENT_MAILBOX_MESSAGE_LOST:    //overwrite/overrun error event
-    case CAN_EVENT_BUS_RECOVERY:            //Bus recovery error event
-    case CAN_EVENT_ERR_BUS_OFF:             //error Bus Off event
-    case CAN_EVENT_ERR_PASSIVE:             //error passive event
-    case CAN_EVENT_ERR_WARNING:             //error warning event
-    case CAN_EVENT_ERR_BUS_LOCK:            //error bus lock
-    case CAN_EVENT_ERR_CHANNEL:             //error channel
-    case CAN_EVENT_ERR_GLOBAL:              //error global
+    case CAN_EVENT_MAILBOX_MESSAGE_LOST: //overwrite/overrun error event
+    case CAN_EVENT_BUS_RECOVERY:         //Bus recovery error event
+    case CAN_EVENT_ERR_BUS_OFF:          //error Bus Off event
+    case CAN_EVENT_ERR_PASSIVE:          //error passive event
+    case CAN_EVENT_ERR_WARNING:          //error warning event
+    case CAN_EVENT_ERR_BUS_LOCK:         //error bus lock
+    case CAN_EVENT_ERR_CHANNEL:          //error channel
+    case CAN_EVENT_ERR_GLOBAL:           //error global
     {
         break;
     }

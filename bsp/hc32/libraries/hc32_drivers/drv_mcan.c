@@ -21,12 +21,12 @@
 ****************************************************************************************/
 typedef struct hc32_mcan_config_struct
 {
-    char *name;                         /* MCAN instance name */
-    CM_MCAN_TypeDef *instance;          /* MCAN instance */
-    stc_mcan_init_t init_para;          /* MCAN initialisation parameters */
+    char *name;                /* MCAN instance name */
+    CM_MCAN_TypeDef *instance; /* MCAN instance */
+    stc_mcan_init_t init_para; /* MCAN initialisation parameters */
 
     uint32_t int0_sel;
-    struct hc32_irq_config int0_cfg;    /* MCAN interrupt line 0 configuration */
+    struct hc32_irq_config int0_cfg; /* MCAN interrupt line 0 configuration */
 #if defined(HC32F4A8)
     func_ptr_t irq_callback0;
 #endif
@@ -34,9 +34,9 @@ typedef struct hc32_mcan_config_struct
 
 typedef struct hc32_mcan_driver_struct
 {
-    hc32_mcan_config_t mcan;            /* MCAN configuration */
-    struct rt_can_device can_device;    /* inherit from rt can device */
-    uint32_t tx_box_num;                /* current tx box number */
+    hc32_mcan_config_t mcan;         /* MCAN configuration */
+    struct rt_can_device can_device; /* inherit from rt can device */
+    uint32_t tx_request_mask;        /**< Physical FIFO buffer bit owned until real TX completion. */
 } hc32_mcan_driver_t;
 
 typedef struct mcan_baud_rate_struct
@@ -79,10 +79,10 @@ typedef struct mcan_baud_rate_struct
 /****************************************************************************************
 * Interrupt definitions
 ****************************************************************************************/
-#define MCAN_RX_INT   (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
-#define MCAN_TX_INT   (MCAN_INT_TX_CPLT)
-#define MCAN_ERR_INT  (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
-                       MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
+#define MCAN_RX_INT  (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
+#define MCAN_TX_INT  (MCAN_INT_TX_CPLT)
+#define MCAN_ERR_INT (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
+                      MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
 #define MCAN_INT0_SEL (MCAN_RX_INT | MCAN_TX_INT | MCAN_ERR_INT)
 
 /****************************************************************************************
@@ -178,11 +178,12 @@ static stc_mcan_filter_t m_mcan2_ext_filters[MCAN2_EXT_FILTER_NUM];
 * Driver operations
 ****************************************************************************************/
 /**
- * @brief Configure CAN controller
+ * @brief Configure CAN controller without discarding an outstanding TX request.
  * @param [inout] device CAN device pointer
  * @param [in] cfg CAN configuration pointer
  * @retval RT_EOK No error
- * @retval An error code on failure
+ * @retval -RT_EBUSY A physical TX request is still owned by Generic
+ * @retval An error code on hardware configuration failure
  */
 static rt_err_t mcan_configure(struct rt_can_device *device, struct can_configure *cfg);
 
@@ -198,23 +199,29 @@ static rt_err_t mcan_configure(struct rt_can_device *device, struct can_configur
 static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg);
 
 /**
- * @brief Send out CAN message
+ * @brief Submit a CAN message into the hardware-selected Tx FIFO buffer.
  * @param [inout] device CAN device pointer
  * @param [in] buf CAN message buffer
- * @param [in] boxno Mailbox number, it is not used in this porting
- * @retval RT_EOK No error
- * @retval An error code on failure
+ * @param [in] boxno Generic logical mailbox index, which must be zero
+ * @retval RT_EOK Request accepted by hardware
+ * @retval -RT_EBUSY Generic mailbox or hardware FIFO still owned
+ * @retval -RT_EINVAL Unsupported logical mailbox index
+ * @retval -RT_ERROR Hardware submission failure
  */
 static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt_uint32_t boxno);
 
 /**
- * @brief Send out CAN message non-blocking
+ * @brief Submit a CAN message without waiting for the physical Tx terminal.
  * @param [inout] device CAN device pointer
  * @param [in] buf CAN message buffer
- * @retval RT_EOK No error
- * @retval An error code on failure
+ * @param [out] mailbox Set to Generic mailbox zero only on successful submission
+ * @retval RT_EOK Request accepted by hardware
+ * @retval -RT_EBUSY Generic mailbox or hardware FIFO still owned
+ * @retval -RT_EINVAL NULL output mailbox pointer
+ * @retval -RT_ERROR Hardware submission failure
  */
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf);
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
+                                           rt_uint32_t *mailbox);
 
 /**
  * @brief Receive message from CAN
@@ -254,6 +261,12 @@ static rt_err_t mcan_configure(struct rt_can_device *device, struct can_configur
     driver = (hc32_mcan_driver_t *)device->parent.user_data;
     RT_ASSERT(driver);
     hard = &driver->mcan;
+
+    /* Reinitialization must not discard a hardware-owned TX request. */
+    if (driver->tx_request_mask != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     RT_ASSERT(IS_RT_CAN_WORK_MODE(cfg->mode));
     RT_ASSERT(IS_RT_CAN_PRIV_MODE(cfg->privmode));
@@ -730,13 +743,22 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
     hc32_mcan_config_t *hard;
     stc_mcan_tx_msg_t ll_tx_msg = { 0 };
     struct rt_can_msg *tx_msg;
+    /* LL submission result distinguishes a full FIFO from invalid parameters. */
+    int32_t ll_result;
 
     RT_ASSERT(device);
     driver = (hc32_mcan_driver_t *)device->parent.user_data;
     RT_ASSERT(driver);
     hard = &driver->mcan;
 
-    driver->tx_box_num = boxno;
+    if (boxno != 0U)
+    {
+        return -RT_EINVAL;
+    }
+    if (driver->tx_request_mask != 0U)
+    {
+        return -RT_EBUSY;
+    }
 
     RT_ASSERT(buf);
     tx_msg = (struct rt_can_msg *)buf;
@@ -760,16 +782,36 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
 #endif
 
     rt_memcpy(ll_tx_msg.au8Data, tx_msg->data, m_mcan_data_size[ll_tx_msg.DLC]);
-    if (MCAN_AddMsgToTxFifoQueue(hard->instance, &ll_tx_msg) != LL_OK)
+    ll_result = MCAN_AddMsgToTxFifoQueue(hard->instance, &ll_tx_msg);
+    if (ll_result == LL_ERR_BUF_FULL)
+    {
+        return -RT_EBUSY;
+    }
+    if (ll_result != LL_OK)
     {
         return -RT_ERROR;
     }
+    /* The LL reports the physical FIFO buffer selected for this request. */
+    driver->tx_request_mask = ll_tx_msg.u32LastTxFifoQueueRequest;
     return RT_EOK;
 }
 
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf)
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
+                                           rt_uint32_t *mailbox)
 {
-    return mcan_sendmsg(device, buf, 0);
+    /* Preserve the underlying submit error without publishing a failed mailbox. */
+    rt_ssize_t result;
+
+    if (mailbox == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+    result = mcan_sendmsg(device, buf, 0U);
+    if (result == RT_EOK)
+    {
+        *mailbox = 0U;
+    }
+    return result;
 }
 
 /****************************************************************************************
@@ -865,10 +907,13 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
     }
 
     /* Check normal status flag */
-    /* Transmission completed */
-    if (ir_status & MCAN_FLAG_TX_CPLT)
+    /* A TX complete flag is controller-wide; retire only the submitted buffer. */
+    if ((ir_status & MCAN_FLAG_TX_CPLT) && (driver->tx_request_mask != 0U) &&
+        (MCAN_GetTxOccurredList(MCANx) & driver->tx_request_mask) &&
+        !(MCANx->TXBRP & driver->tx_request_mask))
     {
-        rt_hw_can_isr(device, RT_CAN_EVENT_TX_DONE | (driver->tx_box_num << 8U));
+        driver->tx_request_mask = 0U;
+        rt_hw_can_isr(device, RT_CAN_EVENT_TX_DONE);
     }
 
     /* Rx FIFO0 new message */
@@ -929,20 +974,12 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
         rt_hw_can_isr(device, RT_CAN_EVENT_RXOF_IND | (MCAN_RX_FIFO1 << 8));
     }
 
-    /* Error occurred during transmitting. Handle as tx failure. */
-    if ((psr & MCAN_PSR_ACT) == MCAN_PSR_ACT)
+    /* Protocol errors may auto-retry; they are not physical TX terminals. */
+    if (ir_status & (MCAN_FLAG_ARB_PHASE_ERROR | MCAN_FLAG_DATA_PHASE_ERROR |
+                     MCAN_FLAG_ERR_LOG_OVF | MCAN_FLAG_ERR_PASSIVE |
+                     MCAN_FLAG_ERR_WARNING | MCAN_FLAG_BUS_OFF))
     {
-#if defined(RT_CAN_USING_CANFD)
-        if (ir_status & (MCAN_FLAG_ARB_PHASE_ERROR | MCAN_FLAG_DATA_PHASE_ERROR))
-        {
-            rt_hw_can_isr(device, RT_CAN_EVENT_TX_FAIL | (driver->tx_box_num << 8U));
-        }
-#else
-        if (ir_status & MCAN_FLAG_ARB_PHASE_ERROR)
-        {
-            rt_hw_can_isr(device, RT_CAN_EVENT_TX_FAIL | (driver->tx_box_num << 8U));
-        }
-#endif
+        rt_hw_can_isr(device, RT_CAN_EVENT_ERR);
     }
 
     /* Check bus-off status flag */
@@ -1125,7 +1162,8 @@ static void init_can_cfg(hc32_mcan_driver_t *driver)
     can_cfg.baud_rate_fd = CANFD_DATA_BAUD_4M;
     can_cfg.enable_canfd = MCAN_FD_SEL;
 #endif
-    can_cfg.sndboxnumber = MCAN_TX_FIFO_NUM;
+    /* The FIFO selects its own physical index; serialize Generic ownership. */
+    can_cfg.sndboxnumber = 1U;
     driver->can_device.config = can_cfg;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * 2020-08-17     malongwei    Fix something
  * 2025-10-27     pandafeng    Fix some bugs
  * 2026-03-16     sayaZhao     Fix some bugs
+ * 2026-11-08     wdfk-prog    Adapt FDCAN to per-mailbox TX management
  */
 
 #include "drv_fdcan.h"
@@ -17,50 +18,45 @@
 
 #if defined(BSP_USING_FDCAN1) || defined(BSP_USING_FDCAN2)
 
-
 //#define DRV_DEBUG
-#define LOG_TAG    "drv_fdcan"
+#define LOG_TAG "drv_fdcan"
 #include <drv_log.h>
 
 #ifdef BSP_USING_FDCAN1
-static stm32_fdcan_t st_DrvCan1=
-{
+static stm32_fdcan_t st_DrvCan1 = {
     .name = "fdcan1",
     .fdcanHandle.Instance = FDCAN1,
 };
 #endif
 
 #ifdef BSP_USING_FDCAN2
-static stm32_fdcan_t st_DrvCan2=
-{
+static stm32_fdcan_t st_DrvCan2 = {
     .name = "fdcan2",
     .fdcanHandle.Instance = FDCAN2,
 };
 #endif
 
 /* 40MHz CAN clock */
-static const stm32_fdcan_timing_t st_FDCAN_ArbTiming[] =
-{
-    {CAN1MBaud, {1, 29, 10, 8, 0}},   /* 1Mbps */
-    {CAN800kBaud,  {1, 37, 12, 8, 0}},   /* 800kbps */
-    {CAN500kBaud,  {1, 59, 20, 8, 0}},   /* 500kbps */
-    {CAN250kBaud,  {2, 63, 16, 8, 0}},  /* 250kbps */
-    {CAN125kBaud,  {5, 55, 8, 8, 0}},  /* 125kbps */
-    {CAN100kBaud,  {8, 41, 8, 8, 0}},  /* 100kbps */
-    {CAN50kBaud,   {16, 41, 8, 8, 0}},   /* 50kbps */
-    {CAN20kBaud,   {40,41,8,8,0}},     /* 20kbps */
-    {CAN10kBaud,   {100,31,8,8,0}}      /* 10kbps */
+static const stm32_fdcan_timing_t st_FDCAN_ArbTiming[] = {
+    { CAN1MBaud, { 1, 29, 10, 8, 0 } },   /* 1Mbps */
+    { CAN800kBaud, { 1, 37, 12, 8, 0 } }, /* 800kbps */
+    { CAN500kBaud, { 1, 59, 20, 8, 0 } }, /* 500kbps */
+    { CAN250kBaud, { 2, 63, 16, 8, 0 } }, /* 250kbps */
+    { CAN125kBaud, { 5, 55, 8, 8, 0 } },  /* 125kbps */
+    { CAN100kBaud, { 8, 41, 8, 8, 0 } },  /* 100kbps */
+    { CAN50kBaud, { 16, 41, 8, 8, 0 } },  /* 50kbps */
+    { CAN20kBaud, { 40, 41, 8, 8, 0 } },  /* 20kbps */
+    { CAN10kBaud, { 100, 31, 8, 8, 0 } }  /* 10kbps */
 };
 /* 40MHz CAN clock */
-static const stm32_fdcan_timing_t st_FDCAN_DataTiming[] =
-{
-    {CAN1MBaud * 8, {1, 3, 1, 1, 0}},   /* 8Mbps */
-    {CAN1MBaud * 5,  {1, 5, 2, 1, 0}},  /* 5Mbps */
-    {CAN500kBaud *8,  {1, 7, 2, 1, 0}},   /* 4Mbps */
-    {CAN250kBaud * 8,  {4, 3, 1, 1, 0}},  /* 2Mbps */
-    {CAN125kBaud *8,  {1, 31, 8, 1, 0}},  /* 1Mkbps */
-    {CAN100kBaud*8,  {2, 19, 5, 1, 0}},  /* 800kbps */
-    {CAN50kBaud *8,   {5, 15, 4, 1, 0}},   /* 400kbps */
+static const stm32_fdcan_timing_t st_FDCAN_DataTiming[] = {
+    { CAN1MBaud * 8, { 1, 3, 1, 1, 0 } },    /* 8Mbps */
+    { CAN1MBaud * 5, { 1, 5, 2, 1, 0 } },    /* 5Mbps */
+    { CAN500kBaud * 8, { 1, 7, 2, 1, 0 } },  /* 4Mbps */
+    { CAN250kBaud * 8, { 4, 3, 1, 1, 0 } },  /* 2Mbps */
+    { CAN125kBaud * 8, { 1, 31, 8, 1, 0 } }, /* 1Mkbps */
+    { CAN100kBaud * 8, { 2, 19, 5, 1, 0 } }, /* 800kbps */
+    { CAN50kBaud * 8, { 5, 15, 4, 1, 0 } },  /* 400kbps */
 };
 
 /**
@@ -71,11 +67,14 @@ static const stm32_fdcan_timing_t st_FDCAN_DataTiming[] =
 static uint8_t dlc_to_length(uint32_t dlc)
 {
     const uint8_t dlc_to_len_table[16] = {
-        0,  1,  2,  3,  4,  5,  6,  7,
+        0, 1, 2, 3, 4, 5, 6, 7,
         8, 12, 16, 20, 24, 32, 48, 64
     };
 
-    if (dlc > 15) return 8;
+    if (dlc > 15)
+    {
+        return 8;
+    }
     return dlc_to_len_table[dlc];
 }
 
@@ -95,14 +94,15 @@ static uint8_t dlc_to_length(uint32_t dlc)
  * @param len  Frame length in bytes (0~64)
  * @return     DLC code (0~15)
  */
-uint8_t length_to_dlc(uint8_t len) {
-    return (len <= 8) ? len :
-           (len <= 12) ? 9 :
-           (len <= 16) ? 10 :
-           (len <= 20) ? 11 :
-           (len <= 24) ? 12 :
-           (len <= 32) ? 13 :
-           (len <= 48) ? 14 : 15;
+uint8_t length_to_dlc(uint8_t len)
+{
+    return (len <= 8) ? len : (len <= 12) ? 9
+                          : (len <= 16)   ? 10
+                          : (len <= 20)   ? 11
+                          : (len <= 24)   ? 12
+                          : (len <= 32)   ? 13
+                          : (len <= 48)   ? 14
+                                          : 15;
 }
 
 /**
@@ -115,7 +115,9 @@ static uint32_t _inline_get_ArbBaudIndex(uint32_t baud_rate)
     for (uint32_t i = 0; i < len; i++)
     {
         if (st_FDCAN_ArbTiming[i].u32Baudrate == baud_rate)
+        {
             return i;
+        }
     }
     return -1;
 }
@@ -134,7 +136,9 @@ static uint32_t _inline_get_DataBaudIndex(uint32_t baud_rate)
     for (uint32_t i = 0; i < len; i++)
     {
         if (st_FDCAN_DataTiming[i].u32Baudrate == baud_rate)
+        {
             return i;
+        }
     }
     return -1;
 }
@@ -174,19 +178,20 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
         break;
     }
 
-    uint32_t arb_idx  = _inline_get_ArbBaudIndex(cfg->baud_rate);
+    uint32_t arb_idx = _inline_get_ArbBaudIndex(cfg->baud_rate);
     if (arb_idx == (uint32_t)-1)
     {
         LOG_E("not support %d baudrate", cfg->baud_rate);
         return -RT_ERROR;
     }
     /* FDCAN arbitration segment */
-    pdrv_can->fdcanHandle.Init.NominalPrescaler      = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.prescaler;
-    pdrv_can->fdcanHandle.Init.NominalSyncJumpWidth  = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_sjw;
-    pdrv_can->fdcanHandle.Init.NominalTimeSeg1       = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_seg1;
-    pdrv_can->fdcanHandle.Init.NominalTimeSeg2       = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_seg2;
+    pdrv_can->fdcanHandle.Init.NominalPrescaler = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.prescaler;
+    pdrv_can->fdcanHandle.Init.NominalSyncJumpWidth = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_sjw;
+    pdrv_can->fdcanHandle.Init.NominalTimeSeg1 = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_seg1;
+    pdrv_can->fdcanHandle.Init.NominalTimeSeg2 = st_FDCAN_ArbTiming[arb_idx].cam_bit_timing.num_seg2;
 #ifdef RT_CAN_USING_CANFD
-    if(cfg->enable_canfd) {
+    if (cfg->enable_canfd)
+    {
         uint32_t data_idx = _inline_get_DataBaudIndex(cfg->baud_rate_fd);
         if (data_idx == (uint32_t)-1)
         {
@@ -194,14 +199,14 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
             return -RT_ERROR;
         }
         /* 数据段 */
-        pdrv_can->fdcanHandle.Init.DataPrescaler         = st_FDCAN_DataTiming[data_idx].cam_bit_timing.prescaler;
-        pdrv_can->fdcanHandle.Init.DataSyncJumpWidth     = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_sjw;
-        pdrv_can->fdcanHandle.Init.DataTimeSeg1          = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_seg1;
-        pdrv_can->fdcanHandle.Init.DataTimeSeg2          = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_seg2;
+        pdrv_can->fdcanHandle.Init.DataPrescaler = st_FDCAN_DataTiming[data_idx].cam_bit_timing.prescaler;
+        pdrv_can->fdcanHandle.Init.DataSyncJumpWidth = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_sjw;
+        pdrv_can->fdcanHandle.Init.DataTimeSeg1 = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_seg1;
+        pdrv_can->fdcanHandle.Init.DataTimeSeg2 = st_FDCAN_DataTiming[data_idx].cam_bit_timing.num_seg2;
     }
 #endif
     /* Configure Message RAM */
-    if(pdrv_can->fdcanHandle.Instance == FDCAN1)
+    if (pdrv_can->fdcanHandle.Instance == FDCAN1)
     {
         pdrv_can->fdcanHandle.Init.MessageRAMOffset = 0;
     }
@@ -236,7 +241,7 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
     }
 #endif
     /* default filter config */
-    HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle , &pdrv_can->FilterConfig);
+    HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &pdrv_can->FilterConfig);
     /* FIFO RX INT */
     HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
     /*init fdcan tx header*/
@@ -250,22 +255,25 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
     pdrv_can->TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
     pdrv_can->TxHeader.MessageMarker = 0;
     /* can start */
-    HAL_FDCAN_Start(&pdrv_can->fdcanHandle);
+    if (HAL_FDCAN_Start(&pdrv_can->fdcanHandle) != HAL_OK)
+    {
+        return -RT_ERROR;
+    }
     return RT_EOK;
 }
 
-static rt_err_t _inline_can_filter_config(stm32_fdcan_t *pdrv_can,struct rt_can_filter_config *puser_can_filter_config)
+static rt_err_t _inline_can_filter_config(stm32_fdcan_t *pdrv_can, struct rt_can_filter_config *puser_can_filter_config)
 {
     int tmp_i32IndexCount;
     RT_ASSERT(pdrv_can);
     RT_ASSERT(puser_can_filter_config);
-     /* get default filter */
+    /* get default filter */
     for (tmp_i32IndexCount = 0; tmp_i32IndexCount < puser_can_filter_config->count; tmp_i32IndexCount++)
     {
         pdrv_can->FilterConfig.FilterIndex = puser_can_filter_config->items[tmp_i32IndexCount].hdr_bank;
         pdrv_can->FilterConfig.FilterID1 = puser_can_filter_config->items[tmp_i32IndexCount].id;
         pdrv_can->FilterConfig.FilterID2 = puser_can_filter_config->items[tmp_i32IndexCount].mask;
-        if(puser_can_filter_config->items[tmp_i32IndexCount].ide == RT_CAN_EXTID)
+        if (puser_can_filter_config->items[tmp_i32IndexCount].ide == RT_CAN_EXTID)
         {
             pdrv_can->FilterConfig.IdType = FDCAN_EXTENDED_ID;
         }
@@ -275,7 +283,7 @@ static rt_err_t _inline_can_filter_config(stm32_fdcan_t *pdrv_can,struct rt_can_
         }
         pdrv_can->FilterConfig.FilterType = FDCAN_FILTER_MASK;
         pdrv_can->FilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-        if(HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle , &pdrv_can->FilterConfig) != HAL_OK)
+        if (HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &pdrv_can->FilterConfig) != HAL_OK)
         {
             return -RT_ERROR;
         }
@@ -283,160 +291,305 @@ static rt_err_t _inline_can_filter_config(stm32_fdcan_t *pdrv_can,struct rt_can_
     return RT_EOK;
 }
 
+/**
+ * @brief Apply FDCAN control commands and submit per-mailbox cancellation requests.
+ *
+ * Successful RT_CAN_CMD_ABORT_TX only submits a hardware cancellation request;
+ * Generic retains mailbox ownership until TX_DONE or TX_FAIL is reported.
+ *
+ * @param[in] can CAN device being controlled.
+ * @param[in] cmd Control command.
+ * @param[in] arg Command-specific value carried as a pointer-sized argument.
+ * @return RT_EOK on acceptance, or a negative RT-Thread error code on failure.
+ */
 static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *arg)
 {
-
     rt_uint32_t argval;
     stm32_fdcan_t *pdrv_can;
     struct rt_can_filter_config *filter_cfg;
     RT_ASSERT(can != RT_NULL);
     pdrv_can = (stm32_fdcan_t *)can->parent.user_data;
     RT_ASSERT(pdrv_can != RT_NULL);
-    switch (cmd) {
-        case RT_DEVICE_CTRL_CLR_INT:
-            argval = (rt_uint32_t) arg;
-            if (argval == RT_DEVICE_FLAG_INT_RX) {
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE);
-            } else if (argval == RT_DEVICE_FLAG_INT_TX) {
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_TX_FIFO_EMPTY);
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_TX_COMPLETE);
-            } else if (argval == RT_DEVICE_CAN_INT_ERR) {
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_WARNING);
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_PASSIVE);
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_LOGGING_OVERFLOW);
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_BUS_OFF);
-                HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ARB_PROTOCOL_ERROR);
-            }
-            break;
-        case RT_DEVICE_CTRL_SET_INT:
-            argval = (rt_uint32_t) arg;
-            if (argval == RT_DEVICE_FLAG_INT_RX) {
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,
-                                               FDCAN_INTERRUPT_LINE0);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
-
-                if (FDCAN1 == pdrv_can->fdcanHandle.Instance) {
-                    HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 1);
-                    HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
-                } else {
-                    HAL_NVIC_SetPriority(FDCAN2_IT0_IRQn, 0, 1);
-                    HAL_NVIC_EnableIRQ(FDCAN2_IT0_IRQn);
-                }
-            } else if (argval == RT_DEVICE_FLAG_INT_TX) {
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_TX_COMPLETE, FDCAN_INTERRUPT_LINE1);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER0);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER1);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_TX_COMPLETE, FDCAN_TX_BUFFER2);
-
-                if (FDCAN1 == pdrv_can->fdcanHandle.Instance) {
-                    HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0, 2);
-                    HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
-                } else {
-                    HAL_NVIC_SetPriority(FDCAN2_IT1_IRQn, 0, 2);
-                    HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
-                }
-            } else if (argval == RT_DEVICE_CAN_INT_ERR) {
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_BUS_OFF, FDCAN_INTERRUPT_LINE1);
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_WARNING, FDCAN_INTERRUPT_LINE1);
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_PASSIVE, FDCAN_INTERRUPT_LINE1);
-                HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ARB_PROTOCOL_ERROR,
-                                               FDCAN_INTERRUPT_LINE1);
-
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_BUS_OFF, 0);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_WARNING, 0);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_PASSIVE, 0);
-                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ARB_PROTOCOL_ERROR, 0);
-                if (FDCAN1 == pdrv_can->fdcanHandle.Instance) {
-                    HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0, 2);
-                    HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
-                } else {
-                    HAL_NVIC_SetPriority(FDCAN2_IT1_IRQn, 0, 2);
-                    HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
-                }
-            }
-            break;
-        case RT_CAN_CMD_SET_FILTER:
-            if (RT_NULL == arg) {
-                /* default filter config */
-                HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &pdrv_can->FilterConfig);
-            } else {
-                filter_cfg = (struct rt_can_filter_config *) arg;
-                _inline_can_filter_config(pdrv_can, filter_cfg);
-            }
-            break;
-        case RT_CAN_CMD_SET_MODE:
-            argval = (rt_uint32_t) arg;
-            if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISTEN) {
+    switch (cmd)
+    {
+    case RT_DEVICE_CTRL_CLR_INT:
+        argval = (rt_uint32_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE);
+        }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            if (HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle,
+                                                 FDCAN_IT_TX_FIFO_EMPTY | FDCAN_IT_TX_COMPLETE |
+                                                     FDCAN_IT_TX_ABORT_COMPLETE) != HAL_OK)
+            {
                 return -RT_ERROR;
             }
-            if (argval != pdrv_can->device.config.mode) {
-                pdrv_can->device.config.mode = argval;
-                return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
-            }
-            break;
-        case RT_CAN_CMD_SET_BAUD:
-            argval = (rt_uint32_t) arg;
-            uint32_t arb_idx = _inline_get_ArbBaudIndex(argval);
-            if (arb_idx == (uint32_t) -1) {
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            if (HAL_FDCAN_DeactivateNotification(&pdrv_can->fdcanHandle,
+                                                 FDCAN_IT_ERROR_WARNING | FDCAN_IT_ERROR_PASSIVE |
+                                                     FDCAN_IT_ERROR_LOGGING_OVERFLOW | FDCAN_IT_BUS_OFF |
+                                                     FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR) != HAL_OK)
+            {
                 return -RT_ERROR;
             }
-            if (argval != pdrv_can->device.config.baud_rate) {
-                pdrv_can->device.config.baud_rate = argval;
-                return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
-            }
-            break;
-
-        case RT_CAN_CMD_SET_PRIV:
-            argval = (rt_uint32_t) arg;
-            if (argval != RT_CAN_MODE_PRIV &&
-                argval != RT_CAN_MODE_NOPRIV) {
-                return -RT_ERROR;
-            }
-            if (argval != pdrv_can->device.config.privmode) {
-                pdrv_can->device.config.privmode = argval;
-
-                return RT_EOK;
-            }
-            break;
-        case RT_CAN_CMD_GET_STATUS: {
-            rt_uint32_t tmp_u32Errcount;
-            rt_uint32_t tmp_u32status;
-            tmp_u32Errcount = pdrv_can->fdcanHandle.Instance->ECR;
-            tmp_u32status = pdrv_can->fdcanHandle.Instance->PSR;
-
-            pdrv_can->device.status.rcverrcnt = (tmp_u32Errcount >> 8) & 0x000000ff;
-            pdrv_can->device.status.snderrcnt = (tmp_u32Errcount) & 0x000000ff;
-            pdrv_can->device.status.lasterrtype = tmp_u32status & 0x000000007;
-
-            rt_memcpy(arg, &pdrv_can->device.status, sizeof(pdrv_can->device.status));
         }
         break;
-        case RT_CAN_CMD_SET_BAUD_FD: {
-            argval = (rt_uint32_t) arg;
-            uint32_t data_idx = _inline_get_DataBaudIndex(argval);
-            if (data_idx == (uint32_t) -1) {
-                return -RT_ERROR;
+    case RT_DEVICE_CTRL_SET_INT:
+        argval = (rt_uint32_t)arg;
+        if (argval == RT_DEVICE_FLAG_INT_RX)
+        {
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,
+                                           FDCAN_INTERRUPT_LINE0);
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
+
+            if (FDCAN1 == pdrv_can->fdcanHandle.Instance)
+            {
+                HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 1);
+                HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
             }
-            if (argval != pdrv_can->device.config.baud_rate_fd) {
-                pdrv_can->device.config.baud_rate_fd = argval;
-                return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
+            else
+            {
+                HAL_NVIC_SetPriority(FDCAN2_IT0_IRQn, 0, 1);
+                HAL_NVIC_EnableIRQ(FDCAN2_IT0_IRQn);
             }
         }
-    }
+        else if (argval == RT_DEVICE_FLAG_INT_TX)
+        {
+            /* Completion and cancellation sources for all three dedicated TX buffers. */
+            uint32_t tx_interrupts = FDCAN_IT_TX_COMPLETE | FDCAN_IT_TX_ABORT_COMPLETE;
+            uint32_t tx_buffers = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
 
+            if (HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle,
+                                               tx_interrupts, FDCAN_INTERRUPT_LINE1) != HAL_OK ||
+                HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle,
+                                               tx_interrupts, tx_buffers) != HAL_OK)
+            {
+                return -RT_ERROR;
+            }
+
+            if (FDCAN1 == pdrv_can->fdcanHandle.Instance)
+            {
+                HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0, 2);
+                HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
+            }
+            else
+            {
+                HAL_NVIC_SetPriority(FDCAN2_IT1_IRQn, 0, 2);
+                HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
+            }
+        }
+        else if (argval == RT_DEVICE_CAN_INT_ERR)
+        {
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_BUS_OFF, FDCAN_INTERRUPT_LINE1);
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_WARNING, FDCAN_INTERRUPT_LINE1);
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_PASSIVE, FDCAN_INTERRUPT_LINE1);
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_ARB_PROTOCOL_ERROR,
+                                           FDCAN_INTERRUPT_LINE1);
+            HAL_FDCAN_ConfigInterruptLines(&pdrv_can->fdcanHandle, FDCAN_IT_DATA_PROTOCOL_ERROR,
+                                           FDCAN_INTERRUPT_LINE1);
+
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_BUS_OFF, 0);
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_WARNING, 0);
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ERROR_PASSIVE, 0);
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_ARB_PROTOCOL_ERROR, 0);
+            HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_DATA_PROTOCOL_ERROR, 0);
+            if (FDCAN1 == pdrv_can->fdcanHandle.Instance)
+            {
+                HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0, 2);
+                HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
+            }
+            else
+            {
+                HAL_NVIC_SetPriority(FDCAN2_IT1_IRQn, 0, 2);
+                HAL_NVIC_EnableIRQ(FDCAN2_IT1_IRQn);
+            }
+        }
+        break;
+    case RT_CAN_CMD_SET_FILTER:
+        if (RT_NULL == arg)
+        {
+            /* default filter config */
+            HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle, &pdrv_can->FilterConfig);
+        }
+        else
+        {
+            filter_cfg = (struct rt_can_filter_config *)arg;
+            _inline_can_filter_config(pdrv_can, filter_cfg);
+        }
+        break;
+    case RT_CAN_CMD_SET_MODE:
+        argval = (rt_uint32_t)arg;
+        if (argval != RT_CAN_MODE_NORMAL &&
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+        {
+            return -RT_ERROR;
+        }
+        if (argval != pdrv_can->device.config.mode)
+        {
+            pdrv_can->device.config.mode = argval;
+            return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
+        }
+        break;
+    case RT_CAN_CMD_SET_BAUD:
+        argval = (rt_uint32_t)arg;
+        uint32_t arb_idx = _inline_get_ArbBaudIndex(argval);
+        if (arb_idx == (uint32_t)-1)
+        {
+            return -RT_ERROR;
+        }
+        if (argval != pdrv_can->device.config.baud_rate)
+        {
+            pdrv_can->device.config.baud_rate = argval;
+            return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
+        }
+        break;
+
+    case RT_CAN_CMD_START:
+    {
+        uint32_t tx_buffers = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
+
+        if ((rt_ubase_t)arg == 0U)
+        {
+            if (pdrv_can->fdcanHandle.State == HAL_FDCAN_STATE_BUSY)
+            {
+                /* HAL Stop sets INIT then CCE; M_CAN clears old TX requests on CCE. */
+                if (HAL_FDCAN_Stop(&pdrv_can->fdcanHandle) != HAL_OK)
+                {
+                    return -RT_ERROR;
+                }
+            }
+            else if (pdrv_can->fdcanHandle.State != HAL_FDCAN_STATE_READY)
+            {
+                return -RT_ERROR;
+            }
+
+            if ((pdrv_can->fdcanHandle.Instance->TXBRP & tx_buffers) != 0U)
+            {
+                return -RT_ERROR;
+            }
+            /* Old TX terminal flags must not survive the next START. */
+            __HAL_FDCAN_CLEAR_FLAG(&pdrv_can->fdcanHandle,
+                                   FDCAN_FLAG_TX_COMPLETE | FDCAN_FLAG_TX_ABORT_COMPLETE);
+        }
+        else
+        {
+            if (pdrv_can->fdcanHandle.State != HAL_FDCAN_STATE_BUSY &&
+                HAL_FDCAN_Start(&pdrv_can->fdcanHandle) != HAL_OK)
+            {
+                return -RT_ERROR;
+            }
+        }
+        break;
+    }
+    case RT_CAN_CMD_ABORT_TX:
+        argval = (rt_uint32_t)(rt_ubase_t)arg;
+        if (argval >= can->config.sndboxnumber ||
+            argval >= pdrv_can->fdcanHandle.Init.TxBuffersNbr)
+        {
+            return -RT_EINVAL;
+        }
+        /* Request hardware cancellation; only the TX terminal retires Generic ownership. */
+        return HAL_FDCAN_AbortTxRequest(&pdrv_can->fdcanHandle,
+                                        FDCAN_TX_BUFFER0 << argval) == HAL_OK
+                   ? RT_EOK
+                   : -RT_ERROR;
+    case RT_CAN_CMD_SET_PRIV:
+        argval = (rt_uint32_t)arg;
+        if (argval != RT_CAN_MODE_PRIV &&
+            argval != RT_CAN_MODE_NOPRIV)
+        {
+            return -RT_ERROR;
+        }
+        if (argval != pdrv_can->device.config.privmode)
+        {
+            pdrv_can->device.config.privmode = argval;
+
+            return RT_EOK;
+        }
+        break;
+    case RT_CAN_CMD_GET_STATUS:
+    {
+        rt_uint32_t tmp_u32Errcount;
+        rt_uint32_t tmp_u32status;
+        tmp_u32Errcount = pdrv_can->fdcanHandle.Instance->ECR;
+        tmp_u32status = pdrv_can->fdcanHandle.Instance->PSR;
+
+        pdrv_can->device.status.rcverrcnt = (tmp_u32Errcount >> 8) & 0x000000ff;
+        pdrv_can->device.status.snderrcnt = (tmp_u32Errcount) & 0x000000ff;
+        pdrv_can->device.status.lasterrtype = tmp_u32status & 0x000000007;
+
+        /* Publish the last protocol error via the existing status indication path.
+             * LEC/DLEC == 7 means no change, not a new error.
+             * The historical 0xff code is retained for Bus-Off. */
+        if ((tmp_u32status & FDCAN_PSR_BO) != 0U)
+        {
+            pdrv_can->device.status.errcode = 0xffU;
+        }
+        else if ((tmp_u32status & 0x07U) >= 1U && (tmp_u32status & 0x07U) <= 6U)
+        {
+            pdrv_can->device.status.errcode = tmp_u32status & 0x07U;
+        }
+        else if (((tmp_u32status >> 8) & 0x07U) >= 1U &&
+                 ((tmp_u32status >> 8) & 0x07U) <= 6U)
+        {
+            pdrv_can->device.status.errcode = (tmp_u32status >> 8) & 0x07U;
+        }
+        else if ((tmp_u32status & 0x07U) == 0U &&
+                 ((tmp_u32status >> 8) & 0x07U) == 0U)
+        {
+            pdrv_can->device.status.errcode = RT_CAN_BUS_NO_ERR;
+        }
+        rt_memcpy(arg, &pdrv_can->device.status, sizeof(pdrv_can->device.status));
+    }
+    break;
+    case RT_CAN_CMD_SET_BAUD_FD:
+    {
+        argval = (rt_uint32_t)arg;
+        uint32_t data_idx = _inline_get_DataBaudIndex(argval);
+        if (data_idx == (uint32_t)-1)
+        {
+            return -RT_ERROR;
+        }
+        if (argval != pdrv_can->device.config.baud_rate_fd)
+        {
+            pdrv_can->device.config.baud_rate_fd = argval;
+            return _inline_can_config(&pdrv_can->device, &pdrv_can->device.config);
+        }
+        break;
+    }
+    default:
+        return -RT_ENOSYS;
+    }
 
     return RT_EOK;
 }
 
+/**
+ * @brief Submit a frame immediately to one Generic-owned dedicated TX buffer.
+ *
+ * Generic holds its TX lock while HAL accepts the request and publishes
+ * software mailbox ownership only after this function returns successfully.
+ * The hardware request and pending terminal checks must return immediately.
+ *
+ * @param[in] can CAN device owning the selected mailbox.
+ * @param[in] buf Frame to submit.
+ * @param[in] box_num Zero-based dedicated TX Buffer index (0..2).
+ * @return RT_EOK on submission, -RT_EBUSY while the buffer/terminal is busy,
+ *         or another negative error code on failure.
+ */
 static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
-
     stm32_fdcan_t *pdrv_can;
     struct rt_can_msg *pmsg;
     uint32_t tmp_u32DataLen;
+    /* Hardware TX Buffer selection bit for the Generic mailbox index. */
+    uint32_t tx_buffer;
     RT_ASSERT(can);
     RT_ASSERT(buf);
 
@@ -444,12 +597,32 @@ static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
     RT_ASSERT(pdrv_can);
 
-    pmsg = (struct rt_can_msg *) buf;
+    if (box_num >= can->config.sndboxnumber ||
+        box_num >= pdrv_can->fdcanHandle.Init.TxBuffersNbr)
+    {
+        return -RT_EINVAL;
+    }
+
+    tx_buffer = FDCAN_TX_BUFFER0 << box_num;
+    if (HAL_FDCAN_IsTxBufferMessagePending(&pdrv_can->fdcanHandle, tx_buffer) != 0U)
+    {
+        return -RT_EBUSY;
+    }
+    /* Do not overwrite a hardware terminal that Generic has not retired yet. */
+    if (((pdrv_can->fdcanHandle.Instance->IR & FDCAN_FLAG_TX_COMPLETE) != 0U &&
+         (pdrv_can->fdcanHandle.Instance->TXBTO & tx_buffer) != 0U) ||
+        ((pdrv_can->fdcanHandle.Instance->IR & FDCAN_FLAG_TX_ABORT_COMPLETE) != 0U &&
+         (pdrv_can->fdcanHandle.Instance->TXBCF & tx_buffer) != 0U))
+    {
+        return -RT_EBUSY;
+    }
+
+    pmsg = (struct rt_can_msg *)buf;
 
     /* Check the parameters */
-    tmp_u32DataLen = length_to_dlc( pmsg->len);
+    tmp_u32DataLen = length_to_dlc(pmsg->len);
 
-    if(pmsg->ide == RT_CAN_EXTID)
+    if (pmsg->ide == RT_CAN_EXTID)
     {
         pdrv_can->TxHeader.IdType = FDCAN_EXTENDED_ID;
     }
@@ -467,36 +640,84 @@ static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
         pdrv_can->TxHeader.TxFrameType = FDCAN_REMOTE_FRAME;
     }
 
-
     pdrv_can->TxHeader.Identifier = pmsg->id;
 
-    pdrv_can->TxHeader.DataLength = tmp_u32DataLen;
-
+    /* HAL DLC constants use either raw nibbles or nibbles at bits [19:16]. */
+    pdrv_can->TxHeader.DataLength = tmp_u32DataLen * (FDCAN_DLC_BYTES_8 / 8U);
 
     if (pmsg->fd_frame == 1)
     {
         pdrv_can->TxHeader.FDFormat = FDCAN_FD_CAN;
     }
-    else {
+    else
+    {
         pdrv_can->TxHeader.FDFormat = FDCAN_CLASSIC_CAN;
     }
 
-    if (pmsg->brs == 1) {
-        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_ON;
-    } else {
-        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
-    }
-
-    if(HAL_FDCAN_AddMessageToTxBuffer(&pdrv_can->fdcanHandle, &pdrv_can->TxHeader, pmsg->data, FDCAN_TX_BUFFER0 + box_num) != HAL_OK)
+    if (pmsg->brs == 1)
     {
-        return -RT_ERROR;
+        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_ON;
     }
     else
     {
-        /* Request transmission */
-        HAL_FDCAN_EnableTxBufferRequest(&pdrv_can->fdcanHandle,FDCAN_TX_BUFFER0+box_num);
-        return RT_EOK;
+        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
     }
+
+    if (HAL_FDCAN_AddMessageToTxBuffer(&pdrv_can->fdcanHandle,
+                                       &pdrv_can->TxHeader, pmsg->data, tx_buffer) != HAL_OK)
+    {
+        return -RT_ERROR;
+    }
+    /* Request transmission only after the dedicated TX Buffer is populated. */
+    if (HAL_FDCAN_EnableTxBufferRequest(&pdrv_can->fdcanHandle, tx_buffer) != HAL_OK)
+    {
+        return -RT_ERROR;
+    }
+    return RT_EOK;
+}
+
+/**
+ * @brief Submit without waiting and return the selected dedicated TX mailbox.
+ *
+ * Generic holds its TX lock around this callback; the blocking-owner bitmap
+ * excludes slots whose completion is still owned by a waiting sender.
+ * Hardware pending and unreported terminal conditions are checked by sendmsg.
+ *
+ * @param[in] can CAN device with three dedicated TX slots.
+ * @param[in] buf Frame to submit.
+ * @param[out] mailbox Zero-based mailbox selected on successful submission.
+ * @return RT_EOK on submission, -RT_EBUSY when all buffers are unavailable,
+ *         or another negative error code on failure.
+ */
+static rt_ssize_t _inline_can_sendmsg_nonblocking(struct rt_can_device *can,
+                                                  const void *buf, rt_uint32_t *mailbox)
+{
+    /* Candidate buffer index and its immediate HAL submit result. */
+    rt_uint32_t box_num;
+    rt_ssize_t result;
+
+    RT_ASSERT(can != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
+    RT_ASSERT(mailbox != RT_NULL);
+
+    for (box_num = 0; box_num < can->config.sndboxnumber; box_num++)
+    {
+        if ((can->status.sndchange & (1UL << box_num)) != 0U)
+        {
+            continue;
+        }
+        result = _inline_can_sendmsg(can, buf, box_num);
+        if (result == RT_EOK)
+        {
+            *mailbox = box_num;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+    return -RT_EBUSY;
 }
 
 static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -508,14 +729,14 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     RT_ASSERT(buf);
 
     pdrv_can = (stm32_fdcan_t *)can->parent.user_data;
-    pmsg = (struct rt_can_msg *) buf;
-    if(HAL_FDCAN_GetRxMessage(&pdrv_can->fdcanHandle,FDCAN_RX_FIFO0+fifo, &pdrv_can->RxHeader, pmsg->data) != HAL_OK)
+    pmsg = (struct rt_can_msg *)buf;
+    if (HAL_FDCAN_GetRxMessage(&pdrv_can->fdcanHandle, FDCAN_RX_FIFO0 + fifo, &pdrv_can->RxHeader, pmsg->data) != HAL_OK)
     {
         return 0;
     }
     else
     {
-        if(pdrv_can->RxHeader.IdType == FDCAN_EXTENDED_ID)
+        if (pdrv_can->RxHeader.IdType == FDCAN_EXTENDED_ID)
         {
             pmsg->ide = RT_CAN_EXTID;
         }
@@ -524,7 +745,7 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
             pmsg->ide = RT_CAN_STDID;
         }
 
-        if(pdrv_can->RxHeader.RxFrameType == FDCAN_DATA_FRAME)
+        if (pdrv_can->RxHeader.RxFrameType == FDCAN_DATA_FRAME)
         {
             pmsg->rtr = RT_CAN_DTR;
         }
@@ -535,11 +756,16 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
         pmsg->id = pdrv_can->RxHeader.Identifier;
 
         uint32_t actual_dlc = pdrv_can->RxHeader.DataLength;
+        /* Normalize HAL's DLC representation before converting to byte length. */
+        if (actual_dlc > 15U)
+        {
+            actual_dlc /= (FDCAN_DLC_BYTES_8 / 8U);
+        }
         pmsg->len = dlc_to_length(actual_dlc);
 
         pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
 #ifdef RT_CAN_USING_CANFD
-        pmsg->fd_frame =  (pdrv_can->RxHeader.FDFormat >> 16) && 0x20;
+        pmsg->fd_frame = (pdrv_can->RxHeader.FDFormat >> 16) && 0x20;
         pmsg->brs = (pdrv_can->RxHeader.BitRateSwitch >> 16) && 0x10;
 #endif
 
@@ -547,26 +773,26 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     }
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     _inline_can_config,
     _inline_can_control,
     _inline_can_sendmsg,
     _inline_can_recvmsg,
+    _inline_can_sendmsg_nonblocking,
 };
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 {
-    if((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)
-      {
-          if(hfdcan->Instance == FDCAN1)
-          {
+    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)
+    {
+        if (hfdcan->Instance == FDCAN1)
+        {
 #ifdef BSP_USING_FDCAN1
-              //CAN1
-              /* Retreive Rx messages from RX FIFO0 */
-              rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_RX_IND | 0 << 8);
+            //CAN1
+            /* Retreive Rx messages from RX FIFO0 */
+            rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_RX_IND | 0 << 8);
 #endif
-          }
+        }
         else
         {
 #ifdef BSP_USING_FDCAN2
@@ -578,76 +804,196 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     }
 }
 
-void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t BufferIndexes)
+/**
+ * @brief Translate HAL TX Buffer completion bitmaps into per-mailbox Generic events.
+ *
+ * A single HAL callback can cover multiple dedicated buffers. Each bit must
+ * report its own zero-based mailbox index rather than using the bitmap as an index.
+ *
+ * @param[in] hfdcan HAL handle that identifies FDCAN1 or FDCAN2.
+ * @param[in] buffer_indexes Bitmap of hardware buffers with the terminal.
+ * @param[in] event RT_CAN_EVENT_TX_DONE or RT_CAN_EVENT_TX_FAIL.
+ */
+static void _inline_fdcan_report_tx_event(FDCAN_HandleTypeDef *hfdcan,
+                                          uint32_t buffer_indexes, rt_uint32_t event)
 {
-    if(hfdcan->Instance == FDCAN1)
-    {
+    /* Generic device bound to this HAL instance and current mailbox index. */
+    struct rt_can_device *can = RT_NULL;
+    rt_uint32_t box_num;
+
 #ifdef BSP_USING_FDCAN1
-        //can1
-        rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
-#endif
-    }
-    else
+    if (hfdcan->Instance == FDCAN1)
     {
+        can = &st_DrvCan1.device;
+    }
+#endif /* BSP_USING_FDCAN1 */
 #ifdef BSP_USING_FDCAN2
-        //can2
-        rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_DONE | ((BufferIndexes-1) << 8));
-#endif
+    if (hfdcan->Instance == FDCAN2)
+    {
+        can = &st_DrvCan2.device;
+    }
+#endif /* BSP_USING_FDCAN2 */
+    if (can == RT_NULL)
+    {
+        return;
+    }
+    for (box_num = 0; box_num < can->config.sndboxnumber; box_num++)
+    {
+        if ((buffer_indexes & (FDCAN_TX_BUFFER0 << box_num)) != 0U)
+        {
+            rt_hw_can_isr(can, event | (box_num << 8));
+        }
     }
 }
 
+/**
+ * @brief Report successful transmission of every completed dedicated TX buffer.
+ * @param[in] hfdcan HAL FDCAN instance.
+ * @param[in] BufferIndexes Bitmap of completed hardware TX buffers.
+ */
+void HAL_FDCAN_TxBufferCompleteCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t BufferIndexes)
+{
+    _inline_fdcan_report_tx_event(hfdcan, BufferIndexes, RT_CAN_EVENT_TX_DONE);
+}
+
+/**
+ * @brief Report terminal cancellation for each buffer not already transmitted.
+ * @param[in] hfdcan HAL FDCAN instance.
+ * @param[in] BufferIndexes Bitmap of finished cancellation requests.
+ */
+void HAL_FDCAN_TxBufferAbortCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t BufferIndexes)
+{
+    /* A buffer transmitted before cancellation is completed by TX_COMPLETE. */
+    _inline_fdcan_report_tx_event(hfdcan, BufferIndexes & ~hfdcan->Instance->TXBTO,
+                                  RT_CAN_EVENT_TX_FAIL);
+}
+
+/**
+ * @brief Preserve the FIFO-empty callback without reporting a TX terminal.
+ *
+ * The configured controller uses three dedicated TX buffers and no TX FIFO.
+ * Only a per-buffer completion or cancellation callback identifies a terminal.
+ *
+ * @param[in] hfdcan FDCAN HAL handle (unused in dedicated-buffer mode).
+ */
 void HAL_FDCAN_TxFifoEmptyCallback(FDCAN_HandleTypeDef *hfdcan)
 {
-    if(hfdcan->Instance == FDCAN1)
-    {
+    (void)hfdcan;
+}
+
+/**
+ * @brief Forward hardware error-state transitions without retiring TX mailboxes.
+ *
+ * HAL reports warning, passive and bus-off status separately from protocol
+ * errors. The BSP owns these state snapshots; only typed protocol events
+ * increment Generic CAN error counters.
+ *
+ * @param[in] hfdcan FDCAN HAL handle identifying the controller.
+ * @param[in] ErrorStatusITs HAL error-status interrupt bitmap.
+ */
+void HAL_FDCAN_ErrorStatusCallback(FDCAN_HandleTypeDef *hfdcan, uint32_t ErrorStatusITs)
+{
+    /* Generic device corresponding to the reporting HAL instance. */
+    struct rt_can_device *can = RT_NULL;
+
+    (void)ErrorStatusITs;
 #ifdef BSP_USING_FDCAN1
-        rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_DONE);
-#endif
-    }
-    else
+    if (hfdcan->Instance == FDCAN1)
     {
+        can = &st_DrvCan1.device;
+    }
+#endif /* BSP_USING_FDCAN1 */
 #ifdef BSP_USING_FDCAN2
-        rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_DONE);
-#endif
+    if (hfdcan->Instance == FDCAN2)
+    {
+        can = &st_DrvCan2.device;
+    }
+#endif /* BSP_USING_FDCAN2 */
+    if (can != RT_NULL)
+    {
+        /* Fresh hardware REC/TEC and protocol status for the state transition. */
+        uint32_t error_counters = hfdcan->Instance->ECR;
+        uint32_t protocol_status = hfdcan->Instance->PSR;
+        uint32_t error_type = protocol_status & 0x07U;
+        uint32_t data_error_type = (protocol_status >> 8) & 0x07U;
+
+        can->status.rcverrcnt = (error_counters >> 8) & 0xffU;
+        can->status.snderrcnt = error_counters & 0xffU;
+        if ((protocol_status & FDCAN_PSR_BO) != 0U)
+        {
+            can->status.errcode = 0xffU;
+        }
+        else if (error_type >= RT_CAN_BUS_BIT_PAD_ERR && error_type <= RT_CAN_BUS_CRC_ERR)
+        {
+            can->status.errcode = error_type;
+        }
+        else if (data_error_type >= RT_CAN_BUS_BIT_PAD_ERR && data_error_type <= RT_CAN_BUS_CRC_ERR)
+        {
+            can->status.errcode = data_error_type;
+        }
+        else if (error_type == 0U && data_error_type == 0U)
+        {
+            can->status.errcode = RT_CAN_BUS_NO_ERR;
+        }
+        /* Error-status interrupts do not identify a new protocol occurrence. */
+        rt_hw_can_isr(can, RT_CAN_EVENT_ERR);
     }
 }
 
 void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
 {
+    /* Preserve diagnostics and report controller faults without retiring TX ownership. */
     rt_uint32_t tmp_u32Errcount;
     rt_uint32_t tmp_u32status;
     uint32_t ret = HAL_FDCAN_GetError(hfdcan);
 
-    if(hfdcan->Instance == FDCAN1)
+    if (hfdcan->Instance == FDCAN1)
     {
 #ifdef BSP_USING_FDCAN1
-        if((ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
+        if ((ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
             (hfdcan->Instance->CCCR & FDCAN_CCCR_INIT_Msk))
         {
             //hfdcan->Instance->CCCR |= FDCAN_CCCR_CCE_Msk;
             hfdcan->Instance->CCCR &= ~FDCAN_CCCR_INIT_Msk;
+            /* Preserve the controller recovery marker independently of error counting. */
+            rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_ERR);
             st_DrvCan1.device.status.errcode = 0xff;
         }
         else
         {
             tmp_u32Errcount = st_DrvCan1.fdcanHandle.Instance->ECR;
             tmp_u32status = st_DrvCan1.fdcanHandle.Instance->PSR;
-            st_DrvCan1.device.status.rcverrcnt = (tmp_u32Errcount>>8)&0x000000ff;
-            st_DrvCan1.device.status.snderrcnt = (tmp_u32Errcount)&0x000000ff;
-            st_DrvCan1.device.status.lasterrtype = tmp_u32status&0x000000007;
-            rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_TX_FAIL);
-
+            st_DrvCan1.device.status.rcverrcnt = (tmp_u32Errcount >> 8) & 0x000000ff;
+            st_DrvCan1.device.status.snderrcnt = (tmp_u32Errcount) & 0x000000ff;
+            st_DrvCan1.device.status.lasterrtype = tmp_u32status & 0x000000007;
+            /* Keep protocol errors visible to the periodic status callback. */
+            if ((tmp_u32status & FDCAN_PSR_BO) != 0U)
+            {
+                st_DrvCan1.device.status.errcode = 0xffU;
+            }
+            else if ((tmp_u32status & 0x07U) >= 1U && (tmp_u32status & 0x07U) <= 6U)
+            {
+                st_DrvCan1.device.status.errcode = tmp_u32status & 0x07U;
+            }
+            else if (((tmp_u32status >> 8) & 0x07U) >= 1U &&
+                     ((tmp_u32status >> 8) & 0x07U) <= 6U)
+            {
+                st_DrvCan1.device.status.errcode = (tmp_u32status >> 8) & 0x07U;
+            }
+            rt_hw_can_isr(&st_DrvCan1.device, RT_CAN_EVENT_ERR);
         }
 #endif /*BSP_USING_FDCAN1*/
     }
     else
     {
 #ifdef BSP_USING_FDCAN2
-        if(    (ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
+        if ((ret & FDCAN_IT_ARB_PROTOCOL_ERROR) &&
             (hfdcan->Instance->CCCR & FDCAN_CCCR_INIT_Msk))
         {
             //hfdcan->Instance->CCCR |= FDCAN_CCCR_CCE_Msk;
             hfdcan->Instance->CCCR &= ~FDCAN_CCCR_INIT_Msk;
+            /* Preserve the controller recovery marker independently of error counting. */
+            rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_ERR);
             st_DrvCan2.device.status.errcode = 0xff;
         }
         else
@@ -655,52 +1001,139 @@ void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)
             //can2
             tmp_u32Errcount = st_DrvCan2.fdcanHandle.Instance->ECR;
             tmp_u32status = st_DrvCan2.fdcanHandle.Instance->PSR;
-            st_DrvCan2.device.status.rcverrcnt = (tmp_u32Errcount>>8)&0x000000ff;
-            st_DrvCan2.device.status.snderrcnt = (tmp_u32Errcount)&0x000000ff;
-            st_DrvCan2.device.status.lasterrtype = tmp_u32status&0x000000007;
-            rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_TX_FAIL);
+            st_DrvCan2.device.status.rcverrcnt = (tmp_u32Errcount >> 8) & 0x000000ff;
+            st_DrvCan2.device.status.snderrcnt = (tmp_u32Errcount) & 0x000000ff;
+            st_DrvCan2.device.status.lasterrtype = tmp_u32status & 0x000000007;
+            /* Keep protocol errors visible to the periodic status callback. */
+            if ((tmp_u32status & FDCAN_PSR_BO) != 0U)
+            {
+                st_DrvCan2.device.status.errcode = 0xffU;
+            }
+            else if ((tmp_u32status & 0x07U) >= 1U && (tmp_u32status & 0x07U) <= 6U)
+            {
+                st_DrvCan2.device.status.errcode = tmp_u32status & 0x07U;
+            }
+            else if (((tmp_u32status >> 8) & 0x07U) >= 1U &&
+                     ((tmp_u32status >> 8) & 0x07U) <= 6U)
+            {
+                st_DrvCan2.device.status.errcode = (tmp_u32status >> 8) & 0x07U;
+            }
+            rt_hw_can_isr(&st_DrvCan2.device, RT_CAN_EVENT_ERR);
         }
 #endif /*BSP_USING_FDCAN2*/
     }
 }
 
-#ifdef BSP_USING_FDCAN1
-void FDCAN1_IT0_IRQHandler(void)             /* FDCAN1 interrupt line 0      */
+/**
+ * @brief Account protocol errors latched in the current FDCAN IRQ only.
+ *
+ * HAL accumulates ErrorCode, so its ErrorCallback alone cannot distinguish a
+ * new protocol error from a later unrelated interrupt. Snapshot enabled IR
+ * flags and PSR before HAL clears them, then publish classified occurrences.
+ *
+ * @param[in] can Generic CAN device receiving the error event.
+ * @param[in] error_flags Enabled pending FDCAN protocol-error IRQ flags.
+ * @param[in] protocol_status PSR sampled for the same IRQ.
+ */
+static void _inline_fdcan_report_protocol_error_irq(struct rt_can_device *can,
+                                                    uint32_t error_flags, uint32_t protocol_status)
 {
+    /* LEC[2:0] and DLEC[10:8] use RT_CAN_BUS_ERR values 1..6. */
+    uint32_t error_type;
+
+    if ((error_flags & FDCAN_IT_ARB_PROTOCOL_ERROR) != 0U)
+    {
+        error_type = protocol_status & 0x07U;
+        if (error_type >= RT_CAN_BUS_BIT_PAD_ERR && error_type <= RT_CAN_BUS_CRC_ERR)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_ERR | (int)(error_type << 8));
+        }
+    }
+
+    if ((error_flags & FDCAN_IT_DATA_PROTOCOL_ERROR) != 0U)
+    {
+        error_type = (protocol_status >> 8) & 0x07U;
+        if (error_type >= RT_CAN_BUS_BIT_PAD_ERR && error_type <= RT_CAN_BUS_CRC_ERR)
+        {
+            rt_hw_can_isr(can, RT_CAN_EVENT_ERR | (int)(error_type << 8));
+        }
+    }
+}
+
+#ifdef BSP_USING_FDCAN1
+void FDCAN1_IT0_IRQHandler(void) /* FDCAN1 interrupt line 0      */
+{
+    /* HAL can clear IT1-routed protocol flags when servicing an IT0 interrupt;
+     * snapshot both flags and PSR before calling the common HAL handler. */
+    uint32_t error_flags;
+    uint32_t protocol_status;
+
     rt_interrupt_enter();
+    error_flags = st_DrvCan1.fdcanHandle.Instance->IR & st_DrvCan1.fdcanHandle.Instance->IE &
+                  (FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR);
+    protocol_status = st_DrvCan1.fdcanHandle.Instance->PSR;
     HAL_FDCAN_IRQHandler(&st_DrvCan1.fdcanHandle);
+    _inline_fdcan_report_protocol_error_irq(&st_DrvCan1.device, error_flags, protocol_status);
     rt_interrupt_leave();
 }
 
-void FDCAN1_IT1_IRQHandler(void)             /* FDCAN1 interrupt line 1      */
+void FDCAN1_IT1_IRQHandler(void) /* FDCAN1 interrupt line 1      */
 {
+    /* Pending enabled error flags, captured before HAL clears IR. */
+    uint32_t error_flags;
+    /* Protocol status belonging to the same error interrupt. */
+    uint32_t protocol_status;
+
     rt_interrupt_enter();
+    error_flags = st_DrvCan1.fdcanHandle.Instance->IR & st_DrvCan1.fdcanHandle.Instance->IE &
+                  (FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR);
+    protocol_status = st_DrvCan1.fdcanHandle.Instance->PSR;
     HAL_FDCAN_IRQHandler(&st_DrvCan1.fdcanHandle);
+    _inline_fdcan_report_protocol_error_irq(&st_DrvCan1.device, error_flags, protocol_status);
     rt_interrupt_leave();
 }
 #endif /*BSP_USING_FDCAN1*/
 #ifdef BSP_USING_FDCAN2
-void FDCAN2_IT0_IRQHandler(void)             /* FDCAN2 interrupt line 0      */
+void FDCAN2_IT0_IRQHandler(void) /* FDCAN2 interrupt line 0      */
 {
+    /* HAL can clear IT1-routed protocol flags when servicing an IT0 interrupt;
+     * snapshot both flags and PSR before calling the common HAL handler. */
+    uint32_t error_flags;
+    uint32_t protocol_status;
+
     rt_interrupt_enter();
+    error_flags = st_DrvCan2.fdcanHandle.Instance->IR & st_DrvCan2.fdcanHandle.Instance->IE &
+                  (FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR);
+    protocol_status = st_DrvCan2.fdcanHandle.Instance->PSR;
     HAL_FDCAN_IRQHandler(&st_DrvCan2.fdcanHandle);
+    _inline_fdcan_report_protocol_error_irq(&st_DrvCan2.device, error_flags, protocol_status);
     rt_interrupt_leave();
 }
 
-void FDCAN2_IT1_IRQHandler(void)             /* FDCAN2 interrupt line 1      */
+void FDCAN2_IT1_IRQHandler(void) /* FDCAN2 interrupt line 1      */
 {
+    /* Pending enabled error flags, captured before HAL clears IR. */
+    uint32_t error_flags;
+    /* Protocol status belonging to the same error interrupt. */
+    uint32_t protocol_status;
+
     rt_interrupt_enter();
+    error_flags = st_DrvCan2.fdcanHandle.Instance->IR & st_DrvCan2.fdcanHandle.Instance->IE &
+                  (FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR);
+    protocol_status = st_DrvCan2.fdcanHandle.Instance->PSR;
     HAL_FDCAN_IRQHandler(&st_DrvCan2.fdcanHandle);
+    _inline_fdcan_report_protocol_error_irq(&st_DrvCan2.device, error_flags, protocol_status);
     rt_interrupt_leave();
 }
-#endif/*BSP_USING_FDCAN2*/
+#endif /*BSP_USING_FDCAN2*/
 
 static int rt_hw_can_init(void)
 {
     struct can_configure config;
     config.baud_rate = CAN1MBaud;
     config.msgboxsz = 48;
-    config.sndboxnumber = 1;
+    /* Expose all three dedicated TX buffers as independent Generic mailbox slots. */
+    config.sndboxnumber = 3;
     config.mode = RT_CAN_MODE_NORMAL;
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.ticks = 50;
