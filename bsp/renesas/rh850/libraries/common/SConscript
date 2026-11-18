@@ -1,0 +1,9 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*_gcc.S')
+CPPPATH = [cwd]
+
+group = DefineGroup('Libraries', src, depend = ['SOC_FAMILY_RENESAS_RH850'], CPPPATH = CPPPATH)
+
+Return('group')

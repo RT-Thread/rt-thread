@@ -1,0 +1,14 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['BSP_USING_UART', 'RT_USING_SERIAL_V1']):
+    src += ['tc_uart_config.c']
+
+if GetDepend(['RT_USING_CPLUSPLUS']):
+    src += ['tc_cxx_ctor.cpp']
+
+group = DefineGroup('BSP utestcases', src, depend = ['RT_USING_UTEST'], CPPPATH = [cwd])
+
+Return('group')

@@ -1,0 +1,10 @@
+menu "RT-Thread RH850 CPU"
+
+    config RT_USING_FPU
+        bool "Using Float Point Unit"
+        default y
+        help
+            Build for the hardware FPU and save its context.
+            If disabled, the code is built with -msoft-float.
+
+endmenu
