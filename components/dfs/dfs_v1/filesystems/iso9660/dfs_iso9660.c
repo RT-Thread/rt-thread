@@ -290,6 +290,12 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
 
         namelen = rt_le32_to_cpu(dirent->namelen);
 
+        /* The name length comes from the medium, never trust it */
+        if (namelen >= MAX_NAMELEN)
+        {
+            namelen = MAX_NAMELEN - 1;
+        }
+
         if (iso->joliet)
         {
             iso9660_convert_string(sname, (rt_uint16_t *)dirent->name, namelen);
@@ -298,8 +304,11 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
         {
             if (!(rt_le32_to_cpu(dirent->flags) & FLAG_TYPE_DIR))
             {
-                /* Remove ";1" */
-                namelen -= 2;
+                /* Remove ";1", but only when the name is long enough */
+                if (namelen >= 2)
+                {
+                    namelen -= 2;
+                }
             }
 
             iso9660_convert_lower(sname, (rt_uint8_t *)dirent->name, namelen);
