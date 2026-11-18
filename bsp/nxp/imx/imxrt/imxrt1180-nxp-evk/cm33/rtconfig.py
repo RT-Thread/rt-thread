@@ -61,7 +61,6 @@ _LINKER_SCRIPT_BASE = {
     'FLEXSPI_NOR_HYPERRAM': 'MIMXRT1189xxxxx_cm33_flexspi_nor_hyperram',
 }[_LINKER_SCRIPT_TYPE]
 
-
 if PLATFORM == 'gcc':
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
@@ -229,24 +228,30 @@ elif PLATFORM == 'iccarm':
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
 
-# Map from linker script type to the matching Keil target name.
-_LINKER_SCRIPT_TO_KEIL_TARGET = {
+# Map from linker script type to the matching Keil target / IAR configuration name.
+# Keil targets and IAR configurations share the same names, so one table serves both.
+_LINKER_SCRIPT_TO_PROJECT_TARGET = {
     'RAM':                  'rtthread_ram',
     'FLEXSPI_NOR':          'rtthread_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'rtthread_flexspi_nor_hyperram',
 }
 
+def _get_active_project_target():
+    """Return the Keil target / IAR config name matching the selected linker script."""
+    return _LINKER_SCRIPT_TO_PROJECT_TARGET.get(_LINKER_SCRIPT_TYPE, 'rtthread_ram')
+
 def update_keil_active_target(uvoptx_path='project.uvoptx'):
     """Set <IsCurrentTarget> in project.uvoptx to match the selected linker script."""
     import xml.etree.ElementTree as etree
 
-    active = _LINKER_SCRIPT_TO_KEIL_TARGET.get(_LINKER_SCRIPT_TYPE, 'rtthread_ram')
+    active = _get_active_project_target()
 
     if not os.path.exists(uvoptx_path):
-        return
+        return active
 
     tree = etree.parse(uvoptx_path)
     root = tree.getroot()
+
 
     for tgt in tree.findall('Target'):
         tname = tgt.find('TargetName')
@@ -261,7 +266,22 @@ def update_keil_active_target(uvoptx_path='project.uvoptx'):
 
     print('Keil active target set to: ' + active)
 
+    # Return the active target name so the caller (tools/targets/keil.py) can
+    # build the matching target with UV4.exe instead of the template's first one.
+    return active
+
+def iar_get_active_config():
+
+    """Return the IAR configuration name matching the selected linker script.
+
+    This hook is called by tools/targets/iar.py when generating the IAR
+    project so that the active configuration follows the Kconfig linker
+    script selection. It is board-specific and only defined here.
+    """
+    return _get_active_project_target()
+
 def dist_handle(BSP_ROOT, dist_dir):
+
     import sys
     cwd_path = os.getcwd()
     # sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
