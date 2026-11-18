@@ -11,6 +11,7 @@
  */
 
 #include "drv_hard_i2c.h"
+#include "i2c_config.h"
 
 #ifdef RT_USING_I2C
 
@@ -60,10 +61,14 @@ struct rt_i2c_bus_device i2c5;
 #define I2C_MASTER_RECEIVE_GD                I2C_ADD_MASTER_RECEIVE
 #define i2c_transfer_byte_number_config_gd   i2c_add_transfer_byte_number_config
 #define i2c_start_on_bus_gd                  i2c_add_start_on_bus
+#define i2c_automatic_end_enable_gd          i2c_add_automatic_end_enable
+#define i2c_automatic_end_disable_gd         i2c_add_automatic_end_disable
 #define I2C_MASTER_TRANSMIT_GD               I2C_ADD_MASTER_TRANSMIT
 #define I2C_FLAG_I2CBSY_GD                   I2C_ADD_FLAG_I2CBSY
 #define I2C_FLAG_TC_GD                       I2C_ADD_FLAG_TC
 #define I2C_FLAG_TI_GD                       I2C_ADD_FLAG_TI
+#define I2C_FLAG_TBE_GD                      I2C_ADD_FLAG_TBE
+#define I2C_FLAG_NACK_GD                     I2C_ADD_FLAG_NACK
 #define i2c_stop_on_bus_gd                   i2c_add_stop_on_bus
 #define I2C_FLAG_STPDET_GD                   I2C_ADD_FLAG_STPDET
 #define i2c_timing_config_gd                 i2c_add_timing_config
@@ -86,10 +91,14 @@ struct rt_i2c_bus_device i2c5;
 #define I2C_MASTER_RECEIVE_GD                I2C_MASTER_RECEIVE
 #define i2c_transfer_byte_number_config_gd   i2c_transfer_byte_number_config
 #define i2c_start_on_bus_gd                  i2c_start_on_bus
+#define i2c_automatic_end_enable_gd          i2c_automatic_end_enable
+#define i2c_automatic_end_disable_gd         i2c_automatic_end_disable
 #define I2C_MASTER_TRANSMIT_GD               I2C_MASTER_TRANSMIT
 #define I2C_FLAG_I2CBSY_GD                   I2C_FLAG_I2CBSY
 #define I2C_FLAG_TC_GD                       I2C_FLAG_TC
 #define I2C_FLAG_TI_GD                       I2C_FLAG_TI
+#define I2C_FLAG_TBE_GD                      I2C_FLAG_TBE
+#define I2C_FLAG_NACK_GD                     I2C_FLAG_NACK
 #define i2c_stop_on_bus_gd                   i2c_stop_on_bus
 #define I2C_FLAG_STPDET_GD                   I2C_FLAG_STPDET
 #define i2c_timing_config_gd                 i2c_timing_config
@@ -103,91 +112,28 @@ struct rt_i2c_bus_device i2c5;
 #define IS_I2C_LEGACY(periph)  ((periph) == I2C0 || (periph) == I2C1 || (periph) == I2C2)
 #elif defined (SOC_SERIES_GD32F4xx)
 #define IS_I2C_LEGACY(periph)  (1)
-#elif defined (SOC_SERIES_GD32H7xx)
+#elif (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
 #define IS_I2C_LEGACY(periph)  (0)
 #endif
 
 static const struct gd32_i2c_bus gd_i2c_config[] = {
 #ifdef BSP_USING_HARD_I2C0
-    {
-    I2C0,    /* uart peripheral index */
-
-    RCU_I2C0, RCU_GPIOB, RCU_GPIOB,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOB, GPIO_AF_4, GPIO_PIN_8,    /* scl port, scl alternate, scl pin */
-    GPIOB, GPIO_AF_4, GPIO_PIN_9,    /* sda port, sda alternate, sda pin */
-
-        &i2c0,
-        "hwi2c0",
-    },
+    I2C0_CONFIG,
 #endif
-
 #ifdef BSP_USING_HARD_I2C1
-    {
-    I2C1,    /* uart peripheral index */
-
-    RCU_I2C1, RCU_GPIOH, RCU_GPIOB,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOH, GPIO_AF_4, GPIO_PIN_4,    /* scl port, scl alternate, scl pin */
-    GPIOB, GPIO_AF_4, GPIO_PIN_11,    /* sda port, sda alternate, sda pin */
-
-        &i2c1,
-        "hwi2c1",
-    },
+    I2C1_CONFIG,
 #endif
-
 #ifdef BSP_USING_HARD_I2C2
-    {
-    I2C2,    /* uart peripheral index */
-
-    RCU_I2C2, RCU_GPIOA, RCU_GPIOC,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOA, GPIO_AF_4, GPIO_PIN_8,    /* scl port, scl alternate, scl pin */
-    GPIOC, GPIO_AF_4, GPIO_PIN_9,    /* sda port, sda alternate, sda pin */
-
-        &i2c2,
-        "hwi2c2",
-    },
+    I2C2_CONFIG,
 #endif
-
 #ifdef BSP_USING_HARD_I2C3
-    {
-    I2C3,    /* uart peripheral index */
-
-    RCU_I2C3, RCU_GPIOF, RCU_GPIOF,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOF, GPIO_AF_4, GPIO_PIN_14,    /* scl port, scl alternate, scl pin */
-    GPIOF, GPIO_AF_4, GPIO_PIN_15,    /* sda port, sda alternate, sda pin */
-
-        &i2c3,
-        "hwi2c3",
-    },
+    I2C3_CONFIG,
 #endif
 #ifdef BSP_USING_HARD_I2C4
-    {
-    I2C4,    /* uart peripheral index */
-
-    RCU_I2C4, RCU_GPIOG, RCU_GPIOG,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOG, GPIO_AF_6, GPIO_PIN_7,    /* scl port, scl alternate, scl pin */
-    GPIOG, GPIO_AF_6, GPIO_PIN_8,    /* sda port, sda alternate, sda pin */
-
-        &i2c4,
-        "hwi2c4",
-    },
+    I2C4_CONFIG,
 #endif
 #ifdef BSP_USING_HARD_I2C5
-    {
-    I2C5,    /* uart peripheral index */
-
-    RCU_I2C5, RCU_GPIOF, RCU_GPIOF,    /* periph clock, scl gpio clock, sda gpio clock */
-
-    GPIOF, GPIO_AF_4, GPIO_PIN_11,    /* scl port, scl alternate, scl pin */
-    GPIOF, GPIO_AF_4, GPIO_PIN_12,    /* sda port, sda alternate, sda pin */
-
-        &i2c5,
-        "hwi2c5",
-    }
+    I2C5_CONFIG,
 #endif
 };
 
@@ -198,28 +144,66 @@ static const struct gd32_i2c_bus gd_i2c_config[] = {
   */
 static void gd32_i2c_gpio_init(const struct gd32_i2c_bus *i2c)
 {
+    rt_uint32_t scl_port, sda_port;
+    rt_uint32_t scl_pin, sda_pin;
+    rt_uint32_t pin_af;
+    rcu_periph_enum scl_periph, sda_periph;
+
+    if(get_pin_config(i2c->scl_pin_name, &scl_port, &scl_pin, &scl_periph) != RT_EOK)
+    {
+        return;
+    }
+
+    if(get_pin_config(i2c->sda_pin_name, &sda_port, &sda_pin, &sda_periph) != RT_EOK)
+    {
+        return;
+    }
+
+    pin_alternate_config(i2c->alternate, &pin_af);
+
     /* enable I2C and GPIO clock */
-    rcu_periph_clock_enable(i2c->scl_gpio_clk);
-    rcu_periph_clock_enable(i2c->sda_gpio_clk);
+    rcu_periph_clock_enable(scl_periph);
+    rcu_periph_clock_enable(sda_periph);
     rcu_periph_clock_enable(i2c->per_clk);
 
-    /* configure I2C_SCL as alternate function push-pull */
-    gpio_af_set(i2c->scl_port, i2c->scl_af, i2c->scl_pin);
-    gpio_mode_set(i2c->scl_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, i2c->scl_pin);
-#if defined (SOC_SERIES_GD32H7xx)
-    gpio_output_options_set(i2c->scl_port, GPIO_OTYPE_OD, GPIO_OSPEED_60MHZ, i2c->scl_pin);
-    /* configure I2C_SDA as alternate function push-pull */
-    gpio_af_set(i2c->sda_port, i2c->sda_af, i2c->sda_pin);
-    gpio_mode_set(i2c->sda_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, i2c->sda_pin);
-    gpio_output_options_set(i2c->sda_port, GPIO_OTYPE_OD, GPIO_OSPEED_60MHZ, i2c->sda_pin);
+    /* configure I2C pins as alternate function open-drain */
+    gpio_af_set(scl_port, pin_af, scl_pin);
+    gpio_mode_set(scl_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, scl_pin);
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    gpio_output_options_set(scl_port, GPIO_OTYPE_OD, GPIO_OSPEED_60MHZ, scl_pin);
+    gpio_af_set(sda_port, pin_af, sda_pin);
+    gpio_mode_set(sda_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, sda_pin);
+    gpio_output_options_set(sda_port, GPIO_OTYPE_OD, GPIO_OSPEED_60MHZ, sda_pin);
 #else
-    gpio_output_options_set(i2c->scl_port, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, i2c->scl_pin);
-    /* configure I2C_SDA as alternate function push-pull */
-    gpio_af_set(i2c->sda_port, i2c->sda_af, i2c->sda_pin);
-    gpio_mode_set(i2c->sda_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, i2c->sda_pin);
-    gpio_output_options_set(i2c->sda_port, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, i2c->sda_pin);
+    gpio_output_options_set(scl_port, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, scl_pin);
+    gpio_af_set(sda_port, pin_af, sda_pin);
+    gpio_mode_set(sda_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, sda_pin);
+    gpio_output_options_set(sda_port, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, sda_pin);
 #endif
 }
+
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+static void gd32_i2c_clock_source_config(rt_uint32_t i2c_periph)
+{
+    switch(i2c_periph)
+    {
+    case I2C0:
+        rcu_i2c_clock_config(IDX_I2C0, RCU_I2CSRC_IRC64MDIV);
+        break;
+    case I2C1:
+        rcu_i2c_clock_config(IDX_I2C1, RCU_I2CSRC_IRC64MDIV);
+        break;
+    case I2C2:
+        rcu_i2c_clock_config(IDX_I2C2, RCU_I2CSRC_IRC64MDIV);
+        break;
+    case I2C3:
+        rcu_i2c_clock_config(IDX_I2C3, RCU_I2CSRC_IRC64MDIV);
+        break;
+    default:
+        break;
+    }
+}
+#endif
 
 /**
   * @brief  read data.
@@ -228,11 +212,19 @@ static void gd32_i2c_gpio_init(const struct gd32_i2c_bus *i2c)
   * @param  data_byte
   * @retval None
   */
-static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_uint16_t data_byte)
+static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer,
+                             rt_uint16_t data_byte, rt_tick_t timeout)
 {
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    rt_tick_t start_tick;
+#else
+    RT_UNUSED(timeout);
+#endif
+
     if (data_byte == 0) return 1;
 
-#ifdef BSP_USING_RECEIVING_A
+#if defined(BSP_USING_RECEIVING_A) && \
+        (defined(SOC_SERIES_GD32F4xx) || defined(SOC_SERIES_GD32F5xx))
     /*
         In single-byte reception, disable ACK because the master needs to send
         NACK after receiving the first byte,indicating no more data will be
@@ -307,8 +299,20 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
         }else
 #endif
         {
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
             /* wait until the RBNE bit is set */
-            while(!i2c_flag_get_gd(i2c_periph, I2C_FLAG_RBNE_GD));
+            start_tick = rt_tick_get();
+            while(!i2c_flag_get_gd(i2c_periph, I2C_FLAG_RBNE_GD))
+            {
+                if(i2c_flag_get_gd(i2c_periph, I2C_FLAG_NACK_GD))
+                {
+                    return 1;
+                }
+                if((rt_tick_get() - start_tick) >= timeout)
+                {
+                    return 1;
+                }
+            }
 
             /* read a byte */
             *p_buffer = i2c_data_receive_gd(i2c_periph);
@@ -316,6 +320,7 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
             p_buffer++;
             /* decrement the read bytes counter */
             data_byte--;
+#endif
         }
     }
     return 0;
@@ -328,8 +333,15 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
   * @param  data_byte
   * @retval None
   */
-static uint8_t gd32_i2c_write(rt_uint32_t i2c_periph, uint8_t *p_buffer, uint16_t data_byte)
+static uint8_t gd32_i2c_write(rt_uint32_t i2c_periph, uint8_t *p_buffer,
+                              uint16_t data_byte, rt_tick_t timeout)
 {
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    rt_tick_t start_tick;
+#else
+    RT_UNUSED(timeout);
+#endif
+
     if (data_byte == 0) return 1;
 
     while(data_byte)
@@ -349,17 +361,36 @@ static uint8_t gd32_i2c_write(rt_uint32_t i2c_periph, uint8_t *p_buffer, uint16_
         else
 #endif
         {
-#if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32H7xx)
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
             /* wait until the transmit data buffer is empty */
             I2C_STAT_GD(i2c_periph) |= I2C_STAT_TBE_GD;
-            while(!i2c_flag_get(i2c_periph, I2C_FLAG_TBE));
+            start_tick = rt_tick_get();
+            while(!i2c_flag_get_gd(i2c_periph, I2C_FLAG_TBE_GD))
+            {
+                if(i2c_flag_get_gd(i2c_periph, I2C_FLAG_NACK_GD) ||
+                   ((rt_tick_get() - start_tick) >= timeout))
+                {
+                    return 1;
+                }
+            }
 
             while(data_byte)
             {
                 /* wait until the TI bit is set */
-                while(!i2c_flag_get(i2c_periph, I2C_FLAG_TI_GD));
+                start_tick = rt_tick_get();
+                while(!i2c_flag_get_gd(i2c_periph, I2C_FLAG_TI_GD))
+                {
+                    if(i2c_flag_get_gd(i2c_periph, I2C_FLAG_NACK_GD))
+                    {
+                        return 1;
+                    }
+                    if((rt_tick_get() - start_tick) >= timeout)
+                    {
+                        return 1;
+                    }
+                }
                 /* data transmission */
-                i2c_data_transmit(i2c_periph, *p_buffer);
+                i2c_data_transmit_gd(i2c_periph, *p_buffer);
                 /* point to the next byte to be written */
                 p_buffer++;
                 /* decrement the write bytes counter */
@@ -386,30 +417,195 @@ static uint8_t gd32_i2c_write(rt_uint32_t i2c_periph, uint8_t *p_buffer, uint16_
 
 static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
-    static struct rt_i2c_msg *msg;
-
-    rt_uint32_t i,w_total_byte=0,r_total_byte=0;
-    rt_err_t ret = RT_ERROR;
+    struct rt_i2c_msg *msg = RT_NULL;
+    struct gd32_i2c_bus *gd32_i2c;
+    rt_uint32_t i;
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    rt_tick_t start_tick;
+    rt_bool_t address_probe = RT_FALSE;
+    rt_bool_t stop_generated = RT_FALSE;
+    rt_bool_t bus_started = RT_FALSE;
+    struct rt_i2c_msg *phase_msg;
+    rt_uint32_t phase_end;
+    rt_uint32_t phase_total_byte;
+#endif
+    rt_err_t ret = -RT_ERROR;
 
     RT_ASSERT(bus != RT_NULL);
 
-    struct gd32_i2c_bus *gd32_i2c = (struct gd32_i2c_bus *)bus->priv;
-
-    for(i = 0; i < num; i++)
+    if(msgs == RT_NULL || num == 0 || (msgs[0].flags & RT_I2C_NO_START))
     {
-        msg = &msgs[i];
-
-        if(msg->flags & RT_I2C_RD)
-        {
-            r_total_byte += msg->len;
-        }else{
-            w_total_byte += msg->len;
-        }
+        return -RT_EINVAL;
     }
 
-    for(i = 0; i < num; i++)
+    gd32_i2c = (struct gd32_i2c_bus *)bus->priv;
+
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    if(!IS_I2C_LEGACY(gd32_i2c->i2c_periph))
+    {
+        phase_msg = &msgs[0];
+        for(i = 1; i < num; i++)
+        {
+            if(msgs[i].flags & RT_I2C_NO_START)
+            {
+                if((msgs[i].addr != phase_msg->addr) ||
+                   ((msgs[i].flags & (RT_I2C_RD | RT_I2C_ADDR_10BIT)) !=
+                    (phase_msg->flags & (RT_I2C_RD | RT_I2C_ADDR_10BIT))))
+                {
+                    return -RT_EINVAL;
+                }
+            }else{
+                phase_msg = &msgs[i];
+            }
+        }
+    }
+#endif
+
+    for(i = 0; i < num;)
     {
         msg = &msgs[i];
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+        if(!IS_I2C_LEGACY(gd32_i2c->i2c_periph))
+        {
+            phase_end = i + 1;
+            phase_total_byte = msg->len;
+            while((phase_end < num) && (msgs[phase_end].flags & RT_I2C_NO_START))
+            {
+                phase_total_byte += msgs[phase_end].len;
+                phase_end++;
+            }
+
+            address_probe = !(msg->flags & (RT_I2C_RD | RT_I2C_NO_START | RT_I2C_NO_STOP)) &&
+                    (msg->len == 0) && (phase_end == (i + 1));
+            stop_generated = RT_FALSE;
+
+            if(!bus_started)
+            {
+                start_tick = rt_tick_get();
+                while(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_I2CBSY_GD))
+                {
+                    if((rt_tick_get() - start_tick) >= bus->timeout)
+                    {
+                        LOG_E("i2c bus busy timeout");
+                        ret = -RT_ETIMEOUT;
+                        goto out;
+                    }
+                }
+            }
+
+            {
+                rt_uint32_t address = msg->addr;
+
+                if(msg->flags & RT_I2C_ADDR_10BIT)
+                {
+                    /* enable 10-bit addressing mode in master mode */
+                    i2c_address10_enable_gd(gd32_i2c->i2c_periph);
+                }else{
+                    /* disable 10-bit addressing mode in master mode */
+                    i2c_address10_disable_gd(gd32_i2c->i2c_periph);
+                    address <<= 1;
+                }
+
+                if(msg->flags & RT_I2C_RD)
+                {
+                    /* configure slave address */
+                    i2c_master_addressing_gd(gd32_i2c->i2c_periph, address, I2C_MASTER_RECEIVE_GD);
+                }else{
+                    /* configure slave address */
+                    i2c_master_addressing_gd(gd32_i2c->i2c_periph, address, I2C_MASTER_TRANSMIT_GD);
+                    if(address_probe)
+                    {
+                        i2c_flag_clear_gd(gd32_i2c->i2c_periph,
+                                I2C_FLAG_STPDET_GD | I2C_FLAG_NACK_GD);
+                        i2c_automatic_end_enable_gd(gd32_i2c->i2c_periph);
+                    }
+                }
+
+                i2c_transfer_byte_number_config_gd(gd32_i2c->i2c_periph, phase_total_byte);
+                /* send a start condition to I2C bus */
+                i2c_start_on_bus_gd(gd32_i2c->i2c_periph);
+                bus_started = RT_TRUE;
+            }
+
+            if(address_probe)
+            {
+                rt_bool_t address_nack = RT_FALSE;
+
+                start_tick = rt_tick_get();
+                while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_STPDET_GD))
+                {
+                    if(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_NACK_GD))
+                    {
+                        address_nack = RT_TRUE;
+                    }
+
+                    if((rt_tick_get() - start_tick) >= bus->timeout)
+                    {
+                        LOG_E("i2c address probe timeout");
+                        i2c_automatic_end_disable_gd(gd32_i2c->i2c_periph);
+                        ret = -RT_ETIMEOUT;
+                        goto out;
+                    }
+                }
+
+                if(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_NACK_GD))
+                {
+                    address_nack = RT_TRUE;
+                }
+                i2c_automatic_end_disable_gd(gd32_i2c->i2c_periph);
+                i2c_flag_clear_gd(gd32_i2c->i2c_periph,
+                        I2C_FLAG_STPDET_GD | I2C_FLAG_NACK_GD);
+                stop_generated = RT_TRUE;
+                msg = &msgs[phase_end - 1];
+                i = phase_end;
+                if(address_nack)
+                {
+                    ret = -RT_EIO;
+                    goto out;
+                }
+                continue;
+            }
+
+            while(i < phase_end)
+            {
+                msg = &msgs[i];
+                if(msg->flags & RT_I2C_RD)
+                {
+                    if(gd32_i2c_read(gd32_i2c->i2c_periph, msg->buf, msg->len,
+                                     bus->timeout) != 0)
+                    {
+                        LOG_E("i2c bus read failed,i2c bus stop!");
+                        goto out;
+                    }
+                }else{
+                    if(gd32_i2c_write(gd32_i2c->i2c_periph, msg->buf, msg->len,
+                                      bus->timeout) != 0)
+                    {
+                        LOG_E("i2c bus write failed,i2c bus stop!");
+                        goto out;
+                    }
+                }
+                i++;
+            }
+
+            start_tick = rt_tick_get();
+            while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_TC_GD))
+            {
+                if(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_NACK_GD))
+                {
+                    ret = -RT_EIO;
+                    goto out;
+                }
+                if((rt_tick_get() - start_tick) >= bus->timeout)
+                {
+                    LOG_E("i2c transfer phase timeout");
+                    ret = -RT_ETIMEOUT;
+                    goto out;
+                }
+            }
+            continue;
+        }
+#endif
         if (!(msg->flags & RT_I2C_NO_START))
         {
 #if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32F4xx)
@@ -459,7 +655,6 @@ static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_
                }else {
                     /* configure slave address */
                     while(i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_I2CBSY));
-                    //i2c_transfer_byte_number_config(gd32_i2c->i2c_periph, w_total_byte);
                     /* send a start condition to I2C bus */
                     i2c_start_on_bus(gd32_i2c->i2c_periph);
                     while(!i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_SBSEND));
@@ -469,64 +664,27 @@ static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_
 
                     i2c_flag_clear(gd32_i2c->i2c_periph, I2C_FLAG_ADDSEND);
                }
-            }else
-#endif
-            {
-#if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32H7xx)
-                if(msg->flags & RT_I2C_ADDR_10BIT)
-                {
-                        /* enable 10-bit addressing mode in master mode */
-                    i2c_address10_enable_gd(gd32_i2c->i2c_periph);
-                }else {
-                        /* disable 10-bit addressing mode in master mode */
-                    i2c_address10_disable_gd(gd32_i2c->i2c_periph);
-                }
-
-                if(msg->flags & RT_I2C_RD)
-                {
-                     /* configure slave address */
-                    i2c_master_addressing_gd(gd32_i2c->i2c_periph, msg->addr, I2C_MASTER_RECEIVE_GD);
-
-                    i2c_transfer_byte_number_config_gd(gd32_i2c->i2c_periph, r_total_byte);
-                     /* send a start condition to I2C bus */
-                    i2c_start_on_bus_gd(gd32_i2c->i2c_periph);
-
-                }else {
-                     /* configure slave address */
-                    i2c_master_addressing_gd(gd32_i2c->i2c_periph, msg->addr, I2C_MASTER_TRANSMIT_GD);
-                    while(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_I2CBSY_GD));
-                    i2c_transfer_byte_number_config_gd(gd32_i2c->i2c_periph, w_total_byte);
-                     /* send a start condition to I2C bus */
-                    i2c_start_on_bus_gd(gd32_i2c->i2c_periph);
-                }
-#endif
             }
+#endif
         }
 
         if(msg->flags & RT_I2C_RD)
         {
-            if(gd32_i2c_read(gd32_i2c->i2c_periph, msg->buf, msg->len) != 0)
+            if(gd32_i2c_read(gd32_i2c->i2c_periph, msg->buf, msg->len,
+                             bus->timeout) != 0)
             {
                 LOG_E("i2c bus read failed,i2c bus stop!");
                 goto out;
             }
         }else {
-            if(gd32_i2c_write(gd32_i2c->i2c_periph, msg->buf, msg->len) != 0)
+            if(gd32_i2c_write(gd32_i2c->i2c_periph, msg->buf, msg->len,
+                              bus->timeout) != 0)
             {
                 LOG_E("i2c bus write failed,i2c bus stop!");
                 goto out;
             }
        }
-#if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32H7xx)
-        if(!IS_I2C_LEGACY(gd32_i2c->i2c_periph))
-        {
-            if(r_total_byte != 0)
-            {
-                while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_TC_GD));
-            }
-        }
-#endif
-
+        i++;
     }
     ret = i;
 
@@ -551,16 +709,44 @@ out:
     }else
 #endif
     {
-#if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32H7xx)
-        if(!(msg->flags & RT_I2C_NO_STOP))
+#if defined (SOC_SERIES_GD32F5xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+        if(!(msg->flags & RT_I2C_NO_STOP) && !stop_generated)
         {
-            while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_TC_GD));
+            if((ret >= 0) && !address_probe)
+            {
+                start_tick = rt_tick_get();
+                while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_TC_GD))
+                {
+                    if(i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_NACK_GD))
+                    {
+                        ret = -RT_EIO;
+                        break;
+                    }
+
+                    if((rt_tick_get() - start_tick) >= bus->timeout)
+                    {
+                        LOG_E("i2c transfer complete timeout");
+                        ret = -RT_ETIMEOUT;
+                        break;
+                    }
+                }
+            }
             /* send a stop condition to I2C bus */
             i2c_stop_on_bus_gd(gd32_i2c->i2c_periph);
             /* wait until stop condition generate */
-            while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_STPDET_GD));
+            start_tick = rt_tick_get();
+            while(!i2c_flag_get_gd(gd32_i2c->i2c_periph, I2C_FLAG_STPDET_GD))
+            {
+                if((rt_tick_get() - start_tick) >= bus->timeout)
+                {
+                    LOG_E("i2c stop timeout");
+                    ret = -RT_ETIMEOUT;
+                    break;
+                }
+            }
             /* clear the STPDET bit */
-            i2c_flag_clear_gd(gd32_i2c->i2c_periph, I2C_FLAG_STPDET_GD);
+            i2c_flag_clear_gd(gd32_i2c->i2c_periph,
+                    I2C_FLAG_STPDET_GD | I2C_FLAG_NACK_GD);
         }
 #endif
     }
@@ -585,7 +771,9 @@ int rt_hw_i2c_init(void)
 
     for(int i = 0; i < obj_num; i++)
     {
-
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+        gd32_i2c_clock_source_config(gd_i2c_config[i].i2c_periph);
+#endif
         gd32_i2c_gpio_init(&gd_i2c_config[i]);
 
         /* configure I2C timing. I2C speed clock=400kHz*/
@@ -600,11 +788,16 @@ int rt_hw_i2c_init(void)
         }else
 #endif
         {
-#if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32H7xx)
+#if defined (SOC_SERIES_GD32F5xx)
             i2c_timing_config_gd(gd_i2c_config[i].i2c_periph, 0x1, 0x7, 0);
             i2c_master_clock_config_gd(gd_i2c_config[i].i2c_periph, 0x2D, 0x87);
 
             /* enable I2C1 */
+            i2c_enable_gd(gd_i2c_config[i].i2c_periph);
+#elif (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+            /* GD32H7xx vendor timing for a 64 MHz I2C kernel clock at 400 kHz. */
+            i2c_timing_config_gd(gd_i2c_config[i].i2c_periph, 0x0, 0x6, 0);
+            i2c_master_clock_config_gd(gd_i2c_config[i].i2c_periph, 0x26, 0x73);
             i2c_enable_gd(gd_i2c_config[i].i2c_periph);
 #endif
         }
