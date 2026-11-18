@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-09-12     Bernard      The first version
  * 2021-07-21     Meco Man     move to libc/common
+ * 2026-11-06     Parthiban    use the picolibc <signal.h> types
  */
 
 #ifndef __SYS_SIGNAL_H__
@@ -26,6 +27,25 @@ extern "C" {
 
 #else /* ndef _POSIX_SOURCE */
 #include <signal.h>
+#endif
+
+#elif defined(RT_USING_PICOLIBC)
+/* picolibc <signal.h> defines the types; sigevent only for POSIX.1b and later */
+#include <signal.h>
+
+#if !defined(_POSIX_REALTIME_SIGNALS) && __POSIX_VISIBLE < 199309
+#define SIGEV_NONE   1
+#define SIGEV_SIGNAL 0
+#define SIGEV_THREAD 2
+
+struct sigevent
+{
+    union sigval sigev_value;
+    int sigev_signo;
+    int sigev_notify;
+    void (*sigev_notify_function)(union sigval);
+    void *sigev_notify_attributes;
+};
 #endif
 
 #else
@@ -241,7 +261,7 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIG_IGN  ((void (*)(int)) 1)
 #endif
 
-#endif /* RT_USING_MUSLLIBC */
+#endif /* RT_USING_MUSLLIBC, RT_USING_PICOLIBC */
 
 #ifdef __cplusplus
 }
