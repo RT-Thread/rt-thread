@@ -21,6 +21,30 @@
 #include <mmu.h>
 #endif
 
+#if defined(RT_USING_CPLUSPLUS) && defined(ARCH_MM_MMU) && !defined(ARCH_RISCV_M_MODE)
+extern char __tdata_start, __tdata_end;
+extern char __tbss_start, __tbss_end;
+
+static rt_size_t riscv_thread_tls_size(void)
+{
+    /* .tbss can have stricter alignment than .tdata.  Its linker-inserted
+     * gap is part of the ABI-visible TLS layout and must be retained. */
+    rt_size_t size = &__tbss_end - &__tdata_start;
+
+    return RT_ALIGN(size, 16);
+}
+
+static void riscv_thread_tls_init(void *tls)
+{
+    rt_size_t tdata_size = &__tdata_end - &__tdata_start;
+    rt_size_t tls_size = riscv_thread_tls_size();
+
+    rt_memcpy(tls, &__tdata_start, tdata_size);
+    rt_memset((rt_uint8_t *)tls + tdata_size, 0, tls_size - tdata_size);
+}
+
+#endif /* RT_USING_CPLUSPLUS && ARCH_MM_MMU && !ARCH_RISCV_M_MODE */
+
 /**
  * This function will initialize thread stack, we assuming
  * when scheduler restore this new thread, context will restore
@@ -41,6 +65,12 @@ rt_uint8_t *rt_hw_stack_init(void *tentry,
 {
     rt_ubase_t *sp;
     rt_hw_switch_frame_t frame;
+#if defined(RT_USING_CPLUSPLUS) && defined(ARCH_MM_MMU) && !defined(ARCH_RISCV_M_MODE)
+    void *tls = (void *)RT_ALIGN_DOWN((rt_ubase_t)stack_addr - riscv_thread_tls_size(), 16);
+
+    riscv_thread_tls_init(tls);
+    stack_addr = tls;
+#endif
 
     /* We use a strict alignment requirement for Q extension */
     sp = (rt_ubase_t *)RT_ALIGN_DOWN((rt_ubase_t)stack_addr, 16);
@@ -56,7 +86,10 @@ rt_uint8_t *rt_hw_stack_init(void *tentry,
 
     frame->regs[RT_HW_SWITCH_CONTEXT_RA] = (rt_ubase_t)_thread_start;
     frame->regs[RT_HW_SWITCH_CONTEXT_XSTATUS] = K_XSTATUS_DEFAULT;
-    /* Bare SMP keeps the current hart's tp across context switches. */
+#if defined(RT_USING_CPLUSPLUS) && defined(ARCH_MM_MMU) && !defined(ARCH_RISCV_M_MODE)
+    frame->regs[RT_HW_SWITCH_CONTEXT_TP] = (rt_ubase_t)tls;
+#endif
+    /* Non-MMU and M-mode configurations keep their existing tp policy. */
 
     return (void *)frame;
 }
