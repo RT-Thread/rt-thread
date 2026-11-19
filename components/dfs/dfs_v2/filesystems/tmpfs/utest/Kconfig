@@ -1,5 +1,12 @@
 menu "Tmpfs Testcase"
 
+config RT_UTEST_TMPFS_TRUNCATE
+    bool "tmpfs truncate test"
+    default n
+    depends on RT_USING_POSIX_FS && RT_USING_DFS_TMPFS
+    help
+        Test zero-length truncation, subsequent I/O and allocation failures.
+
 config RT_UTEST_TMPFS_CP
     bool "tmpfs cp test"
     default n
