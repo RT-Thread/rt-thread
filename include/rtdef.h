@@ -305,12 +305,20 @@ struct rt_object
 #endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_SMART
-    rt_atomic_t lwp_ref_count;                           /**< ref count for lwp */
-#endif /* RT_USING_SMART */
+    rt_atomic_t lwp_ref_count;   /**< ref count for lwp */
+    rt_atomic_t lwp_owner_count; /**< number of LWPs owning this object */
+    rt_atomic_t lwp_flags;       /**< RT_LWP_OBJECT_FLAG_* */
+    rt_list_t lwp_reclaim_node;  /**< node of the LWP deferred-reclaim list */
+#endif                           /* RT_USING_SMART */
 
     rt_list_t   list;                                    /**< list node of kernel object */
 };
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
+
+#ifdef RT_USING_SMART
+/** last LWP owner has closed the object. */
+#define RT_LWP_OBJECT_FLAG_CLOSING 0x01
+#endif /* RT_USING_SMART */
 
 /**
  * iterator of rt_object_for_each()
@@ -580,6 +588,8 @@ struct rt_timer
 
     rt_timer_func_t  timeout_func;                      /**< timeout function */
     void             *parameter;                        /**< timeout function's parameter */
+    rt_atomic_t dispatch_ref;                           /**< in-flight dispatch reference */
+    rt_bool_t closing;                                  /**< closed, no new dispatch or re-arm allowed */
 
     rt_tick_t        init_tick;                         /**< timer timeout tick */
     rt_tick_t        timeout_tick;                      /**< timeout tick */
@@ -924,6 +934,7 @@ struct rt_thread
     struct lwp_thread_signal    signal;                 /**< lwp signal for user-space thread */
     struct rt_user_context      user_ctx;               /**< user space context */
     struct rt_wakeup            wakeup_handle;          /**< wakeup handle for IPC */
+    rt_object_t lwp_syscall_ref[2];                     /**< objects held by an in-flight blocking syscall */
     rt_atomic_t                 exit_request;           /**< pending exit request of thread */
     int                         tid;                    /**< thread ID used by process */
     int                         tid_ref_count;          /**< reference of tid */

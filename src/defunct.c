@@ -27,6 +27,10 @@ rt_align(RT_ALIGN_SIZE) static rt_uint8_t rt_system_stack[SYSTEM_THREAD_STACK_SI
 static struct rt_semaphore system_sem;
 #endif
 
+#if defined(RT_USING_SMART) && defined(RT_USING_LWP)
+extern void lwp_reclaim_execute(void);
+#endif
+
 /**
  * @brief Enqueue a thread to defunct queue.
  *
@@ -44,6 +48,20 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
     rt_sem_release(&system_sem);
 #endif
 }
+
+/**
+ * @brief Wake up the system defunct thread
+ *
+ * Safe to call from an interrupt: it only releases the wakeup semaphore.  LWP
+ * object reclamation uses this to hand destroyed objects to a thread context.
+ */
+void rt_defunct_wakeup(void)
+{
+#if defined(RT_USING_SMP) || defined(RT_USING_SMART)
+    rt_sem_release(&system_sem);
+#endif
+}
+RTM_EXPORT(rt_defunct_wakeup);
 
 /**
  * @brief Dequeue a thread from defunct queue.
@@ -154,6 +172,11 @@ static void rt_thread_system_entry(void *parameter)
             RT_ASSERT(0);
         }
         rt_defunct_execute();
+#if defined(RT_USING_SMART) && defined(RT_USING_LWP)
+        /* Last-reference LWP objects are destroyed here: this context may
+         * block (wait for timer dispatch references) and take the heap lock. */
+        lwp_reclaim_execute();
+#endif
     }
 }
 #endif

@@ -125,7 +125,19 @@ sysret_t sys_sem_delete(rt_sem_t sem)
  */
 sysret_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
 {
-    return rt_sem_take_interruptible(sem, time);
+    sysret_t ret;
+    rt_sem_t ksem;
+
+    ksem = (rt_sem_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)sem, RT_Object_Class_Semaphore, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ksem)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_sem_take_interruptible(ksem, time);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -148,7 +160,19 @@ sysret_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
  */
 sysret_t sys_sem_release(rt_sem_t sem)
 {
-    return rt_sem_release(sem);
+    sysret_t ret;
+    rt_sem_t ksem;
+
+    ksem = (rt_sem_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)sem, RT_Object_Class_Semaphore, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ksem)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_sem_release(ksem);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -270,7 +294,19 @@ sysret_t sys_mutex_delete(rt_mutex_t mutex)
  */
 sysret_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
-    return rt_mutex_take_interruptible(mutex, time);
+    sysret_t ret;
+    rt_mutex_t kmutex;
+
+    kmutex = (rt_mutex_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mutex, RT_Object_Class_Mutex, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmutex)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_mutex_take_interruptible(kmutex, time);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -294,7 +330,19 @@ sysret_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
  */
 sysret_t sys_mutex_release(rt_mutex_t mutex)
 {
-    return rt_mutex_release(mutex);
+    sysret_t ret;
+    rt_mutex_t kmutex;
+
+    kmutex = (rt_mutex_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mutex, RT_Object_Class_Mutex, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmutex)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_mutex_release(kmutex);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -412,7 +460,19 @@ sysret_t sys_event_delete(rt_event_t event)
  */
 sysret_t sys_event_send(rt_event_t event, rt_uint32_t set)
 {
-    return rt_event_send(event, set);
+    sysret_t ret;
+    rt_event_t kevent;
+
+    kevent = (rt_event_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)event, RT_Object_Class_Event, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kevent)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_event_send(kevent, set);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -463,17 +523,27 @@ sysret_t sys_event_recv(rt_event_t event,
 {
     int ret = 0;
     rt_uint32_t krecved;
+    rt_event_t kevent;
+
+    kevent = (rt_event_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)event, RT_Object_Class_Event, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kevent)
+    {
+        return -EINVAL;
+    }
 
     if ((recved != NULL) && !lwp_user_accessable((void *)recved, sizeof(rt_uint32_t *)))
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EFAULT;
     }
 
-    ret = rt_event_recv(event, set, opt, timeout, &krecved);
+    ret = rt_event_recv(kevent, set, opt, timeout, &krecved);
     if ((ret == RT_EOK) && recved)
     {
         lwp_put_to_user((void *)recved, &krecved, sizeof(rt_uint32_t *));
     }
+
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
 
     return ret;
 }
@@ -600,7 +670,19 @@ sysret_t sys_mb_delete(rt_mailbox_t mb)
  */
 sysret_t sys_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 {
-    return rt_mb_send(mb, value);
+    sysret_t ret;
+    rt_mailbox_t kmb;
+
+    kmb = (rt_mailbox_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mb, RT_Object_Class_MailBox, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmb)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_mb_send(kmb, value);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -639,7 +721,19 @@ sysret_t sys_mb_send_wait(rt_mailbox_t mb,
                           rt_ubase_t value,
                           rt_int32_t timeout)
 {
-    return rt_mb_send_wait(mb, value, timeout);
+    sysret_t ret;
+    rt_mailbox_t kmb;
+
+    kmb = (rt_mailbox_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mb, RT_Object_Class_MailBox, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmb)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_mb_send_wait(kmb, value, timeout);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -674,25 +768,35 @@ sysret_t sys_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     int ret = 0;
     rt_ubase_t *kvalue;
+    rt_mailbox_t kmb;
+
+    kmb = (rt_mailbox_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mb, RT_Object_Class_MailBox, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmb)
+    {
+        return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)value, sizeof(rt_ubase_t *)))
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EFAULT;
     }
 
     kvalue = kmem_get(sizeof(rt_ubase_t *));
     if (kvalue == RT_NULL)
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -ENOMEM;
     }
 
-    ret = rt_mb_recv(mb, (rt_ubase_t *)kvalue, timeout);
+    ret = rt_mb_recv(kmb, (rt_ubase_t *)kvalue, timeout);
     if (ret == RT_EOK)
     {
         lwp_put_to_user(value, kvalue, sizeof(rt_ubase_t *));
     }
 
     kmem_put(kvalue);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
 
     return ret;
 }
@@ -874,27 +978,38 @@ sysret_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 {
     int ret = 0;
     void *kbuffer = RT_NULL;
+    rt_mq_t kmq;
+
+    kmq = (rt_mq_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mq, RT_Object_Class_MessageQueue, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmq)
+    {
+        return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)buffer, size))
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EFAULT;
     }
 
     kbuffer = kmem_get(size);
     if (kbuffer == RT_NULL)
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -ENOMEM;
     }
 
     if (lwp_get_from_user(kbuffer, buffer, size) != size)
     {
         kmem_put(kbuffer);
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EINVAL;
     }
 
-    ret = rt_mq_send(mq, kbuffer, size);
+    ret = rt_mq_send(kmq, kbuffer, size);
 
     kmem_put(kbuffer);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
 
     return ret;
 }
@@ -931,27 +1046,38 @@ sysret_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 {
     int ret = 0;
     void *kbuffer = RT_NULL;
+    rt_mq_t kmq;
+
+    kmq = (rt_mq_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mq, RT_Object_Class_MessageQueue, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmq)
+    {
+        return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)buffer, size))
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EFAULT;
     }
 
     kbuffer = kmem_get(size);
     if (kbuffer == RT_NULL)
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -ENOMEM;
     }
 
     if (lwp_get_from_user(kbuffer, buffer, size) != size)
     {
         kmem_put(kbuffer);
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EINVAL;
     }
 
-    ret = rt_mq_urgent(mq, kbuffer, size);
+    ret = rt_mq_urgent(kmq, kbuffer, size);
 
     kmem_put(kbuffer);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
 
     return ret;
 }
@@ -993,33 +1119,37 @@ sysret_t sys_mq_recv(rt_mq_t mq,
 {
     int ret = 0;
     void *kbuffer = RT_NULL;
+    rt_mq_t kmq;
+
+    kmq = (rt_mq_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)mq, RT_Object_Class_MessageQueue, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!kmq)
+    {
+        return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)buffer, size))
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -EFAULT;
     }
 
     kbuffer = kmem_get(size);
     if (kbuffer == RT_NULL)
     {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
         return -ENOMEM;
     }
 
-    ret = rt_mq_recv(mq, kbuffer, size, timeout);
+    ret = rt_mq_recv(kmq, kbuffer, size, timeout);
     if (ret > 0)
     {
         lwp_put_to_user((void *)buffer, (void *)kbuffer, ret);
     }
 
     kmem_put(kbuffer);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
 
     return ret;
-}
-
-static void timer_timeout_callback(void *parameter)
-{
-    rt_sem_t sem = (rt_sem_t)parameter;
-    rt_sem_release(sem);
 }
 
 /**
@@ -1058,30 +1188,65 @@ rt_timer_t sys_rt_timer_create(const char *name,
     int len = 0;
     char *kname = RT_NULL;
     rt_timer_t timer = RT_NULL;
+    rt_sem_t ksem;
+    void *callback_data;
+
+    ksem = (rt_sem_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)data,
+                                            RT_Object_Class_Semaphore, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ksem)
+    {
+        rt_set_errno(EINVAL);
+        return RT_NULL;
+    }
+
+    /* The timer owns one semaphore reference until SET_PARM or destruction.
+     * The callback data serializes release with parameter replacement. */
+    callback_data = lwp_timer_callback_data_alloc(ksem);
+    if (!callback_data)
+    {
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+        rt_set_errno(ENOMEM);
+        return RT_NULL;
+    }
+
+    /* The timer now owns the semaphore reference: clear the syscall slot
+     * without dropping it, the callback data releases it on destruction. */
+    rt_thread_self()->lwp_syscall_ref[0] = RT_NULL;
 
     len = lwp_user_strlen(name);
     if (len <= 0)
     {
+        lwp_timer_callback_data_free(callback_data);
         return RT_NULL;
     }
 
     kname = (char *)kmem_get(len + 1);
     if (!kname)
     {
+        lwp_timer_callback_data_free(callback_data);
         return RT_NULL;
     }
 
     if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
     {
         kmem_put(kname);
+        lwp_timer_callback_data_free(callback_data);
         return RT_NULL;
     }
 
-    timer = rt_timer_create(kname, timer_timeout_callback, (void *)data, time, flag);
+    timer = rt_timer_create(kname, lwp_timer_callback, callback_data, time, flag);
+    if (!timer)
+    {
+        kmem_put(kname);
+        lwp_timer_callback_data_free(callback_data);
+        return RT_NULL;
+    }
+
     if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
     {
         rt_timer_delete(timer);
-        timer = NULL;
+        lwp_timer_callback_data_free(callback_data);
+        timer = RT_NULL;
     }
 
     kmem_put(kname);
@@ -1134,7 +1299,19 @@ sysret_t sys_rt_timer_delete(rt_timer_t timer)
  */
 sysret_t sys_rt_timer_start(rt_timer_t timer)
 {
-    return rt_timer_start(timer);
+    sysret_t ret;
+    rt_timer_t ktimer;
+
+    ktimer = (rt_timer_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)timer, RT_Object_Class_Timer, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ktimer)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_timer_start(ktimer);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -1159,7 +1336,19 @@ sysret_t sys_rt_timer_start(rt_timer_t timer)
  */
 sysret_t sys_rt_timer_stop(rt_timer_t timer)
 {
-    return rt_timer_stop(timer);
+    sysret_t ret;
+    rt_timer_t ktimer;
+
+    ktimer = (rt_timer_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)timer, RT_Object_Class_Timer, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ktimer)
+    {
+        return -EINVAL;
+    }
+
+    ret = rt_timer_stop(ktimer);
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /**
@@ -1187,7 +1376,126 @@ sysret_t sys_rt_timer_stop(rt_timer_t timer)
  */
 sysret_t sys_rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
-    return rt_timer_control(timer, cmd, arg);
+    sysret_t ret = -EINVAL;
+    rt_timer_t ktimer;
+    rt_tick_t tick = 0;
+    rt_uint32_t state = 0;
+    void *value = RT_NULL;
+    void *karg = RT_NULL;
+    rt_sem_t ksem;
+    size_t copy_len = 0;
+    rt_bool_t copy_in = RT_FALSE;
+    rt_bool_t copy_out = RT_FALSE;
+
+    ktimer = (rt_timer_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)timer,
+                                                RT_Object_Class_Timer, &rt_thread_self()->lwp_syscall_ref[0]);
+    if (!ktimer)
+    {
+        return -EINVAL;
+    }
+
+    if (cmd == RT_TIMER_CTRL_SET_PARM)
+    {
+        ksem = (rt_sem_t)lwp_user_object_get_ex(lwp_self(), (rt_object_t)arg,
+                                                RT_Object_Class_Semaphore, &rt_thread_self()->lwp_syscall_ref[1]);
+        if (!ksem)
+        {
+            ret = -EINVAL;
+            goto __exit;
+        }
+
+        /* The new semaphore reference is transferred to the timer; the old one
+         * is recorded in slot 1 by the swap (same critical section), so this
+         * thread still owes a release for it.  A closing timer rejects the
+         * swap: slot 1 still holds the new reference and is released below. */
+        ret = lwp_timer_callback_data_swap(ktimer, ksem,
+                                           &rt_thread_self()->lwp_syscall_ref[1]);
+        lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[1]);
+        if (ret != RT_EOK)
+        {
+            ret = -EINVAL;
+        }
+        goto __exit;
+    }
+    else if (cmd == RT_TIMER_CTRL_GET_PARM)
+    {
+        value = lwp_timer_callback_data_get(ktimer);
+        if (!arg || lwp_put_to_user(arg, &value, sizeof(value)) != sizeof(value))
+        {
+            ret = -EFAULT;
+        }
+        else
+        {
+            ret = RT_EOK;
+        }
+        goto __exit;
+    }
+
+    /* never hand the raw user pointer to rt_timer_control(): it dereferences
+     * arg for GET_TIME/GET_STATE/GET_REMAIN_TIME and reads it for SET_TIME.
+     * Marshal the argument through a kernel local instead; reject SET_FUNC
+     * and GET_FUNC so userspace cannot supply or read kernel text. */
+    switch (cmd)
+    {
+    case RT_TIMER_CTRL_SET_TIME:
+        karg = &tick;
+        copy_len = sizeof(tick);
+        copy_in = RT_TRUE;
+        break;
+    case RT_TIMER_CTRL_GET_TIME:
+    case RT_TIMER_CTRL_GET_REMAIN_TIME:
+        karg = &tick;
+        copy_len = sizeof(tick);
+        copy_out = RT_TRUE;
+        break;
+    case RT_TIMER_CTRL_GET_STATE:
+        karg = &state;
+        copy_len = sizeof(state);
+        copy_out = RT_TRUE;
+        break;
+    case RT_TIMER_CTRL_SET_ONESHOT:
+    case RT_TIMER_CTRL_SET_PERIODIC:
+        karg = RT_NULL;
+        break;
+    case RT_TIMER_CTRL_SET_FUNC:
+    case RT_TIMER_CTRL_GET_FUNC:
+        /* do not accept a user callback or leak a kernel function address */
+        ret = -EINVAL;
+        goto __exit;
+    default:
+        ret = -EINVAL;
+        goto __exit;
+    }
+
+    if (copy_in)
+    {
+        if (!arg || lwp_get_from_user(karg, arg, copy_len) != copy_len)
+        {
+            ret = -EFAULT;
+            goto __exit;
+        }
+    }
+
+    if (cmd == RT_TIMER_CTRL_SET_TIME && tick >= RT_TICK_MAX / 2)
+    {
+        ret = -EINVAL;
+        goto __exit;
+    }
+
+    ret = rt_timer_control(ktimer, cmd, karg);
+
+    if (ret == RT_EOK && copy_out)
+    {
+        if (!arg || lwp_put_to_user(arg, karg, copy_len) != copy_len)
+        {
+            ret = -EFAULT;
+        }
+    }
+
+__exit:
+    lwp_user_object_drop(&rt_thread_self()->lwp_syscall_ref[0]);
+
+    return ret;
 }
 
 /* MUSL compatible */
