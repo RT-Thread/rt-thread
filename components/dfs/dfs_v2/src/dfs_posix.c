@@ -43,17 +43,17 @@
  *         - `O_EXCL`: Ensure that `O_CREAT` creates the file exclusively.
  *         - Other platform-specific flags
  *
- * @return the non-negative integer on successful open, others for failed.
+ * @return A non-negative file descriptor on success, or -1 with errno set on failure.
  */
 int open(const char *file, int flags, ...)
 {
     int fd, result;
-    struct dfs_file *df = RT_NULL;
+    struct dfs_file *df;
     mode_t mode = 0;
 
     if (file == NULL)
     {
-        rt_set_errno(-EBADF);
+        rt_set_errno(EBADF);
         return -1;
     }
 
@@ -66,21 +66,17 @@ int open(const char *file, int flags, ...)
     }
 
     fd = fd_new();
-    if (fd >= 0)
+    if (fd < 0)
     {
-        df = fd_get(fd);
+        return -1;
     }
-    else
-    {
-        rt_set_errno(-RT_ERROR);
-        return RT_NULL;
-    }
+    df = fd_get(fd);
 
     result = dfs_file_open(df, file, flags, mode);
     if (result < 0)
     {
         fd_release(fd);
-        rt_set_errno(result);
+        rt_set_errno(-result);
         return -1;
     }
 
