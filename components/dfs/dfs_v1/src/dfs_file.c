@@ -580,7 +580,7 @@ int dfs_file_flush(struct dfs_file *fd)
  */
 off_t dfs_file_lseek(struct dfs_file *fd, off_t offset)
 {
-    int result;
+    off_t result;
 
     if (fd == NULL)
         return -EINVAL;
@@ -783,6 +783,48 @@ int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
+#ifdef RT_USING_DFS_LARGE_FILE
+static void dfs_print_file_size(off_t size)
+{
+    char tmp[21];
+    char buf[22];
+    int index = 0;
+    int out = 0;
+    uint64_t value;
+
+    if (size < 0)
+    {
+        value = (uint64_t)(-(size + 1)) + 1;
+        buf[out++] = '-';
+    }
+    else
+    {
+        value = (uint64_t)size;
+    }
+
+    if (value == 0)
+    {
+        tmp[index++] = '0';
+    }
+    else
+    {
+        while ((value != 0) && (index < (int)sizeof(tmp)))
+        {
+            tmp[index++] = (char)('0' + (value % 10));
+            value /= 10;
+        }
+    }
+
+    while ((index > 0) && (out + 1 < (int)sizeof(buf)))
+    {
+        buf[out++] = tmp[--index];
+    }
+    buf[out] = '\0';
+
+    rt_kprintf(" %-25s\n", buf);
+}
+#endif
+
 void ls(const char *pathname)
 {
     struct dfs_file fd;
@@ -835,7 +877,11 @@ void ls(const char *pathname)
                     }
                     else
                     {
+#ifdef RT_USING_DFS_LARGE_FILE
+                        dfs_print_file_size(stat.st_size);
+#else
                         rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+#endif
                     }
                 }
                 else
