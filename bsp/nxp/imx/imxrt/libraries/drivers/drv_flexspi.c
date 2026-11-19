@@ -70,7 +70,7 @@ static flexspi_device_config_t deviceconfig = {
     .AHBWriteWaitUnit = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
     .AHBWriteWaitInterval = 0,
 };
-const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
+uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
     /* 8bit mode */
     [4 * ARD_SEQ_INDEX] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
@@ -98,7 +98,7 @@ static flexspi_device_config_t deviceconfig = {
     .AHBWriteWaitInterval = 0,
 };
 
-const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
+uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
 #ifndef BSP_USING_OSPI_FLASH
     /* Normal read mode - SDR */
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_NORMAL] =
