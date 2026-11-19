@@ -46,6 +46,9 @@
 #include <netif/ethernetif.h>
 #include <lwip/ip.h>
 #include <lwip/init.h>
+#include <lwip/sys.h>
+#include <lwip/timeouts.h>
+#include <lwip/tcpip.h>
 
 #if (LWIP_VERSION) < 0x02000000U
 // cppcheck-suppress preprocessorErrorDirective
@@ -53,51 +56,57 @@
 #endif
 
 #if !LWIP_IPV4
-    #error "must enable IPV4"
+#error "must enable IPV4"
 #endif
 
 #if (LWIP_VERSION) >= 0x02000000U
-    #include <lwip/prot/dhcp.h>
+#include <lwip/prot/dhcp.h>
 #endif
 
 /* DHCP server option */
 
 /* allocated client ip range */
 #ifndef DHCPD_CLIENT_IP_MIN
-    #define DHCPD_CLIENT_IP_MIN     2
+#define DHCPD_CLIENT_IP_MIN 2
 #endif
 #ifndef DHCPD_CLIENT_IP_MAX
-    #define DHCPD_CLIENT_IP_MAX     254
+#define DHCPD_CLIENT_IP_MAX 254
 #endif
 
 /* the DHCP server address */
 #ifndef DHCPD_SERVER_IP
-    #define DHCPD_SERVER_IP "192.168.169.1"
+#define DHCPD_SERVER_IP "192.168.169.1"
 #endif
 
 #define DHCP_DEBUG_PRINTF
 
-#ifdef  DHCP_DEBUG_PRINTF
-    #define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
+#ifdef DHCP_DEBUG_PRINTF
+#define DEBUG_PRINTF       \
+    rt_kprintf("[DHCP] "); \
+    rt_kprintf
 #else
-    #define DEBUG_PRINTF(...)
+#define DEBUG_PRINTF(...)
 #endif /* DHCP_DEBUG_PRINTF */
 
 /* we need some routines in the DHCP of lwIP */
-#undef  LWIP_DHCP
-#define LWIP_DHCP   1
+#undef LWIP_DHCP
+#define LWIP_DHCP 1
 #include <lwip/dhcp.h>
 
 /** Mac address length  */
-#define DHCP_MAX_HLEN               6
-/** dhcp default live time */
-#define DHCP_DEFAULT_LIVE_TIME      0x80510100
+#define DHCP_MAX_HLEN 6
+/** dhcp default lease time in seconds */
+#define DHCP_DEFAULT_LIVE_TIME 86400
+/** dhcp default lease time in milliseconds */
+#define DHCP_DEFAULT_LEASE_TIME_MS (DHCP_DEFAULT_LIVE_TIME * 1000U)
 
 /** Minimum length for request before packet is parsed */
-#define DHCP_MIN_REQUEST_LEN        44
+#define DHCP_MIN_REQUEST_LEN 44
 
-#define LWIP_NETIF_LOCK(...)
-#define LWIP_NETIF_UNLOCK(...)
+/* How often the TCP/IP thread scans all servers for expired leases. */
+#ifndef DHCPD_RECYCLE_INTERVAL_MS
+#define DHCPD_RECYCLE_INTERVAL_MS 60000
+#endif
 
 #ifndef DHCP_SERVER_PORT
 #define DHCP_SERVER_PORT 67
@@ -111,7 +120,7 @@ struct dhcp_client_node
     struct dhcp_client_node *next;
     u8_t chaddr[DHCP_MAX_HLEN];
     ip4_addr_t ipaddr;
-    u32_t lease_end;
+    u32_t lease_end; /* lease expiry in sys_now() milliseconds */
 };
 
 /**
@@ -183,6 +192,65 @@ dhcp_client_find_by_ip(struct dhcp_server *dhcpserver, const ip4_addr_t *ip)
 }
 
 /**
+* Check whether a dhcp client lease has expired.
+*
+* @param node The dhcp client node
+* @return 1 if expired, 0 otherwise
+*/
+static rt_bool_t dhcp_client_lease_expired(const struct dhcp_client_node *node)
+{
+    u32_t lease_start = node->lease_end - DHCP_DEFAULT_LEASE_TIME_MS;
+
+    /* Unsigned elapsed check avoids the ~24.8-day signed half-range false negative. */
+    return (u32_t)(sys_now() - lease_start) >= DHCP_DEFAULT_LEASE_TIME_MS;
+}
+
+/**
+* Renew the lease of a dhcp client node.
+*
+* @param node The dhcp client node
+*/
+static void dhcp_client_lease_renew(struct dhcp_client_node *node)
+{
+    node->lease_end = sys_now() + DHCP_DEFAULT_LEASE_TIME_MS;
+}
+
+/**
+* Remove expired dhcp client nodes from the list.
+*
+* @param dhcpserver The dhcp server
+*/
+static void dhcp_client_remove_expired(struct dhcp_server *dhcpserver)
+{
+    struct dhcp_client_node *node = dhcpserver->node_list;
+    struct dhcp_client_node *prev = NULL;
+    struct dhcp_client_node *next;
+
+    while (node != NULL)
+    {
+        next = node->next;
+
+        if (dhcp_client_lease_expired(node))
+        {
+            if (prev == NULL)
+            {
+                dhcpserver->node_list = next;
+            }
+            else
+            {
+                prev->next = next;
+            }
+            mem_free(node);
+        }
+        else
+        {
+            prev = node;
+        }
+        node = next;
+    }
+}
+
+/**
 * Find a dhcp client node by dhcp message
 *
 * @param dhcpserver is the dhcp server
@@ -211,7 +279,11 @@ dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
         {
-            return node;
+            if (memcmp(node->chaddr, msg->chaddr, msg->hlen) == 0)
+            {
+                return node;
+            }
+            return NULL;
         }
     }
 
@@ -239,8 +311,12 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     node = dhcp_client_find_by_mac(dhcpserver, msg->chaddr, msg->hlen);
     if (node != NULL)
     {
+        dhcp_client_lease_renew(node);
         return node;
     }
+
+    /* keep the current client's node, reclaim expired nodes of other clients */
+    dhcp_client_remove_expired(dhcpserver);
 
     opt = dhcp_server_option_find(opt_buf, len, DHCP_OPTION_REQUESTED_IP);
     if (opt != NULL && opt[1] >= 4)
@@ -248,7 +324,12 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
         {
-            return node;
+            if (memcmp(node->chaddr, msg->chaddr, msg->hlen) == 0)
+            {
+                dhcp_client_lease_renew(node);
+                return node;
+            }
+            node = NULL;
         }
     }
 
@@ -282,6 +363,7 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     }
     SMEMCPY(node->chaddr, msg->chaddr, (msg->hlen > sizeof(node->chaddr)) ? sizeof(node->chaddr) : msg->hlen);
     node->ipaddr = dhcpserver->current;
+    dhcp_client_lease_renew(node);
 
     node->next = dhcpserver->node_list;
     dhcpserver->node_list = node;
@@ -381,7 +463,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     msg = (struct dhcp_msg *)q->payload;
     if (msg->op != DHCP_BOOTREQUEST)
     {
-        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("not a DHCP request message, but type %"U16_F"\n", (u16_t)msg->op));
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("not a DHCP request message, but type %" U16_F "\n", (u16_t)msg->op));
         goto free_pbuf_and_return;
     }
 
@@ -408,7 +490,6 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
             {
                 goto free_pbuf_and_return;
             }
-            node->lease_end = DHCP_DEFAULT_LIVE_TIME;
             /* create dhcp offer and send */
             msg->op = DHCP_BOOTREPLY;
             msg->hops = 0;
@@ -485,7 +566,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
                     if (node != NULL)
                     {
                         /* Send ack */
-                        node->lease_end = DHCP_DEFAULT_LIVE_TIME;
+                        dhcp_client_lease_renew(node);
                         /* create dhcp offer and send */
                         msg->op = DHCP_BOOTREPLY;
                         msg->hops = 0;
@@ -615,7 +696,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
                         mem_free(node);
                     }
                 }
-                else if (msg_type ==  DHCP_DECLINE)
+                else if (msg_type == DHCP_DECLINE)
                 {
                     ;
                 }
@@ -625,10 +706,36 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
                 }
             }
         }
+        /* Reclaim expired leases on incoming packets too, shortening gaps between checks. */
+        dhcp_client_remove_expired(dhcp_server);
     }
 
 free_pbuf_and_return:
     pbuf_free(q);
+}
+
+/**
+* Periodically reclaim expired leases from every registered server.
+*
+* This timeout is executed by the lwIP timer path, which holds the TCP/IP
+* core lock (either directly in sys_check_timeouts() or because the TCP/IP
+* thread keeps it while processing timeouts).  The start/stop paths take the
+* same lock, so the server and its lease list cannot be freed concurrently.
+*/
+static void dhcp_server_periodic_recycle(void *arg)
+{
+    struct dhcp_server *server;
+    LWIP_UNUSED_ARG(arg);
+
+    for (server = lw_dhcp_server; server != NULL; server = server->next)
+    {
+        dhcp_client_remove_expired(server);
+    }
+
+    if (lw_dhcp_server != NULL)
+    {
+        sys_timeout(DHCPD_RECYCLE_INTERVAL_MS, dhcp_server_periodic_recycle, NULL);
+    }
 }
 
 /**
@@ -640,9 +747,10 @@ free_pbuf_and_return:
 * @return lwIP error code
 * - ERR_OK - No error
 * - ERR_MEM - Out of memory
+*
+* The caller must hold LOCK_TCPIP_CORE().
 */
-err_t
-dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
+static err_t dhcp_server_start_locked(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
 {
     struct dhcp_server *dhcp_server;
     err_t err;
@@ -681,7 +789,7 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
     dhcp_server->pcb = udp_new();
     if (dhcp_server->pcb == NULL)
     {
-        LWIP_DEBUGF(DHCP_DEBUG  | LWIP_DBG_TRACE, ("dhcp_server_start(): could not obtain pcb\n"));
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_server_start(): could not obtain pcb\n"));
         mem_free(dhcp_server);
         return ERR_MEM;
     }
@@ -697,10 +805,15 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
         return err;
     }
     //udp_connect(dhcp_server->pcb, IP_ADDR_ANY, DHCP_CLIENT_PORT);
+
     /* set up the recv callback and argument */
     udp_recv(dhcp_server->pcb, dhcp_server_recv, dhcp_server);
 
     /* Publish the server only after all resources are ready. */
+    if (lw_dhcp_server == NULL)
+    {
+        sys_timeout(DHCPD_RECYCLE_INTERVAL_MS, dhcp_server_periodic_recycle, NULL);
+    }
     dhcp_server->next = lw_dhcp_server;
     lw_dhcp_server = dhcp_server;
     LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_server_start(): starting DHCP server\n"));
@@ -708,16 +821,30 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
     return ERR_OK;
 }
 
+err_t dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
+{
+    err_t err;
+
+    LOCK_TCPIP_CORE();
+    err = dhcp_server_start_locked(netif, start, end);
+    UNLOCK_TCPIP_CORE();
+
+    return err;
+}
+
 extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
 
 void dhcpd_start(const char *netif_name)
 {
-    struct netif *netif = netif_list;
+    struct netif *netif;
     err_t res;
 
     DEBUG_PRINTF("%s: %s\r\n", __FUNCTION__, netif_name);
 
-    LWIP_NETIF_LOCK();
+    /* Serialize the whole lifecycle with the periodic recycle timeout and
+     * with concurrent dhcpd_stop() calls. */
+    LOCK_TCPIP_CORE();
+    netif = netif_list;
     if (strlen(netif_name) > sizeof(netif->name))
     {
         DEBUG_PRINTF("network interface name too long!\r\n");
@@ -727,7 +854,9 @@ void dhcpd_start(const char *netif_name)
     while (netif != RT_NULL)
     {
         if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        {
             break;
+        }
 
         netif = netif->next;
         if (netif == RT_NULL)
@@ -779,7 +908,7 @@ void dhcpd_start(const char *netif_name)
         ip4addr_aton(str_tmp, &ip_end);
         DEBUG_PRINTF("ip_end: [%s]\r\n", str_tmp);
 
-        res = dhcp_server_start(netif, &ip_start, &ip_end);
+        res = dhcp_server_start_locked(netif, &ip_start, &ip_end);
         if (res != 0)
         {
             DEBUG_PRINTF("dhcp_server_start res: %d.\r\n", (int)res);
@@ -787,19 +916,22 @@ void dhcpd_start(const char *netif_name)
     }
 
 _exit:
-    LWIP_NETIF_UNLOCK();
+    UNLOCK_TCPIP_CORE();
     return;
 }
 
 void dhcpd_stop(const char *netif_name)
 {
     struct dhcp_server *dhcp_server, *server_node;
-    struct netif *netif = netif_list;
+    struct netif *netif;
     struct dhcp_client_node *node, *next;
 
     DEBUG_PRINTF("%s: %s\r\n", __FUNCTION__, netif_name);
 
-    LWIP_NETIF_LOCK();
+    /* Keep object teardown and timeout unregistration in the same core-lock
+     * domain as the periodic recycle callback. */
+    LOCK_TCPIP_CORE();
+    netif = netif_list;
     if (strlen(netif_name) > sizeof(netif->name))
     {
         DEBUG_PRINTF("network interface name too long!\r\n");
@@ -809,7 +941,9 @@ void dhcpd_stop(const char *netif_name)
     while (netif != RT_NULL)
     {
         if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        {
             break;
+        }
 
         netif = netif->next;
         if (netif == RT_NULL)
@@ -866,8 +1000,12 @@ void dhcpd_stop(const char *netif_name)
     }
 
     mem_free(dhcp_server);
+    if (lw_dhcp_server == NULL)
+    {
+        sys_untimeout(dhcp_server_periodic_recycle, NULL);
+    }
     set_if(netif_name, "0.0.0.0", "0.0.0.0", "0.0.0.0");
 
 _exit:
-    LWIP_NETIF_UNLOCK();
+    UNLOCK_TCPIP_CORE();
 }
