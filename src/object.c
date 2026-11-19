@@ -408,6 +408,12 @@ void rt_object_init(struct rt_object *object,
     /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
+#ifdef RT_USING_SMART
+    rt_atomic_store(&object->lwp_ref_count, 0);
+    rt_atomic_store(&object->lwp_owner_count, 0);
+    rt_atomic_store(&object->lwp_flags, 0);
+    rt_list_init(&object->lwp_reclaim_node);
+#endif /* RT_USING_SMART */
 #if RT_NAME_MAX > 0
     if (name)
     {
@@ -522,6 +528,13 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 
     /* set object flag */
     object->flag = 0;
+
+#ifdef RT_USING_SMART
+    rt_atomic_store(&object->lwp_ref_count, 0);
+    rt_atomic_store(&object->lwp_owner_count, 0);
+    rt_atomic_store(&object->lwp_flags, 0);
+    rt_list_init(&object->lwp_reclaim_node);
+#endif /* RT_USING_SMART */
 
 #if RT_NAME_MAX > 0
     if (name)

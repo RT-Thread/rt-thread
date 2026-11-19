@@ -112,6 +112,8 @@ void rt_timer_init(rt_timer_t  timer,
                    rt_tick_t   time,
                    rt_uint8_t  flag);
 rt_err_t rt_timer_detach(rt_timer_t timer);
+void rt_timer_detach_nowait(rt_timer_t timer);
+void rt_timer_detach_wait(rt_timer_t timer);
 #ifdef RT_USING_HEAP
 rt_timer_t rt_timer_create(const char *name,
                            void (*timeout)(void *parameter),
@@ -120,6 +122,8 @@ rt_timer_t rt_timer_create(const char *name,
                            rt_uint8_t  flag);
 rt_err_t rt_timer_delete(rt_timer_t timer);
 #endif /* RT_USING_HEAP */
+void *rt_timer_close(rt_timer_t timer);
+void rt_timer_dispatch_wait(rt_timer_t timer);
 rt_err_t rt_timer_start(rt_timer_t timer);
 rt_err_t rt_timer_stop(rt_timer_t timer);
 rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg);
@@ -655,6 +659,7 @@ rt_ssize_t rt_mq_recv_prio(rt_mq_t mq,
 /* defunct */
 void rt_thread_defunct_init(void);
 void rt_thread_defunct_enqueue(rt_thread_t thread);
+void rt_defunct_wakeup(void);
 rt_thread_t rt_thread_defunct_dequeue(void);
 void rt_defunct_execute(void);
 
