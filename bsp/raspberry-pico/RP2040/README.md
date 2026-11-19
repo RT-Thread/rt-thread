@@ -39,6 +39,18 @@ pkgs --update
 
 ### Step 2: build
 
+On Linux or WSL, if the GNU Arm toolchain is installed outside `/usr/bin`,
+set `RTT_EXEC_PATH` to the directory containing `arm-none-eabi-gcc` before
+running SCons. For example (replace the path with your installation):
+
+```bash
+export RTT_EXEC_PATH="/opt/arm-gnu-toolchain/bin"
+"$RTT_EXEC_PATH/arm-none-eabi-gcc" --version
+```
+
+The BSP passes this directory to the Pico SDK build as well, so you do
+not need to add toolchain symlinks under `/usr/bin`.
+
 ```bash
 scons -c
 scons
