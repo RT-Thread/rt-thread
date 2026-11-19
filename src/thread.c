@@ -120,6 +120,10 @@ static void _thread_exit(void)
 {
     struct rt_thread *thread;
     rt_base_t critical_level;
+#ifdef RT_USING_SMART
+    rt_object_t syscall_ref[2];
+    rt_size_t i;
+#endif
 
     /* get current thread */
     thread = rt_thread_self();
@@ -130,10 +134,33 @@ static void _thread_exit(void)
 
     _thread_detach_from_mutex(thread);
 
+#ifdef RT_USING_SMART
+    /* Detach the in-flight syscall references from the thread here, but
+     * release them after leaving the critical section: the last put may
+     * destroy the object and take the heap lock, which is not allowed while
+     * scheduling is disabled. */
+    for (i = 0; i < 2; i++)
+    {
+        syscall_ref[i] = thread->lwp_syscall_ref[i];
+        thread->lwp_syscall_ref[i] = RT_NULL;
+    }
+#endif
+
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
     rt_exit_critical_safe(critical_level);
+
+#ifdef RT_USING_SMART
+    for (i = 0; i < 2; i++)
+    {
+        if (syscall_ref[i])
+        {
+            extern void lwp_user_object_put(rt_object_t object);
+            lwp_user_object_put(syscall_ref[i]);
+        }
+    }
+#endif
 
     /* switch to next task */
     rt_schedule();
@@ -224,6 +251,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_MUTEX
     rt_list_init(&thread->taken_object_list);
     thread->pending_object = RT_NULL;
+#endif
+
+#ifdef RT_USING_SMART
+    /* LWP references held by an in-flight blocking syscall; kept separate from
+     * pending_object which tracks the mutex being waited on. */
+    thread->lwp_syscall_ref[0] = RT_NULL;
+    thread->lwp_syscall_ref[1] = RT_NULL;
 #endif
 
 #ifdef RT_USING_EVENT
@@ -509,6 +543,10 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 {
     rt_err_t error;
     rt_base_t critical_level;
+#ifdef RT_USING_SMART
+    rt_object_t syscall_ref[2];
+    rt_size_t i;
+#endif
 
     /**
      * forbid scheduling on current core before returning since current thread
@@ -520,10 +558,32 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 
     _thread_detach_from_mutex(thread);
 
+#ifdef RT_USING_SMART
+    /* See _thread_exit(): the references are only detached inside the
+     * critical section and released once scheduling is allowed again. */
+    for (i = 0; i < 2; i++)
+    {
+        syscall_ref[i] = thread->lwp_syscall_ref[i];
+        thread->lwp_syscall_ref[i] = RT_NULL;
+    }
+#endif
+
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
     rt_exit_critical_safe(critical_level);
+
+#ifdef RT_USING_SMART
+    for (i = 0; i < 2; i++)
+    {
+        if (syscall_ref[i])
+        {
+            extern void lwp_user_object_put(rt_object_t object);
+            lwp_user_object_put(syscall_ref[i]);
+        }
+    }
+#endif
+
     return error;
 }
 
