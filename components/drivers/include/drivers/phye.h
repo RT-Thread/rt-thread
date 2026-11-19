@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <drivers/ofw.h>
+#include <drivers/phye-hdmi.h>
 #include <drivers/phye-mipi-dphy.h>
 
 enum rt_phye_mode
@@ -37,6 +38,7 @@ enum rt_phye_mode
     RT_PHYE_MODE_SATA,
     RT_PHYE_MODE_LVDS,
     RT_PHYE_MODE_DP,
+    RT_PHYE_MODE_HDMI,
 
     RT_PHYE_MODE_MAX,
 
@@ -50,6 +52,7 @@ struct rt_phye_ops;
 
 union rt_phye_configure_opts
 {
+    struct rt_phye_configure_opts_hdmi hdmi;
     struct rt_phye_configure_opts_mipi_dphy mipi_dphy;
 };
 

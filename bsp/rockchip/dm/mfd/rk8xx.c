@@ -623,6 +623,14 @@ static const struct rk8xx_endpoint rk818_eps[] =
     },
 };
 
+static rt_err_t rk806_power_off_prepare(struct rt_device *dev)
+{
+    struct rk8xx *rk8xx = raw_to_rk8xx_power(dev)->rk8xx;
+
+    /* Select power-down instead of reset before the platform asserts PWRCTRL. */
+    return rt_pin_ctrl_confs_apply_by_name(rk8xx->dev, "pmic-power-off");
+}
+
 static rt_err_t rk8xx_power_off(struct rt_device *dev)
 {
     rt_uint32_t reg, bit;
@@ -812,7 +820,7 @@ rt_err_t rk8xx_shutdown(struct rk8xx *rk8xx)
 rt_err_t rk8xx_probe(struct rk8xx *rk8xx)
 {
     rt_err_t err;
-    rt_bool_t iomux_retry;
+    rt_bool_t iomux_retry, system_power_controller, power_off_pinctrl;
     rt_bus_t platform_bus;
     int rk8xx_ep_nr, pre_init_regs_nr;
     struct rt_ofw_node *np, *dev_np;
@@ -967,7 +975,10 @@ rt_err_t rk8xx_probe(struct rk8xx *rk8xx)
 
     iomux_retry = rt_pin_ctrl_confs_apply_by_name(rk8xx->dev, RT_NULL) < 0;
 
-    if (rt_ofw_prop_read_bool(dev_np, "rockchip,system-power-controller"))
+    system_power_controller = rt_ofw_prop_read_bool(dev_np, "rockchip,system-power-controller");
+    power_off_pinctrl = rk8xx->variant == RK806_ID && rt_pin_ctrl_confs_lookup(rk8xx->dev, "pmic-power-off") >= 0;
+
+    if (system_power_controller || power_off_pinctrl)
     {
         struct rt_device *dev;
         struct rk8xx_power *rk8xx_power = rt_calloc(1, sizeof(*rk8xx_power));
@@ -983,19 +994,23 @@ rt_err_t rk8xx_probe(struct rk8xx *rk8xx)
         rk8xx_power->rk8xx = rk8xx;
 
         err = rt_dm_power_off_handler(dev, RT_DM_POWER_OFF_MODE_SHUTDOWN,
-                RT_DM_POWER_OFF_PRIO_PLATFORM, &rk8xx_power_off);
+                RT_DM_POWER_OFF_PRIO_PLATFORM,
+                power_off_pinctrl ? &rk806_power_off_prepare : &rk8xx_power_off);
 
         if (err)
         {
             LOG_E("Add %s failed", "shutdown");
         }
 
-        err = rt_dm_power_off_handler(dev, RT_DM_POWER_OFF_MODE_RESET,
-                RT_DM_POWER_OFF_PRIO_PLATFORM, &rk8xx_restart);
-
-        if (err)
+        if (system_power_controller)
         {
-            LOG_E("Add %s failed", "reset");
+            err = rt_dm_power_off_handler(dev, RT_DM_POWER_OFF_MODE_RESET,
+                    RT_DM_POWER_OFF_PRIO_PLATFORM, &rk8xx_restart);
+
+            if (err)
+            {
+                LOG_E("Add %s failed", "reset");
+            }
         }
     }
 
