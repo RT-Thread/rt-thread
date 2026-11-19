@@ -1,0 +1,8 @@
+menu "ADC Test"
+
+config RT_UTEST_ADC
+    bool "ADC framework Test"
+    default n
+    depends on RT_USING_ADC
+
+endmenu
