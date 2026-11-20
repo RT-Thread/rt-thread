@@ -28,13 +28,6 @@ class File(object):
     def c_name(self):
         return '_' + self._name.replace('.', '_')
 
-    @property
-    def bin_name(self):
-        # Pad to 4 bytes boundary with \0
-        pad_len = 4
-        bn = self._name + '\0' * (pad_len - len(self._name) % pad_len)
-        return bn
-
     def c_data(self, prefix=''):
         '''Get the C code represent of the file content.'''
         head = 'static const rt_uint8_t %s[] = {\n' % \
@@ -74,13 +67,6 @@ class Folder(object):
     def c_name(self):
         # add _ to avoid conflict with C key words.
         return '_' + self._name
-
-    @property
-    def bin_name(self):
-        # Pad to 4 bytes boundary with \0
-        pad_len = 4
-        bn = self._name + '\0' * (pad_len - len(self._name) % pad_len)
-        return bn
 
     def walk(self):
         # os.listdir will return unicode list if the argument is unicode.
@@ -191,7 +177,9 @@ class Folder(object):
             else:
                 assert False, 'Unkown instance:%s' % str(c)
 
-            name = bytes(c.bin_name.encode('utf-8'))
+            # NUL-terminate the UTF-8 name and align the following payload.
+            name = c.name.encode('utf-8')
+            name += b'\0' * (4 - len(name) % 4)
             name_addr = v_len
             v_len += len(name)
 
