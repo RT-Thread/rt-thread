@@ -171,6 +171,15 @@ sfud_err sfud_read_status(const sfud_flash *flash, uint8_t *status);
  */
 sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t status);
 
+/**
+ * reset flash device
+ *
+ * @param flash flash device
+ *
+ * @return result
+ */
+sfud_err sfud_reset(const sfud_flash *flash);
+
 #ifdef __cplusplus
 }
 #endif
