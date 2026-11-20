@@ -682,6 +682,24 @@ def _PretreatListParameters(target_list):
 
     return True # permit to add this list to the parameter
 
+def _local_group_objects(group, objects):
+    keys = ('CFLAGS', 'CCFLAGS', 'CXXFLAGS', 'ASFLAGS', 'CPPPATH', 'CPPDEFINES')
+    if not any('LOCAL_' + key in group for key in keys):
+        return False
+
+    flags = {}
+    for key in keys:
+        local_key = 'LOCAL_' + key
+        if key in ('CPPPATH', 'CPPDEFINES'):
+            flags[key] = list(Env.get(key, [])) + group.get(local_key, [])
+        else:
+            flags[key] = Env.get(key, '') + group.get(local_key, '')
+
+    for source in group['src']:
+        objects.append(Env.Object(source, **flags))
+    return True
+
+
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
@@ -776,7 +794,10 @@ def DefineGroup(name, src, depend, **parameters):
 
     # check whether to build group library
     if 'LIBRARY' in group:
-        objs = Env.Library(name, group['src'])
+        sources = []
+        if not _local_group_objects(group, sources):
+            sources = group['src']
+        objs = Env.Library(name, sources)
     else:
         # only add source
         objs = group['src']
@@ -853,24 +874,6 @@ def DoBuilding(target, objects):
                 lst.append(item)
         return lst
 
-    # handle local group
-    def local_group(group, objects):
-        if 'LOCAL_CFLAGS' in group or 'LOCAL_CXXFLAGS' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group or 'LOCAL_ASFLAGS' in group:
-            CFLAGS = Env.get('CFLAGS', '') + group.get('LOCAL_CFLAGS', '')
-            CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
-            CXXFLAGS = Env.get('CXXFLAGS', '') + group.get('LOCAL_CXXFLAGS', '')
-            CPPPATH = list(Env.get('CPPPATH', [''])) + group.get('LOCAL_CPPPATH', [''])
-            CPPDEFINES = list(Env.get('CPPDEFINES', [''])) + group.get('LOCAL_CPPDEFINES', [''])
-            ASFLAGS = Env.get('ASFLAGS', '') + group.get('LOCAL_ASFLAGS', '')
-
-            for source in group['src']:
-                objects.append(Env.Object(source, CFLAGS = CFLAGS, CCFLAGS = CCFLAGS, CXXFLAGS = CXXFLAGS, ASFLAGS = ASFLAGS,
-                    CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES))
-
-            return True
-
-        return False
-
     PreBuilding()
     objects = one_list(objects)
 
@@ -883,7 +886,7 @@ def DoBuilding(target, objects):
         for Group in Projects:
             if Group['name'] == lib_name:
                 lib_name = GroupLibName(Group['name'], Env)
-                if not local_group(Group, objects):
+                if not _local_group_objects(Group, objects):
                     objects = Env.Object(Group['src'])
 
                 program = Env.Library(lib_name, objects)
@@ -900,6 +903,8 @@ def DoBuilding(target, objects):
 
         # remove source files with local flags setting
         for group in Projects:
+            if 'LIBRARY' in group:
+                continue
             if 'LOCAL_CFLAGS' in group or 'LOCAL_CXXFLAGS' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group:
                 for source in group['src']:
                     for obj in objects:
@@ -910,7 +915,8 @@ def DoBuilding(target, objects):
 
         objects_in_group = []
         for group in Projects:
-            local_group(group, objects_in_group)
+            if 'LIBRARY' not in group:
+                _local_group_objects(group, objects_in_group)
 
         # sort separately, because the data type of
         # the members of the two lists are different
