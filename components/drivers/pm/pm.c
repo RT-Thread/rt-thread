@@ -834,35 +834,54 @@ rt_err_t rt_pm_sleep_light_release(rt_uint16_t module_id)
  */
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops)
 {
+    rt_base_t level;
     struct rt_device_pm *device_pm;
 
-    device_pm = RT_KERNEL_MALLOC(sizeof(struct rt_device_pm));
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    device_pm = (struct rt_device_pm *)RT_KERNEL_MALLOC(sizeof(struct rt_device_pm));
     if (device_pm != RT_NULL)
     {
-        rt_slist_append(&_pm.device_list, &device_pm->list);
+        rt_slist_init(&device_pm->list);
         device_pm->device = device;
         device_pm->ops    = ops;
+
+        level = rt_hw_interrupt_disable();
+        rt_slist_append(&_pm.device_list, &device_pm->list);
+        rt_hw_interrupt_enable(level);
     }
 }
 
 /**
- * Unregister device from PM manager.
+ * This function will unregister device from power management
  *
- * @param device the device with PM feature
+ * @param device the device with power management feature
  */
 void rt_pm_device_unregister(struct rt_device *device)
 {
+    rt_base_t level;
     struct rt_device_pm *device_pm = RT_NULL;
+    struct rt_device_pm *found_pm = RT_NULL;
     rt_slist_t *node = RT_NULL;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    level = rt_hw_interrupt_disable();
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
         device_pm = rt_slist_entry(node, struct rt_device_pm, list);
         if (device_pm->device == device)
         {
             rt_slist_remove(&_pm.device_list, &device_pm->list);
-            RT_KERNEL_FREE(device_pm);
+            found_pm = device_pm;
             break;
         }
+    }
+    rt_hw_interrupt_enable(level);
+
+    if (found_pm != RT_NULL)
+    {
+        RT_KERNEL_FREE(found_pm);
     }
 }
 
