@@ -43,6 +43,11 @@
 
 #define DBG_TAG "kernel.thread"
 #define DBG_LVL DBG_INFO
+
+#if defined(RT_USING_MAILBOX) || defined(RT_USING_MESSAGEQUEUE)
+void rt_ipc_handoff_thread_cleanup(rt_thread_t thread);
+#endif
+
 #include <rtdbg.h>
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
@@ -129,6 +134,10 @@ static void _thread_exit(void)
     rt_thread_close(thread);
 
     _thread_detach_from_mutex(thread);
+
+#if defined(RT_USING_MAILBOX) || defined(RT_USING_MESSAGEQUEUE)
+    rt_ipc_handoff_thread_cleanup(thread);
+#endif
 
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
@@ -519,6 +528,10 @@ static rt_err_t _thread_detach(rt_thread_t thread)
     error = rt_thread_close(thread);
 
     _thread_detach_from_mutex(thread);
+
+#if defined(RT_USING_MAILBOX) || defined(RT_USING_MESSAGEQUEUE)
+    rt_ipc_handoff_thread_cleanup(thread);
+#endif
 
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
