@@ -436,6 +436,10 @@ static int swm_can_recvmsg(struct rt_can_device *can_device, void *buf, rt_uint3
     }
     /* get len */
     pmsg->len = CAN_RXMsg.size;
+    if (pmsg->len > 8)
+    {
+        pmsg->len = 8;
+    }
 
     for(i = 0; i < pmsg->len; i++)
     {
