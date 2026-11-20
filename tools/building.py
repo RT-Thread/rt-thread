@@ -691,7 +691,7 @@ def _local_group_objects(group, objects):
     for key in keys:
         local_key = 'LOCAL_' + key
         if key in ('CPPPATH', 'CPPDEFINES'):
-            flags[key] = list(Env.get(key, [''])) + group.get(local_key, [''])
+            flags[key] = list(Env.get(key, [])) + group.get(local_key, [])
         else:
             flags[key] = Env.get(key, '') + group.get(local_key, '')
 
