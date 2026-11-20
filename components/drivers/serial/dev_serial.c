@@ -766,6 +766,10 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
 static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     rt_uint16_t stream_flag = 0;
+    rt_uint16_t rx_mode;
+    rt_uint16_t tx_mode;
+    const rt_uint16_t rx_mask = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX;
+    const rt_uint16_t tx_mask = RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_TX;
     struct rt_serial_device *serial;
 
     RT_ASSERT(dev != RT_NULL);
@@ -782,6 +786,18 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
         return -RT_EIO;
     if ((oflag & RT_DEVICE_FLAG_INT_TX) && !(dev->flag & RT_DEVICE_FLAG_INT_TX))
         return -RT_EIO;
+
+    rx_mode = dev->open_flag & rx_mask;
+    tx_mode = dev->open_flag & tx_mask;
+
+    if (serial->serial_rx != RT_NULL && (oflag & rx_mask) && !(oflag & rx_mode))
+    {
+        return -RT_EBUSY;
+    }
+    if (serial->serial_tx != RT_NULL && (oflag & tx_mask) && !(oflag & tx_mode))
+    {
+        return -RT_EBUSY;
+    }
 
     /* keep steam flag */
     if ((oflag & RT_DEVICE_FLAG_STREAM) || (dev->open_flag & RT_DEVICE_FLAG_STREAM))
@@ -847,12 +863,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     }
     else
     {
-        if (oflag & RT_DEVICE_FLAG_INT_RX)
-            dev->open_flag |= RT_DEVICE_FLAG_INT_RX;
-#ifdef RT_SERIAL_USING_DMA
-        else if (oflag & RT_DEVICE_FLAG_DMA_RX)
-            dev->open_flag |= RT_DEVICE_FLAG_DMA_RX;
-#endif /* RT_SERIAL_USING_DMA */
+        dev->open_flag |= rx_mode;
     }
 
     if (serial->serial_tx == RT_NULL)
@@ -895,12 +906,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     }
     else
     {
-        if (oflag & RT_DEVICE_FLAG_INT_TX)
-            dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
-#ifdef RT_SERIAL_USING_DMA
-        else if (oflag & RT_DEVICE_FLAG_DMA_TX)
-            dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
-#endif /* RT_SERIAL_USING_DMA */
+        dev->open_flag |= tx_mode;
     }
 
     /* set stream flag */
