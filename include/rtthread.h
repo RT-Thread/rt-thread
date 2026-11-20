@@ -420,6 +420,9 @@ rt_err_t rt_susp_list_resume_all_irq(rt_list_t *susp_list,
 rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag);
 /* only for a suspended thread, and caller must hold the scheduler lock */
 rt_err_t rt_susp_list_enqueue(rt_list_t *susp_list, rt_thread_t thread, int ipc_flags);
+#if defined(RT_USING_MAILBOX) || defined(RT_USING_MESSAGEQUEUE)
+void rt_ipc_handoff_thread_cleanup(rt_thread_t thread);
+#endif /* RT_USING_MAILBOX || RT_USING_MESSAGEQUEUE */
 
 /**
  * @addtogroup group_semaphore Semaphore
