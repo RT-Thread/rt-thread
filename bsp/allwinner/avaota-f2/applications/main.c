@@ -13,12 +13,62 @@
 #include "drv_openamp.h"
 
 static uint32_t g_last_req;
+static volatile int g_smp_hart1 = -1;
 
 static void busy_nop(volatile uint32_t n)
 {
     while (n--)
         __asm__ volatile("nop");
 }
+
+#ifdef RT_USING_SMP
+static void smp_hart1_entry(void *parameter)
+{
+    RT_UNUSED(parameter);
+    /* No printk here — shared UART mangles dual-hart prints. */
+    g_smp_hart1 = rt_hw_cpu_id();
+}
+
+/* Bind main on CPU0 and a worker on CPU1; require distinct hart ids. */
+static int smp_bringup_check(void)
+{
+    rt_thread_t tid;
+    rt_thread_t self;
+    int i;
+    int cpu0;
+
+    self = rt_thread_self();
+    rt_thread_control(self, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)0);
+    rt_thread_mdelay(1);
+    cpu0 = rt_hw_cpu_id();
+    rt_kprintf("[C907] SMP cpus=%d main_cpu=%d\n", RT_CPUS_NR, cpu0);
+
+    g_smp_hart1 = -1;
+    tid = rt_thread_create("smp1", smp_hart1_entry, RT_NULL, 1024, 8, 10);
+    if (tid == RT_NULL)
+    {
+        rt_kprintf("[C907] SMP-FAIL create\n");
+        return -1;
+    }
+    rt_thread_control(tid, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)1);
+    rt_thread_startup(tid);
+    for (i = 0; i < 400; i++)
+    {
+        if (g_smp_hart1 >= 0)
+            break;
+        rt_thread_mdelay(5);
+    }
+
+    if (cpu0 == 0 && g_smp_hart1 == 1)
+    {
+        rt_kprintf("[C907] SMP-OK hart0=0 hart1=1\n");
+        return 0;
+    }
+    rt_kprintf("[C907] SMP-FAIL main_cpu=%d hart1_seen=%d\n",
+               cpu0, g_smp_hart1);
+    return -1;
+}
+#endif
 
 static int ping_looks_valid(uint32_t req)
 {
@@ -71,7 +121,10 @@ int main(void)
 
     if (wait_new_req(&req, 4000000U) != 0)
     {
-        rt_kprintf("[C907] no ping (solo) — mmc then msh\n");
+        rt_kprintf("[C907] no ping (solo) — smp/mmc then msh\n");
+#ifdef RT_USING_SMP
+        (void)smp_bringup_check();
+#endif
         (void)rt_hw_mmc0_probe_from_fdt();
         return 0;
     }

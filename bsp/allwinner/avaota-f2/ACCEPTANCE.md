@@ -2,7 +2,8 @@
 
 ## 已证实
 
-- C907 单核交互与双核 SMP（历史）
+- C907 单核交互
+- C907 双核 SMP：`SMP-OK hart0=0 hart1=1`（solo，绑核到 hart1）
 - DT UART（`uart-from-fdt`）
 - 异构从核：magic / ping 应答；E907 侧见 `HETERO-OK`
 - 硬件 MSGBOX 收门铃（`MSGBOX-OK`，或与 E907 `MSGBOX-LIVE` 配对）
