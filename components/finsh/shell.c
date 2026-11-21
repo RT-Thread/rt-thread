@@ -21,7 +21,7 @@
 #include <rthw.h>
 #include <string.h>
 #include <stdio.h>
-
+#include "ansi.h"
 #ifdef RT_USING_FINSH
 
 #include "shell.h"
@@ -409,7 +409,7 @@ static rt_bool_t shell_handle_history(struct finsh_shell *shell)
     rt_kprintf("\r");
 
 #else
-    rt_kprintf("\033[2K\r");
+    rt_kprintf(ANSI_CLR_LINE);
 #endif
     rt_kprintf("%s%s", FINSH_PROMPT, shell->line);
     return RT_FALSE;
@@ -680,10 +680,11 @@ static void finsh_thread_entry(void *parameter)
             /* Add Ctrl+Left/Right handling */
             else if (ch == '1')
             {
-                /* Read modifier sequence [1;5D/C] */
+                /* ESC [ 1 ... is either Ctrl+Arrow or Home. Do not insert '1'. */
                 int next_ch = finsh_getchar();
                 if (next_ch == ';')
                 {
+                    /* Read modifier sequence [1;5D/C] */
                     next_ch = finsh_getchar();
                     if (next_ch == '5')
                     {
@@ -693,7 +694,7 @@ static void finsh_thread_entry(void *parameter)
                             int new_pos = find_prev_word_start(shell->line, shell->line_curpos);
                             if (new_pos != shell->line_curpos)
                             {
-                                rt_kprintf("\033[%dD", shell->line_curpos - new_pos);
+                                rt_kprintf(ANSI_FMT_CUB, shell->line_curpos - new_pos);
                                 shell->line_curpos = new_pos;
                             }
                             continue;
@@ -703,13 +704,25 @@ static void finsh_thread_entry(void *parameter)
                             int new_pos = find_next_word_end(shell->line, shell->line_curpos, shell->line_position);
                             if (new_pos != shell->line_curpos)
                             {
-                                rt_kprintf("\033[%dC", new_pos - shell->line_curpos);
+                                rt_kprintf(ANSI_FMT_CUF, new_pos - shell->line_curpos);
                                 shell->line_curpos = new_pos;
                             }
                             continue;
                         }
                     }
                 }
+#ifdef FINSH_USING_FUNC_EXT
+                else if (next_ch == '~') /* Home */
+                {
+                    if (shell->line_curpos > 0)
+                    {
+                        rt_kprintf(ANSI_FMT_CUB, shell->line_curpos);
+                        shell->line_curpos = 0;
+                    }
+                    continue;
+                }
+#endif
+                continue;
             }
 #endif /*defined(FINSH_USING_WORD_OPERATION) */
 #if defined(FINSH_USING_FUNC_EXT)
@@ -738,10 +751,10 @@ static void finsh_thread_entry(void *parameter)
                 if (key_code == 0x31) /* home key */
                 {
                     /* move cursor to beginning of line */
-                    while (shell->line_curpos > 0)
+                    if (shell->line_curpos > 0)
                     {
-                        rt_kprintf("\b");
-                        shell->line_curpos--;
+                        rt_kprintf(ANSI_FMT_CUB, shell->line_curpos);
+                        shell->line_curpos = 0;
                     }
                 }
                 else if (key_code == 0x32) /* insert key */
@@ -755,7 +768,6 @@ static void finsh_thread_entry(void *parameter)
                     if (finsh_shell_check_line(shell) &&
                         (shell->line_curpos < shell->line_position))
                     {
-                        int i;
                         shell->line_position--;
                         rt_memmove(&shell->line[shell->line_curpos],
                                    &shell->line[shell->line_curpos + 1],
@@ -766,17 +778,16 @@ static void finsh_thread_entry(void *parameter)
                         rt_kprintf("%s ", &shell->line[shell->line_curpos]);
 
                         /* move cursor back to original position */
-                        for (i = shell->line_curpos; i <= shell->line_position; i++)
-                            rt_kprintf("\b");
+                        rt_kprintf(ANSI_FMT_CUB, shell->line_position - shell->line_curpos + 1);
                     }
                 }
                 else if (key_code == 0x34) /* end key */
                 {
                     /* move cursor to end of line */
-                    while (shell->line_curpos < shell->line_position)
+                    if (shell->line_position > shell->line_curpos)
                     {
-                        rt_kprintf("%c", shell->line[shell->line_curpos]);
-                        shell->line_curpos++;
+                        rt_kprintf(ANSI_FMT_CUF, shell->line_position - shell->line_curpos);
+                        shell->line_curpos = shell->line_position;
                     }
                 }
                 continue;
@@ -792,10 +803,11 @@ static void finsh_thread_entry(void *parameter)
         /* handle tab key */
         else if (ch == '\t')
         {
-            int i;
             /* move the cursor to the beginning of line */
-            for (i = 0; i < shell->line_curpos; i++)
-                rt_kprintf("\b");
+            if (shell->line_curpos > 0)
+            {
+                rt_kprintf(ANSI_FMT_CUB, shell->line_curpos);
+            }
 
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
@@ -816,8 +828,6 @@ static void finsh_thread_entry(void *parameter)
 
             if (shell->line_position > shell->line_curpos)
             {
-                int i;
-
                 rt_memmove(&shell->line[shell->line_curpos],
                            &shell->line[shell->line_curpos + 1],
                            shell->line_position - shell->line_curpos);
@@ -826,8 +836,7 @@ static void finsh_thread_entry(void *parameter)
                 rt_kprintf("\b%s  \b", &shell->line[shell->line_curpos]);
 
                 /* move the cursor to the origin position */
-                for (i = shell->line_curpos; i <= shell->line_position; i++)
-                    rt_kprintf("\b");
+                rt_kprintf(ANSI_FMT_CUB, shell->line_position - shell->line_curpos + 1);
             }
             else
             {
@@ -860,15 +869,15 @@ static void finsh_thread_entry(void *parameter)
             shell->line_curpos = start;
 
             /* Redraw the affected line section */
-            rt_kprintf("\033[%dD", del_count);
+            rt_kprintf(ANSI_FMT_CUB, del_count);
             /* Rewrite the remaining content */
             rt_kprintf("%.*s", shell->line_position - start, &shell->line[start]);
-            /* Clear trailing artifacts */
-            rt_kprintf("\033[K");
+            /* Clear from the cursor to the end of the line */
+            rt_kprintf(ANSI_EL);
             if (shell->line_position > start)
             {
                 /* Reset cursor */
-                rt_kprintf("\033[%dD", shell->line_position - start);
+                rt_kprintf(ANSI_FMT_CUB, shell->line_position - start);
             }
 
             continue;
@@ -899,7 +908,6 @@ static void finsh_thread_entry(void *parameter)
         /* normal character */
         if (shell->line_curpos < shell->line_position)
         {
-            int i;
 #if defined(FINSH_USING_FUNC_EXT)
             if (shell->overwrite_mode) /* overwrite mode */
             {
@@ -923,8 +931,8 @@ static void finsh_thread_entry(void *parameter)
                 {
                     rt_kprintf("%s", &shell->line[shell->line_curpos]);
                     /* move cursor back to correct position */
-                    for (i = shell->line_curpos + 1; i < shell->line_position; i++)
-                        rt_kprintf("\b");
+                    if (shell->line_position > shell->line_curpos + 1)
+                        rt_kprintf(ANSI_FMT_CUB, shell->line_position - shell->line_curpos - 1);
                 }
                 shell->line_curpos++;
             }
