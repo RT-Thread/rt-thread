@@ -16,7 +16,9 @@ Allwinner V861（Avaota F2）C907 最小 BSP：UART 控制台 + msh。
 - DT 解析 UART（`uart-from-fdt`）
 - 双核 SMP（可选配置；默认 `RT_CPUS_NR=2`）
 
-MMC、异构 AMP、OpenAMP **不在本阶段声明为已支持**。源码中的 `drv_mmc.c` / `amp_mbox.h` 为后续工作保留，默认 `main` 不依赖它们。
+默认 `applications/main.c` 可作为异构从核应答 DRAM ping（配合 `avaota-f2-e907`）。单独启动、无 ping 时超时后进入 `msh`。
+
+MMC、OpenAMP、硬件 MSGBOX **不在本 BSP 宣称范围内**。
 
 ## 编译
 

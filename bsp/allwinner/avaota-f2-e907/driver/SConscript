@@ -1,0 +1,19 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Split('''
+    drv_uart.c
+    drv_fdt.c
+''')
+
+fdt_cwd = os.path.normpath(os.path.join(cwd, '..', '..', '..', '..', 'components', 'drivers', 'ofw', 'libfdt'))
+fdt_src = [
+    os.path.join(fdt_cwd, 'fdt.c'),
+    os.path.join(fdt_cwd, 'fdt_ro.c'),
+    os.path.join(fdt_cwd, 'fdt_strerror.c'),
+]
+
+CPPPATH = [cwd, fdt_cwd]
+group = DefineGroup('Drivers', src + fdt_src, depend = [''], CPPPATH = CPPPATH)
+Return('group')
