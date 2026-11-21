@@ -831,6 +831,16 @@ rt_err_t rt_pm_sleep_light_release(rt_uint16_t module_id)
  *
  * @param device the device with PM feature
  * @param ops the PM ops for device
+ *
+ * @note Locking: _pm.device_list is protected by rt_hw_interrupt_disable()
+ *       (mapped to rt_cpus_lock() when RT_USING_SMP is enabled).
+ *       _pm_device_suspend()/_pm_device_resume() walk the list inside
+ *       rt_pm_enter_critical(), and _pm_device_frequency_change() walks it
+ *       inside rt_hw_interrupt_disable(), so list updates here are serialized
+ *       with all PM list walkers. A BSP that overrides rt_pm_enter_critical()
+ *       must provide at least the same exclusion as rt_hw_interrupt_disable().
+ * @note Must not be called from interrupt context or from rt_device_pm_ops
+ *       callbacks.
  */
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops)
 {
@@ -853,9 +863,16 @@ void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_o
 }
 
 /**
- * This function will unregister device from power management
+ * Unregister device from PM manager.
  *
- * @param device the device with power management feature
+ * @param device the device with PM feature
+ *
+ * @note The node is removed from _pm.device_list under the same lock used by
+ *       the PM list walkers (see rt_pm_device_register()) and freed only after
+ *       the lock is released. Walkers hold the lock for the whole traversal,
+ *       so no walker can still reference the removed node.
+ * @note Must not be called from interrupt context or from rt_device_pm_ops
+ *       callbacks.
  */
 void rt_pm_device_unregister(struct rt_device *device)
 {
