@@ -8,6 +8,8 @@
 #include <rthw.h>
 
 #include "amp_mbox.h"
+#include "drv_hw_msgbox.h"
+#include "drv_openamp.h"
 
 static uint32_t g_last_req;
 
@@ -40,47 +42,44 @@ int main(void)
 {
     uint32_t i;
     uint32_t req;
-    uint32_t ver;
-    int tx = 0;
-    int rx = 0;
+    uint32_t tok;
 
     rt_kprintf("[C907] avaota-f2 v861 c907 hetero\n");
 
+    /* Publish magic early so E907 can sync before doorbell. */
     amp_coherent_begin();
     g_last_req = 0;
     amp_write(AMP_SLOT_C907, AMP_MAGIC_C907);
     rt_kprintf("[C907] magic=0xc907a11c\n");
 
-    /* Hetero: E907 wrote ping before release. Solo C907-boot: timeout → msh. */
+    /* Optional Phase1 MAGIC (may arrive after magic). Non-fatal. */
+    rt_hw_msgbox_clk_enable();
+    if (rt_hw_msgbox_wait(MSGBOX_VIEW_C907, &tok, 2000000U) == 0 &&
+        tok == MSGBOX_MAGIC)
+        rt_kprintf("[MSGBOX] MSGBOX-OK\n");
+
     if (wait_new_req(&req, 4000000U) != 0)
     {
         rt_kprintf("[C907] no ping (solo) — skip hetero\n");
         return 0;
     }
     amp_write(AMP_SLOT_C907_REPLY, req + 1U);
-    rx++;
-    tx++;
     rt_kprintf("[C907] ping_req=0x%08x reply=0x%08x\n", req, req + 1U);
 
-    ver = *(volatile uint32_t *)AMP_MSGBOX_VER;
-    rt_kprintf("[C907] MSGBOX ver@0x03003010=0x%08x\n", ver);
-
-    /* Three more round-trips on the same slots (RPMsg-lite shape). */
-    for (i = 1; i <= 3; i++)
+    if (openamp_slave_start(8000000U) != 0)
     {
-        if (wait_new_req(&req, 16000000U) != 0)
-        {
-            rt_kprintf("[C907] RPMSG-FAIL wait #%u last=0x%08x\n", i, g_last_req);
-            break;
-        }
-        amp_write(AMP_SLOT_C907_REPLY, req + 1U);
-        rx++;
-        tx++;
-        /* Stay quiet — shared UART with E907; E907 prints RPMSG-OK. */
+        rt_kprintf("[C907] OPENAMP-EPT-FAIL link\n");
+        return 0;
     }
 
-    (void)tx;
-    (void)rx;
+    for (i = 1; i <= 3; i++)
+    {
+        if (openamp_echo_once(16000000U) != 0)
+        {
+            rt_kprintf("[C907] OPENAMP-EPT-FAIL echo #%u\n", i);
+            break;
+        }
+    }
 
     return 0;
 }

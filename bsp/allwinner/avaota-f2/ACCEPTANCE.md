@@ -1,12 +1,17 @@
-# Avaota F2 C907 — 验收边界（PR 阶段 A）
+# Avaota F2 / V861 验收（C907 侧）
 
-## 本阶段宣称
+## 已证实
 
-- C907 上 RT-Thread 启动，UART 控制台与 `msh` 可用
-- UART 参数可来自板载 DTB
+- C907 单核交互与双核 SMP（历史）
+- DT UART（`uart-from-fdt`）
+- 异构从核：magic / ping 应答；E907 侧见 `HETERO-OK`
+- 硬件 MSGBOX 收门铃（`MSGBOX-OK`，或与 E907 `MSGBOX-LIVE` 配对）
+- OpenAMP 形 slave：LINK + 三轮 payload echo（见 E907 `OPENAMP-EPT-OK`）
 
-## 本阶段不宣称
+## 未证实
 
-- MMC 认卡 / 文件系统
-- E907 异构、RPMsg / OpenAMP
-- 已合入主仓（以实际 PR 为准）
+- MMC 认卡（明确延后）
+- libmetal / virtio-rpmsg 全栈
+- 主仓合入（以实际 PR 为准）
+
+异构主入口与通过口见 `../avaota-f2-e907/ACCEPTANCE.md`。

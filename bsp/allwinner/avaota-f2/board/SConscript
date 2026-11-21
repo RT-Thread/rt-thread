@@ -6,6 +6,8 @@ src = Split('''
     board.c
     board_smp.c
     drv_rpmsg.c
+    drv_hw_msgbox.c
+    drv_openamp.c
     clint.c
     tick.c
     trap.c
