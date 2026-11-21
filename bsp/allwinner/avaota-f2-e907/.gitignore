@@ -1,0 +1,10 @@
+__pycache__/
+*.bin
+*.elf
+*.map
+build/
+.sconsign.dblite
+cconfig.h
+.vscode/
+rtconfig.pyc
+*.old

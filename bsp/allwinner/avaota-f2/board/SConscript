@@ -1,0 +1,25 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Split('''
+    board.c
+    board_smp.c
+    drv_rpmsg.c
+    drv_hw_msgbox.c
+    drv_openamp.c
+    clint.c
+    tick.c
+    trap.c
+    cpuport_smp.c
+    startup_gcc.S
+    builtin_fdt.S
+''')
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = [cwd])
+
+# .incbin is invisible to scons; declare explicit dependency.
+dtb = os.path.join(cwd, 'board.dtb')
+if os.path.isfile(dtb):
+    Depends(os.path.join('build', 'board', 'builtin_fdt.o'), dtb)
+
+Return('group')
