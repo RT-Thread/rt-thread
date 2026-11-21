@@ -826,6 +826,8 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-----|-----|-----|-----|-----|-------|-------|
 | [d1](allwinner/d1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [d1s](allwinner/d1s) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [avaota-f2](allwinner/avaota-f2) | | ✅ | | | | | | | | |
+| [avaota-f2-e907](allwinner/avaota-f2-e907) | | ✅ | | | | | | | | |
 
 #### 🟡 K210 (SMP)
 

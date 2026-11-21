@@ -1,0 +1,23 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Split('''
+    board.c
+    board_c907_release.c
+    drv_rpmsg.c
+    drv_hw_msgbox.c
+    drv_openamp.c
+    clint.c
+    tick.c
+    trap.c
+    startup_gcc.S
+    builtin_fdt.S
+''')
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = [cwd])
+
+dtb = os.path.join(cwd, 'board.dtb')
+if os.path.isfile(dtb):
+    Depends(os.path.join('build', 'board', 'builtin_fdt.o'), dtb)
+
+Return('group')
