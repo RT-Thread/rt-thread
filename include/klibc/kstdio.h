@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-09-22     Meco Man     the first version
+ * 2026-11-21     meng-plus    move rt_kprintf and rt_kputs here
  */
 
 #ifndef __RT_KSTDIO_H__
@@ -24,6 +25,14 @@ int rt_sprintf(char *buf, const char *format, ...);
 int rt_snprintf(char *buf, size_t size, const char *format, ...);
 int rt_vsscanf(const char *buffer, const char *format, va_list ap);
 int rt_sscanf(const char *str, const char *format, ...);
+
+#ifndef RT_USING_CONSOLE
+#define rt_kprintf(...)
+#define rt_kputs(str)
+#else
+int rt_kprintf(const char *fmt, ...);
+void rt_kputs(const char *str);
+#endif /* RT_USING_CONSOLE */
 
 #ifdef __cplusplus
 }
