@@ -9,6 +9,7 @@
 
 #include "amp_mbox.h"
 #include "drv_hw_msgbox.h"
+#include "drv_mmc.h"
 #include "drv_openamp.h"
 
 static uint32_t g_last_req;
@@ -19,6 +20,16 @@ static void busy_nop(volatile uint32_t n)
         __asm__ volatile("nop");
 }
 
+static int ping_looks_valid(uint32_t req)
+{
+    if (req == AMP_PING_REQ)
+        return 1;
+    /* RPMsg-lite / OpenAMP lab used 0xB1000001..3 */
+    if ((req & 0xFFFFFF00U) == 0xB1000000U && (req & 0xFFU) >= 1U && (req & 0xFFU) <= 3U)
+        return 1;
+    return 0;
+}
+
 static int wait_new_req(uint32_t *req_out, uint32_t spins)
 {
     uint32_t i;
@@ -27,7 +38,7 @@ static int wait_new_req(uint32_t *req_out, uint32_t spins)
     for (i = 0; i < spins; i++)
     {
         req = amp_read(AMP_SLOT_PING_REQ);
-        if (req != 0 && req != g_last_req)
+        if (ping_looks_valid(req) && req != g_last_req)
         {
             *req_out = req;
             g_last_req = req;
@@ -60,7 +71,8 @@ int main(void)
 
     if (wait_new_req(&req, 4000000U) != 0)
     {
-        rt_kprintf("[C907] no ping (solo) — skip hetero\n");
+        rt_kprintf("[C907] no ping (solo) — mmc then msh\n");
+        (void)rt_hw_mmc0_probe_from_fdt();
         return 0;
     }
     amp_write(AMP_SLOT_C907_REPLY, req + 1U);

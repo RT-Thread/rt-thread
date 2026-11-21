@@ -11,7 +11,7 @@
 ## 未证实 / 不要宣称
 
 - libmetal / 完整 OpenAMP、仓内 virtio-rpmsg、Linux remoteproc
-- MMC 认卡、文件系统
+- 文件系统 / DFS（MMC identify+读块见 C907 `ACCEPTANCE.md`）
 - 已合入主仓（以实际 PR 为准）
 
 ## 冷链

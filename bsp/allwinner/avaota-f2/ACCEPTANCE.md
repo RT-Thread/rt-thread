@@ -7,10 +7,12 @@
 - 异构从核：magic / ping 应答；E907 侧见 `HETERO-OK`
 - 硬件 MSGBOX 收门铃（`MSGBOX-OK`，或与 E907 `MSGBOX-LIVE` 配对）
 - OpenAMP 形 slave：LINK + 三轮 payload echo（见 E907 `OPENAMP-EPT-OK`）
+- MMC0 identify + 读扇区 0（solo `c907_boot`）：`mmc0 card OK` / `mmc0 read OK`，MBR `sig=55aa`
+  - 证据：`mmc-uart-20261121-163257.log`（`PASS=True`）
 
 ## 未证实
 
-- MMC 认卡（明确延后）
+- 文件系统 / DFS / 写块
 - libmetal / virtio-rpmsg 全栈
 - 主仓合入（以实际 PR 为准）
 
