@@ -45,7 +45,7 @@ tar xf ~/gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi.tar.xz
 Add the following line to `~/.bash_profile`
 
 ```shell
-export PATH="$PATH:~/gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi/bin"
+export PATH="$PATH:$HOME/gcc-arm-11.2-2022.02-darwin-x86_64-arm-none-eabi/bin"
 ```
 
 Run the following command. This is only needed once after `~/.bash_profile` is modified
@@ -167,7 +167,7 @@ Type `list_device` to view all devices registered in the system. You can see the
 
 ![format the SD card](figures/macos-mkfs-sd0.png)
 
-The file system will not be loaded immediately after the first formatting of the SD card, and the file system will be loaded correctly only after the second boot. So exit the virtual machine, and then restart the virtual machine and project by entering `./qemu_nographic.sh` on the command line interface. Entering `ls` command, you can see that the `Directory` directory has been added, the file system has been loaded, and then you can experience the file system with other commands provided by RT-Thread:
+The file system will not be loaded immediately after the first formatting of the SD card, and the file system will be loaded correctly only after the second boot. So exit the virtual machine, and then restart the virtual machine and project by entering `./qemu-nographic.sh` on the command line interface. Entering `ls` command, you can see that the `Directory` directory has been added, the file system has been loaded, and then you can experience the file system with other commands provided by RT-Thread:
 
 ![commands of file system](figures/macos-filesys.png)
 
