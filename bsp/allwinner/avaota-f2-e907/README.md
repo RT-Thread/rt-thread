@@ -24,10 +24,15 @@ E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最�
 
 ## 编译
 
-`board/builtin_fdt.S` 用 `.incbin` 内嵌 `board/board.dtb`。该 DTB 由 `board/gen_board_dtb.py` 在构建时自动生成（SCons 已接入，无需手工准备）。首次构建需要 `python3` 与 `fdt` 模块：
+`board/builtin_fdt.S` 用 `.incbin` 内嵌 `board/board.dtb`。该 DTB 由 `board/board.dts`
+经 `dtc` 在构建时生成（`board/SConscript` 已接入），**不再需要** `gen_board_dtb.py`
+或 Python `fdt` 模块。请先装 device-tree-compiler：
 
 ```sh
-pip3 install fdt
+# Debian/Ubuntu
+sudo apt-get install device-tree-compiler
+# macOS
+brew install dtc
 ```
 
 推荐 [RT-Thread Env 2.x](https://github.com/RT-Thread/rt-thread/blob/master/documentation/env/env.md)：用 `sdk` 安装/卸载工具链；本机已有工具链时，简单配置后 Env 可自动探测。
@@ -37,7 +42,14 @@ cd bsp/allwinner/avaota-f2-e907
 scons -j8
 ```
 
-C907 侧在 `../avaota-f2` 同样编译（DTB 同样由 `gen_board_dtb.py` 生成，不入库）。
+C907 侧在 `../avaota-f2` 同样编译（DTB 同样由 `dtc` 从 `board.dts` 生成，不入库）。
+`rtconfig.h` 由 `Kconfig` + `.config` 生成（`scons --pyconfig` / `--pyconfig-silent`），不要手改。
+
+串口：FinSH 以 `RDWR | INT_RX` 打开 `uart0`，`v861_uart0_isr()` 上报
+`RT_SERIAL_EVENT_RX_IND`，`uart_getc()` 空时返回 `-1`。
+
+> 本提交把 uart0 改成 `INT_RX` 并改用 `board.dts` + `dtc`，这两项**尚未上板验证**，
+> 只完成干净构建与静态对照。
 
 ## 未宣称
 

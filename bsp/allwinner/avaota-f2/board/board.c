@@ -9,6 +9,7 @@
 
 #include "board.h"
 #include "drv_uart.h"
+#include "plic.h"
 
 /* rt_hw_uart_print_dt is declared in drv_uart.h */
 
@@ -17,6 +18,7 @@ extern int rt_hw_tick_init(void);
 void rt_hw_board_init(void)
 {
     rt_hw_interrupt_init();
+    v861_plic_init();
     rt_hw_uart_init();
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
@@ -31,6 +33,13 @@ void rt_hw_board_init(void)
 #endif
 
     rt_hw_tick_init();
+
+    {
+        unsigned long mie;
+        __asm__ volatile("csrr %0, mie" : "=r"(mie));
+        mie |= (1U << 11); /* MEIE for PLIC external interrupts */
+        __asm__ volatile("csrw mie, %0" ::"r"(mie));
+    }
 
     {
         unsigned long mie;

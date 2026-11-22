@@ -37,7 +37,8 @@
 #define AMP_MXSTATUS            0x7c0U
 #define AMP_MXSTATUS_THEADISAEE (1UL << 22)
 
-#define AMP_MSGBOX_BASE 0x03003000U
+/* Real V861 MSGBOX views (Tina DTB); legacy 0x03003000 is dead. */
+#define AMP_MSGBOX_BASE 0x06020000U
 #define AMP_MSGBOX_VER  (AMP_MSGBOX_BASE + 0x10U)
 
 static inline void amp_fence(void)

@@ -2,6 +2,7 @@ __pycache__/
 *.bin
 *.elf
 *.map
+*.o
 build/
 .sconsign.dblite
 cconfig.h

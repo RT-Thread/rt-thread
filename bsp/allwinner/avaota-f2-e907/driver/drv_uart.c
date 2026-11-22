@@ -14,6 +14,7 @@
 #include "board.h"
 #include "drv_uart.h"
 #include "drv_fdt.h"
+#include "plic.h"
 
 #define UART_RBR         0x00
 #define UART_THR         0x00
@@ -24,6 +25,7 @@
 #define UART_LCR         0x0c
 #define UART_MCR         0x10
 #define UART_LSR         0x14
+#define UART_IER_RDI     0x01
 #define UART_LSR_DR      0x01
 #define UART_LSR_THRE    0x20
 #define UART_LCR_DLAB    0x80
@@ -119,9 +121,30 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
 
 static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
+    rt_uint32_t ctrl_arg = (rt_uint32_t)(rt_ubase_t)arg;
+
     RT_UNUSED(serial);
-    RT_UNUSED(cmd);
-    RT_UNUSED(arg);
+
+    switch (cmd)
+    {
+    case RT_DEVICE_CTRL_SET_INT:
+        if (ctrl_arg & RT_DEVICE_FLAG_INT_RX)
+        {
+            uart_write(UART_IER, uart_read(UART_IER) | UART_IER_RDI);
+            v861_plic_enable_irq((int)g_uart_fdt.irq);
+        }
+        break;
+    case RT_DEVICE_CTRL_CLR_INT:
+        if (ctrl_arg & RT_DEVICE_FLAG_INT_RX)
+        {
+            uart_write(UART_IER, uart_read(UART_IER) & ~UART_IER_RDI);
+            v861_plic_disable_irq((int)g_uart_fdt.irq);
+        }
+        break;
+    default:
+        break;
+    }
+
     return RT_EOK;
 }
 
@@ -148,8 +171,10 @@ static int uart_getc(struct rt_serial_device *serial)
 {
     RT_UNUSED(serial);
 
-    while ((uart_read(UART_LSR) & UART_LSR_DR) == 0)
+    /* Non-blocking: the serial framework drains the FIFO until getc() == -1. */
+    if ((uart_read(UART_LSR) & UART_LSR_DR) == 0)
     {
+        return -1;
     }
     return (int)(uart_read(UART_RBR) & 0xff);
 }
@@ -161,6 +186,15 @@ static rt_ssize_t uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     RT_UNUSED(size);
     RT_UNUSED(direction);
     return 0;
+}
+
+static void v861_uart0_isr(int irq, void *param)
+{
+    RT_UNUSED(irq);
+    RT_UNUSED(param);
+
+    /* RT_SERIAL_EVENT_RX_IND makes the framework drain getc() into the FIFO. */
+    rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
 }
 
 static const struct rt_uart_ops uart_ops = {
@@ -179,6 +213,7 @@ int rt_hw_uart_init(void)
     {
         /* Fall back to board.h constants if DTB is missing. */
         g_uart_fdt.reg = V861_UART0_BASE;
+        g_uart_fdt.irq = V861_UART0_IRQ;
         g_uart_fdt.baud = V861_UART0_BAUD;
         g_uart_fdt.clk_hz = V861_UART0_CLOCK_HZ;
         g_uart_fdt.gate_reg = 0x0200190cU;
@@ -198,10 +233,12 @@ int rt_hw_uart_init(void)
     }
 
     v861_uart0_hw_init(&g_uart_fdt);
+    v861_plic_install_irq((int)g_uart_fdt.irq, v861_uart0_isr, RT_NULL);
     config.baud_rate = g_uart_fdt.baud;
     serial0.ops = &uart_ops;
     serial0.config = config;
-    return rt_hw_serial_register(&serial0, "uart0", RT_DEVICE_FLAG_RDWR, RT_NULL);
+    return rt_hw_serial_register(&serial0, "uart0",
+                                 RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, RT_NULL);
 }
 
 void rt_hw_uart_print_dt(void)
