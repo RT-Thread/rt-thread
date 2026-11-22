@@ -13,6 +13,7 @@
 
 #include <libfdt.h>
 
+#include "board.h"
 #include "drv_fdt.h"
 
 extern const unsigned char rt_hw_builtin_fdt[];
@@ -95,6 +96,7 @@ int rt_hw_fdt_load_uart(struct v861_uart_fdt *out)
     }
 
     out->reg = prop_u32(fdt, uart, "reg", 0x02500000U);
+    out->irq = prop_u32(fdt, uart, "interrupts", V861_UART0_IRQ);
     out->baud = prop_u32(fdt, uart, "current-speed", 115200U);
     out->clk_hz = prop_u32(fdt, uart, "clock-frequency", 24000000U);
     if (prop_u32_pair(fdt, uart, "allwinner,clock-gate", &out->gate_reg, &out->gate_bit) != 0)
@@ -144,8 +146,8 @@ void rt_hw_fdt_print_uart(const struct v861_uart_fdt *cfg)
     }
 
     rt_kprintf("DT: compatible=%s\n", cfg->compatible);
-    rt_kprintf("DT: stdout %s reg=0x%08x baud=%u clk=%u\n",
-               cfg->stdout_path, cfg->reg, cfg->baud, cfg->clk_hz);
+    rt_kprintf("DT: stdout %s reg=0x%08x irq=%u baud=%u clk=%u\n",
+               cfg->stdout_path, cfg->reg, cfg->irq, cfg->baud, cfg->clk_hz);
     rt_kprintf("DT: gate=0x%08x:%u reset=0x%08x:%u\n",
                cfg->gate_reg, cfg->gate_bit, cfg->reset_reg, cfg->reset_bit);
     if (cfg->pin_count >= 2)

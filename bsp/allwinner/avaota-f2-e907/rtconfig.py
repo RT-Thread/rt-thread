@@ -14,20 +14,17 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM = 'gcc'
-    EXEC_PATH = r'D:\rtt\sdk-toolchain-RISC-V-GCC-WCH\bin'
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/opt/riscv-none-embed/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
-
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 LINK_FILE = 'link.lds'
 TARGET_NAME = 'rtthread.bin'
 
 if PLATFORM == 'gcc':
-    PREFIX = 'riscv-none-embed-'
+    PREFIX = os.getenv('RTT_CC_PREFIX') or 'riscv-none-embed-'
     CC = PREFIX + 'gcc'
     CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'

@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Avaota F2 (Allwinner V861) minimal device tree: UART0 console + MMC0.
+ * board/SConscript compiles this into board/board.dtb and board/builtin_fdt.S
+ * embeds the blob so the kernel can parse it at runtime.
+ */
+
+/dts-v1/;
+
+/ {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    compatible = "syterkit,avaota-f2";
+    model = "Avaota F2";
+
+    chosen {
+        stdout-path = "/soc/serial@2500000";
+    };
+
+    reserved-memory {
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        dma-descriptors@43600000 {
+            reg = <0x43600000 0x00100000>;
+        };
+    };
+
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        plic: interrupt-controller@10000000 {
+            compatible = "sifive,plic-1.0.0", "riscv,plic0";
+            reg = <0x10000000 0x04000000>;
+            #interrupt-cells = <1>;
+            interrupt-controller;
+            riscv,ndev = <207>;
+        };
+
+        serial@2500000 {
+            compatible = "allwinner,sunxi-uart";
+            reg = <0x02500000 0x400>;
+            /* PLIC source for UART0 on V861 (same line as sun55iw3 uart0). */
+            interrupts = <2>;
+            interrupt-parent = <&plic>;
+            current-speed = <115200>;
+            clock-frequency = <24000000>;
+            allwinner,uart-id = <0>;
+            allwinner,clock-gate = <0x0200190c 0>;
+            allwinner,reset = <0x0200190c 16>;
+            allwinner,pins = <7 9 5 7 10 5>;
+            status = "okay";
+        };
+
+        mmc@4020000 {
+            compatible = "allwinner,sunxi-mmc";
+            reg = <0x04020000 0x1000>;
+            label = "sdhci0";
+            allwinner,mmc-id = <0>;
+            bus-width = <4>;
+            max-frequency = <50000000>;
+            allwinner,clock-gate = <0x0200184c 0>;
+            allwinner,reset = <0x0200184c 16>;
+            allwinner,module-clock = <0x02001830 8 0 1>;
+            allwinner,clock-source-rates = <24000000 400000000 300000000 0>;
+            allwinner,pins = <5 2 2 5 3 2 5 1 2 5 0 2 5 5 2 5 4 2>;
+            dma-region = <0x43600000 0x00100000>;
+            status = "okay";
+        };
+
+        pinctrl@2000000 {
+            compatible = "allwinner,sunxi-pinctrl";
+            reg = <0x02000000 0x1000>;
+        };
+    };
+};

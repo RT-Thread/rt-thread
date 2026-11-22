@@ -283,6 +283,7 @@ jobs:
           sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+          sudo apt-get -qq install device-tree-compiler
 
       - name: Install riscv32-esp-elf ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
