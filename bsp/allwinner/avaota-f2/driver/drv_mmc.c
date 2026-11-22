@@ -25,6 +25,8 @@ extern const unsigned char rt_hw_builtin_fdt[];
 #define SMHC_CLKCR               0x04U
 #define SMHC_TIMEOUT             0x08U
 #define SMHC_WIDTH               0x0cU
+#define SMHC_BLKSZ               0x10U
+#define SMHC_BCNTR               0x14U
 #define SMHC_CMD                 0x18U
 #define SMHC_ARG                 0x1cU
 #define SMHC_RESP0               0x20U
@@ -38,7 +40,9 @@ extern const unsigned char rt_hw_builtin_fdt[];
 #define SMHC_CSDC                0x054U
 #define SMHC_DBGC                0x050U
 #define SMHC_NTSR                0x05cU
+#define SMHC_FIFO                0x200U
 #define SMHC_NTSR_2X_MODE        (1U << 31)
+#define SMHC_STATUS_FIFO_EMPTY   (1U << 2)
 #define SMHC_STATUS_CARD_PRESENT (1U << 8)
 
 /* PIO bank power mode (gpio-v2 / D1-class): withstand select + disable auto. */
@@ -52,6 +56,7 @@ extern const unsigned char rt_hw_builtin_fdt[];
 #define SMHC_GCTRL_DMA_RESET  (1U << 2)
 #define SMHC_GCTRL_HW_RESET   (SMHC_GCTRL_SOFT_RESET | SMHC_GCTRL_FIFO_RESET | SMHC_GCTRL_DMA_RESET)
 #define SMHC_GCTRL_INT_EN     (1U << 4)
+#define SMHC_GCTRL_ACCESS_AHB (1U << 31)
 
 #define SMHC_CLKCR_MASK_D0 (1U << 31)
 #define SMHC_CLKCR_CARD_ON (1U << 16)
@@ -60,12 +65,15 @@ extern const unsigned char rt_hw_builtin_fdt[];
 #define SMHC_CMD_RESP      (1U << 6)
 #define SMHC_CMD_LONG_RESP (1U << 7)
 #define SMHC_CMD_CHK_CRC   (1U << 8)
+#define SMHC_CMD_DATA_EXP  (1U << 9)
+#define SMHC_CMD_WRITE     (1U << 10)
 #define SMHC_CMD_WAIT_PRE  (1U << 13)
 #define SMHC_CMD_INIT      (1U << 15)
 #define SMHC_CMD_UPCLK     (1U << 21)
 #define SMHC_CMD_START     (1U << 31)
 
-#define SMHC_RINT_CMD_DONE (1U << 2)
+#define SMHC_RINT_CMD_DONE  (1U << 2)
+#define SMHC_RINT_DATA_OVER (1U << 3)
 #define SMHC_RINT_ERR                                            \
     ((1U << 1) | (1U << 6) | (1U << 7) | (1U << 8) | (1U << 9) | \
      (1U << 11) | (1U << 12) | (1U << 13) | (1U << 15))
@@ -80,7 +88,10 @@ extern const unsigned char rt_hw_builtin_fdt[];
 #define MMC_CMD_GO_IDLE      0
 #define MMC_CMD_ALL_SEND_CID 2
 #define SD_CMD_SEND_REL_ADDR 3
+#define MMC_CMD_SELECT_CARD  7
 #define SD_CMD_SEND_IF_COND  8
+#define MMC_CMD_SET_BLOCKLEN 16
+#define MMC_CMD_READ_SINGLE  17
 #define MMC_CMD_APP_CMD      55
 #define SD_CMD_APP_OP_COND   41
 
@@ -338,7 +349,7 @@ static int smhc_update_clk(uint32_t base)
 
     mmio_w(base + SMHC_CLKCR, clkcr | SMHC_CLKCR_MASK_D0);
     mmio_w(base + SMHC_CMD, SMHC_CMD_START | SMHC_CMD_UPCLK | SMHC_CMD_WAIT_PRE);
-    for (i = 0; i < 200000U; i++)
+    for (i = 0; i < 2000000U; i++)
     {
         if ((mmio_r(base + SMHC_CMD) & SMHC_CMD_START) == 0)
         {
@@ -455,26 +466,35 @@ static int smhc_host_init(struct v861_mmc_fdt *cfg)
     mmio_w(base + SMHC_IMASK, 0);
     mmio_w(base + SMHC_RINT, 0xffffffffU);
 
-    /* SyterKit config_clock: off → update → mode/mclk → on → update. */
+    /*
+     * Module clock must run before UPCLK — otherwise SMHC_CMD_START sticks
+     * and we used to fail at the first update (-10) with mclk still cold.
+     * Order: mclk + 2x mode → card clk off/update → on/update.
+     */
+    if (cfg->mod_clk_reg == 0)
+    {
+        return -9;
+    }
+    set_module_clock(cfg, 800000U); /* timing mode 1: 2 * 400 kHz card clock */
+    busy_mdelay(1);
+    mmio_w(base + SMHC_NTSR, mmio_r(base + SMHC_NTSR) | SMHC_NTSR_2X_MODE);
+
     mmio_w(base + SMHC_CLKCR, mmio_r(base + SMHC_CLKCR) & ~SMHC_CLKCR_CARD_ON);
     if (smhc_update_clk(base) != 0)
     {
+        rt_kprintf("DT: mmc0 upclk#1 fail cmd=0x%08x clkcr=0x%08x mclk=0x%08x\n",
+                   mmio_r(base + SMHC_CMD), mmio_r(base + SMHC_CLKCR),
+                   mmio_r(cfg->mod_clk_reg));
         return -10;
     }
 
-    mmio_w(base + SMHC_NTSR, mmio_r(base + SMHC_NTSR) | SMHC_NTSR_2X_MODE);
-    set_module_clock(cfg, 800000U); /* timing mode 1: 2 * 400 kHz card clock */
-    busy_mdelay(1);
     mmio_w(base + SMHC_CLKCR, SMHC_CLKCR_CARD_ON); /* div field 0 */
     if (smhc_update_clk(base) != 0)
     {
+        rt_kprintf("DT: mmc0 upclk#2 fail cmd=0x%08x clkcr=0x%08x mclk=0x%08x\n",
+                   mmio_r(base + SMHC_CMD), mmio_r(base + SMHC_CLKCR),
+                   mmio_r(cfg->mod_clk_reg));
         return -11;
-    }
-
-    mmio_w(base + SMHC_CLKCR, mmio_r(base + SMHC_CLKCR) | SMHC_CLKCR_CARD_ON);
-    if (smhc_update_clk(base) != 0)
-    {
-        return -12;
     }
 
     return 0;
@@ -562,10 +582,100 @@ static int smhc_identify(uint32_t base, uint32_t *ocr_out, uint32_t *rca_out)
     return 0;
 }
 
+/* PIO/AHB single-block read (CMD17). SDHC uses LBA; SDSC uses byte addr. */
+static int smhc_read_sector(uint32_t base, uint32_t ocr, uint32_t rca,
+                            uint32_t lba, uint8_t *buf, uint32_t len)
+{
+    uint32_t resp[4];
+    uint32_t arg;
+    uint32_t cmdval;
+    uint32_t i;
+    uint32_t words;
+    uint32_t rint;
+    int ret;
+
+    if (buf == RT_NULL || len < 512U)
+    {
+        return -30;
+    }
+
+    ret = smhc_send_cmd(base, MMC_CMD_SELECT_CARD, rca << 16, RSP_R1, resp);
+    if (ret != 0)
+    {
+        return -31;
+    }
+
+    ret = smhc_send_cmd(base, MMC_CMD_SET_BLOCKLEN, 512U, RSP_R1, resp);
+    if (ret != 0)
+    {
+        return -32;
+    }
+
+    arg = (ocr & OCR_HCS) ? lba : (lba * 512U);
+    mmio_w(base + SMHC_GCTRL, mmio_r(base + SMHC_GCTRL) | SMHC_GCTRL_ACCESS_AHB);
+    mmio_w(base + SMHC_BLKSZ, 512U);
+    mmio_w(base + SMHC_BCNTR, 512U);
+    mmio_w(base + SMHC_RINT, 0xffffffffU);
+
+    cmdval = SMHC_CMD_START | SMHC_CMD_RESP | SMHC_CMD_CHK_CRC |
+             SMHC_CMD_DATA_EXP | SMHC_CMD_WAIT_PRE | MMC_CMD_READ_SINGLE;
+    mmio_w(base + SMHC_ARG, arg);
+    mmio_w(base + SMHC_CMD, cmdval);
+
+    words = 512U / 4U;
+    for (i = 0; i < words; i++)
+    {
+        uint32_t t;
+        for (t = 0; t < 2000000U; t++)
+        {
+            if ((mmio_r(base + SMHC_STATUS) & SMHC_STATUS_FIFO_EMPTY) == 0)
+            {
+                break;
+            }
+            if (mmio_r(base + SMHC_RINT) & SMHC_RINT_ERR)
+            {
+                return -33;
+            }
+        }
+        if (mmio_r(base + SMHC_STATUS) & SMHC_STATUS_FIFO_EMPTY)
+        {
+            return -34;
+        }
+        {
+            uint32_t w = mmio_r(base + SMHC_FIFO);
+            buf[i * 4U + 0U] = (uint8_t)(w & 0xffU);
+            buf[i * 4U + 1U] = (uint8_t)((w >> 8) & 0xffU);
+            buf[i * 4U + 2U] = (uint8_t)((w >> 16) & 0xffU);
+            buf[i * 4U + 3U] = (uint8_t)((w >> 24) & 0xffU);
+        }
+    }
+
+    for (i = 0; i < 2000000U; i++)
+    {
+        rint = mmio_r(base + SMHC_RINT);
+        if (rint & SMHC_RINT_ERR)
+        {
+            return -35;
+        }
+        if (rint & SMHC_RINT_DATA_OVER)
+        {
+            break;
+        }
+    }
+    if ((mmio_r(base + SMHC_RINT) & SMHC_RINT_DATA_OVER) == 0)
+    {
+        return -36;
+    }
+
+    mmio_w(base + SMHC_RINT, 0xffffffffU);
+    return 0;
+}
+
 int rt_hw_mmc0_probe_from_fdt(void)
 {
     struct v861_mmc_fdt cfg;
     uint32_t ocr = 0, rca = 0;
+    uint8_t sector[512];
     int ret;
 
     ret = load_mmc_fdt(&cfg);
@@ -595,5 +705,18 @@ int rt_hw_mmc0_probe_from_fdt(void)
 
     rt_kprintf("DT: mmc0 card OK ocr=0x%08x rca=0x%04x %s\n",
                ocr, rca, (ocr & OCR_HCS) ? "SDHC/SDXC" : "SDSC");
+
+    memset(sector, 0, sizeof(sector));
+    ret = smhc_read_sector(cfg.reg, ocr, rca, 0, sector, sizeof(sector));
+    if (ret != 0)
+    {
+        rt_kprintf("DT: mmc0 read FAIL %d rint=0x%08x status=0x%08x\n",
+                   ret, mmio_r(cfg.reg + SMHC_RINT), mmio_r(cfg.reg + SMHC_STATUS));
+        return ret;
+    }
+
+    rt_kprintf("DT: mmc0 read OK lba0 sig=%02x%02x head=%02x %02x %02x %02x\n",
+               sector[510], sector[511],
+               sector[0], sector[1], sector[2], sector[3]);
     return 0;
 }

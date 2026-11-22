@@ -425,6 +425,8 @@
       "RTT_BSP": "riscv-none",
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [
+        "allwinner/avaota-f2",
+        "allwinner/avaota-f2-e907",
         "k210",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
