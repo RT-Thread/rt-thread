@@ -311,6 +311,78 @@ static void test_open_close_reopen(void)
 }
 
 /**
+ * @brief Check RX/TX admission preservation when a device is opened again.
+ */
+static void test_open_direction_expansion(void)
+{
+    rt_device_t dev = rt_device_find(CAN_TC_DEV_NAME);
+    struct rt_can_msg msg;
+    rt_uint16_t both = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX;
+
+    uassert_not_null(dev);
+
+    /* Open RX first, then extend to RX | TX. */
+    uassert_int_equal(rt_device_open(dev, RT_DEVICE_FLAG_INT_RX), RT_EOK);
+    uassert_int_equal(rt_device_open(dev, both), RT_EOK);
+
+    uassert_int_equal(dev->ref_count, 2);
+    uassert_int_equal(dev->open_flag & both, both);
+    uassert_not_null(can_tc_dev.can_rx);
+    uassert_not_null(can_tc_dev.can_tx);
+
+    /* Closing one reference must not disable the existing RX path. */
+    uassert_int_equal(rt_device_close(dev), RT_EOK);
+    uassert_int_equal(dev->ref_count, 1);
+
+    rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_RX_IND | (0 << 8));
+
+    rt_memset(&msg, 0, sizeof(msg));
+    msg.hdr_index = -1;
+
+    uassert_int_equal(rt_device_read(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+    uassert_int_equal(msg.id, CAN_TC_RX_ID);
+
+    uassert_int_equal(rt_device_close(dev), RT_EOK);
+    uassert_int_equal(dev->ref_count, 0);
+
+    /* Open TX first, then extend to RX | TX. */
+    uassert_int_equal(rt_device_open(dev, RT_DEVICE_FLAG_INT_TX), RT_EOK);
+    uassert_int_equal(rt_device_open(dev, both), RT_EOK);
+
+    uassert_int_equal(dev->ref_count, 2);
+    uassert_int_equal(dev->open_flag & both, both);
+    uassert_not_null(can_tc_dev.can_rx);
+    uassert_not_null(can_tc_dev.can_tx);
+
+    /* Verify the original TX direction remains usable. */
+    rt_memset(&msg, 0, sizeof(msg));
+    msg.id = CAN_TC_TX_ID;
+    msg.len = CAN_TC_DLC;
+    msg.nonblocking = 1;
+
+    can_tc_sim.sendmsg_nb_result = RT_EOK;
+    can_tc_sim.nb_mailbox = 0;
+
+    uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+
+    rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (0 << 8));
+    uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), RT_EOK);
+
+    /* Verify the newly enabled RX direction works. */
+    rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_RX_IND | (0 << 8));
+
+    rt_memset(&msg, 0, sizeof(msg));
+    msg.hdr_index = -1;
+
+    uassert_int_equal(rt_device_read(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+    uassert_int_equal(msg.id, CAN_TC_RX_ID);
+
+    uassert_int_equal(rt_device_close(dev), RT_EOK);
+    uassert_int_equal(rt_device_close(dev), RT_EOK);
+    uassert_int_equal(dev->ref_count, 0);
+}
+
+/**
  * @brief Check START admission gating, abort forwarding and send error propagation.
  */
 static void test_tx_admission_and_errors(void)
@@ -460,6 +532,7 @@ static void can_framework_tc(void)
 {
     UTEST_UNIT_RUN(test_register_and_find);
     UTEST_UNIT_RUN(test_open_close_reopen);
+    UTEST_UNIT_RUN(test_open_direction_expansion);
     UTEST_UNIT_RUN(test_tx_admission_and_errors);
     UTEST_UNIT_RUN(test_tx_busy_timeout);
     UTEST_UNIT_RUN(test_nonblocking_terminal);
