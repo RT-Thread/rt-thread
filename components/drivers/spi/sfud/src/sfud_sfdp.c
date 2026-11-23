@@ -414,11 +414,11 @@ static void read_ospi_erase_cmd(sfud_flash *flash)
             {
                 return;
             }
-            if (sfdp->eraser[0].size != 0)
+            if (map_len >= 6 && map[4] != 0x00 && map[4] != 0xFF && sfdp->eraser[0].size != 0)
             {
                 sfdp->eraser[0].ospi_cmd = map[4];
             }
-            if (sfdp->eraser[1].size != 0)
+            if (map_len >= 6 && map[5] != 0x00 && map[5] != 0xFF && sfdp->eraser[1].size != 0)
             {
                 sfdp->eraser[1].ospi_cmd = map[5];
             }
