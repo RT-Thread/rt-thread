@@ -216,10 +216,24 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     return group
 
 # The common part of making MDK4/5 project
-def MDK45Project(env, tree, target, script):
+def MDK45Project(env, tree, target, script, target_names=None):
     project_path = os.path.dirname(os.path.abspath(target))
 
     root = tree.getroot()
+    targets = tree.findall('Targets/Target')
+    if target_names is None:
+        selected_targets = [targets[0]]
+    else:
+        target_names = set(target_names)
+        available_names = {node.findtext('TargetName') for node in targets}
+        missing_names = target_names - available_names
+        if missing_names:
+            raise ValueError('Keil targets not found in template: %s' % ', '.join(sorted(missing_names)))
+        selected_targets = [node for node in targets if node.findtext('TargetName') in target_names]
+        if not selected_targets:
+            raise ValueError('KEIL_BUILD_TARGETS must include at least one target')
+    first_target = selected_targets[0]
+
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
 
@@ -233,8 +247,7 @@ def MDK45Project(env, tree, target, script):
 
     import copy
 
-    # add groups to the first target; they will be copied to all other targets afterward
-    first_target = tree.find('Targets/Target')
+    # add groups to the first target; they will be copied to the selected targets afterward
     groups = first_target.find('Groups')
     if groups is None:
         groups = SubElement(first_target, 'Groups')
@@ -293,7 +306,7 @@ def MDK45Project(env, tree, target, script):
     include_path_text = ';'.join(dict.fromkeys(paths))
     define_text = ', '.join(set(CPPDEFINES))
 
-    for target_node in tree.findall('Targets/Target'):
+    for target_node in selected_targets:
         if target_node is not first_target:
             existing_groups = target_node.find('Groups')
             if existing_groups is not None:
@@ -373,7 +386,8 @@ def MDK5Project(env, target, script):
 
     template_tree = etree.parse('template.uvprojx')
 
-    MDK45Project(env, template_tree, target, script)
+    import rtconfig
+    MDK45Project(env, template_tree, target, script, getattr(rtconfig, 'KEIL_BUILD_TARGETS', None))
 
     # remove project.uvopt file
     project_uvopt = os.path.abspath(target).replace('uvprojx', 'uvoptx')

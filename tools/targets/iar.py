@@ -27,6 +27,7 @@ import re
 import sys
 import string
 import utils
+from copy import deepcopy
 
 from SCons.Script import *
 
@@ -137,10 +138,73 @@ def IARWorkspace(target, active_config=None):
     out.write(xml)
     out.close()
 
+def _prepare_existing_project(tree, template_tree):
+    root = tree.getroot()
+    template_root = template_tree.getroot()
+    managed_options = {
+        'CCIncludePath2', 'newCCIncludePaths', 'CCDefines',
+        'IlinkConfigDefines', 'IlinkUseExtraOptions', 'IlinkExtraOptions',
+        'IlinkAdditionalLibs',
+    }
+
+    def get_options(config):
+        options = {}
+        for settings in config.findall('settings'):
+            data = settings.find('data')
+            if data is None:
+                continue
+            for option in data.findall('option'):
+                name = option.findtext('name')
+                if name in managed_options:
+                    key = (settings.findtext('name'), name)
+                    if key in options:
+                        raise ValueError('Duplicate IAR option %s in configuration %s' %
+                                         (name, config.findtext('name')))
+                    options[key] = (data, option)
+        return options
+
+    templates = {}
+    for config in template_root.findall('configuration'):
+        name = config.findtext('name')
+        if not name or name in templates:
+            raise ValueError('Missing or duplicate IAR template configuration name: %s' % name)
+        templates[name] = config
+
+    existing_names = set()
+    for config in root.findall('configuration'):
+        name = config.findtext('name')
+        if not name or name in existing_names:
+            raise ValueError('Missing or duplicate IAR project configuration name: %s' % name)
+        existing_names.add(name)
+        if name not in templates:
+            raise ValueError('IAR project configuration %s is missing from template.ewp' % name)
+        existing_options = get_options(config)
+        template_options = get_options(templates[name])
+        if existing_options.keys() != template_options.keys():
+            raise ValueError('IAR generated options for configuration %s do not match template.ewp' % name)
+        for key, (data, option) in existing_options.items():
+            index = list(data).index(option)
+            data.remove(option)
+            data.insert(index, deepcopy(template_options[key][1]))
+
+    for name, config in templates.items():
+        if name not in existing_names:
+            root.append(deepcopy(config))
+
+    for group in root.findall('group'):
+        root.remove(group)
+    for group in template_root.findall('group'):
+        root.append(deepcopy(group))
+
 def IARProject(env, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
-    tree = etree.parse('template.ewp')
+    template_tree = etree.parse('template.ewp')
+    if os.path.exists(target):
+        tree = etree.parse(target)
+        _prepare_existing_project(tree, template_tree)
+    else:
+        tree = template_tree
     root = tree.getroot()
 
     CPPPATH = []
@@ -285,19 +349,16 @@ def IARProject(env, target, script):
               'before regenerating the project, otherwise the active target '
               'will not be updated.')
 
-    # copy template.ewd (debugger settings) and template.ewt (build settings) to project files.
-    # The template sources are always template.ewd / template.ewt in the project directory;
-    # do not derive them from the output project name, otherwise a custom --project-name
-    # would make source and destination identical and trigger shutil.SameFileError.
+    # Initialize debugger and build settings only when project files do not exist.
     import shutil
     ewd_template = os.path.join(project_path, 'template.ewd')
     ewd_target   = target.replace('.ewp', '.ewd')
-    if os.path.exists(ewd_template) and os.path.abspath(ewd_template) != os.path.abspath(ewd_target):
+    if os.path.exists(ewd_template) and not os.path.exists(ewd_target):
         shutil.copy2(ewd_template, ewd_target)
 
     ewt_template = os.path.join(project_path, 'template.ewt')
     ewt_target   = target.replace('.ewp', '.ewt')
-    if os.path.exists(ewt_template) and os.path.abspath(ewt_template) != os.path.abspath(ewt_target):
+    if os.path.exists(ewt_template) and not os.path.exists(ewt_target):
         shutil.copy2(ewt_template, ewt_target)
 
 def IARPath():

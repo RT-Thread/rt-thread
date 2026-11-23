@@ -250,6 +250,7 @@ _LINKER_SCRIPT_TO_PROJECT_TARGET = {
     'FLEXSPI_NOR':          'rtthread_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'rtthread_flexspi_nor_hyperram',
 }
+KEIL_BUILD_TARGETS = tuple(_LINKER_SCRIPT_TO_PROJECT_TARGET.values())
 
 def _get_active_project_target():
     """Return the Keil target / IAR config name matching the selected linker script."""
