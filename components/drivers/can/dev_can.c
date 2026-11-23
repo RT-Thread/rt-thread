@@ -188,12 +188,14 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
     }
 
     /*
-     * Start with RX/TX admission closed while runtimes are allocated. RX resume
-     * later publishes admission immediately before enabling its BSP IRQ so the
-     * first interrupt cannot race an unpublished Generic RX path.
+     * Preserve previously enabled RX/TX admission on repeated open.
+     * Newly requested directions remain closed during runtime allocation.
+     * RX admission is published before enabling the BSP IRQ and rolled
+     * back if IRQ enable fails; TX admission follows successful IRQ enable.
      */
-    dev->open_flag = (oflag & 0xff) &
-                     ~(RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX);
+    dev->open_flag = (oflag & 0xff) |
+                     (previous_open_flag &
+                      (RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX));
 
     if ((oflag & RT_DEVICE_FLAG_INT_TX) && can->can_tx == RT_NULL)
     {
