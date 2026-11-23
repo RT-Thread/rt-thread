@@ -39,8 +39,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           lfs: false
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
       - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+        run: python -m pip install -r tools/ci/requirements-format.txt
 
       - name: Check clang-format version
         run: |
@@ -295,7 +300,7 @@ jobs:
           git config --local user.email "$PR_AUTHOR_EMAIL"
 
           git add -A
-          git commit -m "style: format code with clang-format [skip ci]"
+          git commit -m "style: format code with clang-format"
           git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
 
           echo "✅ 格式化结果已作为独立提交推送到分支 ${TARGET_BRANCH}"

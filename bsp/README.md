@@ -157,6 +157,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32l552-st-nucleo](stm32/stm32l552-st-nucleo) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32mp157a-st-discovery](stm32/stm32mp157a-st-discovery) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | ✅ | - | - | - |
 | [stm32mp157a-st-ev1](stm32/stm32mp157a-st-ev1) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | - | ✅ | - | - | - | ✅ | - | ✅ | ✅ | - | - | - |
+| [stm32n657-st-nucleo](stm32/stm32n657-st-nucleo) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32u575-st-nucleo](stm32/stm32u575-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32u585-iot02a](stm32/stm32u585-iot02a) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32wb55-st-nucleo](stm32/stm32wb55-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -197,6 +198,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [frdm-mcxa153](nxp/mcx/mcxa/frdm-mcxa153) | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxa156](nxp/mcx/mcxa/frdm-mcxa156) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxa346](nxp/mcx/mcxa/frdm-mcxa346) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
+| [frdm-mcxc162](nxp/mcx/mcxc/frdm-mcxc162) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxc444](nxp/mcx/mcxc/frdm-mcxc444) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxe247](nxp/mcx/mcxe/frdm-mcxe247) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxn236](nxp/mcx/mcxn/frdm-mcxn236) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
@@ -332,8 +334,8 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | ✅ | - | - | - |
-| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | ✅ | - | - | - |
+| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ |
+| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ |
 
 
 #### 🟡 NRF5x
@@ -761,6 +763,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [hpm6800evk](hpmicro/hpm6800evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
 | [hpm6e00evk](hpmicro/hpm6e00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [hpm6p00evk](hpmicro/hpm6p00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [hpm5100evk](hpmicro/hpm5100evk) | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟢 K230 (RT-Smart)
 
@@ -800,10 +803,17 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [ch32f203r-evt](wch/arm/ch32f203r-evt) | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [ch579m](wch/arm/ch579m) | ✅ | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | ✅ |
 | [ch32v103r-evt](wch/risc-v/ch32v103r-evt) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [ch32v203c-evt-r0](wch/risc-v/ch32v203c-evt-r0) | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | ✅ | ✅ | ✅ | ✅ | - |
 | [ch32v208w-r0](wch/risc-v/ch32v208w-r0) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
 | [ch32v307v-r1](wch/risc-v/ch32v307v-r1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [ch569w-evt](wch/risc-v/ch569w-evt) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | - | - | - | - |
 | [yd-ch32v307vct6](wch/risc-v/yd-ch32v307vct6) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
+
+#### 🟢 Spacemit
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI | DMA | Ethernet | Audio | Display | Crypto |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|-----|-----|----------|-------|---------|--------|
+| [k1](spacemit/k1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 Ultrarisc (RT-Smart) (SMP)
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
@@ -835,6 +845,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | Soft I2C | HWTimer | PWM | WiFi |
 |----------|------|------|-----|-----|-----|----------|---------|-----|------|
 | [ESP32_C3](ESP32_C3) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [ESP32_C6](ESP/ESP32_C6) | ✅ | ✅ | ✅ | - | - | - | - | - | - |
 
 #### 🟡 Bluetrum
 
@@ -874,6 +885,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-----|-----|-----|
 | [ri5cy](rv32m1_vega/ri5cy) | ✅ | ✅ | - | - | - | - |
 | [rv32m1_sdk_riscv](rv32m1_vega/rv32m1_sdk_riscv) | ✅ | ✅ | - | - | - | - |
+
+#### ⚪ ArtInChip
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
+|----------|------|------|-----|-----|-----|-----|
+| [d213ecv-demo-v4-0](artinchip/d213ecv-demo-v4-0) | - | ✅ | - | - | - | - |
 
 ---
 

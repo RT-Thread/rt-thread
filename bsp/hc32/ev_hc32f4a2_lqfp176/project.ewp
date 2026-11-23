@@ -323,7 +323,6 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\board\ports</state>
@@ -344,6 +343,7 @@
           <state>$PROJ_DIR$\packages\hc32-f4-cmsis-latest\Include</state>
           <state>$PROJ_DIR$\packages\hc32-f4-cmsis-latest\Device\HDSC\hc32f4a2\Include</state>
           <state>$PROJ_DIR$\..\platform\tca9539</state>
+          <state>$PROJ_DIR$\..\tests</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -1319,7 +1319,6 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\board\ports</state>
@@ -1340,6 +1339,7 @@
           <state>$PROJ_DIR$\packages\hc32-f4-cmsis-latest\Include</state>
           <state>$PROJ_DIR$\packages\hc32-f4-cmsis-latest\Device\HDSC\hc32f4a2\Include</state>
           <state>$PROJ_DIR$\..\platform\tca9539</state>
+          <state>$PROJ_DIR$\..\tests</state>
           <state>$PROJ_DIR$\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -2088,9 +2088,6 @@
       <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_soft_i2c.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_usart.c</name>
     </file>
   </group>
@@ -2287,6 +2284,18 @@
     <name>Platform</name>
     <file>
       <name>$PROJ_DIR$\..\platform\tca9539\tca9539.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Tests</name>
+    <file>
+      <name>$PROJ_DIR$\..\tests\test_uart_v1.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\tests\test_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\tests\test_gpio.c</name>
     </file>
   </group>
   <group>

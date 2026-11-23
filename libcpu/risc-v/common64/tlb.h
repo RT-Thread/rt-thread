@@ -18,6 +18,11 @@
 #include "sbi.h"
 #include "riscv_mmu.h"
 
+#ifdef RT_USING_SMP
+#include <rtatomic.h>
+#include "cpuport.h"
+#endif
+
 #define HANDLE_FAULT(ret)                                                      \
     if (__builtin_expect((ret) != SBI_SUCCESS, 0))                             \
         LOG_W("%s failed", __FUNCTION__);
@@ -36,11 +41,31 @@ static inline void rt_hw_tlb_invalidate_all_local(void)
 static inline void rt_hw_tlb_invalidate_aspace(rt_aspace_t aspace)
 {
     // TODO ASID
+#ifdef RT_USING_SMP
+    uintptr_t mask = rt_hw_atomic_load((volatile rt_atomic_t *)&rt_riscv_online_mask);
+
+    if (mask != 0)
+    {
+        HANDLE_FAULT(sbi_remote_sfence_vma(&mask, 0, 0, (unsigned long)-1));
+        return;
+    }
+#endif /* RT_USING_SMP */
+
     rt_hw_tlb_invalidate_all_local();
 }
 
 static inline void rt_hw_tlb_invalidate_page(rt_aspace_t aspace, void *start)
 {
+#ifdef RT_USING_SMP
+    uintptr_t mask = rt_hw_atomic_load((volatile rt_atomic_t *)&rt_riscv_online_mask);
+
+    if (mask != 0)
+    {
+        HANDLE_FAULT(sbi_remote_sfence_vma(&mask, 0, (unsigned long)start, ARCH_PAGE_SIZE));
+        return;
+    }
+#endif /* RT_USING_SMP */
+
     __asm__ volatile("sfence.vma %0, zero" ::"r"(start) : "memory");
 }
 

@@ -12,6 +12,7 @@
  */
 
 #include "nfs.h"
+#include "dfs_nfs.h"
 /* This file is copied from RFC1813
  * Copyright 1995 Sun Micrososystems (I assume)
  */
@@ -723,8 +724,10 @@ xdr_READ3resok(register XDR *xdrs, READ3resok *objp)
         return (FALSE);
     if (!xdr_bool(xdrs, &objp->eof))
         return (FALSE);
-    if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (unsigned int *) &objp->data.data_len, ~0))
+    if (!xdr_bytes(xdrs, (char **)&objp->data.data_val, (unsigned int *)&objp->data.data_len, DFS_NFS_MAX_MTU))
+    {
         return (FALSE);
+    }
     return (TRUE);
 }
 

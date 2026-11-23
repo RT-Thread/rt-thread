@@ -32,10 +32,12 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
+#include <drivers/dev_pin.h>
 #include <riscv_io.h>
 #include <rtdef.h>
 #include "ioremap.h"
 #include "drv_gpio.h"
+#include "drv_pinctrl.h"
 #include "drv_hardlock.h"
 #include "board.h"
 #include <dfs_posix.h>
@@ -52,12 +54,15 @@
 #define DBG_COLOR
 
 struct kd_gpio_device {
-    struct rt_device dev;
     void* base[2];
     int hardlock;
 };
 
 static struct kd_gpio_device gpio_dev;
+
+/* Pins configured as open-drain output. The SoC has no open-drain output
+ * stage, so the high level is produced by releasing the pad (input mode). */
+static rt_uint8_t pin_open_drain[GPIO_MAX_NUM];
 
 static struct
 {
@@ -92,7 +97,7 @@ static rt_uint32_t kd_gpio_reg_readl(void* reg, rt_size_t offset)
 
 static int check_pin_valid(rt_base_t pin)
 {
-    if ((rt_uint16_t)pin < 0 || (rt_uint16_t)pin > GPIO_MAX_NUM)
+    if (pin < 0 || pin >= GPIO_MAX_NUM)
     {
         LOG_E("pin %d is not valid\n", pin);
         return -RT_EINVAL;
@@ -379,6 +384,137 @@ rt_err_t kd_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
     return RT_EOK;
 }
 
+/* Pads 0 .. GPIO_PAD_MAX_NUM-1 are routed through the IO mux, the GPIO
+ * block itself provides eight more pins without a pad. */
+static int pin_has_pad(rt_base_t pin)
+{
+    return pin < GPIO_PAD_MAX_NUM;
+}
+
+static void k230_pin_pad_config(rt_base_t pin, rt_uint8_t mode)
+{
+    k230_pinctrl_set_function(pin, IOMUX_FUNC1);
+    k230_pinctrl_set_pu(pin, mode == PIN_MODE_INPUT_PULLUP);
+    k230_pinctrl_set_pd(pin, mode == PIN_MODE_INPUT_PULLDOWN);
+    k230_pinctrl_set_oe(pin, mode == PIN_MODE_OUTPUT);
+    /* Keep the input buffer enabled so that rt_pin_read() also reports
+     * the level of an output pin and of a released open-drain line. */
+    k230_pinctrl_set_ie(pin, 1);
+}
+
+static void k230_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
+{
+    (void)device;
+
+    if (check_pin_valid(pin) < 0)
+    {
+        return;
+    }
+
+    switch (mode)
+    {
+    case PIN_MODE_OUTPUT:
+        (void)kd_pin_mode(pin, GPIO_DM_OUTPUT);
+        pin_open_drain[pin] = 0;
+        break;
+    case PIN_MODE_OUTPUT_OD:
+        if (!pin_has_pad(pin))
+        {
+            LOG_E("pin %d has no pad, open-drain is not supported", pin);
+            return;
+        }
+        /* Latch a low level before releasing the line, so the pin never
+         * drives high. A pull-up is required to bring the line high. */
+        (void)kd_pin_write(pin, GPIO_PV_LOW);
+        (void)kd_pin_mode(pin, GPIO_DM_INPUT);
+        pin_open_drain[pin] = 1;
+        break;
+    case PIN_MODE_INPUT:
+    case PIN_MODE_INPUT_PULLUP:
+    case PIN_MODE_INPUT_PULLDOWN:
+        (void)kd_pin_mode(pin, GPIO_DM_INPUT);
+        pin_open_drain[pin] = 0;
+        break;
+    default:
+        LOG_E("pin mode %u is not supported", mode);
+        return;
+    }
+
+    if (pin_has_pad(pin))
+    {
+        k230_pin_pad_config(pin, mode);
+    }
+}
+
+static void k230_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
+{
+    (void)device;
+
+    if (check_pin_valid(pin) < 0)
+    {
+        return;
+    }
+
+    if (pin_open_drain[pin])
+    {
+        if (value)
+        {
+            /* Release the line and let the external pull-up drive it high. */
+            k230_pinctrl_set_oe(pin, 0);
+            (void)kd_pin_mode(pin, GPIO_DM_INPUT);
+        }
+        else
+        {
+            (void)kd_pin_write(pin, GPIO_PV_LOW);
+            (void)kd_pin_mode(pin, GPIO_DM_OUTPUT);
+            k230_pinctrl_set_oe(pin, 1);
+        }
+        return;
+    }
+
+    (void)kd_pin_write(pin, value ? GPIO_PV_HIGH : GPIO_PV_LOW);
+}
+
+static rt_ssize_t k230_pin_read(struct rt_device *device, rt_base_t pin)
+{
+    (void)device;
+
+    return kd_pin_read(pin);
+}
+
+static rt_err_t k230_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                    rt_uint8_t mode, void (*hdr)(void *args),
+                                    void *args)
+{
+    (void)device;
+
+    return kd_pin_attach_irq(pin, mode, hdr, args);
+}
+
+static rt_err_t k230_pin_detach_irq(struct rt_device *device, rt_base_t pin)
+{
+    (void)device;
+
+    return kd_pin_detach_irq(pin);
+}
+
+static rt_err_t k230_pin_irq_enable(struct rt_device *device, rt_base_t pin,
+                                    rt_uint8_t enabled)
+{
+    (void)device;
+
+    return kd_pin_irq_enable(pin, enabled);
+}
+
+static const struct rt_pin_ops k230_pin_ops = {
+    .pin_mode = k230_pin_mode,
+    .pin_write = k230_pin_write,
+    .pin_read = k230_pin_read,
+    .pin_attach_irq = k230_pin_attach_irq,
+    .pin_detach_irq = k230_pin_detach_irq,
+    .pin_irq_enable = k230_pin_irq_enable,
+};
+
 int rt_hw_gpio_init(void)
 {
     rt_err_t ret;
@@ -393,7 +529,7 @@ int rt_hw_gpio_init(void)
     }
     gpio_dev.hardlock = HARDLOCK_GPIO;
 
-    ret = rt_device_register(&gpio_dev.dev, "gpio", RT_DEVICE_FLAG_RDWR);
+    ret = rt_device_pin_register("gpio", &k230_pin_ops, RT_NULL);
 
     return ret;
 }

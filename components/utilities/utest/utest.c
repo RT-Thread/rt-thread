@@ -14,15 +14,19 @@
 #include "utest.h"
 #include "utest_log.h"
 
-#define DBG_TAG          "utest"
+#ifdef RT_USING_FINSH
+#include <msh.h>
+#endif
+
+#define DBG_TAG "utest"
 #ifdef UTEST_DEBUG
-#define DBG_LVL          DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL          DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif
 #include <rtdbg.h>
 
-#if RT_CONSOLEBUF_SIZE < 256
+#if defined(RT_CONSOLEBUF_SIZE) && RT_CONSOLEBUF_SIZE < 256
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
@@ -33,9 +37,9 @@
 #endif
 
 #ifdef UTEST_THR_PRIORITY
-#define UTEST_THREAD_PRIORITY   UTEST_THR_PRIORITY
+#define UTEST_THREAD_PRIORITY UTEST_THR_PRIORITY
 #else
-#define UTEST_THREAD_PRIORITY   FINSH_THREAD_PRIORITY
+#define UTEST_THREAD_PRIORITY FINSH_THREAD_PRIORITY
 #endif
 
 static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
@@ -43,27 +47,25 @@ static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
 static rt_uint32_t tc_loop;
 static rt_uint8_t *tc_fail_list;
-static struct utest local_utest = {UTEST_PASSED, 0, 0};
+static struct utest local_utest = { UTEST_PASSED, 0, 0 };
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
-#pragma section="UtestTcTab"
+#pragma section = "UtestTcTab"
 #elif defined(_MSC_VER)
 #pragma section("UtestTcTab$a", read)
-__declspec(allocate("UtestTcTab$a")) const struct utest_tc_export __tc_export_begin =
-{
+__declspec(allocate("UtestTcTab$a")) const struct utest_tc_export __tc_export_begin = {
     "__start",
 };
 
 #pragma section("UtestTcTab$z", read)
-__declspec(allocate("UtestTcTab$z")) const struct utest_tc_export __tc_export_end =
-{
+__declspec(allocate("UtestTcTab$z")) const struct utest_tc_export __tc_export_end = {
     "__end",
 };
 #endif
 
-#define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
-#define TC_FAIL_LIST_MARK_FAILED(index)  (tc_fail_list[index / 8] |= (1UL << (index % 8)))
-#define TC_FAIL_LIST_IS_FAILED(index)    (tc_fail_list[index / 8] &  (1UL << (index % 8)))
+#define TC_FAIL_LIST_SIZE               (RT_ALIGN(tc_num, 8) / 8)
+#define TC_FAIL_LIST_MARK_FAILED(index) (tc_fail_list[index / 8] |= (1UL << (index % 8)))
+#define TC_FAIL_LIST_IS_FAILED(index)   (tc_fail_list[index / 8] & (1UL << (index % 8)))
 
 void utest_log_lv_set(rt_uint8_t lv)
 {
@@ -108,8 +110,9 @@ int utest_init(void)
     extern const int UtestTcTab$$Base;
     extern const int UtestTcTab$$Limit;
     tc_table = (utest_tc_export_t)&UtestTcTab$$Base;
+    // cppcheck-suppress subtractPointers
     tc_num = (utest_tc_export_t)&UtestTcTab$$Limit - tc_table;
-#elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
+#elif defined(__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
 #else
@@ -124,21 +127,26 @@ int utest_init(void)
     ptr_end = (unsigned int *)&__tc_export_end;
     ptr_begin += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
 #endif
-    while (*ptr_begin == 0) ptr_begin++;
+#if defined(__GNUC__) || defined(_MSC_VER)
+    while (*ptr_begin == 0)
+        ptr_begin++;
     ptr_end--;
-    while (*ptr_end == 0) ptr_end--;
+    while (*ptr_end == 0)
+        ptr_end--;
     /* copy tc_table from rodata section to ram */
     for (unsigned int *ptr = ptr_begin; ptr < ptr_end;)
     {
         if (!tc_table)
             tc_table = (utest_tc_export_t)rt_malloc(sizeof(struct utest_tc_export));
         else
-            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1)* sizeof(struct utest_tc_export));
+            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1) * sizeof(struct utest_tc_export));
         RT_ASSERT(tc_table);
         tc_table[tc_num++] = *((utest_tc_export_t)ptr);
         ptr += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
-        while (*ptr == 0) ptr++;
+        while (*ptr == 0)
+            ptr++;
     }
+#endif
 #endif
 
     LOG_I("utest is initialize success.");
@@ -146,7 +154,7 @@ int utest_init(void)
     if (tc_num > 0)
     {
         tc_fail_list = rt_malloc(TC_FAIL_LIST_SIZE);
-        if(!tc_fail_list)
+        if (!tc_fail_list)
         {
             LOG_E("no memory, tc_fail_list init failed!");
         }
@@ -178,8 +186,8 @@ static const char *file_basename(const char *file)
     char *end_ptr = RT_NULL;
     char *rst = RT_NULL;
 
-    if (!((end_ptr = strrchr(file, '\\')) != RT_NULL || \
-        (end_ptr = strrchr(file, '/')) != RT_NULL) || \
+    if (!((end_ptr = strrchr(file, '\\')) != RT_NULL ||
+          (end_ptr = strrchr(file, '/')) != RT_NULL) ||
         (rt_strlen(file) < 2))
     {
         rst = (char *)file;
@@ -218,6 +226,44 @@ static int utest_help(void)
     return 0;
 }
 
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+static void utest_loop_runtime_info(rt_uint32_t loop)
+{
+    if (tc_loop <= 1)
+    {
+        return;
+    }
+
+    LOG_I("[==========] [ utest    ] loop %u/%u runtime info", (rt_uint32_t)loop, (rt_uint32_t)tc_loop);
+
+#ifdef RT_USING_FINSH
+    {
+        static char free_cmd[] = "free";
+        static char ps_cmd[] = "ps";
+        int ret = 0;
+
+        ret |= msh_exec(free_cmd, sizeof(free_cmd) - 1);
+        ret |= msh_exec(ps_cmd, sizeof(ps_cmd) - 1);
+        if (ret != 0)
+        {
+            /* do not fail the test run just because the commands are absent, but make it visible */
+            LOG_W("[==========] [ utest    ] 'free'/'ps' are not available, runtime info is incomplete");
+        }
+    }
+#else
+    {
+        rt_size_t total = 0;
+        rt_size_t used = 0;
+        rt_size_t max_used = 0;
+
+        rt_memory_info(&total, &used, &max_used);
+        LOG_I("[==========] [ utest    ] memory total:%u used:%u maximum:%u",
+              (rt_uint32_t)total, (rt_uint32_t)used, (rt_uint32_t)max_used);
+    }
+#endif /* RT_USING_FINSH */
+}
+#endif /* RT_UTEST_AUTO_RUN_LOOP */
+
 static void utest_do_run(const char *utest_name)
 {
     rt_size_t i;
@@ -226,7 +272,7 @@ static void utest_do_run(const char *utest_name)
     rt_uint32_t tc_fail_num = 0;
     rt_uint32_t tc_run_num = 0;
 
-    for (index = 0; index < tc_loop; index ++)
+    for (index = 0; index < tc_loop; index++)
     {
         i = 0;
         is_find = RT_FALSE;
@@ -240,7 +286,7 @@ static void utest_do_run(const char *utest_name)
 
         LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
         LOG_I("[==========] [ utest    ] started");
-        while(i < tc_num)
+        while (i < tc_num)
         {
             if (utest_name)
             {
@@ -270,7 +316,7 @@ static void utest_do_run(const char *utest_name)
                 if (tc_table[i].init() != RT_EOK)
                 {
                     TC_FAIL_LIST_MARK_FAILED(i);
-                    tc_fail_num ++;
+                    tc_fail_num++;
                     tc_failed = RT_TRUE;
                     LOG_E("[  FAILED  ] [ result   ] testcase init (%s)", tc_table[i].name);
                     goto __tc_continue;
@@ -279,6 +325,10 @@ static void utest_do_run(const char *utest_name)
 
             if (tc_table[i].tc != RT_NULL)
             {
+                local_utest.error = UTEST_PASSED;
+                local_utest.passed_num = 0;
+                local_utest.failed_num = 0;
+
                 tc_table[i].tc();
                 if (local_utest.failed_num == 0)
                 {
@@ -287,7 +337,7 @@ static void utest_do_run(const char *utest_name)
                 else
                 {
                     TC_FAIL_LIST_MARK_FAILED(i);
-                    tc_fail_num ++;
+                    tc_fail_num++;
                     tc_failed = RT_TRUE;
                     LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 }
@@ -295,7 +345,7 @@ static void utest_do_run(const char *utest_name)
             else
             {
                 TC_FAIL_LIST_MARK_FAILED(i);
-                tc_fail_num ++;
+                tc_fail_num++;
                 tc_failed = RT_TRUE;
                 LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
             }
@@ -307,17 +357,17 @@ static void utest_do_run(const char *utest_name)
                     if (tc_failed == RT_FALSE)
                     {
                         TC_FAIL_LIST_MARK_FAILED(i);
-                        tc_fail_num ++;
+                        tc_fail_num++;
                     }
                     LOG_E("[  FAILED  ] [ result   ] testcase cleanup (%s)", tc_table[i].name);
                     goto __tc_continue;
                 }
             }
 
-    __tc_continue:
+        __tc_continue:
             LOG_I("[----------] [ testcase ] (%s) finished", tc_table[i].name);
 
-            tc_run_num ++;
+            tc_run_num++;
             i++;
         }
 
@@ -331,10 +381,10 @@ static void utest_do_run(const char *utest_name)
         LOG_I("[==========] [ utest    ] %d tests from %d testcase ran.", tc_run_num, tc_num);
         LOG_I("[  PASSED  ] [ result   ] %d tests.", tc_run_num - tc_fail_num);
 
-        if(tc_fail_list && (tc_fail_num > 0))
+        if (tc_fail_list && (tc_fail_num > 0))
         {
             LOG_E("[  FAILED  ] [ result   ] %d tests, listed below:", tc_fail_num);
-            for(i = 0; i < tc_num; i ++)
+            for (i = 0; i < tc_num; i++)
             {
                 if (TC_FAIL_LIST_IS_FAILED(i))
                 {
@@ -344,7 +394,18 @@ static void utest_do_run(const char *utest_name)
         }
 
         LOG_I("[==========] [ utest    ] finished");
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+        utest_loop_runtime_info(index + 1);
+#endif
     }
+
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    /* Emitted once, after every loop and its runtime info. CI uses this line
+     * instead of the per-loop "finished" one, otherwise it would stop after the
+     * first loop and miss the remaining loops and their free/ps output. */
+    LOG_I("[==========] [ utest    ] all loops finished");
+#endif
 }
 
 static void utest_thr_entry(void *para)
@@ -370,14 +431,23 @@ static void utest_thread_create(const char *utest_name)
 #ifdef RT_UTEST_USING_AUTO_RUN
 static int utest_auto_run(void)
 {
+#ifdef RT_UTEST_AUTO_RUN_LOOP
+    tc_loop = RT_UTEST_AUTO_RUN_LOOP;
+#else
     tc_loop = 1;
+#endif
+    if (tc_loop == 0)
+    {
+        tc_loop = 1;
+    }
+
     utest_thread_create(RT_NULL);
     return RT_EOK;
 }
 INIT_APP_EXPORT(utest_auto_run);
 #endif /* RT_UTEST_USING_AUTO_RUN */
 
-int utest_testcase_run(int argc, char** argv)
+int utest_testcase_run(int argc, char **argv)
 {
     static char utest_name[UTEST_NAME_MAX_LEN];
     rt_memset(utest_name, 0x0, sizeof(utest_name));
@@ -394,7 +464,7 @@ int utest_testcase_run(int argc, char** argv)
         {
             if (argc == 3 || argc == 4)
             {
-                rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
+                rt_strncpy(utest_name, argv[2], sizeof(utest_name) - 1);
                 if (argc == 4)
                 {
                     tc_loop = atoi(argv[3]);
@@ -408,7 +478,7 @@ int utest_testcase_run(int argc, char** argv)
         }
         else
         {
-            rt_strncpy(utest_name, argv[1], sizeof(utest_name) -1);
+            rt_strncpy(utest_name, argv[1], sizeof(utest_name) - 1);
             if (argc == 3)
             {
                 tc_loop = atoi(argv[2]);
@@ -424,7 +494,7 @@ int utest_testcase_run(int argc, char** argv)
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num], optenable);
+MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run[-thread or -help][testcase name][loop num], optenable);
 
 utest_t utest_handle_get(void)
 {
@@ -433,6 +503,9 @@ utest_t utest_handle_get(void)
 
 void utest_unit_run(test_unit_func func, const char *unit_func_name)
 {
+    rt_uint32_t passed_num = local_utest.passed_num;
+    rt_uint32_t failed_num = local_utest.failed_num;
+
     LOG_I("[==========] utest unit name: (%s)", unit_func_name);
     local_utest.error = UTEST_PASSED;
     local_utest.passed_num = 0;
@@ -441,6 +514,16 @@ void utest_unit_run(test_unit_func func, const char *unit_func_name)
     if (func != RT_NULL)
     {
         func();
+    }
+
+    passed_num += local_utest.passed_num;
+    failed_num += local_utest.failed_num;
+
+    local_utest.passed_num = passed_num;
+    local_utest.failed_num = failed_num;
+    if (local_utest.failed_num != 0)
+    {
+        local_utest.error = UTEST_FAILED;
     }
 }
 
@@ -462,7 +545,7 @@ rt_bool_t utest_assert(int value, const char *file, int line, const char *func, 
     if (!(value))
     {
         local_utest.error = UTEST_FAILED;
-        local_utest.failed_num ++;
+        local_utest.failed_num++;
         LOG_E("[  ASSERT  ] [ unit     ] at (%s); func: (%s:%d); msg: (%s)", file_basename(file), func, line, msg);
         rst = RT_FALSE;
     }
@@ -473,7 +556,7 @@ rt_bool_t utest_assert(int value, const char *file, int line, const char *func, 
             LOG_D("[    OK    ] [ unit     ] (%s:%d) is passed", func, line);
         }
         local_utest.error = UTEST_PASSED;
-        local_utest.passed_num ++;
+        local_utest.passed_num++;
         rst = RT_TRUE;
     }
 

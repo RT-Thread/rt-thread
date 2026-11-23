@@ -43,12 +43,12 @@
 #include "rtatomic.h"
 #include <rthw.h>
 
-#define THREAD_PRIORITY         25
-#define THREAD_TIMESLICE        1
-#define THREAD_STACKSIZE        UTEST_THR_STACK_SIZE
+#define THREAD_PRIORITY  25
+#define THREAD_TIMESLICE 1
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 
 /* convenience macro - return either 64-bit or 32-bit value */
-#define ATOMIC_WORD(val_if_64, val_if_32)                                           \
+#define ATOMIC_WORD(val_if_64, val_if_32) \
     ((rt_atomic_t)((sizeof(void *) == sizeof(uint64_t)) ? (val_if_64) : (val_if_32)))
 
 static rt_atomic_t count = 0;
@@ -181,6 +181,26 @@ static void test_atomic_add(void)
     }
     i = rt_atomic_load(&count);
     uassert_true(i == 3000000);
+
+    /*
+     * The three workers exit right after releasing the semaphore, so their TCB
+     * and stack are only released once rt_defunct_execute() runs - and that runs
+     * in the idle thread, which never gets scheduled while this testcase keeps a
+     * runnable thread around. Without the yield below, every run of this testcase
+     * leaves three threads allocated: running it repeatedly in one boot grows the
+     * thread list 3 -> 6 -> 9 and the used heap by 3 * (stack + TCB) per run
+     * (measured 12952 bytes with UTEST_THR_STACK_SIZE = 4096 and 25240 with 8192,
+     * both of which reduce to an rt_thread of about 221 bytes).
+     *
+     * rt_thread_mdelay() suspends this thread for a tick and reschedules, so the
+     * CPU is handed to whatever else is ready - the idle thread included - and the
+     * defunct queue gets processed. It does not wait for the idle thread
+     * specifically; it only gives up the CPU, which is all that is needed here.
+     * Same convention as hooklist_tc.c, which waits for the defunct queue too.
+     */
+    rt_thread_mdelay(1);
+    rt_sem_delete(sem_t);
+    sem_t = RT_NULL;
 }
 
 static rt_err_t utest_tc_init(void)

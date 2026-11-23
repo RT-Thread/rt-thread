@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd, cwd + '/../../include']
+
+if GetDepend(['RT_UTEST_DAC']):
+    src += ['dac_tc.c']
+
+if GetDepend(['RT_UTEST_PWM']):
+    src += ['pwm_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,10 @@
+config RT_UTEST_DLMODULE
+    bool "dlmodule ELF loading and relocation tests (32-bit ARM GCC)"
+    depends on ARCH_ARM_CORTEX_A && !ARCH_CPU_64BIT && !RT_USING_SMART
+    depends on RT_USING_MODULE && RT_USING_DFS && RT_USING_POSIX_FS
+    default n
+    help
+        Build real 32-bit ARM ELF modules and test dlopen, dlsym and dlclose.
+        Requires GCC and a writable filesystem mounted at /.
+        Fixture generation uses -marm -mcpu=arm926ej-s and verifies the
+        GCC-generated ELF layout, section types and symbol properties.

@@ -34,7 +34,11 @@
 #include <page.h>
 
 #include <cpuport.h>
+#ifdef RT_USING_RISCV_NEW_COMMON
+#include <csr.h>
+#else
 #include <encoding.h>
+#endif
 #include <stack.h>
 #include <cache.h>
 
@@ -113,7 +117,11 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
 void *arch_kernel_mmu_table_get(void)
 {
+#if defined(RT_USING_RISCV_NEW_COMMON) && defined(RT_USING_SMP) && RT_CPUS_NR > 1
+    return (void *)((char *)MMUTable + rt_hw_cpu_id() * ARCH_PAGE_SIZE);
+#else
     return (void *)((char *)MMUTable);
+#endif
 }
 
 void arch_user_space_free(struct rt_lwp *lwp)
@@ -165,15 +173,25 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     RT_ASSERT(new_thread_stack != RT_NULL);
     RT_ASSERT(thread_sp != RT_NULL);
     struct rt_hw_stack_frame *syscall_frame;
+#ifdef RT_USING_RISCV_NEW_COMMON
+    struct rt_hw_switch_frame *frame;
+#else
     struct rt_hw_stack_frame *thread_frame;
+#endif
 
     rt_uint8_t *stk;
+#ifndef RT_USING_RISCV_NEW_COMMON
     rt_uint8_t *syscall_stk;
+#endif
 
     stk = (rt_uint8_t *)new_thread_stack;
     /* reserve syscall context, all the registers are copyed from parent */
+#ifdef RT_USING_RISCV_NEW_COMMON
+    stk -= CTX_ALL_REG_NR * sizeof(void *);
+#else
     stk -= CTX_REG_NR * REGBYTES;
     syscall_stk = stk;
+#endif
 
     syscall_frame = (struct rt_hw_stack_frame *)stk;
 
@@ -191,6 +209,15 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     rt_thread_t thread = rt_container_of((unsigned long)thread_sp, struct rt_thread, sp);
     syscall_frame->tp = (rt_ubase_t)thread->thread_idr;
 
+#ifdef RT_USING_RISCV_NEW_COMMON
+    frame = (struct rt_hw_switch_frame *)((rt_ubase_t)stk - sizeof(*frame));
+    rt_memset(frame, 0, sizeof(*frame));
+
+    frame->regs[RT_HW_SWITCH_CONTEXT_RA] = (rt_ubase_t)exit;
+    frame->regs[RT_HW_SWITCH_CONTEXT_XSTATUS] = (csr_read(CSR_STATUS) | SR_PP) & ~SR_IE;
+
+    stk = (void *)frame;
+#else
 #ifdef ARCH_USING_NEW_CTX_SWITCH
     extern void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus);
     rt_ubase_t sstatus = read_csr(sstatus) | SSTATUS_SPP;
@@ -221,6 +248,7 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
     thread_frame->user_sp_exc_stack = (rt_ubase_t)syscall_stk;
 
 #endif /* ARCH_USING_NEW_CTX_SWITCH */
+#endif /* RT_USING_RISCV_NEW_COMMON */
     /* save new stack top */
     *thread_sp = (void *)stk;
 

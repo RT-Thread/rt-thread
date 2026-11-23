@@ -8,8 +8,15 @@ LR_IROM1 0x08000000 0x00100000  {    ; load region size_region
    *(InRoot$$Sections)
    .ANY (+RO)
   }
+  ; Reserved for the WS2812 BDMA buffer in D3 domain SRAM4 (BDMA can only
+  ; access SRAM4); the buffer itself is provided by a standalone package.
+  RW_SRAM4 0x38000000 0x00008000  {
+    *(.ws2812_bdma)
+  }
+
   RW_IRAM1 0x24000000 0x00050000  {  ; RW data
    .ANY (+RW +ZI)
   }
+  
 }
 

@@ -180,7 +180,7 @@ void dfs_file_unlock(void)
  * @param fd The file descriptor that the table must accommodate.
  * @return int
  *         - The input file descriptor `fd` if it is within the current or newly expanded table's capacity.
- *         - `-1` if the requested file descriptor exceeds `DFS_FD_MAX` or memory allocation fails.
+ *         - `-EMFILE` if the descriptor limit is reached, or `-ENOMEM` if allocation fails.
  */
 static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
 {
@@ -197,7 +197,7 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
     /* If the file descriptor exceeds the maximum allowable limit, return an error.*/
     if (fd >= DFS_FD_MAX)
     {
-        return -1;
+        return -EMFILE;
     }
 
     /* Calculate the new capacity, rounding up to the nearest multiple of 4.*/
@@ -213,7 +213,7 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
     fds = (struct dfs_file **)rt_realloc(fdt->fds, nr * sizeof(struct dfs_file *));
     if (!fds)
     {
-        return -1;
+        return -ENOMEM;
     }
 
     /* clean the new allocated fds */
@@ -236,7 +236,7 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
  * @param startfd The starting index for the search for an empty slot.
  * @return int
  *         - The index of the first available slot if successful.
- *         - `-1` if no slot is available or if table expansion fails
+ *         - `-EMFILE` if the descriptor limit is reached, or `-ENOMEM` if allocation fails.
  */
 static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
@@ -256,11 +256,7 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
     {
         idx = startfd;
     }
-    if (fd_slot_expand(fdt, idx) < 0)
-    {
-        return -1;
-    }
-    return idx;
+    return fd_slot_expand(fdt, idx);
 }
 
 /**
@@ -271,7 +267,7 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
  *
  * @return
  * - The index of the allocated file descriptor if successful.
- * - `-1` if no slot is available or memory allocation fails.
+ * - `-EMFILE` if the descriptor limit is reached, or `-ENOMEM` if allocation fails.
  */
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
@@ -280,15 +276,15 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 
     idx = fd_slot_alloc(fdt, startfd);
 
-    /* allocate  'struct dfs_file' */
     if (idx < 0)
     {
-        return -1;
+        return idx;
     }
+
     fd = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
     if (!fd)
     {
-        return -1;
+        return -ENOMEM;
     }
     fd->ref_count = 1;
     fd->magic = DFS_FD_MAGIC;
@@ -302,7 +298,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
  * @ingroup group_fs_file_descriptor
  * This function will allocate a file descriptor.
  *
- * @return -1 on failed or the allocated file descriptor.
+ * @return The allocated descriptor, or -1 with errno set on failure.
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
@@ -314,13 +310,13 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     /* find an empty fd entry */
     idx = fd_alloc(fdt, DFS_STDIO_OFFSET);
 
-    /* can't find an empty fd entry */
+    dfs_file_unlock();
     if (idx < 0)
     {
-        LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
+        LOG_E("Failed to allocate a file descriptor.");
+        rt_set_errno(-idx);
+        return -1;
     }
-
-    dfs_file_unlock();
     return idx;
 }
 
@@ -479,7 +475,7 @@ rt_err_t sys_dup(int oldfd)
     }
 exit:
     dfs_file_unlock();
-    return newfd;
+    return newfd < 0 ? -1 : newfd;
 }
 
 /**

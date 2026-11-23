@@ -421,6 +421,11 @@ int tty_wait_background(struct lwp_tty *tp, struct rt_thread *td, int sig)
     tty_assert_locked(tp);
 
     p = td->lwp;
+    if (p == RT_NULL)
+    {
+        /* kernel threads have no process group: nothing to wait for */
+        return 0;
+    }
     for (;;)
     {
         pg = p->pgrp;
@@ -925,6 +930,12 @@ static int tty_drop_ctty(struct lwp_tty *tp, struct rt_lwp *p)
     struct vnode *vp;
 #endif
 
+    /* a kernel thread owns no session or process group */
+    if (p == RT_NULL)
+    {
+        return -ENOTTY;
+    }
+
     /*
      * This looks terrible, but it's generally safe as long as the tty
      * hasn't gone away while we had the lock dropped.  All of our sanity
@@ -1289,16 +1300,8 @@ static int tty_generic_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, void *data,
         case TIOCSCTTY:
             return lwp_tty_set_ctrl_proc(tp, td);
         case TIOCSPGRP: {
-            int pgid;
-            if (lwp_in_user_space((void *)data))
-            {
-                if (lwp_get_from_user(&pgid, data, sizeof(int)) != sizeof(int))
-                    return -EFAULT;
-            }
-            else
-            {
-                pgid = *(int *)data;
-            }
+            /* data is a kernel buffer: the ioctl adapters are the uaccess boundary */
+            int pgid = *(int *)data;
             return lwp_tty_assign_foreground(tp, td, pgid);
         }
         case TIOCFLUSH: {

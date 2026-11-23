@@ -9,6 +9,7 @@
  */
 
 #include "drv_config.h"
+#include <string.h>
 #include "drv_eth.h"
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
@@ -99,10 +100,12 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
     struct rt_n32_eth *eth = (struct rt_n32_eth *)dev;
     EthFuncStatusType status;
 
+#if defined(SOC_SERIES_N32H7xx)
     /* Enable or disable PWR Clock */
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_PWR, ENABLE);
     /* Enable or disable the power domain of the ETH */
     PWR_MoudlePowerEnable(ETH_PWR_CTRL, ENABLE);
+#endif
     /* Enable or disable ETH Clock */
     ETH_RCC_ENABLE_AHB_PERIPHEN_CLK(ETH_RCC_AHB_PERIPHEN, ENABLE);
 
@@ -132,7 +135,7 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
     ETH_DeInit(ETH);
 
     /* Set ETH initialization parameters by default */
-    ETH_StructInit(ETH, &sETH_InitParam);
+    ETH_STRUCT_INIT(&sETH_InitParam);
 
     /* Modify ETH initialization parameters (only override StructInit defaults) */
     /* MAC Configuration */
@@ -687,6 +690,44 @@ static void phy_linkchange(void)
             phy_speed_new |= PHY_FULL_DUPLEX;
         }
 
+#elif defined(PHY_USING_DM9162EP)
+        /* DM9162EP: read PHY specific status register (0x11) for speed/duplex */
+        ETH_ReadPHYRegister(ETH, phy_addr, PHY_SDSR, &SR);
+        LOG_D("DM9162EP status reg is 0x%X", (unsigned int)SR);
+
+        if (PHY_Status_SPEED_100M(SR))
+        {
+            phy_speed_new |= PHY_100M;
+        }
+        else
+        {
+            phy_speed_new |= PHY_10M;
+        }
+
+        if (PHY_Status_FULL_DUPLEX(SR))
+        {
+            phy_speed_new |= PHY_FULL_DUPLEX;
+        }
+
+#elif defined(PHY_USING_LAN8720A)
+        /* LAN8720A: read PHY specific status register (0x1F) for speed/duplex */
+        ETH_ReadPHYRegister(ETH, phy_addr, PHY_SDSR, &SR);
+        LOG_D("LAN8720A status reg is 0x%X", (unsigned int)SR);
+
+        if (PHY_Status_SPEED_100M(SR))
+        {
+            phy_speed_new |= PHY_100M;
+        }
+        else
+        {
+            phy_speed_new |= PHY_10M;
+        }
+
+        if (PHY_Status_FULL_DUPLEX(SR))
+        {
+            phy_speed_new |= PHY_FULL_DUPLEX;
+        }
+
 #else
         /* Generic PHY: read from status register only, no extended info */
         phy_speed_new |= PHY_100M;
@@ -703,12 +744,15 @@ static void phy_linkchange(void)
         {
             LOG_I("link up");
 
+#if defined(SOC_SERIES_N32H7xx)
             if (phy_speed & PHY_1000M)
             {
                 LOG_D("1000Mbps");
                 n32_eth_device.ETH_Speed = ETH_SPEED_1000M;
             }
-            else if (phy_speed & PHY_100M)
+            else
+#endif
+                if (phy_speed & PHY_100M)
             {
                 LOG_D("100Mbps");
                 n32_eth_device.ETH_Speed = ETH_SPEED_100M;
@@ -734,7 +778,7 @@ static void phy_linkchange(void)
              * in MACCFG (PS[15], FES[14], DM[13]), then restart everything. */
             ETH_StopIT(ETH, &sEthInfo);
             MODIFY_REG(ETH->MACCFG,
-                       (ETH_MACCFG_PS | ETH_MACCFG_FES | ETH_MACCFG_DM),
+                       ETH_MACCFG_SPEED_DUPLEX_MASK,
                        (n32_eth_device.ETH_Speed | n32_eth_device.ETH_Mode));
             ETH_StartIT(ETH, &sEthInfo);
 
@@ -894,7 +938,7 @@ static int rt_hw_n32_eth_init(void)
 
     /* Set default speed based on media interface:
      * GMII → 1000M, MII/RMII → 100M. Actual speed is updated after PHY auto-negotiation. */
-#if (ETH_MEDIA_INTERFACE == ETH_GMII_MODE)
+#if defined(SOC_SERIES_N32H7xx) && (ETH_MEDIA_INTERFACE == ETH_GMII_MODE)
     n32_eth_device.ETH_Speed = ETH_SPEED_1000M;
 #else
     n32_eth_device.ETH_Speed = ETH_SPEED_100M;
@@ -1026,6 +1070,10 @@ const char *n32_eth_get_phy_name(void)
     return "RTL8211EG";
 #elif defined(PHY_USING_YT8522H)
     return "YT8522H";
+#elif defined(PHY_USING_DM9162EP)
+    return "DM9162EP";
+#elif defined(PHY_USING_LAN8720A)
+    return "LAN8720A";
 #else
     return "Unknown";
 #endif

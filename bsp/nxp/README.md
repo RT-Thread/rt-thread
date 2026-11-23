@@ -13,6 +13,7 @@ NXP 系列 BSP 目前支持情况如下表所示：
 | [frdm-mcxa346](mcx/mcxa/frdm-mcxa346) | NXP 官方 FRDM-MCXA346 开发板 |
 | [frdm-mcxa344](mcx/mcxa/frdm-mcxa344) | NXP 官方 FRDM-MCXA344 开发板 |
 | **MCXC 系列** |  |
+| [frdm-mcxc162](mcx/mcxc/frdm-mcxc162) | NXP 官方 FRDM-MCXC162 开发板 |
 | [frdm-mcxc444](mcx/mcxc/frdm-mcxc444) | NXP 官方 FRDM-MCXC444 开发板 |
 | **LPC 系列**                                      |                                     |
 | [lpc43xx](lpc/lpc43xx)                           | NXP LPC43xx 系列开发板                   |

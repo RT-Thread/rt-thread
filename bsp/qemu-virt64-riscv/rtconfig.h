@@ -1,6 +1,10 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define BSP_QEMU_RISCV64
+#define ARCH_TEXT_OFFSET 0x200000
+#define ARCH_RAM_OFFSET 0x80000000
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -81,6 +85,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_HOOKLIST
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 16384
@@ -122,19 +127,27 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_USING_CONSOLE_OUTPUT_CTL
-#define RT_VER_NUM 0x50300
+#define RT_VER_NUM 0x50400
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define ARCH_HEAP_SIZE 0x4000000
+#define ARCH_INIT_PAGE_SIZE 0x200000
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
+#define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+
+/* RISC-V Architecture Configuration */
+
+#define RT_USING_RISCV_NEW_COMMON
+/* end of RISC-V Architecture Configuration */
 #define ARCH_USING_NEW_CTX_SWITCH
-#define ARCH_USING_RISCV_COMMON64
-#define ARCH_REMAP_KERNEL
 
 /* RT-Thread Components */
 
@@ -182,10 +195,12 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_TMPFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -195,6 +210,9 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_8250
+#define RT_SERIAL_EARLY_SBI
 #define RT_USING_CLOCK_TIME
 #define CLOCK_TIMER_FREQ 0
 #define RT_USING_NULL
@@ -202,7 +220,38 @@
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
+#define RT_USING_RESET
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_VIRTIO
+#define RT_VIRTIO_TRANSPORT_MMIO
+#define RT_VIRTIO_NET
+#define RT_VIRTIO_BLK
+#define RT_VIRTIO_CONSOLE
+#define RT_VIRTIO_RPROC_SERIAL
+#define RT_USING_DMA
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PIC
+#define MAX_HANDLERS 256
+#define RT_PIC_RISCV_INTC
+#define RT_PIC_SIFIVE_PLIC
 #define RT_USING_PIN
+#define RT_USING_CLK
+
+/* SoC (System on Chip) Drivers */
+
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -225,6 +274,7 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_SOCKET
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
@@ -234,7 +284,7 @@
 /* Interprocess Communication (IPC) */
 
 #define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
+#define RT_USING_POSIX_PIPE_SIZE 2048
 
 /* Socket is in the 'Network' category */
 
@@ -302,7 +352,9 @@
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
 #define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_NETIF_LOOPBACK
+#define RT_LWIP_USING_LOOPBACK
+#define LWIP_NETIF_LOOPBACK 1
 #define RT_LWIP_USING_PING
 /* end of Network */
 
@@ -322,8 +374,11 @@
 
 /* Memory management */
 
+#define RT_PAGE_MPR_SIZE_DYNAMIC
 #define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
 #define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMBLOCK
+#define RT_INIT_MEMORY_REGIONS 128
 
 /* Debugging */
 
@@ -437,6 +492,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -468,6 +527,10 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -547,25 +610,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* RISC-V QEMU virt64 configs */
-
-#define RT_USING_LEGACY_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_BLK
-#define RT_USING_VIRTIO_NET
-#define RT_USING_VIRTIO_CONSOLE
-#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
-#define RT_USING_VIRTIO_GPU
-#define RT_USING_VIRTIO_INPUT
-#define BSP_USING_VIRTIO_BLK
-#define BSP_USING_VIRTIO_NET
-#define BSP_USING_VIRTIO_CONSOLE
-#define BSP_USING_VIRTIO_GPU
-#define BSP_USING_VIRTIO_INPUT
-/* end of RISC-V QEMU virt64 configs */
-#define BOARD_QEMU_VIRT_RV64
-#define ENABLE_FPU
-#define __STACKSIZE__ 16384
+#define BSP_USING_QEMU_RISCV_VIRT
 
 #endif

@@ -7,6 +7,16 @@
 
 /* rt_vsnprintf options */
 
+#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
+#define RT_KLIBC_USING_VSNPRINTF_STANDARD
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
+#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
+#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
+#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -104,7 +114,7 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_USING_CONSOLE_OUTPUT_CTL
-#define RT_VER_NUM 0x50300
+#define RT_VER_NUM 0x50301
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define ARCH_RISCV
@@ -291,6 +301,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -318,12 +332,24 @@
 /* HPMicro SDK */
 
 #define PKG_USING_HPM_SDK
-#define PKG_USING_HPM_SDK_V110
+#define PKG_USING_HPM_SDK_V113
 /* end of HPMicro SDK */
+
+/* FM33 Drivers */
+
+/* end of FM33 Drivers */
 
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
+
+/* N32 Drivers */
+
+/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -403,11 +429,11 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-#define SOC_HPM6300_SERIES
+#define SOC_SERIES_HPM6000
 
 /* Hardware Drivers Config */
 
-#define SOC_HPM6300
+#define SOC_HPM6000
 
 /* On-chip Peripheral Drivers */
 
@@ -419,6 +445,33 @@
 #define BSP_UART0_TX_BUFSIZE 0
 #define BSP_UART0_IRQ_PRIORITY 1
 /* end of On-chip Peripheral Drivers */
+
+/* HPMicro Interrupt Config */
+
+/* HPMicro RT-Thread Interrupt Framework */
+
+/* HPMicro Use Generic Startup Implementation */
+
+/* end of HPMicro Use Generic Startup Implementation */
+
+/* HPMicro RT-Thread backtrace configuration (experimental) */
+
+/* end of HPMicro RT-Thread backtrace configuration (experimental) */
 /* end of Hardware Drivers Config */
+
+/* Third-Party Add-ons */
+
+/* Segger SystemView Config */
+
+/* end of Segger SystemView Config */
+
+/* RT-Thread Insight Config */
+
+/* end of RT-Thread Insight Config */
+
+/* AMPAK Wi-Fi module Configuration */
+
+/* end of AMPAK Wi-Fi module Configuration */
+/* end of Third-Party Add-ons */
 
 #endif

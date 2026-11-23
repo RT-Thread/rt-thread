@@ -161,36 +161,66 @@ static void dma_recv_callback(struct rt_serial_device *serial, rt_uint8_t isr_fl
 
 #if defined(SOC_SERIES_N32H7xx)
 
-    rt_size_t read_len;
-    read_len = DMA_GetTransferredNumber(uart->config->dma_rx->Instance, uart->config->dma_rx->dma_channel);
-
+    /* BTS (per-block byte count in CHNCTRL) is only valid within the current
+     * LLI block: the hardware loads the next block and wraps BTS the instant a
+     * block completes. Reading BTS inside the TC ISR may therefore see the
+     * already-wrapped value, and diffing it against the last value would
+     * produce a huge underflow count that permanently corrupts the FIFO put
+     * index. Correct scheme:
+     *  - TC ISR only accumulates "actual bytes completed" (no BTS read, no RX
+     *    report; the DMA IRQ has a higher priority than the UART IRQ, so the
+     *    accumulated value is always up to date when the IDLE handler runs);
+     *  - BTS is read only at IDLE (end of frame):
+     *        cumulative = completed-block bytes + BTS
+     *        bytes since last IDLE = cumulative difference.
+     * NOTE: the last LLI item of the ring may be shorter than 4095B
+     * (remain_len), so the TC ISR must add each block's real size by its index,
+     * otherwise the counter drifts per ring turn (16384B buffer -> 4091B). */
     switch (isr_flag)
     {
     case UART_RX_DMA_IT_IDLE_FLAG:
     {
-        if (uart->dma.rx_dma.block_has_recv_cnt != 0)
-        {
-            recv_len = read_len - uart->dma.rx_dma.block_has_recv_cnt;
-        }
-        else
-        {
-            recv_len = read_len;
-        }
-        uart->dma.rx_dma.block_has_recv_cnt = read_len;
+        rt_uint32_t read_len;
+        rt_uint32_t cum;
+        rt_uint32_t delta;
 
+        read_len = DMA_GetTransferredNumber(uart->config->dma_rx->Instance, uart->config->dma_rx->dma_channel);
+        cum = uart->dma.rx_dma.lli_byte_base + read_len;
+        delta = cum - uart->dma.rx_dma.lli_last_cum;   /* u32 wrap-safe subtraction */
+        uart->dma.rx_dma.lli_last_cum = cum;
+
+        /* A frame must fit into the FIFO/ring buffer, otherwise the DMA has
+         * already overwritten it: an illegal state, drop the report */
+        if (delta > 0 && delta <= serial->config.bufsz)
+        {
+            recv_len = delta;
+        }
+        else if (delta > 0)
+        {
+            LOG_E("%s RX DMA delta %u > bufsz %u, drop", uart->config->name, delta, serial->config.bufsz);
+        }
         break;
     }
     case UART_RX_DMA_IT_BLOCK_TC_FLAG:
     {
-        if (uart->dma.rx_dma.block_has_recv_cnt != 0)
+        /* Add the real size of the block that just completed: the tail item
+         * is remain_len bytes, all other items are DMA_BLOCK_SIZE bytes */
+        rt_uint16_t blk_num = uart->dma.rx_dma.block_num;
+
+        if (blk_num > 0)
         {
-            recv_len = read_len - uart->dma.rx_dma.block_has_recv_cnt;
-            uart->dma.rx_dma.block_has_recv_cnt = 0;
+            rt_uint16_t blk_idx = (rt_uint16_t)(uart->dma.rx_dma.lli_blk_cnt % blk_num);
+
+            if ((blk_idx == (rt_uint16_t)(blk_num - 1)) && uart->dma.rx_dma.remain_len != 0)
+            {
+                uart->dma.rx_dma.lli_byte_base += uart->dma.rx_dma.remain_len;
+            }
+            else
+            {
+                uart->dma.rx_dma.lli_byte_base += DMA_BLOCK_SIZE;
+            }
         }
-        else
-        {
-            recv_len = DMA_BLOCK_SIZE;
-        }
+        uart->dma.rx_dma.lli_blk_cnt++;
         break;
     }
 
@@ -950,7 +980,9 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
     if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN))
     {
 #if defined(SOC_SERIES_N32H7xx)
-        uart->dma.rx_dma.block_has_recv_cnt = 0;
+        uart->dma.rx_dma.lli_blk_cnt = 0;
+        uart->dma.rx_dma.lli_byte_base = 0;
+        uart->dma.rx_dma.lli_last_cum = 0;
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
         uart->dma.rx_dma.remaining_cnt = cfg->bufsz;
 #endif /* SOC_SERIES_N32H7xx */
@@ -2194,7 +2226,7 @@ int rt_hw_usart_init(void)
                     uart_obj[i].dma.rx_dma.Read_LinkList[j].pNext = &uart_obj[i].dma.rx_dma.Read_LinkList[j + 1U];
                 }
 
-                /* The last block and block size ≠ BLOCK_SIZE */
+                /* The last block and block size != BLOCK_SIZE */
                 if ((j + 1U) == uart_obj[i].dma.rx_dma.block_num && uart_obj[i].dma.rx_dma.remain_len != 0U)
                 {
                     uart_obj[i].dma.rx_dma.Read_LinkList[j].BlkTfrSize = uart_obj[i].dma.rx_dma.remain_len;

@@ -1,0 +1,25 @@
+Import('rtconfig')
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+board.c
+MCUX_Config/board/clock_config.c
+MCUX_Config/board/pin_mux.c
+''')
+
+linkflags = ''
+if rtconfig.PLATFORM == 'armclang':
+    linkflags = ' --keep *.o(.rti_fn.*) --keep *.o(FSymTab) --keep *.o(VSymTab)'
+
+group = DefineGroup(
+    'Drivers',
+    src,
+    depend=[''],
+    CPPPATH=[cwd, cwd + '/MCUX_Config/board'],
+    CPPDEFINES=['CPU_MCXC162VFT'],
+    LINKFLAGS=linkflags,
+)
+
+Return('group')

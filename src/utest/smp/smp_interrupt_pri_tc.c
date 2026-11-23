@@ -66,8 +66,8 @@
 #define RT_SPI_PRI_HIGH 120
 #define RT_SPI_PRI_LOW  140
 
-static int mode       = 0;
-static int ipi_val[2] = {0, 0};
+static int mode = 0;
+static int ipi_val[2] = { 0, 0 };
 
 /* Software Interrupt 1 Service Functions */
 static void rt_scheduler_ipi1_handler(int vector, void *param)
@@ -108,7 +108,9 @@ static void int_pri1_tc(void)
     pri2 = rt_hw_interrupt_get_priority(RT_SPI_2);
 
     if (pri1 < pri2)
+    {
         uassert_true(pri1 < pri2);
+    }
 
     /* Trigger interrupt */
     rt_hw_ipi_send(RT_SPI_1, 0x1);
@@ -125,7 +127,9 @@ static void int_pri2_tc(void)
     pri2 = rt_hw_interrupt_get_priority(RT_SPI_2);
 
     if (pri1 < pri2)
+    {
         uassert_true(pri1 < pri2);
+    }
 
     rt_base_t level = rt_hw_local_irq_disable();
     /* Trigger interrupt */

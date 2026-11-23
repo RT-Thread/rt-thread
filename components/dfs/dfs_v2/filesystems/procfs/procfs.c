@@ -145,11 +145,11 @@ static int dfs_procfs_getdents(struct dfs_file *file, struct dirent *dirp, uint3
             {
                 d = dirp + index - file->fpos;
 
-                if (S_ISDIR(entry->mode))
+                if (S_ISDIR(iter->mode))
                 {
                     d->d_type = DT_DIR;
                 }
-                else if (S_ISLNK(entry->mode))
+                else if (S_ISLNK(iter->mode))
                 {
                     d->d_type = DT_SYMLINK;
                 }
@@ -340,7 +340,7 @@ static struct dfs_vnode *dfs_procfs_lookup(struct dfs_dentry *dentry)
         if (vnode)
         {
             vnode->nlink = 1;
-            vnode->size = 0;
+            vnode->size = entry->size;
             if (S_ISDIR(entry->mode))
             {
                 vnode->mode = entry->mode;

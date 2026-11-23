@@ -600,6 +600,31 @@ static int elf_zero_bss(struct rt_lwp *lwp, int fd, const Elf_Phdr *phdr, rt_uba
 }
 
 /**
+ * @brief Derive the memory protection flags from an ELF segment's p_flags.
+ *
+ * @param p_flags ELF program header flags (PF_R, PF_W, PF_X).
+ *
+ * @return Protection flags suitable for elf_map().
+ */
+static size_t elf_prot_from_pflags(uint32_t p_flags)
+{
+    size_t prot = PROT_NONE;
+    if (p_flags & PF_R)
+    {
+        prot |= PROT_READ;
+    }
+    if (p_flags & PF_W)
+    {
+        prot |= PROT_WRITE;
+    }
+    if (p_flags & PF_X)
+    {
+        prot |= PROT_EXEC;
+    }
+    return prot;
+}
+
+/**
  * @brief Map ELF segments into memory.
  *
  * This function maps the loadable segments of an ELF file into the process's address space.
@@ -626,7 +651,6 @@ static int elf_file_mmap(elf_load_info_t *load_info, elf_info_t *elf_info, rt_ub
     const Elf_Phdr *tmp_phdr = phdr;  /* Current program header */
     int fd = elf_info->fd; /* File descriptor for ELF file */
     rt_ubase_t load_addr;  /* Calculated load address */
-    size_t prot = PROT_READ | PROT_WRITE; /* Memory protection flags */
     size_t flags = MAP_FIXED | MAP_PRIVATE; /* Memory mapping flags */
 
     /* Iterate through all program headers */
@@ -659,8 +683,13 @@ static int elf_file_mmap(elf_load_info_t *load_info, elf_info_t *elf_info, rt_ub
             flags &= ~MAP_FIXED;
         }
 
-        /* Map the segment into memory */
-        map_va = elf_map(load_info->lwp, tmp_phdr, fd, load_addr, prot, flags, map_size);
+        /*
+         * Map the segment with the permissions described by p_flags. When
+         * LWP_USING_MPROTECT is disabled, lwp_user_mm_attr_to_kernel() ignores
+         * the protection and always maps the segment as MMU_MAP_U_RWCB, so
+         * this behaves exactly as before until MPROTECT is enabled.
+         */
+        map_va = elf_map(load_info->lwp, tmp_phdr, fd, load_addr, elf_prot_from_pflags(tmp_phdr->p_flags), flags, map_size);
         if (!map_va)
         {
             LOG_E("%s : elf_map failed", __func__);

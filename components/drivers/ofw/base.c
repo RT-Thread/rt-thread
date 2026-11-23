@@ -43,7 +43,7 @@ rt_err_t ofw_phandle_hash_reset(rt_phandle min, rt_phandle max)
 
     if (max > _phandle_range[1])
     {
-        rt_size_t size = sizeof(*_phandle_hash) * (max - min);
+        rt_size_t size = sizeof(*_phandle_hash) * (max - min + 1);
 
         if (!_phandle_hash)
         {
@@ -55,9 +55,11 @@ rt_err_t ofw_phandle_hash_reset(rt_phandle min, rt_phandle max)
 
             if (hash_ptr)
             {
+                rt_size_t old_min = _phandle_range[0];
                 rt_size_t old_max = _phandle_range[1];
+                rt_size_t old_count = old_max - old_min + 1;
 
-                rt_memset(&hash_ptr[old_max], 0, sizeof(_phandle_hash) * (max - old_max));
+                rt_memset(&hash_ptr[old_count], 0, size - old_count * sizeof(*_phandle_hash));
             }
         }
     }

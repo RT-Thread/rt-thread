@@ -36,6 +36,7 @@
 
 #define GPIO_IRQ_MAX_NUM            (64)
 #define GPIO_MAX_NUM                (64+8)
+#define GPIO_PAD_MAX_NUM            (64)
 #define IRQN_GPIO0_INTERRUPT        K230_IRQ_GPIO0_0
 
 /* k230 gpio register table */

@@ -44,10 +44,10 @@
 
 #define THREAD_PRIORITY_HIGH 21
 #define THREAD_PRIORITY_LOW  30
-#define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
+#define THREAD_STACK_SIZE    UTEST_THR_STACK_SIZE
 
-static rt_thread_t   threads[2];
-static volatile rt_uint8_t    finish_flag = 0;
+static rt_thread_t threads[2];
+static volatile rt_uint8_t finish_flag = 0;
 static struct rt_spinlock lock;
 
 /* High Priority Thread */
@@ -78,15 +78,15 @@ static void thread_preemptions_tc(void)
 {
     /* Creating low-priority thread */
     threads[0] = rt_thread_create("tlow", thread_low_entry, RT_NULL, THREAD_STACK_SIZE, THREAD_PRIORITY_LOW, 10);
-    if (threads[0]  != RT_NULL)
+    if (threads[0] != RT_NULL)
     {
         uassert_true(1);
-        rt_thread_startup(threads[0] );
+        rt_thread_startup(threads[0]);
     }
 
     rt_thread_delay(5);
     /* Creating high-priority thread */
-    threads[1]  = rt_thread_create("thigh", thread_high_entry, RT_NULL, THREAD_STACK_SIZE, THREAD_PRIORITY_HIGH, 10);
+    threads[1] = rt_thread_create("thigh", thread_high_entry, RT_NULL, THREAD_STACK_SIZE, THREAD_PRIORITY_HIGH, 10);
     if (threads[1] != RT_NULL)
     {
         uassert_true(1);

@@ -62,17 +62,17 @@
 #include <stdlib.h>
 #include "utest.h"
 
-#define HEAP_SIZE        (64 * 1024)
-#define HEAP_ALIGN       (4)
-#define SLICE_NUM        (40)
-#define TEST_TIMES       (100000)
-#define HEAP_NAME        "heap1"
-#define SLICE_SIZE_MAX   (HEAP_SIZE/SLICE_NUM)
+#define HEAP_SIZE      (64 * 1024)
+#define HEAP_ALIGN     (4)
+#define SLICE_NUM      (40)
+#define TEST_TIMES     (100000)
+#define HEAP_NAME      "heap1"
+#define SLICE_SIZE_MAX (HEAP_SIZE / SLICE_NUM)
 
 static void memheap_test(void)
 {
     struct rt_memheap heap1;
-    void * ptr_start;
+    void *ptr_start;
     void *ptr[SLICE_NUM];
     int i, cnt = 0;
 
@@ -116,7 +116,7 @@ static void memheap_test(void)
                 ptr[ptr_index] = rt_memheap_realloc(&heap1, ptr[ptr_index], slice_size);
             }
         }
-        cnt ++;
+        cnt++;
         if (cnt % (TEST_TIMES / 10) == 0)
         {
             rt_kprintf(">");

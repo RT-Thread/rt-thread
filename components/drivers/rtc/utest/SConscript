@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd, cwd + '/../../include']
+
+if GetDepend(['RT_UTEST_RTC']):
+    src += ['rtc_time_tc.c']
+
+if GetDepend(['RT_UTEST_RTC_ALARM']):
+    src += ['rtc_alarm_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_RTC'], CPPPATH = CPPPATH)
+
+Return('group')

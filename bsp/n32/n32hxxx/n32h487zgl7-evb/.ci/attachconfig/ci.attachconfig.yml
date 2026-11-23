@@ -7,4 +7,196 @@ nano:
   <<: *scons
   kconfig:
     - CONFIG_RT_USING_NANO=y
-  
+
+########## Onboard peripheral drivers ##########
+# BSP_PERIPH_PIN_CFG_READY gates all of the entries below; without it the
+# kconfig front-end silently drops the symbols and the entry builds nothing.
+
+# ------ eth ------
+peripheral.eth:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_ETH=y
+    - CONFIG_ETH_INTERFACE_USING_RMII=y
+    - CONFIG_PHY_USING_DM9162EP=y
+
+# ------ qspi ------
+peripheral.qspi:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_QSPI=y
+
+# ------ nand ------
+# drv_nand.c refuses to build unless exactly one FEMC bank is selected.
+peripheral.nand:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_NAND=y
+    - CONFIG_BSP_USING_NAND_BANK3=y
+    - CONFIG_BSP_USING_NAND_BUS_WIDTH_8B=y
+    - CONFIG_BSP_NAND_PAGE_SIZE=2048
+
+# ------ nand (16-bit bus) ------
+# BSP_NAND_BUS_WIDTH_SEL is a choice, so 8B and 16B are mutually exclusive and
+# cannot share one build. The 16-bit rules live in the N32H47x_48x/N32H49x
+# _write_page (drv_nand.c), not in the N32H7xx one, so this belongs on an
+# H47x/H49x board -- it is what keeps the odd-length rejection, the 16-bit AHB
+# write path and the halfword dummy store compiled.
+peripheral.nand_16b:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_NAND=y
+    - CONFIG_BSP_USING_NAND_BANK3=y
+    - CONFIG_BSP_USING_NAND_BUS_WIDTH_16B=y
+    - CONFIG_BSP_NAND_PAGE_SIZE=2048
+
+# ------ nand (large geometry) ------
+# drv_nand.c derives the number of row address cycles from
+# pages_per_block * block_count: 2 up to 65536 pages, 3 up to 16777216, else 4.
+# Every other NAND entry takes the Kconfig defaults, 64 * 1024 = 65536 pages,
+# which sits exactly on the first boundary -- so the >= 3 and >= 4 arms in
+# _read_page/_write_page/_erase_block were compiled by nothing.  64 * 524288
+# pages is past the 24-bit row width, which selects the top rung and so arms
+# both.  The geometry exists to reach that rung and is not a claim about the
+# part on the board; the other entries stay on the default one.
+peripheral.nand_large:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_NAND=y
+    - CONFIG_BSP_USING_NAND_BANK3=y
+    - CONFIG_BSP_USING_NAND_BUS_WIDTH_8B=y
+    - CONFIG_BSP_NAND_PAGE_SIZE=2048
+    - CONFIG_BSP_NAND_BLOCK_COUNT=524288
+
+########## On-chip peripheral drivers ##########
+
+# ------ uart ------
+# UART1 is the console and is already on in the default .config; UART2-4 add
+# the DMA paths.
+devices.uart:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_SERIAL_USING_DMA=y
+    - CONFIG_BSP_USING_UART2=y
+    - CONFIG_BSP_UART2_RX_USING_DMA=y
+    - CONFIG_BSP_UART2_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART3=y
+    - CONFIG_BSP_UART3_RX_USING_DMA=y
+    - CONFIG_BSP_UART3_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART4=y
+    - CONFIG_BSP_UART4_RX_USING_DMA=y
+    - CONFIG_BSP_UART4_TX_USING_DMA=y
+
+# ------ spi ------
+devices.spi:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI1=y
+    - CONFIG_BSP_SPI1_TX_USING_DMA=y
+    - CONFIG_BSP_SPI1_RX_USING_DMA=y
+    - CONFIG_BSP_USING_SPI2=y
+    - CONFIG_BSP_SPI2_TX_USING_DMA=y
+    - CONFIG_BSP_SPI2_RX_USING_DMA=y
+
+# ------ hard i2c ------
+devices.hard_i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_HARD_I2C=y
+    - CONFIG_BSP_USING_HARD_I2C1=y
+    - CONFIG_BSP_I2C1_RX_USING_DMA=y
+    - CONFIG_BSP_I2C1_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C2=y
+    - CONFIG_BSP_I2C2_RX_USING_DMA=y
+    - CONFIG_BSP_I2C2_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C3=y
+    - CONFIG_BSP_I2C3_RX_USING_DMA=y
+    - CONFIG_BSP_I2C3_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C4=y
+    - CONFIG_BSP_I2C4_RX_USING_DMA=y
+    - CONFIG_BSP_I2C4_TX_USING_DMA=y
+
+# ------ adc ------
+devices.adc:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ADC=y
+    - CONFIG_BSP_USING_ADC1=y
+    - CONFIG_BSP_USING_ADC2=y
+    - CONFIG_BSP_USING_ADC3=y
+    - CONFIG_BSP_USING_ADC4=y
+
+# ------ dac ------
+devices.dac:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_DAC=y
+    - CONFIG_BSP_USING_DAC1=y
+    - CONFIG_BSP_USING_DAC2=y
+    - CONFIG_BSP_USING_DAC3=y
+    - CONFIG_BSP_USING_DAC4=y
+
+# ------ rtc / wdt / on-chip flash ------
+# None of the three has a select, so all of them are written explicitly.
+devices.rtc_wdt_flash:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ONCHIP_RTC=y
+    - CONFIG_BSP_RTC_USING_LSE=y
+    - CONFIG_BSP_USING_WDT=y
+    - CONFIG_BSP_USING_ON_CHIP_FLASH=y
+
+# ------ sdio ------
+# BSP_USING_SDIO is a plain bool here: it does not select RT_USING_SDIO, and
+# drv_sdio.h needs struct rt_mmcsd_host, so the symbol is written out too.
+devices.sdio:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_SDIO=y
+    - CONFIG_BSP_USING_SDIO=y
+
+# ------ fdcan ------
+devices.fdcan:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_FDCAN=y
+    - CONFIG_BSP_USING_FDCAN1=y
+    - CONFIG_BSP_USING_FDCAN2=y
+    - CONFIG_BSP_USING_FDCAN3=y
+
+# ------ clock timer / lptim ------
+# Clock timer on GTIM8 ("timer12") plus the LPTIM2 low-power path.
+devices.timer:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_CLOCK_TIMER=y
+    - CONFIG_BSP_USING_GTIM8=y
+    - CONFIG_BSP_USING_LPTIM=y
+    - CONFIG_BSP_USING_LPTIM2=y
+
+# ------ pwm ------
+# PWM13 is GTIM9 and PWM6 is GTIM2. GTIM9 is also pulse-encoder 13, but that
+# lives in devices.pulse_encoder: a separate entry running on its own baseline,
+# so the two never meet.
+devices.pwm:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PWM=y
+    - CONFIG_BSP_USING_PWM13=y
+    - CONFIG_BSP_USING_PWM13_CH1=y
+    - CONFIG_BSP_USING_PWM6=y
+    - CONFIG_BSP_USING_PWM6_CH2=y
+
+# ------ pulse encoder ------
+# PULSE_ENCODER13 is GTIM9.
+devices.pulse_encoder:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PULSE_ENCODER=y
+    - CONFIG_BSP_USING_PULSE_ENCODER13=y

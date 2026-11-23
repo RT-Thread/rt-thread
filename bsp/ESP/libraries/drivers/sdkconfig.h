@@ -4,6 +4,20 @@
  */
 #include "rtconfig.h"
 #pragma once
+/*
+ * ESP-IDF v6.1 moved the newlib compatibility shims into esp_libc.  They are
+ * only enabled when CONFIG_LIBC_NEWLIB is set, otherwise esp_libc declares an
+ * empty `struct _reent` and the toolchain's <stdio.h> fails to compile.
+ * The scons build links against the toolchain's newlib, so enable it.
+ */
+#define CONFIG_LIBC_NEWLIB 1
+/* new in ESP-IDF v6.1 (components/esp_libc/Kconfig), default 200 */
+#define CONFIG_LIBC_ASSERT_BUFFER_SIZE 200
+/* ESP-IDF v6.1 split esp_log into V1/V2 variants (components/log/Kconfig). */
+#define CONFIG_LOG_VERSION 1
+#ifdef SOC_ESP32_C6
+#include "sdkconfig_c6.h"
+#else
 #define CONFIG_SOC_ADC_SUPPORTED 1
 #define CONFIG_SOC_DEDICATED_GPIO_SUPPORTED 1
 #define CONFIG_SOC_GDMA_SUPPORTED 1
@@ -220,7 +234,17 @@
 #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
 #define CONFIG_BOOTLOADER_LOG_LEVEL_INFO 1
 #define CONFIG_BOOTLOADER_LOG_LEVEL 3
+/* new in ESP-IDF v6.1 (components/bootloader/Kconfig.projbuild), default 80 */
+#define CONFIG_BOOTLOADER_CPU_CLK_FREQ_MHZ 80
+/*
+ * ESP-IDF v6.1 only offers the VDDSDIO boost on chips with a configurable
+ * VDDSDIO regulator (choice BOOTLOADER_VDDSDIO_BOOST depends on
+ * SOC_CONFIGURABLE_VDDSDIO_SUPPORTED).  The ESP32-C3 has none and its
+ * soc/rtc.h no longer declares rtc_vddsdio_*_config().
+ */
+#if !defined(SOC_ESP32_C3)
 #define CONFIG_BOOTLOADER_VDDSDIO_BOOST_1_9V 1
+#endif
 #define CONFIG_BOOTLOADER_REGION_PROTECTION_ENABLE 1
 #define CONFIG_BOOTLOADER_WDT_ENABLE 1
 #define CONFIG_BOOTLOADER_WDT_TIME_MS 9000
@@ -244,6 +268,11 @@
 #define CONFIG_ESPTOOLPY_FLASHMODE_DIO 1
 #define CONFIG_ESPTOOLPY_FLASH_SAMPLE_MODE_STR 1
 #define CONFIG_ESPTOOLPY_FLASHMODE "dio"
+#define CONFIG_ESPTOOLPY_FLASHMODE_VAL 3
+/* new in ESP-IDF v6.1: eFuse block revision range checked by the 2nd stage
+   bootloader (components/esp_hw_support/port/esp32c3/Kconfig.hw_support) */
+#define CONFIG_ESP_EFUSE_BLOCK_REV_MIN_FULL 0
+#define CONFIG_ESP_EFUSE_BLOCK_REV_MAX_FULL 199
 #define CONFIG_ESPTOOLPY_FLASHFREQ_80M 1
 #define CONFIG_ESPTOOLPY_FLASHFREQ "80m"
 #define CONFIG_ESPTOOLPY_FLASHSIZE_2MB 1
@@ -403,9 +432,18 @@
 #define CONFIG_ESP_PHY_REDUCE_TX_POWER 1
 #define CONFIG_ESP_PHY_ENABLE_USB 1
 #endif
+/* ESP-IDF v6.1's sleep_modes.c reaches for the PAU-only
+   sleep_enable_cpu_retention() when the CPU is powered down in light sleep,
+   which the ESP32-C3 has no support for (SOC_PAU_SUPPORTED is 0 there).
+   The RT-Thread port does its own tick/sleep handling, so leave the
+   ESP-IDF power management off. */
+#ifdef CONFIG_PM_ENABLE
 #define CONFIG_PM_POWER_DOWN_CPU_IN_LIGHT_SLEEP 1
+#endif
 #define CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_160 1
 #define CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ 160
+/* new in ESP-IDF v6.1 (components/esp_hw_support/Kconfig), default 0 */
+#define CONFIG_ESP_SLEEP_WAIT_FLASH_READY_EXTRA_DELAY 0
 #ifdef BSP_ENABLE_GDBSTUB
 #define CONFIG_ESP_SYSTEM_PANIC_GDBSTUB 1
 #else
@@ -418,6 +456,7 @@
 #define CONFIG_ESP_SYSTEM_USE_EH_FRAME 1
 #endif
 #define CONFIG_ESP_SYSTEM_MEMPROT_FEATURE 1
+#define CONFIG_ESP_SYSTEM_MEMPROT_PMS 1
 #define CONFIG_ESP_SYSTEM_MEMPROT_FEATURE_LOCK 1
 #define CONFIG_ESP_SYSTEM_EVENT_QUEUE_SIZE 32
 #define CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE 2304
@@ -683,6 +722,7 @@
 #define CONFIG_WPA_MBEDTLS_TLS_CLIENT 1
 #endif
 /* List of deprecated options */
+#define CONFIG_ESP_SYSTEM_MEMPROT CONFIG_ESP_SYSTEM_MEMPROT_FEATURE
 #define CONFIG_BROWNOUT_DET CONFIG_ESP_BROWNOUT_DET
 #define CONFIG_BROWNOUT_DET_LVL CONFIG_ESP_BROWNOUT_DET_LVL
 #define CONFIG_BROWNOUT_DET_LVL_SEL_7 CONFIG_ESP_BROWNOUT_DET_LVL_SEL_7
@@ -797,4 +837,5 @@
 #define CONFIG_TIMER_TASK_STACK_SIZE CONFIG_ESP_TIMER_TASK_STACK_SIZE
 #if defined(BSP_USING_WIFI) || defined(BSP_USING_BLE)
 #define CONFIG_UDP_RECVMBOX_SIZE CONFIG_LWIP_UDP_RECVMBOX_SIZE
+#endif
 #endif

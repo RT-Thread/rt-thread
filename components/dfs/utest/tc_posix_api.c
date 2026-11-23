@@ -151,6 +151,64 @@ static void test_posix_close(void)
     fd = -1;
 }
 
+static void test_posix_open_full(void)
+{
+    int *held = rt_calloc(DFS_FD_MAX, sizeof(*held));
+    int count = 0;
+    int result, error;
+
+    uassert_not_null(held);
+    if (!held)
+    {
+        return;
+    }
+
+    /* Reserve slots without opening additional files on the test filesystem. */
+    while (count < DFS_FD_MAX)
+    {
+        result = fd_new();
+        if (result < 0)
+        {
+            break;
+        }
+        held[count++] = result;
+    }
+
+    errno = 0;
+    result = open(TEST_FILE, O_RDONLY);
+    error = errno;
+    while (count > 0)
+    {
+        fd_release(held[--count]);
+    }
+    rt_free(held);
+
+    uassert_int_equal(result, -1);
+    uassert_int_equal(error, EMFILE);
+
+    result = open(TEST_FILE, O_RDONLY);
+    uassert_true(result >= 0);
+    if (result >= 0)
+    {
+        uassert_int_equal(close(result), 0);
+    }
+}
+
+static void test_posix_open_missing(void)
+{
+    int result, error;
+
+    errno = 0;
+    result = open(TEST_FILE, O_RDONLY);
+    error = errno;
+    uassert_int_equal(result, -1);
+    uassert_int_equal(error, ENOENT);
+    if (result >= 0)
+    {
+        close(result);
+    }
+}
+
 static void test_posix_stat(void)
 {
     struct stat stat_buf;
@@ -514,8 +572,10 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_posix_write);
     UTEST_UNIT_RUN(test_posix_read);
     UTEST_UNIT_RUN(test_posix_close);
+    UTEST_UNIT_RUN(test_posix_open_full);
     UTEST_UNIT_RUN(test_posix_stat);
     UTEST_UNIT_RUN(test_posix_unlink);
+    UTEST_UNIT_RUN(test_posix_open_missing);
     UTEST_UNIT_RUN(test_posix_mkdir);
     UTEST_UNIT_RUN(test_posix_rmdir);
     UTEST_UNIT_RUN(test_posix_rename);

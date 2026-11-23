@@ -1,0 +1,8 @@
+# clang-format ignore file
+/ESP32_C3/idf_port/include/freertos/portmacro.h
+/ESP32_C3/idf_port/src/port.c
+/ESP32_C6/idf_port/include/freertos/portmacro.h
+/ESP32_C6/libraries/drivers/sdkconfig.h
+/ESP32_C6/libraries/drivers/sdkconfig_c6.h
+/libraries/drivers/sdkconfig.h
+/libraries/drivers/sdkconfig_c6.h

@@ -38,6 +38,7 @@ typedef enum
 } rt_wlan_prot_event_t;
 
 struct rt_wlan_prot;
+struct pbuf;
 struct rt_wlan_prot_ops
 {
     rt_err_t (*prot_recv)(struct rt_wlan_device *wlan, void *buff, int len);
@@ -67,6 +68,9 @@ rt_err_t rt_wlan_prot_regisetr(struct rt_wlan_prot *prot);
 rt_err_t rt_wlan_prot_transfer_dev(struct rt_wlan_device *wlan, void *buff, int len);
 
 rt_err_t rt_wlan_dev_transfer_prot(struct rt_wlan_device *wlan, void *buff, int len);
+
+/* Submit an RX pbuf from lwIP core context; lwIP owns it on success. */
+rt_err_t rt_wlan_lwip_direct_input(struct rt_wlan_device *wlan, struct pbuf *p);
 
 rt_err_t rt_wlan_prot_event_register(struct rt_wlan_prot *prot, rt_wlan_prot_event_t event, rt_wlan_prot_event_handler handler);
 

@@ -378,8 +378,21 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
     }
 
     df = fd_get(fd);
-    if (!df)
+    if (df == RT_NULL || df->vnode == RT_NULL)
+    {
+        rt_set_errno(EINVAL);
         return -EINVAL;
+    }
+
+#ifdef RT_USING_DFS_V2
+    if (df->fops != &timerfd_fops)
+#else
+    if (df->vnode->fops != &timerfd_fops)
+#endif
+    {
+        rt_set_errno(EINVAL);
+        return -EINVAL;
+    }
 
     tfd = df->vnode->data;
 
@@ -502,7 +515,17 @@ static int timerfd_do_gettime(int fd, struct itimerspec *cur)
 
     df = fd_get(fd);
 
-    if (df == RT_NULL)
+    if (df == RT_NULL || df->vnode == RT_NULL)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+#ifdef RT_USING_DFS_V2
+    if (df->fops != &timerfd_fops)
+#else
+    if (df->vnode->fops != &timerfd_fops)
+#endif
     {
         rt_set_errno(EINVAL);
         return -1;

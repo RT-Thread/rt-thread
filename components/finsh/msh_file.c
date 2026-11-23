@@ -352,12 +352,12 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
         {
-            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) > DFS_PATH_MAX)
+            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) >= DFS_PATH_MAX)
             {
                 rt_kprintf("cannot remove '%s/%s', path too long.\n", pathname, dirent->d_name);
                 continue;
             }
-            rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
+            rt_snprintf(full_path, DFS_PATH_MAX, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type != DT_DIR)
             {
                 if (unlink(full_path) != 0)
@@ -900,12 +900,12 @@ static void directory_setattr(const char *pathname, struct dfs_attr *attr, char 
         if (rt_strcmp(".", dirent->d_name) != 0 &&
             rt_strcmp("..", dirent->d_name) != 0)
         {
-            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) > DFS_PATH_MAX)
+            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) >= DFS_PATH_MAX)
             {
                 rt_kprintf("'%s/%s' setattr failed, path too long.\n", pathname, dirent->d_name);
                 continue;
             }
-            rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
+            rt_snprintf(full_path, DFS_PATH_MAX, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type == DT_REG)
             {
                 if (dfs_file_setattr(full_path, attr) != 0)

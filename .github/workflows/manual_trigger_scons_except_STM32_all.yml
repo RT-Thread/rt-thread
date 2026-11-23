@@ -89,7 +89,8 @@ jobs:
          #- {RTT_BSP_NAME: "core-v-mcu_core-v-cv32e40p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "core-v-mcu/core-v-cv32e40p"} #特殊toolchain，不支持
           - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
           - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
-          - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"} 
+          - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"}
+          - {RTT_BSP_NAME: "ESP32_C6", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C6"} 
           - {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}
           - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
@@ -123,8 +124,9 @@ jobs:
           - {RTT_BSP_NAME: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l196"}
           - {RTT_BSP_NAME: "hifive1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "hifive1"} 
          #- {RTT_BSP_NAME: "hk32_hk32f030c8-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hk32/hk32f030c8-mini"}  #scons dist有问题
-          - {RTT_BSP_NAME: "hpmicro_hpm6750evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evk"}
-          - {RTT_BSP_NAME: "hpmicro_hpm6750evkmini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evkmini"}
+          - {RTT_BSP_NAME: "hpmicro_hpm5100evk", RTT_TOOL_CHAIN: "RISC-V-GCC-RV32", RTT_BSP: "hpmicro/hpm5100evk"}
+          - {RTT_BSP_NAME: "hpmicro_hpm6750evk", RTT_TOOL_CHAIN: "RISC-V-GCC-RV32", RTT_BSP: "hpmicro/hpm6750evk"}
+          - {RTT_BSP_NAME: "hpmicro_hpm6750evkmini", RTT_TOOL_CHAIN: "RISC-V-GCC-RV32", RTT_BSP: "hpmicro/hpm6750evkmini"}
           - {RTT_BSP_NAME: "ht32f12366", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ht32/ht32f12366"}
           - {RTT_BSP_NAME: "ht32f52352", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ht32/ht32f52352"}
          #- {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
@@ -190,18 +192,21 @@ jobs:
          #- {RTT_BSP_NAME: "mm32f327x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f327x"}  #编译问题
           - {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}
           - {RTT_BSP_NAME: "mm32l3xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l3xx"}
-          - {RTT_BSP_NAME: "n32_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g43xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g457qel-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xml-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xrl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xvl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g4frml-stb"}
-          - {RTT_BSP_NAME: "n32_n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l40xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l436-evb"}
-          - {RTT_BSP_NAME: "n32_n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xml-stb"}
-          - {RTT_BSP_NAME: "n32_n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xrl-stb"}
-          - {RTT_BSP_NAME: "n32_n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32wb45xl-evb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g43xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g457qel-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xvl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g4frml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l40xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l436-evb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l43xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l43xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32wb45xl-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h487zgl7-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h487zgl7-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h497zgl7-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h497zgl7-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h760zil7-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h760zil7-stb"}
           - {RTT_BSP_NAME: "n32g452xx_n32g452xx-mini-system", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32g452xx/n32g452xx-mini-system"}
          #- {RTT_BSP_NAME: "nios_ii", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nios_ii"} #编译问题
           - {RTT_BSP_NAME: "nrf5x_nrf51822", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf51822"}
@@ -263,6 +268,7 @@ jobs:
           - {RTT_BSP_NAME: "wch_arm_ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f203r-evt"}
          #- {RTT_BSP_NAME: "wch_arm_ch579m", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch579m"}  #编译错误
          #- {RTT_BSP_NAME: "wch_risc-v_ch32v103r-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v103r-evt"} #编译出错
+          - {RTT_BSP_NAME: "wch_risc-v_ch32v203c-evt-r0", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v203c-evt-r0"}
           - {RTT_BSP_NAME: "wch_risc-v_ch32v208w-r0", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v208w-r0"}
           - {RTT_BSP_NAME: "wch_risc-v_ch32v307v-r1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v307v-r1"}
          #- {RTT_BSP_NAME: "wch_risc-v_ch569w-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch569w-evt"}  #编译出错
@@ -289,7 +295,7 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@main
         with:
           python-version: 3.8
 
@@ -300,9 +306,11 @@ jobs:
           wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
+          pip install -r tools/requirements.txt
           git config --global http.postBuffer 524288000
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
+          echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
 
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
@@ -339,6 +347,14 @@ jobs:
           /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
 
+      - name: Install riscv32-unknown-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
+        run: |
+          wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+          sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+          /opt/riscv32-unknown-elf-newlib-multilib/bin/riscv32-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin/" >> $GITHUB_ENV
+
       - name: Install Riscv-none-embed ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
         run: |
@@ -355,8 +371,8 @@ jobs:
       - name: Install riscv32-esp-elf ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
         run: |
-          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
-          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz
+          sudo tar xf riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
           pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
@@ -368,7 +384,7 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
-          # source ~/.env/env.sh
+          source ~/.env/env.sh
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
           sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
@@ -381,7 +397,7 @@ jobs:
           cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
           ls bsp/$RTT_BSP/dist
           pwd
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@main
         if:  ${{ github.event.inputs.dist_flag }} 
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}

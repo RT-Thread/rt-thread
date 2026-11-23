@@ -1,409 +1,72 @@
-**QEMU/RISCV64 VIRT 板级支持包使用说明**
+# QEMU RISC-V virt BSP
 
-中文页 | [English](./README.md)
+[English](README.md) | 中文
 
-<!-- TOC -->
+本 BSP 在 QEMU RISC-V `virt` 机器的 S-Mode 下运行 RT-Thread。目录名为兼容
+现有工程继续保留，Kconfig 内部同时支持 RV32 和 RV64，默认选择 RV64。目前
+RT-Thread Smart 仍只支持 RV64；RV32 运行标准版 RT-Thread。
 
-- [1. 简介](#1-简介)
-- [2. 构建](#2-构建)
-	- [2.1. 安装工具链](#21-安装工具链)
-	- [2.2. 设置 RT-Thread 工具链环境变量](#22-设置-rt-thread-工具链环境变量)
-	- [2.3. 下载内核](#23-下载内核)
-	- [2.4. 配置内核](#24-配置内核)
-	- [2.5. 编译内核](#25-编译内核)
-- [3. 运行](#3-运行)
-	- [3.1. 安装 QEMU](#31-安装-qemu)
-	- [3.2. 运行 QEMU](#32-运行-qemu)
-		- [3.2.1. 运行 RT-Thread 标准版](#321-运行-rt-thread-标准版)
-		- [3.2.2. 运行 RT-Thread Smart 版](#322-运行-rt-thread-smart-版)
-		- [3.2.3. 运行 RT-Thread Smart 版 + 根文件系统](#323-运行-rt-thread-smart-版--根文件系统)
-- [4. 如何使用 rv64ilp32 工具链](#4-如何使用-rv64ilp32-工具链)
-- [5. 联系人信息](#5-联系人信息)
+## 编译
 
-<!-- /TOC -->
+安装 SCons、QEMU RISC-V system emulator 和 RISC-V GCC 工具链。编译 RV32
+时，工具链必须包含所选 RV32 ABI 的 multilib。
 
-# 1. 简介
+```sh
+export RTT_EXEC_PATH=/path/to/toolchain/bin
+export RTT_CC_PREFIX=riscv64-unknown-elf-
 
-RISC-V 是一种开放和免费的指令集体系结构 (ISA)。本工程是在 QEMU 的 RISCV64 VIRT 版本上进行的一份移植。
-
-本工程支持玄铁团队联合中科院软件所共同推出的全球首款 rv64ilp32 产品级开源工具链。
-
-# 2. 构建
-
-工作系统：以 Ubuntu 22.04 为例：
-
-```shell
-$ lsb_release -a
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description:    Ubuntu 22.04.2 LTS
-Release:        22.04
-Codename:       jammy
+scons --menuconfig
+scons -j$(nproc)
 ```
 
-## 2.1. 安装工具链
+位宽在 `RISC-V XLEN` 中选择。重新生成配置后会更新 `rtconfig.h`，编译产物为
+`rtthread.elf` 和 `rtthread.bin`。BSP 把 `ARCH_RAM_OFFSET` 设为 `0x80000000`，
+RV32 使用 4 MiB image offset，RV64 使用 2 MiB image offset，与 QEMU/OpenSBI
+的默认装载地址保持一致，不需要 BSP 本地链接脚本。
 
-具体使用的工具链，和 RT-Thread 官方保持一致，具体的工具链版本可以参考 RT-Thread 仓库的 <https://github.com/RT-Thread/rt-thread/blob/master/.github/workflows/action_utest.yml> 这个文件。
+## 运行
 
-```yaml
-    - name: Install RISC-V ToolChains
-      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST != 'rtsmart/riscv64' && success() }}
-      run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
-        sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
-        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
-        echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
-
-    - name: Install RISC-V Musl ToolChains
-      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST == 'rtsmart/riscv64' && success() }}
-      shell: bash
-      run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
-        sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
-        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
-        echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
-        echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+```sh
+./qemu.py
 ```
 
-其中 `riscv64-unknown-elf-gcc` 用于构建 RT-Thread 标准版，`riscv64-unknown-linux-musl-gcc` 用于构建 RT-Thread Smart 版。根据上面所示链接分别下载到本地后解压缩。
+RV32 和 RV64 都默认启用 QEMU user 网络和一个 virtio block 磁盘。RV64
+另外默认启用 AIA（APLIC/IMSIC）、NVMe、virtio-console 和 PCI serial。
+RV32 默认使用 PLIC/ACLINT 和 legacy virtio-mmio，不默认挂载 NVMe 和两个
+附加控制台。缺失的 qcow2 镜像会自动创建，存储设备只保留 virtio block
+与 NVMe 两类。
 
-## 2.2. 设置 RT-Thread 工具链环境变量
+在 QEMU 10.1 与 OpenSBI 1.5.1 组合下，RV32 S-mode AIA 能进入 IMSIC 初始化，
+但访问 `siselect/sireg` 时会触发非法指令。`-aia` 参数仍可用于测试新版
+模拟器和固件组合，但不作为 RV32 默认值。
 
-和 RT-Thread 工具链相关的环境变量有三个
+常用参数：
 
-- `RTT_CC` 为工具链名称, 这里统一为 `"gcc"`
-- `RTT_CC_PREFIX`: 为工具链前缀, 这里对于标准版是 `"riscv64-unknown-elf-"`，对于 Smart 版是 `"riscv64-unknown-linux-musl-"`。
-- `RTT_EXEC_PATH`: 工具链的 bin 文件夹所在路径, 如 `"$HOME/tools/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin"`, 这个根据个人下载解压后的实际路径进行设置，注意 RT-Thread 标准版和 Smart 版本的工具链是两套不同的版本，而且设置 `RTT_EXEC_PATH` 的路径名时要一直到 `bin`。
-
-如果一直使用的话，建议将这三个环境变量在 `.bashrc` 文件中 export。
-
-## 2.3. 下载内核
-
-假设工作路径是 `$WORKSPACE`。
-
-```shell
-$ cd $WORKSPACE
-$ git clone git@github.com:RT-Thread/rt-thread.git
+```sh
+./qemu.py -no-aia
+./qemu.py -no-net -no-nvme
+./qemu.py -nvme -virtio-console -pci-serial
+./qemu.py -pci
+./qemu.py -graphic
+./qemu.py -dumpdtb qemu-virt.dtb
+./qemu.py -dry-run
 ```
 
-进入 qemu-virt64-riscv 所在 BSP 目录，后面的操作不做另外介绍，默认就在这个目录下。
+QEMU 核数必须与内核配置中的 `RT_CPUS_NR` 一致。调整 `-smp` 前应先修改
+`RT_CPUS_NR` 并重新编译；当前内核没有独立的 online CPU mask，因此脚本会拒绝
+核数不匹配的启动方式。
 
-```shell
-$ cd $WORKSPACE/rt-thread/bsp/qemu-virt64-riscv
+启用 `ARCH_RISCV_VECTOR` 后，脚本会从 `rtconfig.h` 读取 VLEN 并同步配置
+QEMU。内核未启用 Vector 时，也可以用 `-v` 强制 QEMU 使用默认的 128-bit
+Vector 配置。
+
+## 调试
+
+让 QEMU 暂停等待 GDB：
+
+```sh
+./qemu.py -debug
+riscv64-linux-gnu-gdb rtthread.elf -ex "target remote :1234"
 ```
 
-## 2.4. 配置内核
-
-第一次编译前先刷新一下配置文件。
-
-```shell
-$ scons --menuconfig
-```
-
-默认配置就是 RT-Thread 标准版，所以如果没有什么特别需求，什么都不要改动，直接保存退出即可。
-
-如果要使用 RT-Thread Smart 版，进入配置菜单后至少要打开 `RT_USING_SMART` 这个选项(见下图)，其他的看自己的需求。
-
-```
-(Top) → RT-Thread Kernel
-                                                                RT-Thread Project Configuration
-(24) The maximal size of kernel object name
-[ ] Use the data types defined in ARCH_CPU
-[*] Enable RT-Thread Smart (microkernel on kernel/userland)
-[ ] Enable RT-Thread Nano
-...
-```
-
-修改后保存退出。
-
-## 2.5. 编译内核
-
-如果以前编译后，可以清理一下：
-
-```shell
-$ scons --clean
-```
-
-或者直接编译：
-
-```shell
-$ scons -j$(nproc)
-```
-
-在 `$WORKSPACE/rt-thread/bsp/qemu-virt64-riscv` 路径下会生成内核的二进制文件 `rtthread.bin`。
-
-# 3. 运行
-
-## 3.1. 安装 QEMU
-
-```shell
-$ sudo apt update
-$ sudo apt install qemu-system-misc
-```
-
-安装完毕后可以看一下版本。
-
-```shell
-$ qemu-system-riscv64 --version
-QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.24)
-Copyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers
-```
-
-## 3.2. 运行 QEMU
-
-仓库里已经提供了现成的执行脚本，可以直接执行：
-
-```shell
-$ ./run.sh
-```
-
-### 3.2.1. 运行 RT-Thread 标准版
-
-示例如下：
-
-```shell
-$ ./run.sh
-
-OpenSBI v0.9
-   ____                    _____ ____ _____
-  / __ \                  / ____|  _ \_   _|
- | |  | |_ __   ___ _ __ | (___ | |_) || |
- | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
- | |__| | |_) |  __/ | | |____) | |_) || |_
-  \____/| .__/ \___|_| |_|_____/|____/_____|
-        | |
-        |_|
-
-Platform Name             : riscv-virtio,qemu
-Platform Features         : timer,mfdeleg
-Platform HART Count       : 1
-Firmware Base             : 0x80000000
-Firmware Size             : 100 KB
-Runtime SBI Version       : 0.2
-
-Domain0 Name              : root
-Domain0 Boot HART         : 0
-Domain0 HARTs             : 0*
-Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
-Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
-Domain0 Next Address      : 0x0000000080200000
-Domain0 Next Arg1         : 0x000000008f000000
-Domain0 Next Mode         : S-mode
-Domain0 SysReset          : yes
-
-Boot HART ID              : 0
-Boot HART Domain          : root
-Boot HART ISA             : rv64imafdcsu
-Boot HART Features        : scounteren,mcounteren,time
-Boot HART PMP Count       : 16
-Boot HART PMP Granularity : 4
-Boot HART PMP Address Bits: 54
-Boot HART MHPM Count      : 0
-Boot HART MHPM Count      : 0
-Boot HART MIDELEG         : 0x0000000000000222
-Boot HART MEDELEG         : 0x000000000000b109
-heap: [0x8028d8a8 - 0x8428d8a8]
-
- \ | /
-- RT -     Thread Operating System
- / | \     5.2.0 build Nov 14 2024 15:41:57
- 2006 - 2024 Copyright by RT-Thread team
-lwIP-2.0.3 initialized!
-[I/sal.skt] Socket Abstraction Layer initialize success.
-[I/utest] utest is initialize success.
-[I/utest] total utest testcase num: (0)
-file system initialization done!
-Hello RISC-V
-msh />
-```
-
-### 3.2.2. 运行 RT-Thread Smart 版
-
-示例如下：
-
-```shell
-$ ./run.sh
-
-OpenSBI v0.9
-   ____                    _____ ____ _____
-  / __ \                  / ____|  _ \_   _|
- | |  | |_ __   ___ _ __ | (___ | |_) || |
- | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
- | |__| | |_) |  __/ | | |____) | |_) || |_
-  \____/| .__/ \___|_| |_|_____/|____/_____|
-        | |
-        |_|
-
-Platform Name             : riscv-virtio,qemu
-Platform Features         : timer,mfdeleg
-Platform HART Count       : 1
-Firmware Base             : 0x80000000
-Firmware Size             : 100 KB
-Runtime SBI Version       : 0.2
-
-Domain0 Name              : root
-Domain0 Boot HART         : 0
-Domain0 HARTs             : 0*
-Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
-Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
-Domain0 Next Address      : 0x0000000080200000
-Domain0 Next Arg1         : 0x000000008f000000
-Domain0 Next Mode         : S-mode
-Domain0 SysReset          : yes
-
-Boot HART ID              : 0
-Boot HART Domain          : root
-Boot HART ISA             : rv64imafdcsu
-Boot HART Features        : scounteren,mcounteren,time
-Boot HART PMP Count       : 16
-Boot HART PMP Granularity : 4
-Boot HART PMP Address Bits: 54
-Boot HART MHPM Count      : 0
-Boot HART MHPM Count      : 0
-Boot HART MIDELEG         : 0x0000000000000222
-Boot HART MEDELEG         : 0x000000000000b109
-heap: [0x002ef030 - 0x042ef030]
-
- \ | /
-- RT -     Thread Smart Operating System
- / | \     5.2.0 build Nov 14 2024 15:48:43
- 2006 - 2024 Copyright by RT-Thread team
-lwIP-2.0.3 initialized!
-[I/sal.skt] Socket Abstraction Layer initialize success.
-[I/utest] utest is initialize success.
-[I/utest] total utest testcase num: (0)
-[I/drivers.serial] Using /dev/ttyS0 as default console
-file system initialization done!
-Hello RISC-V
-msh />
-```
-
-### 3.2.3. 运行 RT-Thread Smart 版 + 根文件系统
-
-对于 Smart 版本的内核，也可以在执行 `run.sh` 脚本时指定根文件系统镜像文件的路径在启动过程中挂载根文件系统。
-
-需要注意的是，内核默认支持 fat, 如果要挂载 ext4 的文件系统，则还需要额外安装 lwext4 软件包，即使能 `PKG_USING_LWEXT4`（具体 menuconfig 路径是 (Top) -> RT-Thread online packages -> system packages ->  lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers.）。如果在菜单中找不到该软件包，可以退出 menuconfig 并执行 `pkgs --upgrade` 更新软件包索引后再尝试使能软件包。
-
-勾选该选项后还需要执行如下操作更新软件并安装源码到 bsp 的 packages 目录下(该操作只要执行一次即可)：
-
-```shell
-$ source ~/.env/env.sh
-$ pkgs --update
-```
-
-保存后重新编译内核。
-
-有关如何制作根文件系统，请参考 <https://github.com/RT-Thread/userapps/blob/main/README.md>，这里不再赘述。
-
-示例如下：
-
-```shell
-$ ./run.sh /home/u/ws/duo/userapps/apps/build/ext4.img 
-
-OpenSBI v0.9
-   ____                    _____ ____ _____
-  / __ \                  / ____|  _ \_   _|
- | |  | |_ __   ___ _ __ | (___ | |_) || |
- | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
- | |__| | |_) |  __/ | | |____) | |_) || |_
-  \____/| .__/ \___|_| |_|_____/|____/_____|
-        | |
-        |_|
-
-Platform Name             : riscv-virtio,qemu
-Platform Features         : timer,mfdeleg
-Platform HART Count       : 1
-Firmware Base             : 0x80000000
-Firmware Size             : 100 KB
-Runtime SBI Version       : 0.2
-
-Domain0 Name              : root
-Domain0 Boot HART         : 0
-Domain0 HARTs             : 0*
-Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
-Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
-Domain0 Next Address      : 0x0000000080200000
-Domain0 Next Arg1         : 0x000000008f000000
-Domain0 Next Mode         : S-mode
-Domain0 SysReset          : yes
-
-Boot HART ID              : 0
-Boot HART Domain          : root
-Boot HART ISA             : rv64imafdcsu
-Boot HART Features        : scounteren,mcounteren,time
-Boot HART PMP Count       : 16
-Boot HART PMP Granularity : 4
-Boot HART PMP Address Bits: 54
-Boot HART MHPM Count      : 0
-Boot HART MHPM Count      : 0
-Boot HART MIDELEG         : 0x0000000000000222
-Boot HART MEDELEG         : 0x000000000000b109
-heap: [0x00326438 - 0x04326438]
-
- \ | /
-- RT -     Thread Smart Operating System
- / | \     5.2.0 build Dec 17 2024 11:49:39
- 2006 - 2024 Copyright by RT-Thread team
-lwIP-2.0.3 initialized!
-[I/sal.skt] Socket Abstraction Layer initialize success.
-[I/utest] utest is initialize success.
-[I/utest] total utest testcase num: (0)
-[I/drivers.serial] Using /dev/ttyS0 as default console
-[W/DFS.fs] mount / failed with file system type: elm
-file system initialization done!
-Hello RISC-V
-msh />[E/sal.skt] not find network interface device by protocol family(1).
-[E/sal.skt] SAL socket protocol family input failed, return error -3.
-/ # ls
-bin         lib         proc        sbin        tmp
-dev         lost+found  root        services    usr
-etc         mnt         run         tc          var
-/ # 
-```
-
-# 4. 如何使用 rv64ilp32 工具链
-
-- 工具链地址：https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/tags
-
-- 使用方法：
-
-  - 配置工具链路径
-
-  - 修改ABI参数为：`-mabi=ilp32d`
-
-  - 然后执行常规编译
-
-  - 使用 [脚本](./qemu-rv64ilp32-nographic.sh) 启动 QEMU (INFO: QEMU 二进制同样在工具链目录)
-
-- 使用传统 64 位工具链与使用新 32 位工具链编译相同工程的固件大小对比：
-
-  传统 64 位工具链固件大小：
-
-  ```bash
-  Memory region         Used Size  Region Size  %age Used
-              SRAM:      225856 B        16 MB      1.35%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
-     text    data     bss     dec     hex filename
-   150907    3664   71268  225839   3722f rtthread.elf
-  ```
-
-  新 32 位工具链固件大小：
-
-  ```bash
-  Memory region         Used Size  Region Size  %age Used
-              SRAM:      209376 B        16 MB      1.25%
-  riscv64-unknown-elf-objcopy -O binary rtthread.elf rtthread.bin
-  riscv64-unknown-elf-size rtthread.elf
-     text    data     bss     dec     hex filename
-   138739    1356   69276  209371   331db rtthread.elf
-  ```
-
-# 5. 联系人信息
-
-维护人：[bernard][1]
-
-[1]: https://github.com/BernardXiong
-
-
-
+RV32 构建应使用与对应位宽和工具链匹配的 GDB。

@@ -221,6 +221,7 @@
         "stm32/stm32h7r7-artpi2",
         "stm32/stm32mp157a-st-discovery",
         "stm32/stm32mp157a-st-ev1",
+        "stm32/stm32n657-st-nucleo",
         "stm32/stm32u575-st-nucleo",
         "stm32/stm32u585-iot02a",
         "stm32/stm32wb55-st-nucleo"
@@ -258,6 +259,7 @@
         "nxp/imx/imxrt/imxrt1180-nxp-evk/cm7",
         "nxp/mcx/mcxn/frdm-mcxn947",
         "nxp/mcx/mcxn/frdm-mcxn236",
+        "nxp/mcx/mcxc/frdm-mcxc162",
         "nxp/mcx/mcxc/frdm-mcxc444",
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
@@ -425,6 +427,7 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [
         "k210",
+        "wch/risc-v/ch32v203c-evt-r0",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
         "wch/risc-v/yd-ch32v307vct6",
@@ -435,6 +438,7 @@
       "RTT_BSP": "riscv64-unknown",
       "RTT_TOOL_CHAIN": "sourcery-riscv64-unknown-elf",
       "SUB_RTT_BSP": [
+        "artinchip/d213ecv-demo-v4-0",
         "bluetrum/ab32vg1-ab-prougen",
         "qemu-virt64-riscv",
         "ultrarisc/ur_dp1000_evb"
@@ -445,6 +449,13 @@
       "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
       "SUB_RTT_BSP": [
         "k230"
+      ]
+    },
+    {
+      "RTT_BSP": "spacemit-k1",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "spacemit/k1"
       ]
     },
     {
@@ -461,7 +472,8 @@
         "hpmicro/hpm6800evk",
         "hpmicro/hpm6e00evk",
         "hpmicro/hpm6p00evk",
-        "hpmicro/hpm5e00evk"
+        "hpmicro/hpm5e00evk",
+        "hpmicro/hpm5100evk"
       ]
     },
     {
@@ -490,6 +502,13 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
         "ESP/ESP32_C3"
+      ]
+    },
+    {
+      "RTT_BSP": "ESP32C6",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_C6"
       ]
     },
     {
@@ -529,7 +548,6 @@
         "xuantie/smartl/e907",
         "xuantie/xiaohui/c906",
         "xuantie/xiaohui/c907",
-        "xuantie/xiaohui/c908",
         "xuantie/xiaohui/c908x",
         "xuantie/xiaohui/c920",
         "xuantie/xiaohui/r908",
@@ -542,7 +560,8 @@
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-linux-musl",
       "SUB_RTT_BSP": [
         "xuantie/virt64/c906",
-        "xuantie/virt64/c908"
+        "xuantie/virt64/c908",
+        "xuantie/xiaohui/c908"
       ]
     },
     {

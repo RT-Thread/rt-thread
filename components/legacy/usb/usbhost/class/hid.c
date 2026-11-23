@@ -244,6 +244,7 @@ static void rt_usbh_hid_callback(void* context)
     upipe_t pipe;
     struct uhid* hid;
     int timeout = USB_TIMEOUT_LONG;
+    rt_size_t xfer_len;
 
     /* parameter check */
     RT_ASSERT(context != RT_NULL);
@@ -254,11 +255,18 @@ static void rt_usbh_hid_callback(void* context)
     /* invoke protocal callback function */
     hid->protocal->callback((void*)hid);
 
-    /* parameter check */
-     RT_ASSERT(((struct uhintf*)pipe->inst)->device->hcd != RT_NULL);
+    /* the endpoint packet size is device controlled and may exceed buffer */
+    xfer_len = pipe->ep.wMaxPacketSize;
+    if (xfer_len > sizeof(hid->buffer))
+    {
+        xfer_len = sizeof(hid->buffer);
+    }
 
-    rt_usb_hcd_pipe_xfer(((struct uhintf*)pipe->inst)->device->hcd, pipe,
-        hid->buffer, pipe->ep.wMaxPacketSize, timeout);
+    /* parameter check */
+    RT_ASSERT(((struct uhintf *)pipe->inst)->device->hcd != RT_NULL);
+
+    rt_usb_hcd_pipe_xfer(((struct uhintf *)pipe->inst)->device->hcd, pipe,
+                         hid->buffer, xfer_len, timeout);
 }
 
 /**

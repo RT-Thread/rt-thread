@@ -399,6 +399,7 @@ static rt_err_t virtio_rpmsg_probe(struct rt_virtio_device *vdev)
 
         if (!vrpmsg->ns)
         {
+            err = -RT_ENOMEM;
             goto _fail_ns;
         }
 
@@ -415,6 +416,10 @@ static rt_err_t virtio_rpmsg_probe(struct rt_virtio_device *vdev)
     return RT_EOK;
 
 _fail_ns:
+    if (vrpmsg->ns)
+    {
+        rt_free(vrpmsg->ns);
+    }
     rt_bus_remove_device(&vrpmsg->parent.parent);
 
 _fail:
@@ -433,6 +438,7 @@ static rt_err_t virtio_rpmsg_remove(struct rt_virtio_device *vdev)
     if (vrpmsg->ns)
     {
         rt_bus_remove_device(&vrpmsg->ns->parent);
+        rt_free(vrpmsg->ns);
     }
 
     virtio_rpmsg_vq_finit(vrpmsg);

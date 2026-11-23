@@ -130,10 +130,11 @@ struct rt_link_frame_head
 /* record frame information that opposite */
 struct rt_link_record
 {
-    rt_uint8_t rx_seq;      /* record the opposite sequence */
-    rt_uint8_t total;       /* the number of long frame number */
-    rt_uint8_t long_count;  /* long packet recv counter */
-    rt_uint8_t *dataspace;  /* the space of long frame */
+    rt_uint8_t rx_seq;        /* record the opposite sequence */
+    rt_uint8_t total;         /* the number of long frame number */
+    rt_uint8_t long_count;    /* long packet recv counter */
+    rt_uint8_t *dataspace;    /* the space of long frame */
+    rt_size_t dataspace_size; /* allocated byte size of dataspace */
 };
 
 struct rt_link_extend

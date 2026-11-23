@@ -295,13 +295,4 @@
 #define CONFIG_USBHOST_PIPE_NUM 10
 #endif
 
-
-#ifndef usb_phyaddr2ramaddr
-#define usb_phyaddr2ramaddr(addr) (addr)
-#endif
-
-#ifndef usb_ramaddr2phyaddr
-#define usb_ramaddr2phyaddr(addr) (addr)
-#endif
-
 #endif

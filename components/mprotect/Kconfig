@@ -17,12 +17,20 @@ if RT_USING_MEM_PROTECTION
 
     config NUM_MEM_REGIONS
     int "Total number of memory protection regions supported by hardware"
+    default 8
+    help
+        The number of MPU regions supported by the target MCU. The common value
+        for Cortex-M4/M7/M33 is 8, but some MCUs expose 4, 12, or 16 regions.
+        Set this to the actual value reported by the hardware, otherwise the MPU
+        initialization will reject the configuration at runtime.
 
     config NUM_EXCLUSIVE_REGIONS
     int "Total number of exclusive memory regions added using rt_mprotect_add_exclusive_region API"
+    default 0
 
     config NUM_CONFIGURABLE_REGIONS
     int "Maximum number of configurable memory regions for each thread, excluding stack guard and exclusive regions added using rt_mprotect_add_exclusive_region API"
+    default 0
 endif
 
 endmenu

@@ -12,7 +12,6 @@
 #include <gicv3.h>
 #include <rtthread.h>
 #include <rthw.h>
-//#include <board.h>
 
 #include "interrupt.h"
 
@@ -257,16 +256,8 @@ void rt_hw_trap_irq(void)
     }
 
 #ifdef SOC_SERIES_R9A07G0
-    extern fsp_vector_t g_vector_table[BSP_ICU_VECTOR_MAX_ENTRIES];
-
     bsp_common_interrupt_handler((uint32_t)ir);
-    if (ir < MAX_HANDLERS)
-    {
-        /* get interrupt service routine */
-        isr_table[ir].handler = (rt_isr_handler_t)g_vector_table[ir];
-        isr_table[ir].param = RT_NULL;
-    }
-#endif
+#else
     /* get interrupt service routine */
     isr_func = isr_table[ir].handler;
 
@@ -280,7 +271,7 @@ void rt_hw_trap_irq(void)
         /* turn to interrupt service routine */
         isr_func(ir, param);
     }
-
+#endif
     /* end of interrupt */
     rt_hw_interrupt_ack(int_ack);
 }
@@ -288,31 +279,38 @@ void rt_hw_trap_irq(void)
 void rt_hw_trap_fiq(void)
 {
     void *param;
+    int int_ack;
     int ir;
-    rt_isr_handler_t isr_func;
+    volatile rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    ir = rt_hw_interrupt_get_irq();
+    int_ack = rt_hw_interrupt_get_irq();
+
+    ir = int_ack & GIC_ACK_INTID_MASK;
+    if (ir == 1023)
+    {
+        /* Spurious interrupt */
+        return;
+    }
 
 #ifdef SOC_SERIES_R9A07G0
-    extern fsp_vector_t g_vector_table[BSP_ICU_VECTOR_MAX_ENTRIES];
-
     bsp_common_interrupt_handler((uint32_t)ir);
-    if (ir < MAX_HANDLERS)
-    {
-        /* get interrupt service routine */
-        isr_table[ir].handler = (rt_isr_handler_t)g_vector_table[ir];
-        isr_table[ir].param = RT_NULL;
-    }
-#endif
+#else
     /* get interrupt service routine */
     isr_func = isr_table[ir].handler;
-    param = isr_table[ir].param;
 
-    /* turn to interrupt service routine */
-    isr_func(ir, param);
-
+#ifdef RT_USING_INTERRUPT_INFO
+    isr_table[ir].counter++;
+#endif
+    if (isr_func)
+    {
+        /* Interrupt for myself. */
+        param = isr_table[ir].param;
+        /* turn to interrupt service routine */
+        isr_func(ir, param);
+    }
+#endif
     /* end of interrupt */
-    rt_hw_interrupt_ack(ir);
+    rt_hw_interrupt_ack(int_ack);
 }
 

@@ -4,19 +4,63 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-12-18     quanzhao     the first version
+ *
+ * NOTE: /dev/random and /dev/urandom are non-cryptographic PRNGs.
+ * Do not use them for keys, nonces or other security-critical values.
  */
 
 #include <time.h>
 #include <string.h>
 #include <rtthread.h>
 
+#if defined(RT_USING_HWCRYPTO) && defined(RT_HWCRYPTO_USING_RNG)
+#include <hw_rng.h>
+#endif
+
 static struct rt_device random_dev;
 static unsigned long seed;
+static rt_bool_t seed_ready;
+
+/* returns 0 when no default hwcrypto RNG is available */
+static rt_uint32_t random_hw_value(void)
+{
+#if defined(RT_USING_HWCRYPTO) && defined(RT_HWCRYPTO_USING_RNG)
+    return rt_hwcrypto_rng_update();
+#else
+    return 0;
+#endif
+}
+
+static unsigned long random_seed_value(const void *salt)
+{
+    unsigned long value = (unsigned long)rt_tick_get() ^ (unsigned long)(rt_ubase_t)salt;
+
+#if defined(RT_USING_HWCRYPTO) && defined(RT_HWCRYPTO_USING_RNG)
+    value ^= (unsigned long)rt_hwcrypto_rng_update();
+#endif
+
+    value ^= value >> 16;
+    value *= 0x7feb352dUL;
+    value ^= value >> 15;
+    value *= 0x846ca68bUL;
+    value ^= value >> 16;
+
+    return value ? value : 0x9e3779b9UL;
+}
 
 static rt_uint16_t calc_random(void)
 {
+    rt_uint32_t hw_value = random_hw_value();
+
+    /* seed on first use so rt_tick_get() has advanced since boot */
+    if (!seed_ready)
+    {
+        seed = random_seed_value(&seed);
+        seed_ready = RT_TRUE;
+    }
+
     seed = 214013L * seed + 2531011L;
-    return (seed >> 16) & 0x7FFF;   /* return bits 16~30 */
+    return (rt_uint16_t)(((seed >> 16) ^ hw_value) & 0x7FFF);
 }
 
 static rt_ssize_t random_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -48,6 +92,10 @@ static rt_ssize_t random_write(rt_device_t dev, rt_off_t pos, const void *buffer
 {
     ssize_t ret = sizeof(seed) < size ? sizeof(seed) : size;
     rt_memcpy(&seed, buffer, ret);
+    if (ret > 0)
+    {
+        seed_ready = RT_TRUE;
+    }
     return ret;
 }
 
@@ -103,11 +151,21 @@ INIT_DEVICE_EXPORT(random_device_init);
 
 static struct rt_device urandom_dev;
 static unsigned long useed;
+static rt_bool_t useed_ready;
 
 static rt_uint16_t calc_urandom(void)
 {
+    rt_uint32_t hw_value = random_hw_value();
+
+    /* seed on first use so rt_tick_get() has advanced since boot */
+    if (!useed_ready)
+    {
+        useed = random_seed_value(&useed);
+        useed_ready = RT_TRUE;
+    }
+
     useed = 214013L * useed + 2531011L;
-    return (useed >> 16) & 0x7FFF;   /* return bits 16~30 */
+    return (rt_uint16_t)(((useed >> 16) ^ hw_value) & 0x7FFF);
 }
 
 static rt_ssize_t random_uread(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
@@ -139,6 +197,10 @@ static rt_ssize_t random_uwrite(rt_device_t dev, rt_off_t pos, const void *buffe
 {
     ssize_t ret = sizeof(useed) < size ? sizeof(useed) : size;
     rt_memcpy(&useed, buffer, ret);
+    if (ret > 0)
+    {
+        useed_ready = RT_TRUE;
+    }
     return ret;
 }
 

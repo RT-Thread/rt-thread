@@ -12,7 +12,13 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+#if defined(SOC_RISCV_SERIES_CH32V2)
+#include "ch32v20x_iwdg.h"
+#elif defined(SOC_RISCV_SERIES_CH32V1)
+#include "ch32v10x_iwdg.h"
+#else
 #include "ch32v30x_iwdg.h"
+#endif
 
 #ifdef BSP_USING_IWDT
 

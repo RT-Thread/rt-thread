@@ -74,11 +74,11 @@ static volatile uint32_t max_get_nest_count = 0;
 
 static void irq_callback()
 {
-    if(rt_interrupt_get_nest() >  max_get_nest_count)
+    if (rt_interrupt_get_nest() > max_get_nest_count)
     {
         max_get_nest_count = rt_interrupt_get_nest();
     }
-    irq_count ++;
+    irq_count++;
 }
 
 static void irq_test(void)
@@ -116,15 +116,14 @@ static void interrupt_test(void)
     rt_interrupt_leave_sethook(irq_callback);
     irq_count = 0;
     level = rt_hw_interrupt_disable();
-    while(i)
+    while (i)
     {
-        i --;
+        i--;
     }
     uassert_int_equal(0, irq_count);
     rt_hw_interrupt_enable(level);
     rt_interrupt_enter_sethook(RT_NULL);
     rt_interrupt_leave_sethook(RT_NULL);
-
 }
 static void testcase(void)
 {

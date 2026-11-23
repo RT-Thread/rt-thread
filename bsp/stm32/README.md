@@ -99,6 +99,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **MP1 系列**                                                     |                                                   |
 | [stm32mp157a-st-discovery](stm32mp157a-st-discovery)           | ST 官方 STM32MP157A-DK1 开发板                         |
 | [stm32mp157a-st-ev1](stm32mp157a-st-ev1)                       | ST 官方 STM32MP157A-EV1 开发板                         |
+| **N6 系列**                                                     |                                                   |
+| [stm32n657-st-nucleo](stm32n657-st-nucleo)                     | ST 官方 STM32N657-Nucleo 开发板                        |
 | **WB 系列**                                                      |                                                   |
 | [stm32wb55-st-nucleo](stm32wb55-st-nucleo)                     | ST 官方 STM32WB55-Nucleo 开发板                        |
 | [stm32wl55-st-nucleo](stm32wl55-st-nucleo)                     | ST 官方 STM32WL55-Nucleo 开发板                        |

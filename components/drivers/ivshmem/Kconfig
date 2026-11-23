@@ -8,3 +8,15 @@ config RT_IVSHMEM_QEMU
     bool "QEMU"
     depends on RT_USING_IVSHMEM
     default n
+
+config RT_IVSHMEM_JAILHOUSE
+    bool "JailHouse shared memory in PCI config space"
+    depends on RT_USING_IVSHMEM
+    default n
+    help
+        Take the shared memory address and size from the device's
+        vendor-specific PCI config space (0x40..0x4f) when BAR2 is not
+        available. These fields are controlled by the device and are not
+        validated by the PCI core, so enable this only when running as a
+        JailHouse guest whose hypervisor and PCI devices are trusted.
+        Without this option, a device must provide the shared memory as BAR2.

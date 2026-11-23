@@ -1,0 +1,3 @@
+config RT_I2C_SPACEMIT_K1X
+    bool "Spacemit k1x I2C controller"
+    default n

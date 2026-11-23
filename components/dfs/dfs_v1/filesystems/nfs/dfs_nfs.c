@@ -17,9 +17,9 @@
 
 #include "mount.h"
 #include "nfs.h"
+#include "dfs_nfs.h"
 
-#define NAME_MAX    64
-#define DFS_NFS_MAX_MTU  1024
+#define NAME_MAX 64
 
 #ifdef _WIN32
 #define strtok_r strtok_s
@@ -555,7 +555,8 @@ int nfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     READ3args args;
     READ3res res;
-    ssize_t bytes, total = 0;
+    size_t bytes;
+    ssize_t total = 0;
     nfs_file *fd;
     nfs_filesystem *nfs;
 
@@ -580,33 +581,59 @@ int nfs_read(struct dfs_file *file, void *buf, size_t count)
     {
         args.offset = fd->offset;
         args.count = count > DFS_NFS_MAX_MTU ? DFS_NFS_MAX_MTU : count;
-        count -= args.count;
 
         memset(&res, 0, sizeof(res));
         if (nfsproc3_read_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
         {
             rt_kprintf("Read failed\n");
-            total = 0;
+            if (total == 0)
+            {
+                total = -1;
+            }
             break;
         }
         else if (res.status != NFS3_OK)
         {
             rt_kprintf("Read failed: %d\n", res.status);
-            total = 0;
+            if (total == 0)
+            {
+                total = -1;
+            }
             break;
         }
         else
         {
+            /* count and data.data_len are independent reply fields controlled
+             * by the server; never copy more than requested or decoded. */
             bytes = res.READ3res_u.resok.count;
-            total += bytes;
+            if (bytes > args.count)
+            {
+                bytes = args.count;
+            }
+            if (bytes > res.READ3res_u.resok.data.data_len)
+            {
+                bytes = res.READ3res_u.resok.data.data_len;
+            }
+
+            /* No progress and no EOF would keep the loop spinning. */
+            if (bytes == 0)
+            {
+                if (res.READ3res_u.resok.eof)
+                {
+                    fd->eof = TRUE;
+                }
+                break;
+            }
+
+            total += (ssize_t)bytes;
             fd->offset += bytes;
             /* update current position */
             file->pos = fd->offset;
             memcpy(buf, res.READ3res_u.resok.data.data_val, bytes);
-            buf = (void *)((char *)buf + args.count);
+            buf = (void *)((char *)buf + bytes);
+            count -= bytes;
             if (res.READ3res_u.resok.eof)
             {
-                /* something should probably be here */
                 fd->eof = TRUE;
                 break;
             }
@@ -624,7 +651,8 @@ int nfs_write(struct dfs_file *file, const void *buf, size_t count)
 {
     WRITE3args args;
     WRITE3res res;
-    ssize_t bytes, total = 0;
+    size_t bytes;
+    ssize_t total = 0;
     nfs_file *fd;
     nfs_filesystem *nfs;
 
@@ -651,8 +679,6 @@ int nfs_write(struct dfs_file *file, const void *buf, size_t count)
         args.data.data_val = (void *)buf;
         args.count = count > DFS_NFS_MAX_MTU ? DFS_NFS_MAX_MTU : count;
         args.data.data_len = args.count;
-        count -= args.count;
-        buf = (const void *)((char *)buf + args.count);
 
         if (nfsproc3_write_3(args, &res, nfs->nfs_client) != RPC_SUCCESS)
         {
@@ -669,13 +695,32 @@ int nfs_write(struct dfs_file *file, const void *buf, size_t count)
         else
         {
             bytes = res.WRITE3res_u.resok.count;
+            /* the server cannot have written more than was sent */
+            if (bytes > args.count)
+            {
+                bytes = args.count;
+            }
+
+            /* A short write is legal; advance by the accepted bytes only so
+             * the unacknowledged tail is retried at the correct offset. */
+            if (bytes == 0)
+            {
+                break;
+            }
+
             fd->offset += bytes;
-            total += bytes;
+            total += (ssize_t)bytes;
             /* update current position */
             file->pos = fd->offset;
             /* update file size */
-            if (fd->size < fd->offset) fd->size = fd->offset;
+            if (fd->size < fd->offset)
+            {
+                fd->size = fd->offset;
+            }
             file->vnode->size = fd->size;
+
+            buf = (const void *)((char *)buf + bytes);
+            count -= bytes;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
     } while (count > 0);

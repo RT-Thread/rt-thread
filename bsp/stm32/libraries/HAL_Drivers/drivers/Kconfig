@@ -169,3 +169,213 @@ config BSP_USING_UDID
     bool "Enable UDID (Unique Device Identifier)"
     select RT_USING_HWCRYPTO
     default n
+
+if SOC_SERIES_STM32H7
+    config BSP_USING_BDMA
+        bool
+
+    config BSP_SPI6_TX_USING_BDMA
+        bool "Enable SPI6 TX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_TX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+
+    config BSP_SPI6_RX_USING_BDMA
+        bool "Enable SPI6 RX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_RX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+endif
+
+menu "STM32 Input Capture BSP"
+
+    config BSP_USING_INPUT_CAPTURE
+        bool "Enable STM32 timer Input Capture devices"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        help
+            Register independently selected timer capture channels, or one
+            exclusive hardware PWM Input or dual-edge device per enabled TIM.
+            Configure capture pins, peripheral clocks and IRQ in the board HAL MSP.
+
+    if BSP_USING_INPUT_CAPTURE
+        config BSP_INPUT_CAPTURE_COUNTER_HZ
+            int "Capture timer counter frequency (Hz)"
+            range 100000 1000000
+            default 1000000
+
+        config BSP_USING_INPUT_CAPTURE_TIM1
+            bool "Enable TIM1 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM1
+            config BSP_INPUT_CAPTURE_TIM1_PWM_INPUT
+                int "TIM1 PWM Input (0 = off, 1 = on)"
+                range 0 1
+                default 0
+                help
+                    PWM Input occupies the entire timer and registers one
+                    logical capture device. Set 0 to select dual-edge or
+                    independent EDGE capture instead.
+
+            config BSP_INPUT_CAPTURE_TIM1_DUAL_EDGE
+                bool "TIM1 paired dual-edge capture (CH1/CH2)"
+                depends on BSP_INPUT_CAPTURE_TIM1_PWM_INPUT = 0
+                default n
+                help
+                    Capture rising and falling edges of the same TI1/TI2 input
+                    with CH1/CH2 and register one logical device. This mode
+                    reserves the entire timer and does not use slave reset.
+
+            if BSP_INPUT_CAPTURE_TIM1_PWM_INPUT = 0 && !BSP_INPUT_CAPTURE_TIM1_DUAL_EDGE
+                config BSP_INPUT_CAPTURE_TIM1_CH1
+                    bool "TIM1 CH1 independent EDGE capture"
+                    default y
+                config BSP_INPUT_CAPTURE_TIM1_CH2
+                    bool "TIM1 CH2 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM1_CH3
+                    bool "TIM1 CH3 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM1_CH4
+                    bool "TIM1 CH4 independent EDGE capture"
+                    default n
+            endif
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM2
+            bool "Enable TIM2 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM2
+            config BSP_INPUT_CAPTURE_TIM2_PWM_INPUT
+                int "TIM2 PWM Input (0 = off, 1 = on)"
+                range 0 1
+                default 0
+                help
+                    PWM Input occupies the entire timer and registers one
+                    logical capture device. Set 0 to select dual-edge or
+                    independent EDGE capture instead.
+
+            config BSP_INPUT_CAPTURE_TIM2_DUAL_EDGE
+                bool "TIM2 paired dual-edge capture (CH1/CH2)"
+                depends on BSP_INPUT_CAPTURE_TIM2_PWM_INPUT = 0
+                default n
+                help
+                    Capture rising and falling edges of the same TI1/TI2 input
+                    with CH1/CH2 and register one logical device. This mode
+                    reserves the entire timer and does not use slave reset.
+
+            if BSP_INPUT_CAPTURE_TIM2_PWM_INPUT = 0 && !BSP_INPUT_CAPTURE_TIM2_DUAL_EDGE
+                config BSP_INPUT_CAPTURE_TIM2_CH1
+                    bool "TIM2 CH1 independent EDGE capture"
+                    default y
+                config BSP_INPUT_CAPTURE_TIM2_CH2
+                    bool "TIM2 CH2 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM2_CH3
+                    bool "TIM2 CH3 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM2_CH4
+                    bool "TIM2 CH4 independent EDGE capture"
+                    default n
+            endif
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM3
+            bool "Enable TIM3 Input Capture"
+            default y
+
+        if BSP_USING_INPUT_CAPTURE_TIM3
+            config BSP_INPUT_CAPTURE_TIM3_PWM_INPUT
+                int "TIM3 PWM Input (0 = off, 1 = on)"
+                range 0 1
+                default 0
+                help
+                    PWM Input occupies the entire timer and registers one
+                    logical capture device. Set 0 to select dual-edge or
+                    independent EDGE capture instead.
+
+            config BSP_INPUT_CAPTURE_TIM3_DUAL_EDGE
+                bool "TIM3 paired dual-edge capture (CH1/CH2)"
+                depends on BSP_INPUT_CAPTURE_TIM3_PWM_INPUT = 0
+                default n
+                help
+                    Capture rising and falling edges of the same TI1/TI2 input
+                    with CH1/CH2 and register one logical device. This mode
+                    reserves the entire timer and does not use slave reset.
+
+            if BSP_INPUT_CAPTURE_TIM3_PWM_INPUT = 0 && !BSP_INPUT_CAPTURE_TIM3_DUAL_EDGE
+                config BSP_INPUT_CAPTURE_TIM3_CH1
+                    bool "TIM3 CH1 independent EDGE capture"
+                    default y
+                config BSP_INPUT_CAPTURE_TIM3_CH2
+                    bool "TIM3 CH2 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM3_CH3
+                    bool "TIM3 CH3 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM3_CH4
+                    bool "TIM3 CH4 independent EDGE capture"
+                    default n
+            endif
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_TIM4
+            bool "Enable TIM4 Input Capture"
+            default n
+
+        if BSP_USING_INPUT_CAPTURE_TIM4
+            config BSP_INPUT_CAPTURE_TIM4_PWM_INPUT
+                int "TIM4 PWM Input (0 = off, 1 = on)"
+                range 0 1
+                default 0
+                help
+                    PWM Input occupies the entire timer and registers one
+                    logical capture device. Set 0 to select dual-edge or
+                    independent EDGE capture instead.
+
+            config BSP_INPUT_CAPTURE_TIM4_DUAL_EDGE
+                bool "TIM4 paired dual-edge capture (CH1/CH2)"
+                depends on BSP_INPUT_CAPTURE_TIM4_PWM_INPUT = 0
+                default n
+                help
+                    Capture rising and falling edges of the same TI1/TI2 input
+                    with CH1/CH2 and register one logical device. This mode
+                    reserves the entire timer and does not use slave reset.
+
+            if BSP_INPUT_CAPTURE_TIM4_PWM_INPUT = 0 && !BSP_INPUT_CAPTURE_TIM4_DUAL_EDGE
+                config BSP_INPUT_CAPTURE_TIM4_CH1
+                    bool "TIM4 CH1 independent EDGE capture"
+                    default y
+                config BSP_INPUT_CAPTURE_TIM4_CH2
+                    bool "TIM4 CH2 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM4_CH3
+                    bool "TIM4 CH3 independent EDGE capture"
+                    default n
+                config BSP_INPUT_CAPTURE_TIM4_CH4
+                    bool "TIM4 CH4 independent EDGE capture"
+                    default n
+            endif
+        endif
+
+        config BSP_USING_INPUT_CAPTURE_DUAL_EDGE
+            bool
+            default y if BSP_INPUT_CAPTURE_TIM1_DUAL_EDGE
+            default y if BSP_INPUT_CAPTURE_TIM2_DUAL_EDGE
+            default y if BSP_INPUT_CAPTURE_TIM3_DUAL_EDGE
+            default y if BSP_INPUT_CAPTURE_TIM4_DUAL_EDGE
+
+        config BSP_USING_INPUT_CAPTURE_PWM_INPUT
+            bool
+            default y if BSP_INPUT_CAPTURE_TIM1_PWM_INPUT = 1
+            default y if BSP_INPUT_CAPTURE_TIM2_PWM_INPUT = 1
+            default y if BSP_INPUT_CAPTURE_TIM3_PWM_INPUT = 1
+            default y if BSP_INPUT_CAPTURE_TIM4_PWM_INPUT = 1
+
+    endif
+
+endmenu

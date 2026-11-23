@@ -1,0 +1,14 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['main.c']
+
+if (GetDepend('BSP_USING_UART1') or GetDepend('BSP_USING_UART2') or
+        GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_SPI0') or
+        GetDepend('BSP_USING_RTC') or GetDepend('BSP_USING_WDT') or
+        GetDepend('BSP_USING_CLOCK_TIMER')):
+    src += ['peripheral_test.c']
+
+group = DefineGroup('Applications', src, depend=[''], CPPPATH=[cwd])
+
+Return('group')

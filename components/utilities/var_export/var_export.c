@@ -39,11 +39,11 @@ __declspec(allocate("VarExpTab$z"))
 rt_used const struct ve_exporter __ve_table_end = { "ve_end", "ve_end", 2};
 
 /* Find var objects in VarExpTab segments */
-static int ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_t *table)
+static rt_size_t ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_t *table, rt_size_t max_num)
 {
-    int obj_count = 0;
+    rt_size_t obj_count = 0;
 
-    while (begin < end)
+    while ((begin < end) && (obj_count < max_num))
     {
         if (*begin != RT_NULL)
         {
@@ -55,6 +55,16 @@ static int ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_
         {
             begin++;
         }
+    }
+
+    /* Check if any non-empty exporter remains beyond max_num */
+    while (begin < end)
+    {
+        if (*begin != RT_NULL)
+        {
+            return (rt_size_t)-1;
+        }
+        begin++;
     }
 
     return obj_count;
@@ -75,7 +85,7 @@ int var_export_init(void)
     extern const int __ve_table_start;
     extern const int __ve_table_end;
     ve_exporter_table = (const ve_exporter_t *)&__ve_table_start;
-    ve_exporter_num = (const ve_exporter_t *)&__ve_table_end - ve_exporter_table;
+    ve_exporter_num = ((uintptr_t)&__ve_table_end - (uintptr_t)ve_exporter_table) / sizeof(ve_exporter_t);
 #elif defined (_MSC_VER)                            /* for MS VC++ compiler */
     unsigned int *ptr_begin = (unsigned int *)&__ve_table_start;
     unsigned int *ptr_end = (unsigned int *)&__ve_table_end;
@@ -84,6 +94,7 @@ int var_export_init(void)
     static char __vexp_strbuf2[1024];
     ve_exporter_t ve_exporter_temp;
     rt_size_t index_i, index_j;
+    rt_size_t max_num = sizeof(ve_exporter_tab) / sizeof(ve_exporter_t);
 
     /* past the three members in first ptr_begin */
     ptr_begin += (sizeof(struct ve_exporter) / sizeof(unsigned int));
@@ -91,32 +102,39 @@ int var_export_init(void)
     do ptr_end--; while (*ptr_end == 0);
 
     /* Find var objects in custom segments to solve the problem of holes in objects in different files */
-    ve_exporter_num = ve_init_find_obj(ptr_begin, ptr_end, ve_exporter_tab);
-
-    /* check if the ve_exporter_num is out of bounds */
-    RT_ASSERT(ve_exporter_num < (sizeof(ve_exporter_tab) / sizeof(ve_exporter_t)));
-
-    /* bubble sort algorithms */
-    for (index_i = 0; index_i < (ve_exporter_num - 1); index_i++)
+    rt_size_t found_num = ve_init_find_obj(ptr_begin, ptr_end, ve_exporter_tab, max_num);
+    if (found_num == (rt_size_t)-1)
     {
-        for (index_j = 0; index_j < ((ve_exporter_num - 1) - index_i); index_j++)
+        ve_exporter_num = 0;
+        ve_exporter_table = RT_NULL;
+        return -RT_EFULL;
+    }
+    ve_exporter_num = found_num;
+
+    if (ve_exporter_num > 1)
+    {
+        /* bubble sort algorithms */
+        for (index_i = 0; index_i < (ve_exporter_num - 1); index_i++)
         {
-            /* splice ve_exporter's module and ve_exporter's identifier into a complete string */
-            rt_snprintf(__vexp_strbuf1,
-                        sizeof(__vexp_strbuf1),
-                        "%s%s",
-                        ve_exporter_tab[index_j].module,
-                        ve_exporter_tab[index_j].identifier);
-            rt_snprintf(__vexp_strbuf2,
-                        sizeof(__vexp_strbuf2),
-                        "%s%s",
-                        ve_exporter_tab[index_j + 1].module,
-                        ve_exporter_tab[index_j + 1].identifier);
-            if (rt_strcmp(__vexp_strbuf1, __vexp_strbuf2) > 0)
+            for (index_j = 0; index_j < ((ve_exporter_num - 1) - index_i); index_j++)
             {
-                ve_exporter_temp = ve_exporter_tab[index_j];
-                ve_exporter_tab[index_j] = ve_exporter_tab[index_j + 1];
-                ve_exporter_tab[index_j + 1] = ve_exporter_temp;
+                /* splice ve_exporter's module and ve_exporter's identifier into a complete string */
+                rt_snprintf(__vexp_strbuf1,
+                            sizeof(__vexp_strbuf1),
+                            "%s%s",
+                            ve_exporter_tab[index_j].module,
+                            ve_exporter_tab[index_j].identifier);
+                rt_snprintf(__vexp_strbuf2,
+                            sizeof(__vexp_strbuf2),
+                            "%s%s",
+                            ve_exporter_tab[index_j + 1].module,
+                            ve_exporter_tab[index_j + 1].identifier);
+                if (rt_strcmp(__vexp_strbuf1, __vexp_strbuf2) > 0)
+                {
+                    ve_exporter_temp = ve_exporter_tab[index_j];
+                    ve_exporter_tab[index_j] = ve_exporter_tab[index_j + 1];
+                    ve_exporter_tab[index_j + 1] = ve_exporter_temp;
+                }
             }
         }
     }

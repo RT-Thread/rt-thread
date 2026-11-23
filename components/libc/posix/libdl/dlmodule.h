@@ -86,4 +86,6 @@ void dlmodule_extract_name(const char *path, char *name, int name_size);
 
 rt_ubase_t dlmodule_symbol_find(const char *sym_str);
 
+rt_err_t dlmodule_check_rel_target(struct rt_dlmodule *module, rt_ubase_t r_offset, rt_size_t width);
+
 #endif

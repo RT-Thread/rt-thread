@@ -53,9 +53,9 @@
 #define MEMPOOL_BLOCK_COUNT 32
 #define MEMPOOL_SIZE        (MEMPOOL_BLOCK_SIZE + sizeof(rt_uint8_t *)) * MEMPOOL_BLOCK_COUNT
 
-static rt_uint8_t        mempool_static[MEMPOOL_SIZE];
+static rt_uint8_t mempool_static[MEMPOOL_SIZE];
 static struct rt_mempool mp_static;
-static rt_mp_t           mp_dynamic;
+static rt_mp_t mp_dynamic;
 
 /* Static memory pool test */
 static void test_mp_static_init(void)
@@ -138,7 +138,7 @@ static void test_mp_boundary_alloc_exceed(void)
 {
     void *blocks[MEMPOOL_BLOCK_COUNT];
     void *extra_block;
-    int   i;
+    int i;
 
     /* Allocate all blocks */
     for (i = 0; i < MEMPOOL_BLOCK_COUNT; i++)
@@ -178,7 +178,7 @@ static void test_mp_boundary_free_invalid(void)
 static void test_mp_stress_alloc_free(void)
 {
     void *blocks[MEMPOOL_BLOCK_COUNT];
-    int   i, j;
+    int i, j;
 
     for (j = 0; j < 100; j++) /* Repeat 100 times */
     {

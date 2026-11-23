@@ -40,6 +40,7 @@ extern "C" {
 #include "f1/usbd_config.h"
 #include "f1/i2c_hard_config.h"
 #include "f1/pulse_encoder_config.h"
+#include "f1/inputcapture_config.h"
 #elif defined(SOC_SERIES_STM32F2)
 #include "f2/dma_config.h"
 #include "f2/uart_config.h"
@@ -116,7 +117,7 @@ extern "C" {
 #include "g0/tim_config.h"
 #include "g0/pwm_config.h"
 #include "g0/usbd_config.h"
-#elif  defined(SOC_SERIES_STM32G4)
+#elif defined(SOC_SERIES_STM32G4)
 #include "g4/dma_config.h"
 #include "g4/uart_config.h"
 #include "g4/spi_config.h"
@@ -142,6 +143,7 @@ extern "C" {
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
 #include "h7/i2c_hard_config.h"
+#include "h7/inputcapture_config.h"
 #elif defined(SOC_SERIES_STM32H7RS)
 #include "h7/dma_config.h"
 #include "h7/uart_config.h"
@@ -179,6 +181,14 @@ extern "C" {
 #include "mp1/dac_config.h"
 #include "mp1/tim_config.h"
 #include "mp1/pwm_config.h"
+#elif defined(SOC_SERIES_STM32N6)
+#include "n6/dma_config.h"
+#include "n6/uart_config.h"
+#include "n6/spi_config.h"
+#include "n6/adc_config.h"
+#include "n6/tim_config.h"
+#include "n6/pwm_config.h"
+#include "n6/usbd_config.h"
 #elif defined(SOC_SERIES_STM32WL)
 #include "wl/dma_config.h"
 #include "wl/uart_config.h"

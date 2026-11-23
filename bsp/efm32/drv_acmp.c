@@ -90,9 +90,9 @@ ACMP_WarmTime_TypeDef efm32_acmp_WarmTimeCalc(rt_uint32_t hfperFreq);
  *  Error code
  ******************************************************************************/
 static rt_err_t rt_acmp_control(
-    rt_device_t     dev,
-    rt_uint8_t      cmd,
-    void            *args)
+    rt_device_t dev,
+    int cmd,
+    void *args)
 {
     RT_ASSERT(dev != RT_NULL);
 

@@ -366,9 +366,9 @@ static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t p
 
         /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3; /* 5bit */
         RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
-        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07); /* 3bit */
 #else
         RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
@@ -387,9 +387,9 @@ static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t p
 
         /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3; /* 5bit */
         RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
-        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07); /* 3bit */
 #else
         RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
@@ -499,8 +499,7 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
         /* If hook handled the overflow successfully, don't enter infinite loop */
         if (hook_result != RT_EOK)
         {
-            while (dummy)
-                ;
+            while (dummy);
         }
     }
 #endif /* RT_USING_HW_STACK_GUARD */

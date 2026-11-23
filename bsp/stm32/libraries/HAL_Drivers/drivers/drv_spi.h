@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,12 +66,21 @@
 #define BSP_SPI_USING_POLL
 #endif
 
-/* Aggregate DMA transfer configuration from per-instance Kconfig macros. */
-#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI6_TX_USING_DMA)
+#if defined(BSP_SPI6_TX_USING_DMA) && defined(BSP_SPI6_TX_USING_BDMA)
+#error "SPI6 TX DMA and BDMA are mutually exclusive"
+#endif
+
+#if defined(BSP_SPI6_RX_USING_DMA) && defined(BSP_SPI6_RX_USING_BDMA)
+#error "SPI6 RX DMA and BDMA are mutually exclusive"
+#endif
+
+/* Aggregate DMA transfer configuration from per-instance Kconfig macros.
+ * SPI6 BDMA is a DMA-engine backend, so it shares the DMA transport path. */
+#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI6_TX_USING_DMA) || defined(BSP_SPI6_TX_USING_BDMA)
 #define BSP_SPI_TX_USING_DMA
 #endif
 
-#if defined(BSP_SPI1_RX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA) || defined(BSP_SPI4_RX_USING_DMA) || defined(BSP_SPI5_RX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA)
+#if defined(BSP_SPI1_RX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA) || defined(BSP_SPI4_RX_USING_DMA) || defined(BSP_SPI5_RX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA) || defined(BSP_SPI6_RX_USING_BDMA)
 #define BSP_SPI_RX_USING_DMA
 #endif
 
@@ -95,7 +104,7 @@
 #define BSP_SPI5_USING_DMA
 #endif
 
-#if defined(BSP_SPI6_TX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA)
+#if defined(BSP_SPI6_TX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA) || defined(BSP_SPI6_TX_USING_BDMA) || defined(BSP_SPI6_RX_USING_BDMA)
 #define BSP_SPI6_USING_DMA
 #endif
 
@@ -204,10 +213,10 @@ struct stm32_spi_config
     char *bus_name;            /**< RT-Thread SPI bus name. */
     IRQn_Type irq_type;        /**< SPI peripheral IRQ number. */
 #ifdef BSP_SPI_RX_USING_DMA
-    const struct stm32_dma_config *dma_rx; /**< RX DMA configuration. */
+    const struct stm32_dma_config *dma_rx; /**< RX DMA/BDMA configuration. */
 #endif /* BSP_SPI_RX_USING_DMA */
 #ifdef BSP_SPI_TX_USING_DMA
-    const struct stm32_dma_config *dma_tx; /**< TX DMA configuration. */
+    const struct stm32_dma_config *dma_tx; /**< TX DMA/BDMA configuration. */
 #endif /* BSP_SPI_TX_USING_DMA */
 };
 
@@ -238,13 +247,14 @@ struct stm32_spi
     struct
     {
 #ifdef BSP_SPI_RX_USING_DMA
-        DMA_HandleTypeDef handle_rx;   /**< STM32 HAL RX DMA handle. */
+        DMA_HandleTypeDef handle_rx;   /**< STM32 HAL RX DMA/BDMA handle. */
 #endif /* BSP_SPI_RX_USING_DMA */
 #ifdef BSP_SPI_TX_USING_DMA
-        DMA_HandleTypeDef handle_tx;   /**< STM32 HAL TX DMA handle. */
+        DMA_HandleTypeDef handle_tx;   /**< STM32 HAL TX DMA/BDMA handle. */
 #endif /* BSP_SPI_TX_USING_DMA */
     } dma;                             /**< DMA handles associated with this SPI bus. */
 #endif /* BSP_SPI_USING_DMA */
 };
 
 #endif /*__DRV_SPI_H__ */
+

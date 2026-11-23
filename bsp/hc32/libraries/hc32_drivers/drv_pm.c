@@ -150,7 +150,9 @@ static void _pm_run(struct rt_pm *pm, uint8_t mode)
     static uint8_t last_mode = PM_RUN_MODE_NORMAL_SPEED;
 
     if (mode == last_mode)
+    {
         return;
+    }
 
     if (_run_switch_func[last_mode][mode] != RT_NULL)
     {

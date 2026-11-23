@@ -52,7 +52,7 @@ static rt_sem_t perf_thread_sem = RT_NULL;
 static rt_event_t perf_thread_event = RT_NULL;
 static rt_sem_t complete_sem = RT_NULL;
 
-#define EVENT_FLAG          (1 << 0)
+#define EVENT_FLAG (1 << 0)
 static void perf_thread_sem1(void *parameter)
 {
     rt_err_t ret = RT_EOK;
@@ -62,7 +62,7 @@ static void perf_thread_sem1(void *parameter)
     {
         ret = rt_sem_take(perf_thread_sem, RT_WAITING_FOREVER);
         rt_perf_stop(perf);
-        if(ret != RT_EOK)
+        if (ret != RT_EOK)
         {
             LOG_E("Sem recv error!");
             rt_sem_delete(perf_thread_sem);
@@ -92,9 +92,9 @@ static void perf_thread_sem2(void *parameter)
             return;
         }
         ret = rt_event_recv(perf_thread_event, EVENT_FLAG,
-                (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
-                RT_WAITING_FOREVER, &recv);
-        if(ret != RT_EOK)
+                            (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
+                            RT_WAITING_FOREVER, &recv);
+        if (ret != RT_EOK)
         {
             LOG_E("Event reception failed");
             rt_event_delete(perf_thread_event);
@@ -111,10 +111,10 @@ rt_err_t rt_perf_thread_sem(rt_perf_t *perf)
     rt_thread_t thread1 = RT_NULL;
     rt_thread_t thread2 = RT_NULL;
 
-# if __STDC_VERSION__ >= 199901L
-    rt_strcpy(perf->name,__func__);
+#if __STDC_VERSION__ >= 199901L
+    rt_strcpy(perf->name, __func__);
 #else
-    rt_strcpy(perf->name,"rt_perf_thread_sem");
+    rt_strcpy(perf->name, "rt_perf_thread_sem");
 #endif
 
     perf_thread_sem = rt_sem_create("perf_thread_sem", 0, RT_IPC_FLAG_FIFO);
@@ -128,7 +128,7 @@ rt_err_t rt_perf_thread_sem(rt_perf_t *perf)
     complete_sem = rt_sem_create("complete", 0, RT_IPC_FLAG_FIFO);
 
     thread1 = rt_thread_create("perf_thread_sem1", perf_thread_sem1, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (thread1 == RT_NULL)
     {
         LOG_E("perf_thread_sem1 create failed.");
@@ -136,7 +136,7 @@ rt_err_t rt_perf_thread_sem(rt_perf_t *perf)
     }
 
     thread2 = rt_thread_create("perf_thread_sem2", perf_thread_sem2, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (thread2 == RT_NULL)
     {
         LOG_E("perf_thread_sem2 create failed.");

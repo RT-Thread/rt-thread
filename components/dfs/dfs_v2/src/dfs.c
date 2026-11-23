@@ -50,7 +50,7 @@ static struct dfs_fdtable _fdtab = {0};
  * @param[in] fd The file descriptor that needs to be accommodated
  *
  * @return int The input file descriptor if successful (fd >= 0),
- *         -1 if expansion failed or fd exceeds maximum allowed value (DFS_FD_MAX)
+ *         -EMFILE if the descriptor limit is reached, or -ENOMEM if allocation fails
  *
  * @note Expand table size to next multiple of 4 (but not exceeding DFS_FD_MAX)
  */
@@ -66,7 +66,7 @@ static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
     }
     if (fd >= DFS_FD_MAX)
     {
-        return -1;
+        return -EMFILE;
     }
 
     nr = ((fd + 4) & ~3);
@@ -77,7 +77,7 @@ static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
     fds = (struct dfs_file **)rt_realloc(fdt->fds, nr * sizeof(struct dfs_file *));
     if (!fds)
     {
-        return -1;
+        return -ENOMEM;
     }
 
     /* clean the new allocated fds */
@@ -98,7 +98,7 @@ static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
  * @param[in] startfd The starting file descriptor index to begin searching
  *
  * @return int The allocated file descriptor index if successful (>= 0),
- *         -1 if allocation failed (table expansion failed)
+ *         -EMFILE if the descriptor limit is reached, or -ENOMEM if allocation fails
  *
  * @note If no empty slot found, expand the table and return the new index.
  */
@@ -121,12 +121,7 @@ static int _fdt_slot_alloc(struct dfs_fdtable *fdt, int startfd)
         idx = startfd;
     }
 
-    if (_fdt_slot_expand(fdt, idx) < 0)
-    {
-        return -1;
-    }
-
-    return idx;
+    return _fdt_slot_expand(fdt, idx);
 }
 
 /**
@@ -136,7 +131,7 @@ static int _fdt_slot_alloc(struct dfs_fdtable *fdt, int startfd)
  * @param[in] startfd The starting file descriptor index to begin searching
  *
  * @return int The allocated file descriptor index if successful (>= 0),
- *         -1 if allocation failed
+ *         -EMFILE if the descriptor limit is reached, or -ENOMEM if allocation fails
  *
  * @note This is a wrapper function that calls _fdt_slot_alloc() to perform
  *       the actual allocation. It maintains the same behavior as _fdt_slot_alloc().
@@ -236,6 +231,7 @@ int dfs_init(void)
     /* create device filesystem lock */
     rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
     rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_FIFO);
+    dfs_record_lock_init();
 
     /* Initialize dentry system */
     dfs_dentry_init();
@@ -293,51 +289,43 @@ void dfs_file_destroy(struct dfs_file *file)
  *
  * @return int The allocated file descriptor index if successful (>= 0),
  *         -RT_ENOSYS if filesystem lock failed,
- *         -1 if allocation failed (no empty slots or memory allocation failed)
+ *         -1 if allocation failed. On failure, errno is set to the cause.
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
-    int idx = -1;
+    int idx;
 
     /* lock filesystem */
     if (dfs_file_lock() != RT_EOK)
     {
+        rt_set_errno(ENOSYS);
         return -RT_ENOSYS;
     }
 
     /* find an empty fd entry */
     idx = _fdt_fd_alloc(fdt, (fdt == &_fdtab) ? DFS_STDIO_OFFSET : 0);
-    /* can't find an empty fd entry */
-    if (idx < 0)
+    if (idx >= 0)
     {
-        LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
-    }
-    else if (!fdt->fds[idx])
-    {
-        struct dfs_file *file;
-
-        file = dfs_file_create();
+        struct dfs_file *file = dfs_file_create();
 
         if (file)
         {
             fdt->fds[idx] = file;
-
             LOG_D("allocate a new fd @ %d", idx);
         }
         else
         {
-            fdt->fds[idx] = RT_NULL;
-            idx = -1;
+            idx = -ENOMEM;
         }
-    }
-    else
-    {
-        LOG_E("DFS not found an empty fds entry.");
-        idx = -1;
     }
 
     dfs_file_unlock();
-
+    if (idx < 0)
+    {
+        LOG_E("Failed to allocate a file descriptor.");
+        rt_set_errno(-idx);
+        return -1;
+    }
     return idx;
 }
 
@@ -458,7 +446,7 @@ exit:
  * @brief Allocate a new file descriptor in current process's file descriptor table
  *
  * @return int The allocated file descriptor index if successful (>= 0),
- *         -1 if allocation failed
+ *         a negative value with errno set on failure
  */
 int fd_new(void)
 {
@@ -740,6 +728,7 @@ _EXIT:
 int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
 {
     int err = 0;
+    struct dfs_file *file;
 
     if (fdt == NULL)
     {
@@ -751,7 +740,15 @@ int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
         return -RT_ENOSYS;
     }
 
-    err = dfs_file_close(fdt->fds[fd]);
+    file = fdt_get_file(fdt, fd);
+    if (file == RT_NULL)
+    {
+        dfs_file_unlock();
+        return -EBADF;
+    }
+
+    dfs_record_lock_release(file, fdt);
+    err = dfs_file_close(file);
     if (!err)
     {
         fdt_fd_release(fdt, fd);
@@ -804,7 +801,7 @@ int dfs_dup(int oldfd, int startfd)
     }
 exit:
     dfs_file_unlock();
-    return newfd;
+    return newfd < 0 ? -1 : newfd;
 }
 
 /**
@@ -852,7 +849,7 @@ int dfs_dup_to(int oldfd, struct dfs_fdtable *fdtab)
 exit:
     dfs_file_unlock();
 
-    return newfd;
+    return newfd < 0 ? -1 : newfd;
 }
 
 /**
@@ -901,6 +898,7 @@ int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
         file->data = fdtab->fds[oldfd]->data;
     }
 
+    dfs_record_lock_release(fdtab->fds[oldfd], fdtab);
     dfs_file_close(fdtab->fds[oldfd]);
 
 exit:
@@ -990,6 +988,7 @@ rt_err_t sys_dup2(int oldfd, int newfd)
 
     if (fdt->fds[newfd])
     {
+        dfs_record_lock_release(fdt->fds[newfd], fdt);
         ret = dfs_file_close(fdt->fds[newfd]);
         if (ret < 0)
         {

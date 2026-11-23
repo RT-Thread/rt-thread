@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['port/system.c', 'port/clock.c', 'port/interrupt.c', 'port/timer.c']
+if GetDepend('BSP_USING_UART0'):
+    src += ['drivers/drv_uart.c']
+
+group = DefineGroup('D21x', src, depend=['AIC_SOC_D21X'],
+                    CPPPATH=[cwd + '/include', cwd + '/../../include'])
+Return('group')

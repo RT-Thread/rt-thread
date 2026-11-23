@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-25     Meco Man     first version
+ * 2026-11-06     Parthiban    keep TC_rt_memmove_too_long inside its buffers
  */
 
 #include <rtthread.h>
@@ -15,7 +16,7 @@
 static void TC_rt_memmove_basic(void)
 {
     char src[] = "Hello";
-    char dest[10] = {0};
+    char dest[10] = { 0 };
     rt_memmove(dest, src, rt_strlen(src) + 1);
     uassert_str_equal(dest, "Hello");
 }
@@ -69,14 +70,16 @@ static void TC_rt_memmove_null_dest(void)
     rt_memmove(RT_NULL, src, 0); /* Should not crash and do nothing */
 }
 
-/* Move more than source size */
+/* Move more than the string length */
 static void TC_rt_memmove_too_long(void)
 {
-    char src[] = "Short";
-    char dest[10] = {0};
-    rt_memmove(dest, src, sizeof(src) + 5); /* Should only copy up to src length */
+    char src[11] = { 'S', 'h', 'o', 'r', 't', '\0', 'X', 'Y', 'Z', 'W', 'V' };
+    char dest[11];
+
+    rt_memset(dest, 0xAA, sizeof(dest));
+    rt_memmove(dest, src, sizeof(src)); /* all 11 bytes, also past the NUL */
     uassert_str_equal(dest, "Short");
-    uassert_int_equal(dest[5], 0); /* Ensure no buffer overflow */
+    uassert_buf_equal(dest, src, sizeof(src));
 }
 
 /* Move empty string */
@@ -87,7 +90,7 @@ static void TC_rt_memmove_empty_string(void)
     rt_memmove(dest, src, rt_strlen(src) + 1);
 
     /* Expect dest to only contain '\0' at the start */
-    uassert_str_equal(dest, "");  /* Destination should now be an empty string */
+    uassert_str_equal(dest, "");      /* Destination should now be an empty string */
     uassert_int_equal(dest[0], '\0'); /* First character should be '\0' */
 }
 

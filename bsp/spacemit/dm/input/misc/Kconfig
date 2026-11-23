@@ -1,0 +1,5 @@
+config RT_INPUT_MISC_PWRKEY_SPACEMIT_PMIC
+    bool "Spacemit PMIC power key support"
+    depends on RT_INPUT_MISC
+    depends on RT_MFD_SPACEMIT_PMIC
+    default n

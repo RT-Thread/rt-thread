@@ -15,6 +15,26 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
+def bsp_pkg_check():
+    if GetOption('clean'):
+        return
+
+    need_update = True
+
+    if os.path.isdir("packages"):
+        for p in os.listdir("packages"):
+            if p.startswith("hpm_sdk-"):
+                need_update = False
+                break
+    if need_update:
+        print("\n===============================================================================")
+        print("Dependency packages missing, please running 'pkgs --update'...")
+        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
+        print("===============================================================================")
+        exit(1)
+
+RegisterPreBuildingAction(bsp_pkg_check)
+
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 AddOption('--run',
@@ -29,6 +49,7 @@ DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS,
     CXXCOM = '$CXX -o $TARGET -c $CXXFLAGS $_CCCOMCOM $SOURCES')
@@ -46,9 +67,6 @@ if os.path.exists(os.path.join(SDK_ROOT, 'libraries')):
 else:
     libraries_path_prefix = os.path.join(os.path.dirname(SDK_ROOT), 'libraries')
 
-SDK_LIB = libraries_path_prefix
-Export('SDK_LIB')
-
 
 GDB = rtconfig.GDB
 
@@ -59,6 +77,7 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # includes rtt drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers',  'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'misc',  'SConscript'), variant_dir='build/libraries/misc', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

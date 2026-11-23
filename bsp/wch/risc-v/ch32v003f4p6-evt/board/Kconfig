@@ -1,0 +1,18 @@
+menu "Hardware Drivers Config"
+
+config SOC_CH32V003F4
+    bool
+    select ARCH_RISCV
+    select SOC_RISCV_FAMILY_CH32
+    default y
+
+config BSP_USING_UART
+    bool
+    select RT_USING_SERIAL
+    default y
+
+config BSP_USING_UART1
+    bool
+    default y
+
+endmenu

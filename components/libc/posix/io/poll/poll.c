@@ -214,16 +214,28 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
     if (fd >= 0)
     {
         struct dfs_file *f = fd_get(fd);
+        const struct dfs_file_ops *fops = RT_NULL;
         mask = POLLNVAL;
 
         if (f)
         {
+#ifdef RT_USING_DFS_V2
+            fops = f->fops;
+#else
+            if (f->vnode)
+            {
+                fops = f->vnode->fops;
+            }
+#endif
+        }
+        if (fops)
+        {
             mask = POLLMASK_DEFAULT;
-            if (f->vnode->fops->poll)
+            if (fops->poll)
             {
                 req->_key = pollfd->events | POLLERR | POLLHUP;
 
-                mask = f->vnode->fops->poll(f, req);
+                mask = fops->poll(f, req);
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)

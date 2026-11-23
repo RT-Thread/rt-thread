@@ -63,7 +63,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         }
 
         d = fd_get(fd);
-        if(d)
+        if (d)
         {
 #ifdef RT_USING_DFS_V2
             d->fops = dfs_net_get_fops();
@@ -670,6 +670,10 @@ int socket(int domain, int type, int protocol)
     }
     else
     {
+#ifdef RT_USING_DFS_V2
+        dfs_vnode_destroy(d->vnode);
+        d->vnode = RT_NULL;
+#endif
         /* release fd */
         fd_release(fd);
         rt_set_errno(-ENOMEM);

@@ -178,6 +178,11 @@ static rt_err_t _uart_ops_configure( struct rt_serial_device *dev,
     RT_ASSERT(RT_NULL != dev);
     RT_ASSERT(RT_NULL != cfg);
 
+    if (cfg->baud_rate == 0 || cfg->baud_rate > BAUD_RATE_921600)
+    {
+        return -RT_EINVAL;
+    }
+
     uart = (struct imx_uart*)dev;
     periph = (UART_Type*)uart->periph.vaddr;
 
@@ -187,8 +192,6 @@ static rt_err_t _uart_ops_configure( struct rt_serial_device *dev,
 
     periph->UFCR &= ~UART_UFCR_RFDIV_MASK;
     periph->UFCR |=  UART_UFCR_RFDIV(5);
-
-    RT_ASSERT(cfg->baud_rate <= BAUD_RATE_921600);
 
     periph->UBIR = UART_UBIR_INC(15);
     periph->UBMR = UART_UBMR_MOD(HW_UART_BUS_CLOCK / cfg->baud_rate - 1);

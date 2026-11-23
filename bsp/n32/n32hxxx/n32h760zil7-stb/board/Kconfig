@@ -1,10 +1,18 @@
 menu "Hardware Drivers Config"
 
+    config BSP_PERIPH_PIN_CFG_READY
+        bool "Optional peripheral AF pins are configured on this board"
+        default n
+        help
+            The peripheral clock and IO must be configured in
+            board/Cube_Config/USER/src/n32h7xx_cfg.c.
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         if BSP_USING_SDRAM
             choice BSP_SDRAM_BANK_SEL
                 prompt "Select SDRAM Bank"
@@ -85,6 +93,7 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select BSP_USING_SDRAM
         if BSP_USING_LCD
             config BSP_BITS_PER_PIXEL
@@ -175,6 +184,7 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_LWIP
         if BSP_USING_ETH
             choice BSP_ETH_SEL
@@ -286,6 +296,174 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART6_TX_USING_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+
+            config BSP_UART7_RX_USING_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART7_TX_USING_DMA
+                bool "Enable UART7 TX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+
+            config BSP_UART8_RX_USING_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART8_TX_USING_DMA
+                bool "Enable UART8 TX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART9
+                bool "Enable UART9"
+                default n
+
+            config BSP_UART9_RX_USING_DMA
+                bool "Enable UART9 RX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART9_TX_USING_DMA
+                bool "Enable UART9 TX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART10
+                bool "Enable UART10"
+                default n
+
+            config BSP_UART10_RX_USING_DMA
+                bool "Enable UART10 RX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART10_TX_USING_DMA
+                bool "Enable UART10 TX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART11
+                bool "Enable UART11"
+                default n
+
+            config BSP_UART11_RX_USING_DMA
+                bool "Enable UART11 RX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART11_TX_USING_DMA
+                bool "Enable UART11 TX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART12
+                bool "Enable UART12"
+                default n
+
+            config BSP_UART12_RX_USING_DMA
+                bool "Enable UART12 RX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART12_TX_USING_DMA
+                bool "Enable UART12 TX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART13
+                bool "Enable UART13"
+                default n
+
+            config BSP_UART13_RX_USING_DMA
+                bool "Enable UART13 RX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART13_TX_USING_DMA
+                bool "Enable UART13 TX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART14
+                bool "Enable UART14"
+                default n
+
+            config BSP_UART14_RX_USING_DMA
+                bool "Enable UART14 RX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART14_TX_USING_DMA
+                bool "Enable UART14 TX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART15
+                bool "Enable UART15"
+                default n
+
+            config BSP_UART15_RX_USING_DMA
+                bool "Enable UART15 RX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART15_TX_USING_DMA
+                bool "Enable UART15 TX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
         endif
 
     menuconfig BSP_USING_SPI
@@ -306,6 +484,96 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+
+            config BSP_SPI4_TX_USING_DMA
+                bool "Enable SPI4 TX DMA"
+                depends on BSP_USING_SPI4
+                default n
+
+            config BSP_SPI4_RX_USING_DMA
+                bool "Enable SPI4 RX DMA"
+                depends on BSP_USING_SPI4
+                select BSP_SPI4_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+
+            config BSP_SPI5_TX_USING_DMA
+                bool "Enable SPI5 TX DMA"
+                depends on BSP_USING_SPI5
+                default n
+
+            config BSP_SPI5_RX_USING_DMA
+                bool "Enable SPI5 RX DMA"
+                depends on BSP_USING_SPI5
+                select BSP_SPI5_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
+
+            config BSP_SPI6_TX_USING_DMA
+                bool "Enable SPI6 TX DMA"
+                depends on BSP_USING_SPI6
+                default n
+
+            config BSP_SPI6_RX_USING_DMA
+                bool "Enable SPI6 RX DMA"
+                depends on BSP_USING_SPI6
+                select BSP_SPI6_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI7
+                bool "Enable SPI7 BUS"
+                default n
+
+            config BSP_SPI7_TX_USING_DMA
+                bool "Enable SPI7 TX DMA"
+                depends on BSP_USING_SPI7
+                default n
+
+            config BSP_SPI7_RX_USING_DMA
+                bool "Enable SPI7 RX DMA"
+                depends on BSP_USING_SPI7
+                select BSP_SPI7_TX_USING_DMA
                 default n
         endif
 
@@ -392,6 +660,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI Quad SPI BUS"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_QSPI
         select RT_USING_SPI
         if BSP_USING_QSPI
@@ -1293,6 +1562,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_PWM
             menuconfig BSP_USING_PWM1
                 bool "Enable ATIM1 output PWM"
+                depends on !BSP_USING_ATIM1
                 default n
                 if BSP_USING_PWM1
                     config BSP_USING_PWM1_CH1
@@ -1314,6 +1584,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM2
                 bool "Enable ATIM2 output PWM"
+                depends on !BSP_USING_ATIM2
                 default n
                 if BSP_USING_PWM2
                     config BSP_USING_PWM2_CH1
@@ -1335,6 +1606,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM3
                 bool "Enable ATIM3 output PWM"
+                depends on !BSP_USING_ATIM3
                 default n
                 if BSP_USING_PWM3
                     config BSP_USING_PWM3_CH1
@@ -1356,6 +1628,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM4
                 bool "Enable ATIM4 output PWM"
+                depends on !BSP_USING_ATIM4
                 default n
                 if BSP_USING_PWM4
                     config BSP_USING_PWM4_CH1
@@ -1377,6 +1650,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM5
                 bool "Enable GTIMA1 output PWM"
+                depends on !BSP_USING_GTIMA1
                 default n
                 if BSP_USING_PWM5
                     config BSP_USING_PWM5_CH1
@@ -1398,6 +1672,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM6
                 bool "Enable GTIMA2 output PWM"
+                depends on !BSP_USING_GTIMA2
                 default n
                 if BSP_USING_PWM6
                     config BSP_USING_PWM6_CH1
@@ -1419,6 +1694,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM7
                 bool "Enable GTIMA3 output PWM"
+                depends on !BSP_USING_GTIMA3
                 default n
                 if BSP_USING_PWM7
                     config BSP_USING_PWM7_CH1
@@ -1440,6 +1716,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM8
                 bool "Enable GTIMA4 output PWM"
+                depends on !BSP_USING_GTIMA4
                 default n
                 if BSP_USING_PWM8
                     config BSP_USING_PWM8_CH1
@@ -1461,6 +1738,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM9
                 bool "Enable GTIMA5 output PWM"
+                depends on !BSP_USING_GTIMA5
                 default n
                 if BSP_USING_PWM9
                     config BSP_USING_PWM9_CH1
@@ -1482,6 +1760,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM10
                 bool "Enable GTIMA6 output PWM"
+                depends on !BSP_USING_GTIMA6
                 default n
                 if BSP_USING_PWM10
                     config BSP_USING_PWM10_CH1
@@ -1503,6 +1782,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM11
                 bool "Enable GTIMA7 output PWM"
+                depends on !BSP_USING_GTIMA7
                 default n
                 if BSP_USING_PWM11
                     config BSP_USING_PWM11_CH1
@@ -1524,6 +1804,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM12
                 bool "Enable GTIMB1 output PWM"
+                depends on !BSP_USING_GTIMB1
                 default n
                 if BSP_USING_PWM12
                     config BSP_USING_PWM12_CH1
@@ -1545,6 +1826,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM13
                 bool "Enable GTIMB2 output PWM"
+                depends on !BSP_USING_GTIMB2
                 default n
                 if BSP_USING_PWM13
                     config BSP_USING_PWM13_CH1
@@ -1566,6 +1848,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM14
                 bool "Enable GTIMB3 output PWM"
+                depends on !BSP_USING_GTIMB3
                 default n
                 if BSP_USING_PWM14
                     config BSP_USING_PWM14_CH1
@@ -1593,65 +1876,78 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_PULSE_ENCODER
                 config BSP_USING_PULSE_ENCODER1
                     bool "Enable Pulse Encoder1"
+                    depends on !BSP_USING_ATIM1 && !BSP_USING_PWM1
                     default n
 
                 config BSP_USING_PULSE_ENCODER2
                     bool "Enable Pulse Encoder2"
+                    depends on !BSP_USING_ATIM2 && !BSP_USING_PWM2
                     default n
 
                 config BSP_USING_PULSE_ENCODER3
                     bool "Enable Pulse Encoder3"
+                    depends on !BSP_USING_ATIM3 && !BSP_USING_PWM3
                     default n
 
                 config BSP_USING_PULSE_ENCODER4
                     bool "Enable Pulse Encoder4"
+                    depends on !BSP_USING_ATIM4 && !BSP_USING_PWM4
                     default n
 
                 config BSP_USING_PULSE_ENCODER5
                     bool "Enable Pulse Encoder5"
+                    depends on !BSP_USING_GTIMA1 && !BSP_USING_PWM5
                     default n
 
                 config BSP_USING_PULSE_ENCODER6
                     bool "Enable Pulse Encoder6"
+                    depends on !BSP_USING_GTIMA2 && !BSP_USING_PWM6
                     default n
 
                 config BSP_USING_PULSE_ENCODER7
                     bool "Enable Pulse Encoder7"
+                    depends on !BSP_USING_GTIMA3 && !BSP_USING_PWM7
                     default n
 
                 config BSP_USING_PULSE_ENCODER8
                     bool "Enable Pulse Encoder8"
+                    depends on !BSP_USING_GTIMA4 && !BSP_USING_PWM8
                     default n
 
                 config BSP_USING_PULSE_ENCODER9
                     bool "Enable Pulse Encoder9"
+                    depends on !BSP_USING_GTIMA5 && !BSP_USING_PWM9
                     default n
 
                 config BSP_USING_PULSE_ENCODER10
                     bool "Enable Pulse Encoder10"
+                    depends on !BSP_USING_GTIMA6 && !BSP_USING_PWM10
                     default n
 
                 config BSP_USING_PULSE_ENCODER11
                     bool "Enable Pulse Encoder11"
+                    depends on !BSP_USING_GTIMA7 && !BSP_USING_PWM11
                     default n
 
                 config BSP_USING_PULSE_ENCODER12
                     bool "Enable Pulse Encoder12"
+                    depends on !BSP_USING_GTIMB1 && !BSP_USING_PWM12
                     default n
 
                 config BSP_USING_PULSE_ENCODER13
                     bool "Enable Pulse Encoder13"
+                    depends on !BSP_USING_GTIMB2 && !BSP_USING_PWM13
                     default n
 
                 config BSP_USING_PULSE_ENCODER14
                     bool "Enable Pulse Encoder14"
+                    depends on !BSP_USING_GTIMB3 && !BSP_USING_PWM14
                     default n
             endif
 
     menuconfig BSP_USING_LPTIM
         bool "Enable lptimer"
         default n
-        select RT_USING_LPTIMER
         select RT_USING_CLOCK_TIME
         if BSP_USING_LPTIM
             config BSP_USING_LPTIM1
@@ -1675,6 +1971,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_NAND
         bool "Enable Nand"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_MTD_NAND
         if BSP_USING_NAND
             choice BSP_NAND_BANK_SEL

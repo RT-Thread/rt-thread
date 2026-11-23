@@ -311,8 +311,8 @@ void arm_gic_set_system_register_enable_mask(rt_uint32_t index, rt_uint32_t valu
     value &= 0xFFUL;
     /* set priority mask */
     __set_gicv3_reg(ICC_SRE, value);
-    __asm__ volatile ("isb 0xF"::
-                        :"memory");
+    __asm__ volatile("isb 0xF" ::
+                         : "memory");
 }
 
 rt_uint32_t arm_gic_get_system_register_enable_mask(rt_uint32_t index)
@@ -384,10 +384,10 @@ void arm_gic_send_affinity_sgi(rt_uint32_t index, int irq, rt_uint32_t cpu_mask,
         sgi_val = (1ULL << 40) | ((irq & 0x0FULL) << 24); //Interrupts routed to all PEs in the system, excluding "self".
         /*  Write the ICC_SGI1R registers */
         __asm__ volatile("dsb 0xF" ::
-                            : "memory");
+                             : "memory");
         __set_cp64(15, 0, sgi_val, 12);
         __asm__ volatile("isb 0xF" ::
-                            : "memory");
+                             : "memory");
     }
     else
     {
@@ -401,10 +401,10 @@ void arm_gic_send_affinity_sgi(rt_uint32_t index, int irq, rt_uint32_t cpu_mask,
                        ((cluster_id >> 24) & 0xFFull) << GIC_RSGI_AFF3_OFFSET);
 
             __asm__ volatile("dsb 0xF" ::
-                                : "memory");
+                                 : "memory");
             __set_cp64(15, 0, sgi_val, 12);
             __asm__ volatile("isb 0xF" ::
-                                : "memory");
+                                 : "memory");
         }
     }
 }
@@ -504,9 +504,13 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
      * platform maximum.
      */
     if (_gic_max_irq > 1020U)
+    {
         _gic_max_irq = 1020U;
+    }
     if (_gic_max_irq > ARM_GIC_NR_IRQS) /* the platform maximum interrupts */
+    {
         _gic_max_irq = ARM_GIC_NR_IRQS;
+    }
 
     GIC_DIST_CTRL(dist_base) = 0x0U;
     /* Wait for register write pending */
@@ -514,7 +518,9 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 
     /* Set all global interrupts to be level triggered, active low. */
     for (i = 32U; i < _gic_max_irq; i += 16U)
+    {
         GIC_DIST_CONFIG(dist_base, i) = 0x0U;
+    }
 
     arm_gicv3_wait_rwp(0, 32);
 
@@ -530,7 +536,9 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 
     /* Set priority on spi interrupts. */
     for (i = 32U; i < _gic_max_irq; i += 4U)
+    {
         GIC_DIST_PRI(dist_base, i) = 0xa0a0a0a0U;
+    }
 
     arm_gicv3_wait_rwp(0, 32);
     /* Disable all interrupts. */
@@ -543,7 +551,9 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
     arm_gicv3_wait_rwp(0, 32);
     /* All interrupts defaults to IGROUP1(IRQ). */
     for (i = 0U; i < _gic_max_irq; i += 32U)
+    {
         GIC_DIST_IGROUP(dist_base, i) = 0xffffffffU;
+    }
 
     arm_gicv3_wait_rwp(0, 32);
 
@@ -660,8 +670,8 @@ void arm_gic_dump_type(rt_uint32_t index)
     unsigned int gic_type;
 
     gic_type = GIC_DIST_TYPE(_gic_table[index].dist_hw_base);
-    rt_kprintf("GICv%d on %p, max IRQs: %d, %s security extension(%08x)\n",
-               (GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4U) & 0xfUL,
+    rt_kprintf("GICv%u on 0x%08x, max IRQs: %u, %s security extension(%08x)\n",
+               (unsigned int)((GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4U) & 0xfUL),
                _gic_table[index].dist_hw_base,
                _gic_max_irq,
                gic_type & (1U << 10U) ? "has" : "no",
@@ -673,7 +683,7 @@ void arm_gic_dump(rt_uint32_t index)
     unsigned int i, k;
 
     k = arm_gic_get_high_pending_irq(0);
-    rt_kprintf("--- high pending priority: %d(%08x)\n", k, k);
+    rt_kprintf("--- high pending priority: %u(%08x)\n", k, k);
     rt_kprintf("--- hw mask ---\n");
     for (i = 0U; i < _gic_max_irq / 32U; i++)
     {

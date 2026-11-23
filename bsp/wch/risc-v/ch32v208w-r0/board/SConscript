@@ -12,6 +12,9 @@ board.c
 software_irq.c
 ''')
 
+if GetDepend('BSP_USING_PM'):
+    src += ['drv_pm.c']
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

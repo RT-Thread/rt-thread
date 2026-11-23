@@ -320,7 +320,7 @@ rt_err_t  rt_link_dev_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
 
-    if (cmd & RT_DEVICE_CTRL_CONFIG)
+    if ((cmd & ~RT_LINK_DEVICE_MASK) == RT_DEVICE_CTRL_CONFIG)
     {
         if (args == RT_NULL)
             return -RT_EINVAL;
