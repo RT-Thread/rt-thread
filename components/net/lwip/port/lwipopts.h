@@ -654,17 +654,32 @@
 #define LWIP_NETIF_API                  1
 #endif
 
+/* DHCPD keeps one permanent sys_timeout for periodic lease recycling.
+ * Reserve it explicitly: with MEMP_MEM_MALLOC=0 the pool otherwise only
+ * covers lwIP's own protocol timers, so DHCPD would either hit an empty
+ * pool or steal a slot reserved for TCP and the other protocols. */
+#ifdef LWIP_USING_DHCPD
+#define DHCPD_SYS_TIMEOUT_COUNT     1
+#else
+#define DHCPD_SYS_TIMEOUT_COUNT     0
+#endif
+
 /* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active timeouts. */
 #if RT_USING_LWIP_VER_NUM >= 0x20200
 /* lwIP 2.2.x changed the pool formula (LWIP_ACD, LWIP_IPV6_DHCP6,
- * PPP_NUM_TIMEOUTS_PER_PCB). Do not derive it here; fall back to the
- * upstream opt.h default (MEMP_NUM_SYS_TIMEOUT == LWIP_NUM_SYS_TIMEOUT_INTERNAL,
- * opt.h:527 in 2.2.1) which always matches its own code. */
+ * PPP_NUM_TIMEOUTS_PER_PCB). Do not derive it here; use the upstream
+ * LWIP_NUM_SYS_TIMEOUT_INTERNAL value (opt.h:519 in 2.2.1) and only add
+ * the DHCPD reservation when DHCPD is enabled. */
+#ifdef LWIP_USING_DHCPD
+/* opt.h defines LWIP_NUM_SYS_TIMEOUT_INTERNAL after including lwipopts.h;
+ * this expression is expanded later, when MEMP_NUM_SYS_TIMEOUT is used. */
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_NUM_SYS_TIMEOUT_INTERNAL + DHCPD_SYS_TIMEOUT_COUNT)
+#endif
 #else
 #if RT_USING_LWIP_VER_NUM == 0x20102
-#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_NUM_TIMEOUTS + (LWIP_IPV6 * (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD)))
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_NUM_TIMEOUTS + (LWIP_IPV6 * (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD)) + DHCPD_SYS_TIMEOUT_COUNT)
 #else
-#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + (2*LWIP_IPV6)) : 0))
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + (2*LWIP_IPV6)) : 0) + DHCPD_SYS_TIMEOUT_COUNT)
 #endif
 #endif
 
