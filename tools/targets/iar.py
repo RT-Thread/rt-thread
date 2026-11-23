@@ -146,6 +146,8 @@ def _prepare_existing_project(tree, template_tree):
         'IlinkConfigDefines', 'IlinkUseExtraOptions', 'IlinkExtraOptions',
         'IlinkAdditionalLibs',
     }
+    if getattr(sys.modules.get('rtconfig'), 'IAR_USE_TEMPLATE_ICF', False):
+        managed_options.add('IlinkIcfFile')
 
     def get_options(config):
         options = {}
