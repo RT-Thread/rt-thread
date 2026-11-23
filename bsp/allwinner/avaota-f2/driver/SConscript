@@ -1,6 +1,8 @@
 from building import *
 import os
 
+Import('RTT_ROOT')
+
 cwd = GetCurrentDir()
 src = Split('''
     drv_uart.c
@@ -8,8 +10,9 @@ src = Split('''
     drv_mmc.c
 ''')
 
-# libfdt only (no full RT_USING_OFW yet)
-fdt_cwd = os.path.normpath(os.path.join(cwd, '..', '..', '..', '..', 'components', 'drivers', 'ofw', 'libfdt'))
+# libfdt only (no full RT_USING_OFW yet); use RTT_ROOT so that a `scons --dist`
+# project (where the BSP is not four levels below the tree root) also builds.
+fdt_cwd = os.path.join(RTT_ROOT, 'components', 'drivers', 'ofw', 'libfdt')
 fdt_src = [
     os.path.join(fdt_cwd, 'fdt.c'),
     os.path.join(fdt_cwd, 'fdt_ro.c'),

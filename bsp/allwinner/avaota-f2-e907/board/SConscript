@@ -1,0 +1,31 @@
+from building import *
+import os
+
+Import('env')
+
+cwd = GetCurrentDir()
+src = Split('''
+    board.c
+    board_c907_release.c
+    drv_rpmsg.c
+    clint.c
+    plic.c
+    tick.c
+    trap.c
+    startup_gcc.S
+''')
+
+# board.dtb is compiled from board.dts and embedded by builtin_fdt.S with
+# .incbin, which scons cannot scan. Build the object here so that it can depend
+# on the generated DTB: a clean tree compiles the DTS before assembling, and
+# editing the DTS rebuilds both. Requires dtc (device-tree-compiler).
+dtb = env.Command(os.path.join(cwd, 'board.dtb'),
+                  os.path.join(cwd, 'board.dts'),
+                  'dtc -I dts -O dtb -o $TARGET $SOURCE')
+fdt_obj = env.Object(os.path.join(cwd, 'builtin_fdt.S'))
+env.Depends(fdt_obj, dtb)
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = [cwd])
+group += fdt_obj
+
+Return('group')

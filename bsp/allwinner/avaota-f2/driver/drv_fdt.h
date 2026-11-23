@@ -12,6 +12,7 @@
 struct v861_uart_fdt
 {
     uint32_t reg;
+    uint32_t irq;
     uint32_t baud;
     uint32_t clk_hz;
     uint32_t gate_reg;
