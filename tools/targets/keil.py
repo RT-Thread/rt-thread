@@ -333,7 +333,11 @@ def MDK45Project(env, tree, target, script, target_names=None):
 
         misc = target_node.find('TargetOption/TargetArmAds/LDads/Misc')
         if misc is not None:
-            misc.text = LINKFLAGS
+            if target_names is None:
+                misc.text = LINKFLAGS
+            else:
+                template_flags = (misc.text or '').strip()
+                misc.text = ' '.join(filter(None, (template_flags, LINKFLAGS.strip())))
 
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode())
