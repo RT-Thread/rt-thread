@@ -998,6 +998,7 @@ struct rt_ipc_object
     struct rt_object parent;                            /**< inherit from rt_object */
 
     rt_list_t suspend_thread;                 /**< threads pended on this resource */
+    rt_atomic_t in_flight;                    /**< in-flight handoff reclaims referencing this object */
 };
 
 /**
