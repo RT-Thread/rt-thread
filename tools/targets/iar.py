@@ -200,7 +200,7 @@ def IARProject(env, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
     template_tree = etree.parse('template.ewp')
-    if os.path.exists(target):
+    if os.path.exists(target) and os.path.getsize(target) > 0:
         tree = etree.parse(target)
         _prepare_existing_project(tree, template_tree)
     else:
