@@ -264,8 +264,30 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
 
     do {
         /* Ignore "." and ".." */
-        do {
+        for (;;)
+        {
             rt_uint32_t dlen = rt_le32_to_cpu(dirent->len);
+            rt_uint32_t dnamelen = rt_le32_to_cpu(dirent->namelen);
+
+            /*
+             * Both the record length and the name length come from the
+             * medium: make sure the record is complete inside the current
+             * sector and that the name is contained in the record before
+             * reading name[0] or passing it to the converters.
+             */
+            if (dnamelen == 0 ||
+                dlen < sizeof(*dirent) ||
+                dnamelen > dlen - sizeof(*dirent) ||
+                dlen > ISO9660_BLKSZ - sz)
+            {
+                goto _fail;
+            }
+
+            if (dirent->name[0] >> 1 != 0 || dnamelen != 1)
+            {
+                /* This is not "." or "..", use this record. */
+                break;
+            }
 
             dirent = (void *)dirent + dlen;
             sz += dlen;
@@ -286,7 +308,7 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
                 /* Is end, no found. */
                 goto _fail;
             }
-        } while (dirent->name[0] >> 1 == 0 && rt_le32_to_cpu(dirent->namelen) == 1);
+        }
 
         namelen = rt_le32_to_cpu(dirent->namelen);
 
