@@ -21,29 +21,29 @@
 #include "gd32h77x_78x_mdma.h"
 #endif
 
-#define LOG_TAG              "drv.ospi"
+#define LOG_TAG "drv.ospi"
 #include <drv_log.h>
 
-#define GD32_OSPI_FIFO_CHUNK_SIZE       16U
-#define GD32_OSPI_FIFO_WORD_SIZE        4U
+#define GD32_OSPI_FIFO_CHUNK_SIZE 16U
+#define GD32_OSPI_FIFO_WORD_SIZE  4U
 
 #ifdef BSP_OSPI0_USING_MDMA
-#define GD32_OSPI_MDMA_CHANNEL          ((mdma_channel_enum)BSP_OSPI0_MDMA_CHANNEL)
-#define GD32_OSPI_MDMA_BUFFER_SIZE      16U
-#define GD32_OSPI_MDMA_MIN_SIZE         512U
-#define GD32_OSPI_MDMA_MAX_SIZE         0x10000U
-#define GD32_OSPI_MDMA_TIMEOUT_MS       1000U
+#define GD32_OSPI_MDMA_CHANNEL     ((mdma_channel_enum)BSP_OSPI0_MDMA_CHANNEL)
+#define GD32_OSPI_MDMA_BUFFER_SIZE 16U
+#define GD32_OSPI_MDMA_MIN_SIZE    512U
+#define GD32_OSPI_MDMA_MAX_SIZE    0x10000U
+#define GD32_OSPI_MDMA_TIMEOUT_MS  1000U
 #ifdef RT_USING_CACHE
-#define GD32_OSPI_MDMA_ALIGNMENT        32U
+#define GD32_OSPI_MDMA_ALIGNMENT 32U
 #else
-#define GD32_OSPI_MDMA_ALIGNMENT        GD32_OSPI_MDMA_BUFFER_SIZE
+#define GD32_OSPI_MDMA_ALIGNMENT GD32_OSPI_MDMA_BUFFER_SIZE
 #endif
-#define GD32_OSPI_ITCM_START            0x00000000U
-#define GD32_OSPI_ITCM_END              0x00020000U
-#define GD32_OSPI_DTCM_START            0x20000000U
-#define GD32_OSPI_DTCM_END              0x20040000U
-#define GD32_OSPI_AHB_SRAM_START        0x30000000U
-#define GD32_OSPI_AHB_SRAM_END          0x40000000U
+#define GD32_OSPI_ITCM_START     0x00000000U
+#define GD32_OSPI_ITCM_END       0x00020000U
+#define GD32_OSPI_DTCM_START     0x20000000U
+#define GD32_OSPI_DTCM_END       0x20040000U
+#define GD32_OSPI_AHB_SRAM_START 0x30000000U
+#define GD32_OSPI_AHB_SRAM_END   0x40000000U
 #endif
 
 struct gd32_ospi_pin
@@ -141,9 +141,7 @@ static void gd32_ospi_mdma_configure(void *data, rt_size_t length, rt_bool_t rec
         mdma_init_struct.source_addr = (uint32_t)&OSPI_DATA(OSPI0);
         mdma_init_struct.destination_addr = (uint32_t)data;
         mdma_init_struct.source_bus = MDMA_SOURCE_AXI;
-        mdma_init_struct.destination_bus = data_bus == MDMA_SOURCE_AHB_TCM ?
-                                           MDMA_DESTINATION_AHB_TCM :
-                                           MDMA_DESTINATION_AXI;
+        mdma_init_struct.destination_bus = data_bus == MDMA_SOURCE_AHB_TCM ? MDMA_DESTINATION_AHB_TCM : MDMA_DESTINATION_AXI;
     }
     else
     {
@@ -263,7 +261,7 @@ static rt_err_t gd32_ospi_mdma_receive(const ospi_parameter_struct *configuratio
     gd32_ospi_mdma_configure(data, length, RT_TRUE);
 #ifdef RT_USING_CACHE
     gd32_ospi_mdma_cache_ops(RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE,
-                            data, length);
+                             data, length);
 #endif
 
     mdma_channel_enable(GD32_OSPI_MDMA_CHANNEL);
@@ -438,15 +436,14 @@ static rt_err_t gd32_ospi_receive(const ospi_parameter_struct *configuration,
     return RT_EOK;
 }
 
-static const struct gd32_ospi_pin ospi0_pins[] =
-{
+static const struct gd32_ospi_pin ospi0_pins[] = {
     /* OSPI0 is wired to the board's four-line QSPI flash. */
-    {BSP_OSPI0_CS_PIN,  BSP_OSPI0_CS_AFIO},
-    {BSP_OSPI0_CLK_PIN, BSP_OSPI0_CLK_AFIO},
-    {BSP_OSPI0_D0_PIN,  BSP_OSPI0_D0_AFIO},
-    {BSP_OSPI0_D1_PIN,  BSP_OSPI0_D1_AFIO},
-    {BSP_OSPI0_D2_PIN,  BSP_OSPI0_D2_AFIO},
-    {BSP_OSPI0_D3_PIN,  BSP_OSPI0_D3_AFIO},
+    { BSP_OSPI0_CS_PIN, BSP_OSPI0_CS_AFIO },
+    { BSP_OSPI0_CLK_PIN, BSP_OSPI0_CLK_AFIO },
+    { BSP_OSPI0_D0_PIN, BSP_OSPI0_D0_AFIO },
+    { BSP_OSPI0_D1_PIN, BSP_OSPI0_D1_AFIO },
+    { BSP_OSPI0_D2_PIN, BSP_OSPI0_D2_AFIO },
+    { BSP_OSPI0_D3_PIN, BSP_OSPI0_D3_AFIO },
 };
 
 static rt_err_t gd32_ospi_gpio_init(void)
@@ -730,9 +727,7 @@ static rt_err_t gd32_ospi_configure(struct rt_spi_device *device,
     ospi_disable(OSPI0);
     ospi_struct_init(&ospi_bus->init);
     ospi_bus->init.prescaler = divider - 1U;
-    ospi_bus->init.sample_shift = qspi_configuration->ddr_mode ?
-                                  OSPI_SAMPLE_SHIFTING_NONE :
-                                  OSPI_SAMPLE_SHIFTING_HALF_CYCLE;
+    ospi_bus->init.sample_shift = qspi_configuration->ddr_mode ? OSPI_SAMPLE_SHIFTING_NONE : OSPI_SAMPLE_SHIFTING_HALF_CYCLE;
     ospi_bus->init.fifo_threshold = OSPI_FIFO_THRESHOLD_16;
     ospi_bus->init.device_size = OSPI_MESZ(address_bits - 1U);
     ospi_bus->init.cs_hightime = OSPI_CS_HIGH_TIME_3_CYCLE;
@@ -751,7 +746,7 @@ static rt_ssize_t gd32_ospi_xfer(struct rt_spi_device *device,
     struct rt_qspi_device *qspi_device;
     struct rt_qspi_message *qspi_message;
     struct gd32_ospi_bus *ospi_bus;
-    ospi_regular_cmd_struct command = {0};
+    ospi_regular_cmd_struct command = { 0 };
     rt_uint8_t max_width;
     rt_bool_t ddr_mode;
     rt_err_t result;
@@ -812,16 +807,11 @@ static rt_ssize_t gd32_ospi_xfer(struct rt_spi_device *device,
         return -RT_EINVAL;
     }
 
-    command.ins_dtr_mode = ddr_mode && command.ins_mode != OSPI_INSTRUCTION_NONE ?
-                           OSPI_INSDTR_MODE_ENABLE : OSPI_INSDTR_MODE_DISABLE;
-    command.addr_dtr_mode = ddr_mode && command.addr_mode != OSPI_ADDRESS_NONE ?
-                            OSPI_ADDRDTR_MODE_ENABLE : OSPI_ADDRDTR_MODE_DISABLE;
-    command.alter_bytes_dtr_mode = ddr_mode && command.alter_bytes_mode != OSPI_ALTERNATE_BYTES_NONE ?
-                                   OSPI_ABDTR_MODE_ENABLE : OSPI_ABDTR_MODE_DISABLE;
-    command.data_dtr_mode = ddr_mode && command.data_mode != OSPI_DATA_NONE ?
-                            OSPI_DADTR_MODE_ENABLE : OSPI_DADTR_MODE_DISABLE;
-    command.dqs_mode = ddr_mode && command.data_mode != OSPI_DATA_NONE ?
-                       OSPI_DQS_ENABLE : OSPI_DQS_DISABLE;
+    command.ins_dtr_mode = ddr_mode && command.ins_mode != OSPI_INSTRUCTION_NONE ? OSPI_INSDTR_MODE_ENABLE : OSPI_INSDTR_MODE_DISABLE;
+    command.addr_dtr_mode = ddr_mode && command.addr_mode != OSPI_ADDRESS_NONE ? OSPI_ADDRDTR_MODE_ENABLE : OSPI_ADDRDTR_MODE_DISABLE;
+    command.alter_bytes_dtr_mode = ddr_mode && command.alter_bytes_mode != OSPI_ALTERNATE_BYTES_NONE ? OSPI_ABDTR_MODE_ENABLE : OSPI_ABDTR_MODE_DISABLE;
+    command.data_dtr_mode = ddr_mode && command.data_mode != OSPI_DATA_NONE ? OSPI_DADTR_MODE_ENABLE : OSPI_DADTR_MODE_DISABLE;
+    command.dqs_mode = ddr_mode && command.data_mode != OSPI_DATA_NONE ? OSPI_DQS_ENABLE : OSPI_DQS_DISABLE;
 
     ospi_command_config(OSPI0, &ospi_bus->init, &command);
 
@@ -848,8 +838,7 @@ static rt_ssize_t gd32_ospi_xfer(struct rt_spi_device *device,
     return 1;
 }
 
-static const struct rt_spi_ops gd32_ospi_ops =
-{
+static const struct rt_spi_ops gd32_ospi_ops = {
     .configure = gd32_ospi_configure,
     .xfer = gd32_ospi_xfer,
 };

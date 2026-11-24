@@ -25,26 +25,26 @@
 #include <finsh.h>
 #endif
 
-#define DBG_TAG                         "app.ov7670"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "app.ov7670"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define OV7670_PREVIEW_PERIOD_MS        10U
-#define OV7670_CONTROL_PERIOD_MS        20U
-#define OV7670_PREVIEW_BUFFER_COUNT     2U
-#define OV7670_PREVIEW_INVALID_BUFFER   (-1)
-#define OV7670_CAPTURE_THREAD_STACK     4096U
+#define OV7670_PREVIEW_PERIOD_MS      10U
+#define OV7670_CONTROL_PERIOD_MS      20U
+#define OV7670_PREVIEW_BUFFER_COUNT   2U
+#define OV7670_PREVIEW_INVALID_BUFFER (-1)
+#define OV7670_CAPTURE_THREAD_STACK   4096U
 
 #ifndef PKG_LVGL_THREAD_PRIO
-#define PKG_LVGL_THREAD_PRIO            (RT_THREAD_PRIORITY_MAX * 2U / 3U)
+#define PKG_LVGL_THREAD_PRIO (RT_THREAD_PRIORITY_MAX * 2U / 3U)
 #endif
 
-#define OV7670_CAPTURE_THREAD_PRIORITY  (PKG_LVGL_THREAD_PRIO + 1U)
+#define OV7670_CAPTURE_THREAD_PRIORITY (PKG_LVGL_THREAD_PRIO + 1U)
 
 /* Static storage cannot fall back to the automatically bound SDRAM heap. */
 rt_align(32) static rt_uint8_t ov7670_preview_buffers[OV7670_PREVIEW_BUFFER_COUNT]
-                                                       [OV7670_FRAME_SIZE];
-#define OV7670_PREVIEW_BUFFER(index)    ov7670_preview_buffers[index]
+                                                     [OV7670_FRAME_SIZE];
+#define OV7670_PREVIEW_BUFFER(index) ov7670_preview_buffers[index]
 
 enum ov7670_preview_request
 {
@@ -53,8 +53,7 @@ enum ov7670_preview_request
     OV7670_PREVIEW_REQUEST_STOP,
 };
 
-static const lv_image_dsc_t preview_image_descriptors[OV7670_PREVIEW_BUFFER_COUNT] =
-{
+static const lv_image_dsc_t preview_image_descriptors[OV7670_PREVIEW_BUFFER_COUNT] = {
     {
         .header.magic = LV_IMAGE_HEADER_MAGIC,
         .header.cf = LV_COLOR_FORMAT_RGB565,
@@ -153,8 +152,7 @@ static void ov7670_preview_capture_entry(void *parameter)
             size = rt_device_read(preview_camera, 0,
                                   OV7670_PREVIEW_BUFFER(buffer_index),
                                   OV7670_FRAME_SIZE);
-            result = size == OV7670_FRAME_SIZE ? RT_EOK :
-                     (size < 0 ? (rt_err_t)size : -RT_EIO);
+            result = size == OV7670_FRAME_SIZE ? RT_EOK : (size < 0 ? (rt_err_t)size : -RT_EIO);
 
             rt_enter_critical();
             preview_capture_buffer = OV7670_PREVIEW_INVALID_BUFFER;
@@ -338,8 +336,8 @@ static void ov7670_preview_start(void)
     lv_obj_center(back_label);
 
     preview_frame_timer = lv_timer_create(ov7670_preview_frame,
-                                           OV7670_PREVIEW_PERIOD_MS,
-                                           RT_NULL);
+                                          OV7670_PREVIEW_PERIOD_MS,
+                                          RT_NULL);
     if (preview_frame_timer == RT_NULL)
     {
         result = -RT_ENOMEM;
@@ -455,8 +453,8 @@ void ov7670_preview_init(void)
     preview_capture_thread_ready = RT_TRUE;
 
     preview_control_timer = lv_timer_create(ov7670_preview_control,
-                                             OV7670_CONTROL_PERIOD_MS,
-                                             RT_NULL);
+                                            OV7670_CONTROL_PERIOD_MS,
+                                            RT_NULL);
     if (preview_control_timer == RT_NULL)
     {
         preview_last_result = -RT_ENOMEM;
@@ -565,10 +563,10 @@ static void ov7670_preview(int argc, char **argv)
         last_result = preview_last_result;
         rt_exit_critical();
         elapsed_ticks = rt_tick_get() - start_tick;
-        fps_tenths = (active && (elapsed_ticks != 0U)) ?
-                     (rt_uint32_t)(((rt_uint64_t)frames *
-                                    RT_TICK_PER_SECOND * 10U) /
-                                   elapsed_ticks) : 0U;
+        fps_tenths = (active && (elapsed_ticks != 0U)) ? (rt_uint32_t)(((rt_uint64_t)frames *
+                                                                        RT_TICK_PER_SECOND * 10U) /
+                                                                       elapsed_ticks)
+                                                       : 0U;
         rt_kprintf("OV7670 preview ready=%d active=%d request=%s "
                    "captured=%u displayed=%u dropped=%u errors=%u "
                    "fps=%u.%u last=%d\n",

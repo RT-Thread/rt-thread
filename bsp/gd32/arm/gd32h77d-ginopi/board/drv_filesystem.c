@@ -18,22 +18,20 @@
 #include <rtdbg.h>
 
 #if defined(BSP_USING_SDCARD_FATFS) || defined(BSP_USING_FLASH_FATFS) || defined(RT_USBH_MSTORAGE)
-static const struct romfs_dirent _romfs_root[] =
-{
+static const struct romfs_dirent _romfs_root[] = {
 #ifdef BSP_USING_SDCARD_FATFS
-    {ROMFS_DIRENT_DIR, "sd", RT_NULL, 0},
+    { ROMFS_DIRENT_DIR, "sd", RT_NULL, 0 },
 #endif
 #ifdef BSP_USING_FLASH_FATFS
-    {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
+    { ROMFS_DIRENT_DIR, "flash", RT_NULL, 0 },
 #endif
 #ifdef RT_USBH_MSTORAGE
-    {ROMFS_DIRENT_DIR, "udisk", RT_NULL, 0},
+    { ROMFS_DIRENT_DIR, "udisk", RT_NULL, 0 },
 #endif
 };
 #endif
 
-const struct romfs_dirent romfs_root =
-{
+const struct romfs_dirent romfs_root = {
 #if defined(BSP_USING_SDCARD_FATFS) || defined(BSP_USING_FLASH_FATFS) || defined(RT_USBH_MSTORAGE)
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root,
     sizeof(_romfs_root) / sizeof(_romfs_root[0])
@@ -59,7 +57,7 @@ static void qspi_flash_mount(void)
     partition = fal_partition_find(GD25Q64E_FILESYSTEM_PART_NAME);
     if (partition == RT_NULL ||
         fal_partition_read(partition, 0, &probe_data, sizeof(probe_data)) !=
-        (int)sizeof(probe_data))
+            (int)sizeof(probe_data))
     {
         LOG_E("QSPI flash is not accessible");
         return;

@@ -30,14 +30,14 @@
 #error "Please Enable RTC alarm define (BSP_USING_ALARM0 | BSP_USING_ALARM1)"
 #elif defined(BSP_USING_ALARM0)
     #define BSP_ALARM_FLAG         RTC_FLAG_ALARM0
-    #define BSP_ALARM_WRITE_FLAG   RTC_FLAG_ALARM0W
-    #define BSP_RTC_ALARM          RTC_ALARM0
-    #define BSP_RTC_INT_ALARM      RTC_INT_ALARM0
+#define BSP_ALARM_WRITE_FLAG       RTC_FLAG_ALARM0W
+#define BSP_RTC_ALARM              RTC_ALARM0
+#define BSP_RTC_INT_ALARM          RTC_INT_ALARM0
 #elif defined(BSP_USING_ALARM1)
     #define BSP_ALARM_FLAG         RTC_FLAG_ALARM1
-    #define BSP_ALARM_WRITE_FLAG   RTC_FLAG_ALARM1W
-    #define BSP_RTC_ALARM          RTC_ALARM1
-    #define BSP_RTC_INT_ALARM      RTC_INT_ALARM1
+#define BSP_ALARM_WRITE_FLAG       RTC_FLAG_ALARM1W
+#define BSP_RTC_ALARM              RTC_ALARM1
+#define BSP_RTC_INT_ALARM          RTC_INT_ALARM1
 #endif
 #endif
 
@@ -56,10 +56,10 @@
 
 #define RTC_LXTAL_TIMEOUT_MS  5000U
 #define RTC_STATUS_TIMEOUT_MS 1000U
-#define PRESCALER_S          0xFFU
-#define PRESCALER_A          0x7FU
+#define PRESCALER_S           0xFFU
+#define PRESCALER_A           0x7FU
 /* Reserve RTC_BKP0 to retain initialization state even when the year is 2000. */
-#define RTC_INIT_MARKER      0x52544301U
+#define RTC_INIT_MARKER 0x52544301U
 
 static rt_err_t get_rtc_timestamp(time_t *time_stamp);
 static rt_err_t set_rtc_timestamp(time_t time_stamp);
@@ -409,7 +409,7 @@ static rt_err_t gd_set_alarm(struct rt_rtc_wkalarm *alarm)
     }
 
     if (alarm->enable && (((rt_uint32_t)alarm->tm_hour > 23U) ||
-        ((rt_uint32_t)alarm->tm_min > 59U) || ((rt_uint32_t)alarm->tm_sec > 59U)))
+                          ((rt_uint32_t)alarm->tm_min > 59U) || ((rt_uint32_t)alarm->tm_sec > 59U)))
     {
         return -RT_EINVAL;
     }

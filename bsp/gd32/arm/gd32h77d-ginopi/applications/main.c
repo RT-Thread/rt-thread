@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -14,9 +14,8 @@
 #include <board.h>
 
 /* defined the LED1 pin: PC4 */
-#define LED1_PIN GET_PIN(C, 4)
+#define LED1_PIN         GET_PIN(C, 4)
 #define VCOM_DEVICE_NAME "vcom"
-
 
 int main(void)
 {

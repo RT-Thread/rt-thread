@@ -33,7 +33,9 @@ static int sdram_heap_test(void)
     }
 
     for (i = 0; i < words; i++)
+    {
         buffer[i] = 0x55AA0000U ^ (rt_uint32_t)i;
+    }
 
     for (i = 0; i < words; i++)
     {
@@ -46,8 +48,7 @@ static int sdram_heap_test(void)
     }
 
     rt_free((void *)buffer);
-    rt_kprintf(result == RT_EOK ? "SDRAM heap test passed\n" :
-                                 "SDRAM heap test failed\n");
+    rt_kprintf(result == RT_EOK ? "SDRAM heap test passed\n" : "SDRAM heap test failed\n");
     return result;
 }
 MSH_CMD_EXPORT(sdram_heap_test, test SDRAM heap);

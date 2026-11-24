@@ -23,46 +23,46 @@
 #include "ov7670_preview.h"
 #endif
 
-#define DBG_TAG                         "app.board.demo"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "app.board.demo"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifndef BSP_GD32VW553_MQTT_HOST
-#define BSP_GD32VW553_MQTT_HOST         "broker.emqx.io"
+#define BSP_GD32VW553_MQTT_HOST "broker.emqx.io"
 #endif
 
 #ifndef BSP_GD32VW553_MQTT_SUB_TOPIC
-#define BSP_GD32VW553_MQTT_SUB_TOPIC    "rtt/gd32vw553/sub"
+#define BSP_GD32VW553_MQTT_SUB_TOPIC "rtt/gd32vw553/sub"
 #endif
 
 #ifndef BSP_GD32VW553_MQTT_PUB_TOPIC
-#define BSP_GD32VW553_MQTT_PUB_TOPIC    "rtt/gd32vw553/pub"
+#define BSP_GD32VW553_MQTT_PUB_TOPIC "rtt/gd32vw553/pub"
 #endif
 
-#define BOARD_DEMO_WIDTH                720
-#define BOARD_DEMO_HEIGHT               720
-#define BOARD_DEMO_SIDEBAR_WIDTH        132
-#define BOARD_DEMO_HEADER_HEIGHT        64
-#define BOARD_DEMO_CONTENT_WIDTH        (BOARD_DEMO_WIDTH - BOARD_DEMO_SIDEBAR_WIDTH)
-#define BOARD_DEMO_CONTENT_HEIGHT       (BOARD_DEMO_HEIGHT - BOARD_DEMO_HEADER_HEIGHT)
-#define BOARD_DEMO_PAGE_INNER_WIDTH     (BOARD_DEMO_CONTENT_WIDTH - 32)
-#define BOARD_DEMO_REFRESH_MS           150U
-#define BOARD_DEMO_STORAGE_POLL_MS      1000U
-#define BOARD_DEMO_KEYBOARD_HEIGHT      260
-#define BOARD_DEMO_LCD_DEVICE_NAME      "lcd"
+#define BOARD_DEMO_WIDTH            720
+#define BOARD_DEMO_HEIGHT           720
+#define BOARD_DEMO_SIDEBAR_WIDTH    132
+#define BOARD_DEMO_HEADER_HEIGHT    64
+#define BOARD_DEMO_CONTENT_WIDTH    (BOARD_DEMO_WIDTH - BOARD_DEMO_SIDEBAR_WIDTH)
+#define BOARD_DEMO_CONTENT_HEIGHT   (BOARD_DEMO_HEIGHT - BOARD_DEMO_HEADER_HEIGHT)
+#define BOARD_DEMO_PAGE_INNER_WIDTH (BOARD_DEMO_CONTENT_WIDTH - 32)
+#define BOARD_DEMO_REFRESH_MS       150U
+#define BOARD_DEMO_STORAGE_POLL_MS  1000U
+#define BOARD_DEMO_KEYBOARD_HEIGHT  260
+#define BOARD_DEMO_LCD_DEVICE_NAME  "lcd"
 
-#define COLOR_NAV                       lv_color_hex(0x242A2D)
-#define COLOR_NAV_ACTIVE                lv_color_hex(0x365B56)
-#define COLOR_PAGE                      lv_color_hex(0xF1F4F5)
-#define COLOR_SURFACE                   lv_color_hex(0xFFFFFF)
-#define COLOR_TEXT                      lv_color_hex(0x1F2933)
-#define COLOR_MUTED                     lv_color_hex(0x64727D)
-#define COLOR_BORDER                    lv_color_hex(0xD6DEE2)
-#define COLOR_ACCENT                    lv_color_hex(0x0F766E)
-#define COLOR_INFO                      lv_color_hex(0x2563A6)
-#define COLOR_ACCENT_SOFT               lv_color_hex(0xE1F0EB)
-#define COLOR_WARNING                   lv_color_hex(0xB45309)
-#define COLOR_DANGER                    lv_color_hex(0xB42318)
+#define COLOR_NAV         lv_color_hex(0x242A2D)
+#define COLOR_NAV_ACTIVE  lv_color_hex(0x365B56)
+#define COLOR_PAGE        lv_color_hex(0xF1F4F5)
+#define COLOR_SURFACE     lv_color_hex(0xFFFFFF)
+#define COLOR_TEXT        lv_color_hex(0x1F2933)
+#define COLOR_MUTED       lv_color_hex(0x64727D)
+#define COLOR_BORDER      lv_color_hex(0xD6DEE2)
+#define COLOR_ACCENT      lv_color_hex(0x0F766E)
+#define COLOR_INFO        lv_color_hex(0x2563A6)
+#define COLOR_ACCENT_SOFT lv_color_hex(0xE1F0EB)
+#define COLOR_WARNING     lv_color_hex(0xB45309)
+#define COLOR_DANGER      lv_color_hex(0xB42318)
 
 enum board_demo_page_id
 {
@@ -77,16 +77,26 @@ enum board_demo_page_id
     BOARD_DEMO_PAGE_COUNT,
 };
 
-static const char *const board_demo_page_names[BOARD_DEMO_PAGE_COUNT] =
-{
-    "Overview", "Files", "CAN", "MQTT",
-    "PWM", "Camera", "SPI", "I2C",
+static const char * const board_demo_page_names[BOARD_DEMO_PAGE_COUNT] = {
+    "Overview",
+    "Files",
+    "CAN",
+    "MQTT",
+    "PWM",
+    "Camera",
+    "SPI",
+    "I2C",
 };
 
-static const char *const board_demo_page_symbols[BOARD_DEMO_PAGE_COUNT] =
-{
-    LV_SYMBOL_HOME, LV_SYMBOL_DIRECTORY, LV_SYMBOL_LOOP, LV_SYMBOL_WIFI,
-    LV_SYMBOL_SETTINGS, LV_SYMBOL_IMAGE, LV_SYMBOL_SHUFFLE, LV_SYMBOL_LIST,
+static const char * const board_demo_page_symbols[BOARD_DEMO_PAGE_COUNT] = {
+    LV_SYMBOL_HOME,
+    LV_SYMBOL_DIRECTORY,
+    LV_SYMBOL_LOOP,
+    LV_SYMBOL_WIFI,
+    LV_SYMBOL_SETTINGS,
+    LV_SYMBOL_IMAGE,
+    LV_SYMBOL_SHUFFLE,
+    LV_SYMBOL_LIST,
 };
 
 static lv_obj_t *demo_screen;
@@ -347,7 +357,7 @@ static void board_demo_textarea_event(lv_event_t *event)
     lv_obj_set_hidden(demo_keyboard, false);
     lv_obj_move_foreground(demo_keyboard);
     lv_obj_set_height(demo_pages[demo_active_page],
-                       BOARD_DEMO_CONTENT_HEIGHT - BOARD_DEMO_KEYBOARD_HEIGHT);
+                      BOARD_DEMO_CONTENT_HEIGHT - BOARD_DEMO_KEYBOARD_HEIGHT);
     lv_obj_update_layout(demo_pages[demo_active_page]);
     lv_obj_scroll_to_view(textarea, LV_ANIM_OFF);
 }
@@ -388,8 +398,7 @@ static void board_demo_show_page(enum board_demo_page_id page_id)
 
     if (page_id == BOARD_DEMO_PAGE_FILES)
     {
-        board_demo_files_request_path(demo_snapshot.fs_path[0] == '\0' ?
-                                      "/flash" : demo_snapshot.fs_path);
+        board_demo_files_request_path(demo_snapshot.fs_path[0] == '\0' ? "/flash" : demo_snapshot.fs_path);
     }
 }
 
@@ -404,8 +413,7 @@ static void board_demo_storage_source_event(lv_event_t *event)
 static void board_demo_files_refresh_event(lv_event_t *event)
 {
     RT_UNUSED(event);
-    board_demo_files_request_path(demo_snapshot.fs_path[0] == '\0' ?
-                                  "/flash" : demo_snapshot.fs_path);
+    board_demo_files_request_path(demo_snapshot.fs_path[0] == '\0' ? "/flash" : demo_snapshot.fs_path);
 }
 
 static void board_demo_files_up_event(lv_event_t *event)
@@ -559,9 +567,11 @@ static int board_demo_parse_can_data(const char *text, rt_uint8_t data[8],
 
 static void board_demo_can_baud_event(lv_event_t *event)
 {
-    static const rt_uint32_t baud_rates[] =
-    {
-        CAN125kBaud, CAN250kBaud, CAN500kBaud, CAN1MBaud,
+    static const rt_uint32_t baud_rates[] = {
+        CAN125kBaud,
+        CAN250kBaud,
+        CAN500kBaud,
+        CAN1MBaud,
     };
     uint32_t selected;
 
@@ -601,8 +611,7 @@ static void board_demo_can_send_event(lv_event_t *event)
         return;
     }
 
-    extended = lv_obj_has_state(can_extended_switch, LV_STATE_CHECKED) ?
-               RT_TRUE : RT_FALSE;
+    extended = lv_obj_has_state(can_extended_switch, LV_STATE_CHECKED) ? RT_TRUE : RT_FALSE;
     result = board_demo_request_can_send(id, extended, data, length);
     if (result != RT_EOK)
     {
@@ -720,7 +729,7 @@ static void board_demo_brightness_event(lv_event_t *event)
 
 static void board_demo_pwm_apply_event(lv_event_t *event)
 {
-    static const rt_uint32_t frequencies[] = {1000U, 10000U, 20000U};
+    static const rt_uint32_t frequencies[] = { 1000U, 10000U, 20000U };
     uint32_t selected;
 
     RT_UNUSED(event);
@@ -770,8 +779,7 @@ static void board_demo_bus_request_feedback(lv_obj_t *status_label,
         return;
     }
 
-    reason = result == -RT_ENOSYS ? "Feature disabled" :
-             (result == -RT_EBUSY ? "Test already running" : "Request failed");
+    reason = result == -RT_ENOSYS ? "Feature disabled" : (result == -RT_EBUSY ? "Test already running" : "Request failed");
     lv_label_set_text_fmt(status_label, "%s: %d", reason, result);
     lv_obj_set_style_text_color(status_label, COLOR_DANGER, 0);
     lv_label_set_text_fmt(log_label, "FAIL %s: %d", reason, result);
@@ -780,8 +788,8 @@ static void board_demo_bus_request_feedback(lv_obj_t *status_label,
 
 static void board_demo_spi_run_event(lv_event_t *event)
 {
-    static const rt_uint32_t frequencies[] = {1000000U, 5000000U, 10000000U};
-    static const rt_uint16_t lengths[] = {32U, 64U, 128U, 256U};
+    static const rt_uint32_t frequencies[] = { 1000000U, 5000000U, 10000000U };
+    static const rt_uint16_t lengths[] = { 32U, 64U, 128U, 256U };
     uint32_t frequency_index;
     uint32_t length_index;
     int result;
@@ -881,7 +889,7 @@ static void board_demo_create_header(void)
     lv_obj_set_style_text_font(demo_header_title, &lv_font_montserrat_16, 0);
 
     demo_header_status = board_demo_create_label(header, "Starting services",
-                                                  200, 12, BOARD_DEMO_CONTENT_WIDTH - 216);
+                                                 200, 12, BOARD_DEMO_CONTENT_WIDTH - 216);
     lv_obj_set_style_text_align(demo_header_status, LV_TEXT_ALIGN_RIGHT, 0);
     lv_obj_set_style_text_color(demo_header_status, COLOR_MUTED, 0);
 }
@@ -908,21 +916,24 @@ static void board_demo_build_overview_page(void)
         lv_obj_add_event_cb(button, board_demo_nav_event, LV_EVENT_CLICKED,
                             (void *)(rt_ubase_t)index);
         label = board_demo_create_label(button, board_demo_page_symbols[index],
-                                         14, 24, 26);
+                                        14, 24, 26);
         lv_obj_set_style_text_color(label,
-            (index == BOARD_DEMO_PAGE_CAN || index == BOARD_DEMO_PAGE_SPI ||
-             index == BOARD_DEMO_PAGE_I2C) ? COLOR_INFO : COLOR_ACCENT, 0);
+                                    (index == BOARD_DEMO_PAGE_CAN || index == BOARD_DEMO_PAGE_SPI ||
+                                     index == BOARD_DEMO_PAGE_I2C)
+                                        ? COLOR_INFO
+                                        : COLOR_ACCENT,
+                                    0);
         board_demo_create_line(button, board_demo_page_names[index], 52, 10, 200);
         overview_status[index] = board_demo_create_line(button, "-", 52, 36,
-                                                         BOARD_DEMO_PAGE_INNER_WIDTH - 98);
+                                                        BOARD_DEMO_PAGE_INNER_WIDTH - 98);
         lv_obj_set_style_text_color(overview_status[index], COLOR_MUTED, 0);
         label = board_demo_create_label(button, LV_SYMBOL_RIGHT,
-                                         BOARD_DEMO_PAGE_INNER_WIDTH - 30, 24, 18);
+                                        BOARD_DEMO_PAGE_INNER_WIDTH - 30, 24, 18);
         lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     }
 
     overview_uptime = board_demo_create_line(page, "Uptime 0 s", 0, 592,
-                                               BOARD_DEMO_PAGE_INNER_WIDTH);
+                                             BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(overview_uptime, COLOR_MUTED, 0);
 }
 
@@ -933,9 +944,10 @@ static void board_demo_build_files_page(void)
     lv_obj_t *button;
     lv_obj_t *label;
     int source;
-    static const char *const source_names[BOARD_DEMO_STORAGE_COUNT] =
-    {
-        LV_SYMBOL_DRIVE " Flash", LV_SYMBOL_SD_CARD " SD card", LV_SYMBOL_USB " USB Host",
+    static const char * const source_names[BOARD_DEMO_STORAGE_COUNT] = {
+        LV_SYMBOL_DRIVE " Flash",
+        LV_SYMBOL_SD_CARD " SD card",
+        LV_SYMBOL_USB " USB Host",
     };
 
     page = board_demo_create_page(BOARD_DEMO_PAGE_FILES);
@@ -958,12 +970,12 @@ static void board_demo_build_files_page(void)
         label = board_demo_create_line(button, source_names[source], 12, 9, 156);
         lv_obj_set_style_text_color(label, COLOR_TEXT, 0);
         files_source_status[source] = board_demo_create_line(button, "Not mounted",
-                                                               12, 35, 156);
+                                                             12, 35, 156);
         lv_obj_set_style_text_color(files_source_status[source], COLOR_MUTED, 0);
     }
     files_up_button = board_demo_create_button(page, LV_SYMBOL_UP,
-                                                456, 114, 44, 44,
-                                                board_demo_files_up_event);
+                                               456, 114, 44, 44,
+                                               board_demo_files_up_event);
     board_demo_create_button(page, LV_SYMBOL_REFRESH, 512, 114, 44, 44,
                              board_demo_files_refresh_event);
 
@@ -994,7 +1006,7 @@ static void board_demo_build_files_page(void)
     lv_obj_set_hidden(files_empty_label, true);
 
     files_preview_title = board_demo_create_line(page, "File preview", 0, 440,
-                                                  BOARD_DEMO_PAGE_INNER_WIDTH);
+                                                 BOARD_DEMO_PAGE_INNER_WIDTH);
     preview_panel = lv_obj_create(page);
     files_preview_panel = preview_panel;
     lv_obj_set_pos(preview_panel, 0, 472);
@@ -1020,7 +1032,7 @@ static void board_demo_build_can_page(void)
     demo_pages[BOARD_DEMO_PAGE_CAN] = page;
 
     can_status_label = board_demo_create_line(page, "CAN initializing", 0, 36,
-                                               BOARD_DEMO_PAGE_INNER_WIDTH);
+                                              BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(can_status_label, COLOR_MUTED, 0);
 
     can_baud_dropdown = lv_dropdown_create(page);
@@ -1087,14 +1099,14 @@ static void board_demo_build_mqtt_page(void)
     demo_pages[BOARD_DEMO_PAGE_MQTT] = page;
 
     mqtt_status_label = board_demo_create_line(page, "MQTT stopped", 0, 36,
-                                                BOARD_DEMO_PAGE_INNER_WIDTH);
+                                               BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(mqtt_status_label, COLOR_MUTED, 0);
 
     label = board_demo_create_line(page, "Broker: " BSP_GD32VW553_MQTT_HOST,
-                                    0, 76, 326);
+                                   0, 76, 326);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     label = board_demo_create_line(page, "Subscribe: " BSP_GD32VW553_MQTT_SUB_TOPIC,
-                                    0, 116, BOARD_DEMO_PAGE_INNER_WIDTH);
+                                   0, 116, BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     board_demo_create_button(page, LV_SYMBOL_PLAY " Start", 344, 68, 100, 40,
                              board_demo_mqtt_start_event);
@@ -1128,7 +1140,7 @@ static void board_demo_build_mqtt_page(void)
     label = board_demo_create_label(page, "Last received topic", 0, 436, 240);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     mqtt_rx_topic_label = board_demo_create_line(page, "-", 0, 464,
-                                                  BOARD_DEMO_PAGE_INNER_WIDTH);
+                                                 BOARD_DEMO_PAGE_INNER_WIDTH);
     label = board_demo_create_label(page, "Last received payload", 0, 500, 240);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     rx_panel = lv_obj_create(page);
@@ -1154,7 +1166,7 @@ static void board_demo_build_pwm_page(void)
     demo_pages[BOARD_DEMO_PAGE_PWM] = page;
 
     pwm_status_label = board_demo_create_line(page, "PWM idle", 0, 36,
-                                               BOARD_DEMO_PAGE_INNER_WIDTH);
+                                              BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(pwm_status_label, COLOR_MUTED, 0);
 
     label = board_demo_create_label(page, "Display brightness", 0, 78, 200);
@@ -1168,7 +1180,7 @@ static void board_demo_build_pwm_page(void)
     }
     rt_snprintf(brightness_text, sizeof(brightness_text), "%u%%", brightness);
     brightness_value_label = board_demo_create_label(page, brightness_text,
-                                                      470, 78, 60);
+                                                     470, 78, 60);
     brightness_slider = lv_slider_create(page);
     lv_obj_set_pos(brightness_slider, 0, 112);
     lv_obj_set_size(brightness_slider, 450, 18);
@@ -1224,7 +1236,7 @@ static void board_demo_build_camera_page(void)
     demo_pages[BOARD_DEMO_PAGE_CAMERA] = page;
 
     camera_status_label = board_demo_create_line(page, "Camera idle", 0, 36,
-                                                  BOARD_DEMO_PAGE_INNER_WIDTH);
+                                                 BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(camera_status_label, COLOR_MUTED, 0);
 
     preview_panel = lv_obj_create(page);
@@ -1276,7 +1288,7 @@ static void board_demo_build_spi_page(void)
     demo_pages[BOARD_DEMO_PAGE_SPI] = page;
 
     spi_status_label = board_demo_create_line(page, "SPI loopback idle", 0, 36,
-                                               BOARD_DEMO_PAGE_INNER_WIDTH);
+                                              BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(spi_status_label, COLOR_MUTED, 0);
 
     label = board_demo_create_label(page, "Clock", 0, 90, 150);
@@ -1315,14 +1327,14 @@ static void board_demo_build_i2c_page(void)
     demo_pages[BOARD_DEMO_PAGE_I2C] = page;
 
     i2c_status_label = board_demo_create_line(page, "I2C scan idle", 0, 36,
-                                               BOARD_DEMO_PAGE_INNER_WIDTH);
+                                              BOARD_DEMO_PAGE_INNER_WIDTH);
     lv_obj_set_style_text_color(i2c_status_label, COLOR_MUTED, 0);
 
     label = board_demo_create_label(page, "External bus", 0, 86, 170);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
     board_demo_create_line(page, BOARD_DEMO_I2C_BUS_NAME, 0, 122, 170);
     i2c_scan_button = board_demo_create_button(page, LV_SYMBOL_REFRESH " Scan",
-                                              190, 112, 112, 44, board_demo_i2c_scan_event);
+                                               190, 112, 112, 44, board_demo_i2c_scan_event);
 
     label = board_demo_create_line(page, "Address map", 0, 180, 240);
     lv_obj_set_style_text_color(label, COLOR_MUTED, 0);
@@ -1375,9 +1387,9 @@ static void board_demo_update_storage(void)
     for (source = 0; source < BOARD_DEMO_STORAGE_COUNT; source++)
     {
         board_demo_set_label_text(files_source_status[source],
-            (mounts & (1U << source)) ? "Mounted" : "Not mounted");
+                                  (mounts & (1U << source)) ? "Mounted" : "Not mounted");
         lv_obj_set_style_text_color(files_source_status[source],
-            (mounts & (1U << source)) ? COLOR_ACCENT : COLOR_MUTED, 0);
+                                    (mounts & (1U << source)) ? COLOR_ACCENT : COLOR_MUTED, 0);
     }
 
     source = board_demo_fs_source(demo_snapshot.fs_path);
@@ -1403,9 +1415,9 @@ static void board_demo_update_files(void)
         for (index = 0U; index < BOARD_DEMO_STORAGE_COUNT; index++)
         {
             lv_obj_set_style_bg_color(files_source_buttons[index],
-                source == index ? COLOR_ACCENT_SOFT : COLOR_SURFACE, 0);
+                                      source == index ? COLOR_ACCENT_SOFT : COLOR_SURFACE, 0);
             lv_obj_set_style_border_color(files_source_buttons[index],
-                source == index ? COLOR_ACCENT : COLOR_BORDER, 0);
+                                          source == index ? COLOR_ACCENT : COLOR_BORDER, 0);
         }
         if ((source >= 0) &&
             (rt_strcmp(demo_snapshot.fs_path, board_demo_storage_roots[source]) != 0))
@@ -1418,15 +1430,13 @@ static void board_demo_update_files(void)
         }
         lv_obj_set_hidden(files_empty_label, demo_snapshot.fs_entry_count != 0U);
         lv_label_set_text(files_empty_label,
-            (source >= 0 && (storage_mounts & (1U << source))) ?
-            demo_snapshot.fs_status : "Storage unavailable");
+                          (source >= 0 && (storage_mounts & (1U << source))) ? demo_snapshot.fs_status : "Storage unavailable");
         lv_table_set_row_count(files_table,
                                (uint32_t)demo_snapshot.fs_entry_count + 1U);
         for (index = 0U; index < demo_snapshot.fs_entry_count; index++)
         {
             lv_table_set_cell_value(files_table, index + 1U, 0U,
-                                    demo_snapshot.fs_entries[index].is_directory ?
-                                    LV_SYMBOL_DIRECTORY : LV_SYMBOL_FILE);
+                                    demo_snapshot.fs_entries[index].is_directory ? LV_SYMBOL_DIRECTORY : LV_SYMBOL_FILE);
             lv_table_set_cell_value(files_table, index + 1U, 1U,
                                     demo_snapshot.fs_entries[index].name);
             if (demo_snapshot.fs_entries[index].is_directory)
@@ -1460,10 +1470,8 @@ static void board_demo_update_files(void)
     if (file_sequence != demo_snapshot.file_sequence)
     {
         file_sequence = demo_snapshot.file_sequence;
-        lv_label_set_text(files_preview_title, demo_snapshot.file_name[0] == '\0' ?
-                          "File preview" : demo_snapshot.file_name);
-        lv_label_set_text(files_preview_label, demo_snapshot.file_preview[0] == '\0' ?
-                          "No file selected" : demo_snapshot.file_preview);
+        lv_label_set_text(files_preview_title, demo_snapshot.file_name[0] == '\0' ? "File preview" : demo_snapshot.file_name);
+        lv_label_set_text(files_preview_label, demo_snapshot.file_preview[0] == '\0' ? "No file selected" : demo_snapshot.file_preview);
         lv_obj_scroll_to_y(files_preview_panel, 0, LV_ANIM_OFF);
     }
 }
@@ -1488,8 +1496,7 @@ static void board_demo_update_can(void)
     for (frame_index = 0U; frame_index < demo_snapshot.can_frame_count; frame_index++)
     {
         rt_snprintf(id_text, sizeof(id_text),
-                    demo_snapshot.can_frames[frame_index].extended ?
-                    "%08X" : "%03X",
+                    demo_snapshot.can_frames[frame_index].extended ? "%08X" : "%03X",
                     demo_snapshot.can_frames[frame_index].id);
         rt_snprintf(length_text, sizeof(length_text), "%u",
                     demo_snapshot.can_frames[frame_index].length);
@@ -1504,16 +1511,16 @@ static void board_demo_update_can(void)
                                            "%02X%s",
                                            demo_snapshot.can_frames[frame_index].data[data_index],
                                            data_index + 1U ==
-                                           demo_snapshot.can_frames[frame_index].length ?
-                                           "" : " ");
+                                                   demo_snapshot.can_frames[frame_index].length
+                                               ? ""
+                                               : " ");
             if (used >= sizeof(data_text))
             {
                 break;
             }
         }
         lv_table_set_cell_value(can_table, frame_index + 1U, 0U,
-                                demo_snapshot.can_frames[frame_index].transmitted ?
-                                "TX" : "RX");
+                                demo_snapshot.can_frames[frame_index].transmitted ? "TX" : "RX");
         lv_table_set_cell_value(can_table, frame_index + 1U, 1U, id_text);
         lv_table_set_cell_value(can_table, frame_index + 1U, 2U, length_text);
         lv_table_set_cell_value(can_table, frame_index + 1U, 3U, data_text);
@@ -1529,8 +1536,7 @@ static void board_demo_update_bus_log(lv_obj_t *label, const char *text)
     if (follow)
     {
         lv_obj_update_layout(panel);
-        lv_obj_scroll_to_y(panel, lv_obj_get_scroll_y(panel) +
-                          lv_obj_get_scroll_bottom(panel), LV_ANIM_OFF);
+        lv_obj_scroll_to_y(panel, lv_obj_get_scroll_y(panel) + lv_obj_get_scroll_bottom(panel), LV_ANIM_OFF);
     }
 }
 
@@ -1584,11 +1590,9 @@ static void board_demo_update_runtime(void)
         mqtt_sequence = demo_snapshot.mqtt_sequence;
         lv_label_set_text(mqtt_status_label, demo_snapshot.mqtt_status);
         lv_label_set_text(mqtt_rx_topic_label,
-                          demo_snapshot.mqtt_rx_topic[0] == '\0' ?
-                          "-" : demo_snapshot.mqtt_rx_topic);
+                          demo_snapshot.mqtt_rx_topic[0] == '\0' ? "-" : demo_snapshot.mqtt_rx_topic);
         lv_label_set_text(mqtt_rx_payload_label,
-                          demo_snapshot.mqtt_rx_payload[0] == '\0' ?
-                          "-" : demo_snapshot.mqtt_rx_payload);
+                          demo_snapshot.mqtt_rx_payload[0] == '\0' ? "-" : demo_snapshot.mqtt_rx_payload);
     }
     if (pwm_sequence != demo_snapshot.pwm_sequence)
     {
@@ -1601,8 +1605,7 @@ static void board_demo_update_runtime(void)
         lv_label_set_text(spi_status_label, demo_snapshot.spi_status);
         board_demo_update_bus_log(spi_log_label, demo_snapshot.spi_log);
         lv_obj_set_style_text_color(spi_status_label,
-                                    demo_snapshot.spi_busy ? COLOR_INFO :
-                                    (demo_snapshot.spi_passed ? COLOR_ACCENT : COLOR_DANGER), 0);
+                                    demo_snapshot.spi_busy ? COLOR_INFO : (demo_snapshot.spi_passed ? COLOR_ACCENT : COLOR_DANGER), 0);
         lv_obj_set_state(spi_run_button, LV_STATE_DISABLED, demo_snapshot.spi_busy);
         lv_obj_set_state(spi_frequency_dropdown, LV_STATE_DISABLED, demo_snapshot.spi_busy);
         lv_obj_set_state(spi_length_dropdown, LV_STATE_DISABLED, demo_snapshot.spi_busy);
@@ -1614,9 +1617,7 @@ static void board_demo_update_runtime(void)
         board_demo_update_i2c_table();
         board_demo_update_bus_log(i2c_log_label, demo_snapshot.i2c_log);
         lv_obj_set_style_text_color(i2c_status_label,
-                                    demo_snapshot.i2c_busy ? COLOR_INFO :
-                                    (demo_snapshot.i2c_result_code != RT_EOK ? COLOR_DANGER :
-                                    (demo_snapshot.i2c_device_count ? COLOR_ACCENT : COLOR_WARNING)), 0);
+                                    demo_snapshot.i2c_busy ? COLOR_INFO : (demo_snapshot.i2c_result_code != RT_EOK ? COLOR_DANGER : (demo_snapshot.i2c_device_count ? COLOR_ACCENT : COLOR_WARNING)), 0);
         lv_obj_set_state(i2c_scan_button, LV_STATE_DISABLED, demo_snapshot.i2c_busy);
     }
 
@@ -1662,9 +1663,7 @@ static void board_demo_update_overview(void)
     ov7670_preview_get_status(&camera_status);
     rt_snprintf(camera_text, sizeof(camera_text),
                 "%s | Captured %u | Shown %u | Drop %u | Err %u",
-                camera_status.active ? "Active" :
-                (!camera_status.ready ? "Unavailable" :
-                 (camera_status.last_result != RT_EOK ? "Error" : "Ready")),
+                camera_status.active ? "Active" : (!camera_status.ready ? "Unavailable" : (camera_status.last_result != RT_EOK ? "Error" : "Ready")),
                 camera_status.frame_count, camera_status.display_count,
                 camera_status.drop_count, camera_status.error_count);
 #else
@@ -1736,8 +1735,8 @@ void board_demo_init(void)
 
 #if LV_USE_THEME_DEFAULT
     lv_display_set_theme(lv_display_get_default(),
-        lv_theme_default_init(lv_display_get_default(), COLOR_ACCENT, COLOR_INFO,
-                              false, &lv_font_montserrat_16));
+                         lv_theme_default_init(lv_display_get_default(), COLOR_ACCENT, COLOR_INFO,
+                                               false, &lv_font_montserrat_16));
 #endif
 
     demo_screen = lv_obj_create(RT_NULL);

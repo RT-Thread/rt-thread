@@ -96,12 +96,12 @@ void rt_hw_sdram_gpio_init(void)
     /* A3, A5, NRAS and A6-A9. */
     _sdram_gpio_config(GPIOF, GPIO_AF_12,
                        GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_11 | GPIO_PIN_12 |
-                       GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
+                           GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
     /* A10-A11, D6-D7, BA0-BA1, CLK and NCAS. */
     _sdram_gpio_config(GPIOG, GPIO_AF_12,
                        GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5 |
-                       GPIO_PIN_8 | GPIO_PIN_15);
+                           GPIO_PIN_8 | GPIO_PIN_15);
     _sdram_gpio_config(GPIOG, GPIO_AF_0, GPIO_PIN_2 | GPIO_PIN_3);
 
     /* SDCKE0 and NBL1. */

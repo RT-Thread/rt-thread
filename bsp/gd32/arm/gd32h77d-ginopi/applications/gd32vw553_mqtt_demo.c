@@ -31,8 +31,8 @@
 #define GD32VW553_MQTT_CMD_TIMEOUT_MS  20000
 #define GD32VW553_MQTT_STOP_TIMEOUT_MS 30000
 
-#define GD32VW553_MQTT_STR_HELPER(x)   #x
-#define GD32VW553_MQTT_STR(x)          GD32VW553_MQTT_STR_HELPER(x)
+#define GD32VW553_MQTT_STR_HELPER(x) #x
+#define GD32VW553_MQTT_STR(x)        GD32VW553_MQTT_STR_HELPER(x)
 
 #ifndef BSP_GD32VW553_MQTT_HOST
 #define BSP_GD32VW553_MQTT_HOST "broker.emqx.io"
@@ -177,7 +177,9 @@ static rt_bool_t gd32vw553_mqtt_netdev_is_ready(struct at_device *device)
 
     netdev = device->netdev;
     return (netdev_is_up(netdev) && netdev_is_link_up(netdev) &&
-            !ip_addr_isany(&netdev->ip_addr)) ? RT_TRUE : RT_FALSE;
+            !ip_addr_isany(&netdev->ip_addr))
+               ? RT_TRUE
+               : RT_FALSE;
 }
 
 static rt_bool_t gd32vw553_mqtt_wait_netdev_ready(struct at_device *device)
@@ -200,8 +202,7 @@ static rt_bool_t gd32vw553_mqtt_wait_netdev_ready(struct at_device *device)
                        device->is_init ? 1 : 0,
                        (netdev != RT_NULL && netdev_is_up(netdev)) ? 1 : 0,
                        (netdev != RT_NULL && netdev_is_link_up(netdev)) ? 1 : 0,
-                       (netdev != RT_NULL && !ip_addr_isany(&netdev->ip_addr)) ?
-                       inet_ntoa(netdev->ip_addr) : "0.0.0.0");
+                       (netdev != RT_NULL && !ip_addr_isany(&netdev->ip_addr)) ? inet_ntoa(netdev->ip_addr) : "0.0.0.0");
         }
 
         rt_thread_mdelay(500);
@@ -286,8 +287,7 @@ static void gd32vw553_mqtt_thread_entry(void *parameter)
     if (result != RT_EOK)
     {
         gd32vw553_mqtt_report_status(
-            result == -RT_ENOSYS ? "GD32VW553 AT device is unavailable" :
-                                   gd32vw553_mqtt_wifi_error(device),
+            result == -RT_ENOSYS ? "GD32VW553 AT device is unavailable" : gd32vw553_mqtt_wifi_error(device),
             result);
         failure_reported = RT_TRUE;
         goto __exit;
@@ -475,7 +475,7 @@ static int gd32vw553_mqtt_start(int argc, char **argv)
 
     return gd32vw553_mqtt_demo_start();
 }
-MSH_CMD_EXPORT(gd32vw553_mqtt_start, start GD32VW553 MQTT demo with kawaii-mqtt);
+MSH_CMD_EXPORT(gd32vw553_mqtt_start, start GD32VW553 MQTT demo with kawaii - mqtt);
 
 int gd32vw553_mqtt_demo_publish(const char *topic, const char *payload)
 {

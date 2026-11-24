@@ -21,8 +21,7 @@ extern void Reset_Handler(void);
 extern uint32_t __initial_sp;
 
 __attribute__((section(".ARM.__at_0x08000000"), used))
-const uint32_t boot_fuction_table[] =
-{
+const uint32_t boot_fuction_table[] = {
     (uint32_t)&__initial_sp,
     (uint32_t)&Reset_Handler,
 };
@@ -31,8 +30,7 @@ extern void Reset_Handler(void);
 extern uint32_t _sp;
 
 __attribute__((section(".boot_fuction_table"), used))
-const uint32_t boot_fuction_table[] =
-{
+const uint32_t boot_fuction_table[] = {
     (uint32_t)&_sp,
     (uint32_t)&Reset_Handler,
 };
@@ -43,15 +41,15 @@ const uint32_t boot_fuction_table[] =
 #error "MIPI LCD requires SDRAM"
 #endif
 
-#define BOARD_DMA_MPU_SUBREGION_SIZE    (512U * 1024U)
+#define BOARD_DMA_MPU_SUBREGION_SIZE (512U * 1024U)
 #ifdef BSP_USING_OV7670
-#define BOARD_DMA_MPU_SIZE              EXT_SDRAM_LCD_SCANOUT_SIZE
+#define BOARD_DMA_MPU_SIZE EXT_SDRAM_LCD_SCANOUT_SIZE
 #else
-#define BOARD_DMA_MPU_SIZE              EXT_SDRAM_LCD_RESERVED_SIZE
+#define BOARD_DMA_MPU_SIZE EXT_SDRAM_LCD_RESERVED_SIZE
 #endif
-#define BOARD_EXT_GUARD_ATTR            ARM_MPU_RASR(1U, ARM_MPU_AP_NONE, 0U, \
-                                                     1U, 0U, 0U, 0x87U, \
-                                                     ARM_MPU_REGION_SIZE_4GB)
+#define BOARD_EXT_GUARD_ATTR ARM_MPU_RASR(1U, ARM_MPU_AP_NONE, 0U, \
+                                          1U, 0U, 0U, 0x87U,       \
+                                          ARM_MPU_REGION_SIZE_4GB)
 
 /* SDRAM board initialization must finish before its windows become cacheable. */
 static void board_mpu_config(void)
@@ -107,8 +105,7 @@ static void board_mpu_config(void)
         mpu_config.region_size = MPU_REGION_SIZE_4MB;
         mpu_config.access_bufferable = MPU_ACCESS_NON_BUFFERABLE;
         mpu_config.region_number = MPU_REGION_NUMBER6;
-        mpu_config.subregion_disable = (rt_uint8_t)(0xFFU <<
-            (BOARD_DMA_MPU_SIZE / BOARD_DMA_MPU_SUBREGION_SIZE));
+        mpu_config.subregion_disable = (rt_uint8_t)(0xFFU << (BOARD_DMA_MPU_SIZE / BOARD_DMA_MPU_SUBREGION_SIZE));
         mpu_config.tex_type = MPU_TEX_TYPE0;
         mpu_region_config(&mpu_config);
         mpu_region_enable();
@@ -186,9 +183,7 @@ void rt_hw_us_delay(rt_uint32_t us)
         current = SysTick->VAL;
         if (current != previous)
         {
-            elapsed += (current < previous) ?
-                       (previous - current) :
-                       (reload - current + previous);
+            elapsed += (current < previous) ? (previous - current) : (reload - current + previous);
             previous = current;
         }
     }
@@ -200,13 +195,13 @@ void rt_hw_us_delay(rt_uint32_t us)
 void rt_hw_board_init()
 {
     /* NVIC Configuration */
-#define NVIC_VTOR_MASK              0x3FFFFF80
-#ifdef  VECT_TAB_RAM
+#define NVIC_VTOR_MASK 0x3FFFFF80
+#ifdef VECT_TAB_RAM
     /* Set the Vector Table base location at 0x10000000 */
-    SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
-#else  /* VECT_TAB_FLASH  */
+    SCB->VTOR = (0x10000000 & NVIC_VTOR_MASK);
+#else /* VECT_TAB_FLASH  */
     /* Set the Vector Table base location at 0x08010000 */
-    SCB->VTOR  = (0x08010000 & NVIC_VTOR_MASK);
+    SCB->VTOR = (0x08010000 & NVIC_VTOR_MASK);
 #endif
 
     /* Reset entry (or a bootloader handoff) must leave D-Cache disabled. */

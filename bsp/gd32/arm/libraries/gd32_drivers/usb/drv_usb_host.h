@@ -34,7 +34,7 @@ typedef enum
 */
 __STATIC_INLINE uint8_t usb_frame_even(usb_core_driver *udev)
 {
-    return (uint8_t) !(udev->regs.hr->HFINFR & 0x01U);
+    return (uint8_t)!(udev->regs.hr->HFINFR & 0x01U);
 }
 
 /*!

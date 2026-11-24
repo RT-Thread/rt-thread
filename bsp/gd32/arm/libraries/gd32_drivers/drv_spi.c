@@ -77,7 +77,7 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     rt_uint32_t sck_port, miso_port, mosi_port;
     rt_uint32_t sck_pin, miso_pin, mosi_pin;
     rcu_periph_enum sck_periph, miso_periph, mosi_periph;
-#if defined (SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32E23x)
+#if defined(SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32F5xx) || defined(SOC_SERIES_GD32E23x)
     rt_uint32_t sck_af, miso_af, mosi_af;
 #endif
 
@@ -100,7 +100,7 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     rcu_periph_clock_enable(miso_periph);
     rcu_periph_clock_enable(mosi_periph);
 
-#if defined (SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32E23x)
+#if defined(SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32F5xx) || defined(SOC_SERIES_GD32E23x)
     if (pin_alternate_config(gd32_spi->sck_alternate, &sck_af) != RT_EOK ||
         pin_alternate_config(gd32_spi->miso_alternate, &miso_af) != RT_EOK ||
         pin_alternate_config(gd32_spi->mosi_alternate, &mosi_af) != RT_EOK)
@@ -119,7 +119,7 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     gpio_output_options_set(sck_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, sck_pin);
     gpio_output_options_set(miso_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, miso_pin);
     gpio_output_options_set(mosi_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, mosi_pin);
-#elif defined (SOC_SERIES_GD32E23x)
+#elif defined(SOC_SERIES_GD32E23x)
     gpio_output_options_set(sck_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, sck_pin);
     gpio_output_options_set(miso_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, miso_pin);
     gpio_output_options_set(mosi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, mosi_pin);

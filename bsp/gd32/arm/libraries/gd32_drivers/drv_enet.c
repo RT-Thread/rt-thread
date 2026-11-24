@@ -12,40 +12,40 @@
 #include <lwip/pbuf.h>
 #include "gd32h77x_78x_enet.h"
 
-#define DBG_TAG                 "drv.enet"
-#define DBG_LVL                 DBG_INFO
+#define DBG_TAG "drv.enet"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define ENET_DEVICE_NAME        "e0"
-#define ENET_PERIPH             ENET1
-#define ENET_PHY_ADDR_INVALID   0xFFU
-#define ENET_PHY_ID1_REG        2U
-#define ENET_PHY_ID2_REG        3U
-#define ENET_PHY_ANAR_REG       4U
-#define ENET_PHY_ANLPAR_REG     5U
-#define ENET_PHY_EXT_DATA_REG   0x0DU
-#define ENET_PHY_EXT_ADDR_REG   0x0EU
-#define ENET_PHY_LED_CTRL0_EXT  0x1E33U
-#define ENET_PHY_LED_MODE_MASK  0x0070U
-#define ENET_PHY_GD30PH201D_ID1 0xADB4U
-#define ENET_PHY_GD30PH201D_ID2 0x0400U
+#define ENET_DEVICE_NAME             "e0"
+#define ENET_PERIPH                  ENET1
+#define ENET_PHY_ADDR_INVALID        0xFFU
+#define ENET_PHY_ID1_REG             2U
+#define ENET_PHY_ID2_REG             3U
+#define ENET_PHY_ANAR_REG            4U
+#define ENET_PHY_ANLPAR_REG          5U
+#define ENET_PHY_EXT_DATA_REG        0x0DU
+#define ENET_PHY_EXT_ADDR_REG        0x0EU
+#define ENET_PHY_LED_CTRL0_EXT       0x1E33U
+#define ENET_PHY_LED_MODE_MASK       0x0070U
+#define ENET_PHY_GD30PH201D_ID1      0xADB4U
+#define ENET_PHY_GD30PH201D_ID2      0x0400U
 #define ENET_PHY_GD30PH201D_ID2_MASK 0xFFF0U
-#define ENET_PHY_AN_10_HALF     (1U << 5)
-#define ENET_PHY_AN_10_FULL     (1U << 6)
-#define ENET_PHY_AN_100_HALF    (1U << 7)
-#define ENET_PHY_AN_100_FULL    (1U << 8)
-#define ENET_PHY_POLL_TICKS     RT_TICK_PER_SECOND
-#define ENET_TX_WAIT_TICKS      RT_TICK_PER_SECOND
-#define ENET_DMA_RAM_BASE       0x30004000U
-#define ENET_DMA_RAM_SIZE       0x00004000U
-#define ENET_DMA_STATUS_W1C     0x0001E7FFU
+#define ENET_PHY_AN_10_HALF          (1U << 5)
+#define ENET_PHY_AN_10_FULL          (1U << 6)
+#define ENET_PHY_AN_100_HALF         (1U << 7)
+#define ENET_PHY_AN_100_FULL         (1U << 8)
+#define ENET_PHY_POLL_TICKS          RT_TICK_PER_SECOND
+#define ENET_TX_WAIT_TICKS           RT_TICK_PER_SECOND
+#define ENET_DMA_RAM_BASE            0x30004000U
+#define ENET_DMA_RAM_SIZE            0x00004000U
+#define ENET_DMA_STATUS_W1C          0x0001E7FFU
 
 #ifdef RT_LWIP_USING_HW_CHECKSUM
-#define ENET_RX_CHECKSUM_MODE   ENET_AUTOCHECKSUM_DROP_FAILFRAMES
-#define ENET_TX_CHECKSUM_MODE   ENET_CHECKSUM_TCPUDPICMP_FULL
+#define ENET_RX_CHECKSUM_MODE ENET_AUTOCHECKSUM_DROP_FAILFRAMES
+#define ENET_TX_CHECKSUM_MODE ENET_CHECKSUM_TCPUDPICMP_FULL
 #else
-#define ENET_RX_CHECKSUM_MODE   ENET_NO_AUTOCHECKSUM
-#define ENET_TX_CHECKSUM_MODE   ENET_CHECKSUM_DISABLE
+#define ENET_RX_CHECKSUM_MODE ENET_NO_AUTOCHECKSUM
+#define ENET_TX_CHECKSUM_MODE ENET_CHECKSUM_DISABLE
 #endif
 
 struct gd32_enet_dma
@@ -73,8 +73,7 @@ static struct gd32_enet gd32_enet_device;
 static struct gd32_enet_dma gd32_enet_dma
     __attribute__((section(".enet_dma"), aligned(32)));
 
-typedef char gd32_enet_dma_size_check[
-    (sizeof(struct gd32_enet_dma) <= ENET_DMA_RAM_SIZE) ? 1 : -1];
+typedef char gd32_enet_dma_size_check[(sizeof(struct gd32_enet_dma) <= ENET_DMA_RAM_SIZE) ? 1 : -1];
 
 static void enet_tx_desc_reset(void)
 {
@@ -87,8 +86,7 @@ static void enet_tx_desc_reset(void)
 
         desc->status = ENET_TDES0_TCHM;
         desc->buffer1_addr = (rt_uint32_t)&gd32_enet_dma.tx_buffer[index][0];
-        desc->buffer2_next_desc_addr = (rt_uint32_t)&gd32_enet_dma.tx_desc[
-            (index + 1U) % ENET_TXBUF_NUM];
+        desc->buffer2_next_desc_addr = (rt_uint32_t)&gd32_enet_dma.tx_desc[(index + 1U) % ENET_TXBUF_NUM];
     }
 
     gd32_enet_device.tx_desc = &gd32_enet_dma.tx_desc[0];
@@ -154,7 +152,7 @@ static void enet_dma_mpu_config(void)
     mpu_region_init_struct mpu_config;
 
     SCB_CleanInvalidateDCache_by_Addr((uint32_t *)ENET_DMA_RAM_BASE,
-                                     ENET_DMA_RAM_SIZE);
+                                      ENET_DMA_RAM_SIZE);
     ARM_MPU_Disable();
 
     mpu_region_struct_para_init(&mpu_config);
@@ -188,8 +186,7 @@ static void enet_dma_desc_init(void)
         desc->status = ENET_RDES0_DAV;
         desc->control_buffer_size = ENET_RDES1_RCHM | ENET_RXBUF_SIZE;
         desc->buffer1_addr = (rt_uint32_t)&gd32_enet_dma.rx_buffer[index][0];
-        desc->buffer2_next_desc_addr = (rt_uint32_t)&gd32_enet_dma.rx_desc[
-            (index + 1U) % ENET_RXBUF_NUM];
+        desc->buffer2_next_desc_addr = (rt_uint32_t)&gd32_enet_dma.rx_desc[(index + 1U) % ENET_RXBUF_NUM];
     }
 
     gd32_enet_device.rx_desc = &gd32_enet_dma.rx_desc[0];
@@ -201,13 +198,15 @@ static void enet_dma_desc_init(void)
 static rt_err_t enet_phy_read(rt_uint8_t address, rt_uint8_t reg, rt_uint16_t *value)
 {
     return enet_phy_write_read(ENET_PERIPH, ENET_PHY_READ, address, reg, value) == SUCCESS
-           ? RT_EOK : -RT_ERROR;
+               ? RT_EOK
+               : -RT_ERROR;
 }
 
 static rt_err_t enet_phy_write(rt_uint8_t address, rt_uint8_t reg, rt_uint16_t value)
 {
     return enet_phy_write_read(ENET_PERIPH, ENET_PHY_WRITE, address, reg, &value) == SUCCESS
-           ? RT_EOK : -RT_ERROR;
+               ? RT_EOK
+               : -RT_ERROR;
 }
 
 static rt_err_t enet_phy_ext_read(rt_uint8_t address, rt_uint16_t reg, rt_uint16_t *value)
@@ -721,8 +720,7 @@ void ENET1_IRQHandler(void)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-static const struct rt_device_ops gd32_enet_ops =
-{
+static const struct rt_device_ops gd32_enet_ops = {
     gd32_enet_init,
     gd32_enet_open,
     gd32_enet_close,

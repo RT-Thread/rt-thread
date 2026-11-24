@@ -15,9 +15,9 @@
 
 #if defined(BSP_USING_USB) && defined(RT_USING_USB_DEVICE)
 
-#define EP_IN(x)                ((uint8_t)(0x80U | (x)))    /*!< device IN endpoint */
-#define EP_OUT(x)               ((uint8_t)(x))              /*!< device OUT endpoint */
-#define EP_MAX_PACKET_SIZE_MASK 0x07FFU                     /*!< endpoint maximum packet size mask */
+#define EP_IN(x)                ((uint8_t)(0x80U | (x))) /*!< device IN endpoint */
+#define EP_OUT(x)               ((uint8_t)(x))           /*!< device OUT endpoint */
+#define EP_MAX_PACKET_SIZE_MASK 0x07FFU                  /*!< endpoint maximum packet size mask */
 
 #define USB_MIN(a, b) (((a) < (b)) ? (a) : (b))
 

@@ -19,7 +19,6 @@
 #include "sdio_config.h"
 #endif
 
-
 //#define DRV_DEBUG
 #define LOG_TAG  "drv.sdio"
 #include "drv_log.h"
@@ -93,18 +92,18 @@
 #define SD_ALLZERO                          ((uint32_t)0x00000000)    /* all zero */
 #define SD_RCA_SHIFT                        ((uint8_t)0x10)           /* RCA shift bits */
 #ifdef GD32_SDIO_USING_H77X
-#define SD_CLK_DIV_INIT                     ((uint16_t)500U)          /* 300 MHz / (2 * 500) = 300 kHz */
-#define SD_CLK_DIV_TRANS                    ((uint16_t)8U)            /* 300 MHz / (2 * 8) = 18.75 MHz */
-#define SDIO_POLLING_TIMEOUT                ((uint32_t)4000000U)
-#define SDIO_MASK_INTC_FLAGS                ((uint32_t)0x1FE00FFF)
-#define SDIO_MASK_CMD_FLAGS                 ((uint32_t)0x002000C5)
-#define SDIO_MASK_DATA_FLAGS                ((uint32_t)0x18000F3A)
-#define SDIO_READ_SINGLE_FLAGS              (SDIO_FLAG_DTCRCERR | SDIO_FLAG_DTTMOUT | SDIO_FLAG_RXORE | \
-                                             SDIO_FLAG_DTBLKEND | SDIO_FLAG_DTEND)
-#define SDIO_READ_MULTI_FLAGS               SDIO_READ_SINGLE_FLAGS
-#define SDIO_WRITE_SINGLE_FLAGS             (SDIO_FLAG_DTCRCERR | SDIO_FLAG_DTTMOUT | SDIO_FLAG_TXURE | \
-                                             SDIO_FLAG_DTBLKEND | SDIO_FLAG_DTEND)
-#define SDIO_WRITE_MULTI_FLAGS              SDIO_WRITE_SINGLE_FLAGS
+#define SD_CLK_DIV_INIT         ((uint16_t)500U) /* 300 MHz / (2 * 500) = 300 kHz */
+#define SD_CLK_DIV_TRANS        ((uint16_t)8U)   /* 300 MHz / (2 * 8) = 18.75 MHz */
+#define SDIO_POLLING_TIMEOUT    ((uint32_t)4000000U)
+#define SDIO_MASK_INTC_FLAGS    ((uint32_t)0x1FE00FFF)
+#define SDIO_MASK_CMD_FLAGS     ((uint32_t)0x002000C5)
+#define SDIO_MASK_DATA_FLAGS    ((uint32_t)0x18000F3A)
+#define SDIO_READ_SINGLE_FLAGS  (SDIO_FLAG_DTCRCERR | SDIO_FLAG_DTTMOUT | SDIO_FLAG_RXORE | \
+                                 SDIO_FLAG_DTBLKEND | SDIO_FLAG_DTEND)
+#define SDIO_READ_MULTI_FLAGS   SDIO_READ_SINGLE_FLAGS
+#define SDIO_WRITE_SINGLE_FLAGS (SDIO_FLAG_DTCRCERR | SDIO_FLAG_DTTMOUT | SDIO_FLAG_TXURE | \
+                                 SDIO_FLAG_DTBLKEND | SDIO_FLAG_DTEND)
+#define SDIO_WRITE_MULTI_FLAGS  SDIO_WRITE_SINGLE_FLAGS
 #else
 #define SD_CLK_DIV_INIT                     ((uint16_t)0x0076)        /* SD clock division in initialization phase */
 #define SD_CLK_DIV_TRANS                    ((uint16_t)0x0002)        /* SD clock division in transmission phase */
@@ -150,7 +149,7 @@ static sdcard_opration_t card_opration = {
 };
 
 /* set sector size to 512 */
-#define SD_SECTOR_SIZE     512
+#define SD_SECTOR_SIZE 512
 
 typedef struct
 {
@@ -228,12 +227,14 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     uint16_t retry = 5;
 
 #ifdef BSP_SDIO_USING_CARD_DETECT
-    if(RT_EOK != sdio_card_detect_config()){
+    if (RT_EOK != sdio_card_detect_config())
+    {
         return -RT_EINVAL;
     }
 
     rt_thread_mdelay(5U);
-    if(!sdio_card_is_present()){
+    if (!sdio_card_is_present())
+    {
         LOG_W("No SD card detected: CD %s=%d", BSP_SDIO_CD_PIN,
               sdio_gpio_level_get(BSP_SDIO_CD_PIN));
         return -RT_EIO;
@@ -260,7 +261,6 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     card_info_get();
 
     return RT_EOK;
-
 }
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
@@ -273,7 +273,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static uint32_t dma_buffer[SD_SECTOR_SIZE/sizeof(uint32_t)];
+static uint32_t dma_buffer[SD_SECTOR_SIZE / sizeof(uint32_t)];
 #ifdef GD32_SDIO_USING_H77X
 static rt_bool_t first_block_read = RT_TRUE;
 static rt_bool_t first_block_write = RT_TRUE;
@@ -286,12 +286,14 @@ static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
     uint32_t status;
     gd32_sdio_t *sd = (gd32_sdio_t *)dev->user_data;
 
-    if (!buffer || !size) {
+    if (!buffer || !size)
+    {
         return 0;
     }
 
 #ifdef GD32_SDIO_USING_H77X
-    if(first_block_read){
+    if (first_block_read)
+    {
         LOG_D("first block read: sector=%u count=%u", (uint32_t)pos, (uint32_t)size);
     }
 #endif
@@ -305,11 +307,11 @@ static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
         uint32_t sector_adr;
         uint8_t *copy_buffer;
 
-        sector_adr = pos*SD_SECTOR_SIZE;
+        sector_adr = pos * SD_SECTOR_SIZE;
         copy_buffer = (uint8_t *)buffer;
 
         for(i=0; i<size; i++){
-            sd_error = sd_block_read((uint32_t*)dma_buffer, sector_adr, SD_SECTOR_SIZE);
+            sd_error = sd_block_read((uint32_t *)dma_buffer, sector_adr, SD_SECTOR_SIZE);
 
             rt_memcpy(copy_buffer, dma_buffer, SD_SECTOR_SIZE);
             sector_adr += SD_SECTOR_SIZE;
@@ -318,10 +320,10 @@ static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
     }
     else {
         if (size == 1){
-            sd_error = sd_block_read((uint32_t*)buffer, pos*SD_SECTOR_SIZE, SD_SECTOR_SIZE);
+            sd_error = sd_block_read((uint32_t *)buffer, pos * SD_SECTOR_SIZE, SD_SECTOR_SIZE);
         }
         else {
-            sd_error = sd_multiblocks_read((uint32_t*)buffer, pos*SD_SECTOR_SIZE, SD_SECTOR_SIZE, size);
+            sd_error = sd_multiblocks_read((uint32_t *)buffer, pos * SD_SECTOR_SIZE, SD_SECTOR_SIZE, size);
         }
     }
 
@@ -329,7 +331,8 @@ static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
 
     if (sd_error == SD_OK){
 #ifdef GD32_SDIO_USING_H77X
-        if(first_block_read){
+        if (first_block_read)
+        {
             LOG_D("first block read ok");
             first_block_read = RT_FALSE;
         }
@@ -352,12 +355,14 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
     uint32_t status;
     gd32_sdio_t *sd = (gd32_sdio_t *)dev->user_data;
 
-    if (!buffer || !size) {
+    if (!buffer || !size)
+    {
         return 0;
     }
 
 #ifdef GD32_SDIO_USING_H77X
-    if(first_block_write){
+    if (first_block_write)
+    {
         LOG_D("first block write: sector=%u count=%u", (uint32_t)pos, (uint32_t)size);
     }
 #endif
@@ -370,7 +375,7 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
         rt_size_t sector_adr;
         const uint8_t *copy_buffer;
 
-        sector_adr = pos*SD_SECTOR_SIZE;
+        sector_adr = pos * SD_SECTOR_SIZE;
         copy_buffer = (const uint8_t *)buffer;
 
         for (i=0; i<size; i++) {
@@ -378,7 +383,7 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
             rt_memcpy(dma_buffer, copy_buffer, SD_SECTOR_SIZE);
 
             while (retry > 0) {
-                sd_error = sd_block_write((uint32_t*)dma_buffer, sector_adr, SD_SECTOR_SIZE);
+                sd_error = sd_block_write((uint32_t *)dma_buffer, sector_adr, SD_SECTOR_SIZE);
                 retry--;
                 if (sd_error == SD_OK) {
                     break;
@@ -394,7 +399,7 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
 
         if (size == 1) {
             while (retry > 0) {
-                sd_error = sd_block_write((uint32_t*)buffer, pos*SD_SECTOR_SIZE, SD_SECTOR_SIZE);
+                sd_error = sd_block_write((uint32_t *)buffer, pos * SD_SECTOR_SIZE, SD_SECTOR_SIZE);
                 retry--;
                 if (sd_error == SD_OK) {
                     break;
@@ -403,7 +408,7 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
         }
         else {
             while (retry > 0) {
-                sd_error = sd_multiblocks_write((uint32_t*)buffer, pos*SD_SECTOR_SIZE, SD_SECTOR_SIZE, size);
+                sd_error = sd_multiblocks_write((uint32_t *)buffer, pos * SD_SECTOR_SIZE, SD_SECTOR_SIZE, size);
                 retry--;
                 if (sd_error == SD_OK) {
                     break;
@@ -419,7 +424,8 @@ static rt_ssize_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* bu
     }
     if (sd_error == SD_OK) {
 #ifdef GD32_SDIO_USING_H77X
-        if(first_block_write){
+        if (first_block_write)
+        {
             LOG_D("first block write ok");
             first_block_write = RT_FALSE;
         }
@@ -487,7 +493,7 @@ int rt_hw_sdcard_init(void)
 
     ret = rt_device_register(&sd.sdcard_device, sd.device_name,
                              RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE |
-                             RT_DEVICE_FLAG_STANDALONE);
+                                 RT_DEVICE_FLAG_STANDALONE);
     if (ret != RT_EOK)
     {
         LOG_E("register device failed");
@@ -514,7 +520,8 @@ sd_error_enum sd_config(void)
 
     /* initialize the card */
     status = sd_init();
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD initialization stage failed: %d", status);
         return status;
     }
@@ -523,7 +530,8 @@ sd_error_enum sd_config(void)
 #endif
 
     status = sd_card_information_get(&sd.sd_cardinfo);
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD card information stage failed: %d", status);
         return status;
     }
@@ -532,7 +540,8 @@ sd_error_enum sd_config(void)
 #endif
 
     status = sd_card_select_deselect(sd.sd_cardinfo.card_rca);
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD card selection stage failed: %d", status);
         return status;
     }
@@ -541,7 +550,8 @@ sd_error_enum sd_config(void)
 #endif
 
     status = sd_cardstatus_get(&cardstate);
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD card status stage failed: %d", status);
         return status;
     }
@@ -567,7 +577,8 @@ sd_error_enum sd_config(void)
 
     /* set bus mode */
     status = sd_bus_mode_config(SDIO_BUSMODE_4BIT);
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD 4-bit bus configuration failed: %d", status);
         return status;
     }
@@ -581,7 +592,8 @@ sd_error_enum sd_config(void)
 #else
     status = sd_transfer_mode_config(SD_DMA_MODE);
 #endif
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         LOG_W("SD transfer mode configuration failed: %d", status);
     }
 
@@ -692,10 +704,12 @@ sd_error_enum sd_init(void)
     sd_error_enum status = SD_OK;
 
     /* configure the RCU and GPIO, deinitialize the SDIO */
-    if(RT_EOK != rcu_config()){
+    if (RT_EOK != rcu_config())
+    {
         return SD_OPERATION_IMPROPER;
     }
-    if (RT_EOK != gpio_config()) {
+    if (RT_EOK != gpio_config())
+    {
         return SD_PARAMETER_INVALID;
     }
     sdio_deinit();
@@ -857,22 +871,27 @@ sd_error_enum sd_power_on(void)
     sdio_csm_enable();
 
     status = r7_error_check();
-    if(SD_OK == status){
+    if (SD_OK == status)
+    {
         /* SD Card 2.0 */
         card_opration.cardtype = SDIO_STD_CAPACITY_SD_CARD_V2_0;
         sdcardtype = SD_HIGH_CAPACITY;
-    }else{
+    }
+    else
+    {
         LOG_D("CMD8 failed: %d", status);
     }
 
     /* SD memory card power-up sequence: CMD55 must be followed by ACMD41. */
-    while((!busyflag) && (count < SD_MAX_VOLT_VALIDATION)){
+    while ((!busyflag) && (count < SD_MAX_VOLT_VALIDATION))
+    {
         sdio_command_response_config(SD_CMD_APP_CMD, (uint32_t)0x0, SDIO_RESPONSETYPE_SHORT);
         sdio_flag_clear(SDIO_MASK_CMD_FLAGS);
         sdio_wait_type_set(SDIO_WAITTYPE_NO);
         sdio_csm_enable();
         status = r1_error_check(SD_CMD_APP_CMD);
-        if(SD_OK != status){
+        if (SD_OK != status)
+        {
             LOG_W("CMD55 failed at attempt %u: %d", count + 1U, status);
             return status;
         }
@@ -882,20 +901,23 @@ sd_error_enum sd_power_on(void)
         sdio_wait_type_set(SDIO_WAITTYPE_NO);
         sdio_csm_enable();
         status = r3_error_check();
-        if(SD_OK != status){
+        if (SD_OK != status)
+        {
             LOG_W("ACMD41 failed at attempt %u: %d", count + 1U, status);
             return status;
         }
 
         response = sdio_response_get(SDIO_RESPONSE0);
-        busyflag = (uint8_t)((response >> 31)&(uint32_t)0x01);
+        busyflag = (uint8_t)((response >> 31) & (uint32_t)0x01);
         ++count;
     }
-    if(count >= SD_MAX_VOLT_VALIDATION){
+    if (count >= SD_MAX_VOLT_VALIDATION)
+    {
         LOG_D("ACMD41 voltage validation timed out");
         return SD_VOLTRANGE_INVALID;
     }
-    if(response & SD_HIGH_CAPACITY){
+    if (response & SD_HIGH_CAPACITY)
+    {
         /* SDHC card */
         card_opration.cardtype = SDIO_HIGH_CAPACITY_SD_CARD;
     }
@@ -1069,7 +1091,8 @@ sd_error_enum sd_block_read(uint32_t *preadbuffer, uint32_t readaddr, uint16_t b
 #ifdef GD32_SDIO_USING_H77X
         timeout = SDIO_POLLING_TIMEOUT;
 #endif
-        while(!sdio_flag_get(SDIO_READ_SINGLE_FLAGS)){
+        while (!sdio_flag_get(SDIO_READ_SINGLE_FLAGS))
+        {
             if(RESET != sdio_flag_get(SDIO_FLAG_RFH)){
                 /* at least 8 words can be read in the FIFO */
                 for(count = 0; count < SD_FIFOHALF_WORDS; count++){
@@ -1078,7 +1101,8 @@ sd_error_enum sd_block_read(uint32_t *preadbuffer, uint32_t readaddr, uint16_t b
                 ptempbuff += SD_FIFOHALF_WORDS;
             }
 #ifdef GD32_SDIO_USING_H77X
-            if(0U == --timeout){
+            if (0U == --timeout)
+            {
                 sdio_data_timeout_log("block read timeout");
                 sdio_transfer_start_disable();
                 sdio_flag_clear(SDIO_MASK_DATA_FLAGS);
@@ -1106,7 +1130,8 @@ sd_error_enum sd_block_read(uint32_t *preadbuffer, uint32_t readaddr, uint16_t b
             sdio_flag_clear(SDIO_FLAG_STBITE);
             return status;
         }
-        while(SDIO_FIFO_DATA_AVAILABLE()){
+        while (SDIO_FIFO_DATA_AVAILABLE())
+        {
             *ptempbuff = sdio_data_read();
             ++ptempbuff;
         }
@@ -1234,7 +1259,8 @@ sd_error_enum sd_multiblocks_read(uint32_t *preadbuffer, uint32_t readaddr, uint
 #ifdef GD32_SDIO_USING_H77X
             timeout = SDIO_POLLING_TIMEOUT;
 #endif
-            while(!sdio_flag_get(SDIO_READ_MULTI_FLAGS)){
+            while (!sdio_flag_get(SDIO_READ_MULTI_FLAGS))
+            {
                 if(RESET != sdio_flag_get(SDIO_FLAG_RFH)){
                     /* at least 8 words can be read in the FIFO */
                     for(count = 0; count < SD_FIFOHALF_WORDS; count++){
@@ -1243,7 +1269,8 @@ sd_error_enum sd_multiblocks_read(uint32_t *preadbuffer, uint32_t readaddr, uint
                     ptempbuff += SD_FIFOHALF_WORDS;
                 }
 #ifdef GD32_SDIO_USING_H77X
-                if(0U == --timeout){
+                if (0U == --timeout)
+                {
                     sdio_data_timeout_log("multi-block read timeout");
                     sdio_transfer_start_disable();
                     sdio_flag_clear(SDIO_MASK_DATA_FLAGS);
@@ -1270,7 +1297,8 @@ sd_error_enum sd_multiblocks_read(uint32_t *preadbuffer, uint32_t readaddr, uint
                 sdio_flag_clear(SDIO_FLAG_STBITE);
                 return status;
             }
-            while(SDIO_FIFO_DATA_AVAILABLE()){
+            while (SDIO_FIFO_DATA_AVAILABLE())
+            {
                 *ptempbuff = sdio_data_read();
                 ++ptempbuff;
             }
@@ -1447,7 +1475,8 @@ sd_error_enum sd_block_write(uint32_t *pwritebuffer, uint32_t writeaddr, uint16_
     sdio_wait_type_set(SDIO_WAITTYPE_NO);
     sdio_csm_enable();
     status = r1_error_check(SD_CMD_WRITE_BLOCK);
-    if(SD_OK != status){
+    if (SD_OK != status)
+    {
         sdio_transfer_start_disable();
         return status;
     }
@@ -1458,7 +1487,8 @@ sd_error_enum sd_block_write(uint32_t *pwritebuffer, uint32_t writeaddr, uint16_
 #ifdef GD32_SDIO_USING_H77X
         timeout = SDIO_POLLING_TIMEOUT;
 #endif
-        while(!sdio_flag_get(SDIO_WRITE_SINGLE_FLAGS)){
+        while (!sdio_flag_get(SDIO_WRITE_SINGLE_FLAGS))
+        {
             if(RESET != sdio_flag_get(SDIO_FLAG_TFH)){
                 /* at least 8 words can be written into the FIFO */
                 if((card_opration.totalnumber_bytes - transbytes) < SD_FIFOHALF_BYTES){
@@ -1478,7 +1508,8 @@ sd_error_enum sd_block_write(uint32_t *pwritebuffer, uint32_t writeaddr, uint16_
                 }
             }
 #ifdef GD32_SDIO_USING_H77X
-            if(0U == --timeout){
+            if (0U == --timeout)
+            {
                 sdio_data_timeout_log("block write timeout");
                 sdio_transfer_start_disable();
                 sdio_flag_clear(SDIO_MASK_DATA_FLAGS);
@@ -1681,7 +1712,8 @@ sd_error_enum sd_multiblocks_write(uint32_t *pwritebuffer, uint32_t writeaddr, u
         sdio_wait_type_set(SDIO_WAITTYPE_NO);
         sdio_csm_enable();
         status = r1_error_check(SD_CMD_WRITE_MULTIPLE_BLOCK);
-        if(SD_OK != status){
+        if (SD_OK != status)
+        {
             sdio_transfer_start_disable();
             return status;
         }
@@ -1692,7 +1724,8 @@ sd_error_enum sd_multiblocks_write(uint32_t *pwritebuffer, uint32_t writeaddr, u
 #ifdef GD32_SDIO_USING_H77X
             timeout = SDIO_POLLING_TIMEOUT;
 #endif
-            while(!sdio_flag_get(SDIO_WRITE_MULTI_FLAGS)){
+            while (!sdio_flag_get(SDIO_WRITE_MULTI_FLAGS))
+            {
                 if(RESET != sdio_flag_get(SDIO_FLAG_TFH)){
                     /* at least 8 words can be written into the FIFO */
                     if(!((card_opration.totalnumber_bytes - transbytes) < SD_FIFOHALF_BYTES)){
@@ -1712,7 +1745,8 @@ sd_error_enum sd_multiblocks_write(uint32_t *pwritebuffer, uint32_t writeaddr, u
                     }
                 }
 #ifdef GD32_SDIO_USING_H77X
-                if(0U == --timeout){
+                if (0U == --timeout)
+                {
                     sdio_data_timeout_log("multi-block write timeout");
                     sdio_transfer_start_disable();
                     sdio_flag_clear(SDIO_MASK_DATA_FLAGS);
@@ -2061,7 +2095,8 @@ sd_error_enum sd_sdstatus_get(uint32_t *psdstatus)
         return status;
     }
 
-    while(!sdio_flag_get(SDIO_READ_SINGLE_FLAGS)){
+    while (!sdio_flag_get(SDIO_READ_SINGLE_FLAGS))
+    {
         if(RESET != sdio_flag_get(SDIO_FLAG_RFH)){
             for(count = 0; count < SD_FIFOHALF_WORDS; count++){
                 *(psdstatus + count) = sdio_data_read();
@@ -2088,7 +2123,8 @@ sd_error_enum sd_sdstatus_get(uint32_t *psdstatus)
         sdio_flag_clear(SDIO_FLAG_STBITE);
         return status;
     }
-    while(SDIO_FIFO_DATA_AVAILABLE()){
+    while (SDIO_FIFO_DATA_AVAILABLE())
+    {
         *psdstatus = sdio_data_read();
         ++psdstatus;
     }
@@ -2519,12 +2555,15 @@ sd_error_enum sd_card_information_get(sd_card_info_struct *pcardinfo)
 #ifdef GD32_SDIO_USING_H77X
 static void sdio_command_error_log(uint8_t cmdindex, const char *reason, uint32_t status)
 {
-    if(SD_CMD_SEND_IF_COND == cmdindex){
+    if (SD_CMD_SEND_IF_COND == cmdindex)
+    {
         LOG_D("CMD%u %s: STAT=0x%08x CMDCTL=0x%08x ARG=0x%08x RSPIDX=%u RESP0=0x%08x CLKCTL=0x%08x PWRCTL=0x%08x",
               cmdindex, reason, status, SDIO_CMDCTL(SDIO_PERIPH), SDIO_CMDAGMT(SDIO_PERIPH),
               SDIO_RSPCMDIDX(SDIO_PERIPH), SDIO_RESP0(SDIO_PERIPH), SDIO_CLKCTL(SDIO_PERIPH),
               SDIO_PWRCTL(SDIO_PERIPH));
-    }else{
+    }
+    else
+    {
         LOG_W("CMD%u %s: STAT=0x%08x CMDCTL=0x%08x ARG=0x%08x RSPIDX=%u RESP0=0x%08x CLKCTL=0x%08x PWRCTL=0x%08x",
               cmdindex, reason, status, SDIO_CMDCTL(SDIO_PERIPH), SDIO_CMDAGMT(SDIO_PERIPH),
               SDIO_RSPCMDIDX(SDIO_PERIPH), SDIO_RESP0(SDIO_PERIPH), SDIO_CLKCTL(SDIO_PERIPH),
@@ -2809,7 +2848,8 @@ static sd_error_enum r7_error_check(void)
         sdio_flag_clear(SDIO_MASK_CMD_FLAGS);
         return status;
     }
-    if(reg_status & SDIO_FLAG_CCRCERR){
+    if (reg_status & SDIO_FLAG_CCRCERR)
+    {
         status = SD_CMD_CRC_ERROR;
 #ifdef GD32_SDIO_USING_H77X
         sdio_command_error_log(SD_CMD_SEND_IF_COND, "response CRC error", reg_status);
@@ -3017,11 +3057,16 @@ static sd_error_enum sd_scr_get(uint16_t rca, uint32_t *pscr)
     }
 
     /* store the received SCR */
-    while(!sdio_flag_get(SDIO_READ_SINGLE_FLAGS)){
-        if(SDIO_FIFO_DATA_AVAILABLE()){
-            if(idx_scr < 2U){
+    while (!sdio_flag_get(SDIO_READ_SINGLE_FLAGS))
+    {
+        if (SDIO_FIFO_DATA_AVAILABLE())
+        {
+            if (idx_scr < 2U)
+            {
                 temp_scr[idx_scr++] = sdio_data_read();
-            }else{
+            }
+            else
+            {
                 (void)sdio_data_read();
             }
         }
@@ -3046,7 +3091,8 @@ static sd_error_enum sd_scr_get(uint16_t rca, uint32_t *pscr)
         return status;
     }
 
-    if(2U != idx_scr){
+    if (2U != idx_scr)
+    {
 #ifdef GD32_SDIO_USING_H77X
         LOG_E("SCR length error: words=%u STAT=0x%08x DATACNT=%u", idx_scr,
               SDIO_STATUS_REG, SDIO_DATACNT(SDIO_PERIPH));
@@ -3103,7 +3149,8 @@ static int sdio_gpio_level_get(const char *pin_name)
     uint32_t port, pin;
     rcu_periph_enum gpio_clock;
 
-    if(RT_EOK != get_pin_config(pin_name, &port, &pin, &gpio_clock)){
+    if (RT_EOK != get_pin_config(pin_name, &port, &pin, &gpio_clock))
+    {
         return -1;
     }
 
@@ -3124,7 +3171,8 @@ static rt_err_t sdio_card_detect_config(void)
     uint32_t port, pin;
     rcu_periph_enum gpio_clock;
 
-    if(RT_EOK != get_pin_config(BSP_SDIO_CD_PIN, &port, &pin, &gpio_clock)){
+    if (RT_EOK != get_pin_config(BSP_SDIO_CD_PIN, &port, &pin, &gpio_clock))
+    {
         LOG_E("invalid SD card detect pin: %s", BSP_SDIO_CD_PIN);
         return -RT_ERROR;
     }
@@ -3157,7 +3205,8 @@ static rt_err_t sdio_gpio_configure(const char *pin_name, const char *af_name, u
     rcu_periph_enum gpio_clock;
 
     if ((RT_EOK != get_pin_config(pin_name, &port, &pin, &gpio_clock)) ||
-        (RT_EOK != pin_alternate_config(af_name, &alternate))) {
+        (RT_EOK != pin_alternate_config(af_name, &alternate)))
+    {
         LOG_E("invalid SDIO pin configuration: %s/%s", pin_name, af_name);
         return -RT_ERROR;
     }
@@ -3185,7 +3234,8 @@ static rt_err_t gpio_config(void)
         (RT_EOK != sdio_gpio_configure(BSP_SDIO_D0_PIN, BSP_SDIO_D0_AFIO, GPIO_PUPD_PULLUP)) ||
         (RT_EOK != sdio_gpio_configure(BSP_SDIO_D1_PIN, BSP_SDIO_D1_AFIO, GPIO_PUPD_PULLUP)) ||
         (RT_EOK != sdio_gpio_configure(BSP_SDIO_D2_PIN, BSP_SDIO_D2_AFIO, GPIO_PUPD_PULLUP)) ||
-        (RT_EOK != sdio_gpio_configure(BSP_SDIO_D3_PIN, BSP_SDIO_D3_AFIO, GPIO_PUPD_PULLUP))) {
+        (RT_EOK != sdio_gpio_configure(BSP_SDIO_D3_PIN, BSP_SDIO_D3_AFIO, GPIO_PUPD_PULLUP)))
+    {
         return -RT_ERROR;
     }
 #else
@@ -3234,12 +3284,14 @@ static rt_err_t rcu_config(void)
     rcu_sdio_clock_config(SDIO_CLOCK_INDEX, SDIO_CLOCK_SOURCE);
     rcu_periph_clock_enable(SDIO_PERI_CLOCK);
     sdio_clock = rcu_clock_freq_get(SDIO_CLOCK_FREQUENCY);
-    if(0U == sdio_clock){
+    if (0U == sdio_clock)
+    {
         LOG_E("SDIO kernel clock is unavailable");
         return -RT_ERROR;
     }
 
-    if(!clock_logged){
+    if (!clock_logged)
+    {
 #ifdef BSP_SDIO_USING_SDIO1
         LOG_I("SDIO1 PLL0Q clock: %u Hz", sdio_clock);
 #else

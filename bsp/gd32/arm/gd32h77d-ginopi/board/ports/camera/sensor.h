@@ -17,9 +17,9 @@
 
 #include "omv_i2c.h"
 
-#define OV_CHIP_ID                  (0x0AU)
-#define OV7670_ID                   (0x76U)
-#define SENSOR_HW_FLAGS_YVU422      (1U)
+#define OV_CHIP_ID             (0x0AU)
+#define OV7670_ID              (0x76U)
+#define SENSOR_HW_FLAGS_YVU422 (1U)
 
 typedef enum
 {
@@ -45,13 +45,13 @@ struct _sensor
     rt_uint8_t slv_addr;
     struct
     {
-        rt_uint32_t vsync : 1;
-        rt_uint32_t hsync : 1;
-        rt_uint32_t pixck : 1;
-        rt_uint32_t fsync : 1;
-        rt_uint32_t jpege : 1;
-        rt_uint32_t gs_bpp : 2;
-        rt_uint32_t rgb_swap : 1;
+        rt_uint32_t vsync     : 1;
+        rt_uint32_t hsync     : 1;
+        rt_uint32_t pixck     : 1;
+        rt_uint32_t fsync     : 1;
+        rt_uint32_t jpege     : 1;
+        rt_uint32_t gs_bpp    : 2;
+        rt_uint32_t rgb_swap  : 1;
         rt_uint32_t yuv_order : 1;
     } hw_flags;
     bool disable_delays;

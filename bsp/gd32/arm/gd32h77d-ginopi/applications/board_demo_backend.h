@@ -9,17 +9,17 @@
 
 #include <rtthread.h>
 
-#define BOARD_DEMO_FS_PATH_MAX          128
-#define BOARD_DEMO_FS_NAME_MAX          BOARD_DEMO_FS_PATH_MAX
-#define BOARD_DEMO_FS_ENTRY_MAX         32
-#define BOARD_DEMO_FILE_PREVIEW_MAX     1536
-#define BOARD_DEMO_CAN_LOG_MAX          16
-#define BOARD_DEMO_MQTT_TOPIC_MAX       64
-#define BOARD_DEMO_MQTT_PAYLOAD_MAX     256
-#define BOARD_DEMO_STATUS_MAX           80
-#define BOARD_DEMO_I2C_ADDRESS_COUNT    128
-#define BOARD_DEMO_I2C_BUS_NAME         "hwi2c1"
-#define BOARD_DEMO_BUS_LOG_MAX          3072
+#define BOARD_DEMO_FS_PATH_MAX       128
+#define BOARD_DEMO_FS_NAME_MAX       BOARD_DEMO_FS_PATH_MAX
+#define BOARD_DEMO_FS_ENTRY_MAX      32
+#define BOARD_DEMO_FILE_PREVIEW_MAX  1536
+#define BOARD_DEMO_CAN_LOG_MAX       16
+#define BOARD_DEMO_MQTT_TOPIC_MAX    64
+#define BOARD_DEMO_MQTT_PAYLOAD_MAX  256
+#define BOARD_DEMO_STATUS_MAX        80
+#define BOARD_DEMO_I2C_ADDRESS_COUNT 128
+#define BOARD_DEMO_I2C_BUS_NAME      "hwi2c1"
+#define BOARD_DEMO_BUS_LOG_MAX       3072
 
 enum board_demo_i2c_address_state
 {
@@ -38,7 +38,7 @@ enum board_demo_storage_id
     BOARD_DEMO_STORAGE_COUNT,
 };
 
-extern const char *const board_demo_storage_roots[BOARD_DEMO_STORAGE_COUNT];
+extern const char * const board_demo_storage_roots[BOARD_DEMO_STORAGE_COUNT];
 
 struct board_demo_fs_entry
 {

@@ -23,19 +23,18 @@
 #include <drv_log.h>
 
 #if defined(SOC_SERIES_GD32H77x_H78X) /* APB2 300MHz(max) */
-static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
-{
-    {CAN1MBaud,     1, 20, 27, 12, 5},
-    {CAN800kBaud,   1,  2,  9,  3, 25},
-    {CAN500kBaud,   1,  2,  5,  2, 60},
-    {CAN250kBaud,   1,  2,  5,  2, 120},
-    {CAN125kBaud,   1,  2,  5,  2, 240},
-    {CAN100kBaud,   1,  2,  5,  2, 300},
-    {CAN50kBaud,    1,  2,  5,  2, 600},
-    {CAN20kBaud,    1, 14, 25, 10, 300},
-    {CAN10kBaud,    1, 14, 25, 10, 600},
+static const struct gd32_baudrate_tbl can_baudrate_tbl[] = {
+    { CAN1MBaud, 1, 20, 27, 12, 5 },
+    { CAN800kBaud, 1, 2, 9, 3, 25 },
+    { CAN500kBaud, 1, 2, 5, 2, 60 },
+    { CAN250kBaud, 1, 2, 5, 2, 120 },
+    { CAN125kBaud, 1, 2, 5, 2, 240 },
+    { CAN100kBaud, 1, 2, 5, 2, 300 },
+    { CAN50kBaud, 1, 2, 5, 2, 600 },
+    { CAN20kBaud, 1, 14, 25, 10, 300 },
+    { CAN10kBaud, 1, 14, 25, 10, 600 },
 };
-#elif defined(GD32F405) || defined(GD32F407) /* 42MHz(max) */
+#elif defined(GD32F405) || defined(GD32F407)                                          /* 42MHz(max) */
 static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
 {
     {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 3},
@@ -87,15 +86,13 @@ static struct gd32_can_device dev_can0 =
 #endif
 
 #ifdef BSP_USING_CAN1
-static struct gd32_can_device dev_can1 =
-{
+static struct gd32_can_device dev_can1 = {
     .name = "can1",
     .can_x = CAN1,
 };
 #endif
 
-static const struct gd32_can gd32_can_gpio[] =
-{
+static const struct gd32_can gd32_can_gpio[] = {
 #if defined(BSP_USING_CAN0) && !defined(SOC_SERIES_GD32H77x_H78X)
     {
         .can_clk = RCU_CAN0,
@@ -179,9 +176,9 @@ static rt_err_t gd32_can_gpio_init(void)
         rcu_periph_enum tx_clk, rx_clk;
 
         if (get_pin_config(gd32_can_gpio[i].tx_pin_name, &tx_port, &tx_pin, &tx_clk) != RT_EOK ||
-                get_pin_config(gd32_can_gpio[i].rx_pin_name, &rx_port, &rx_pin, &rx_clk) != RT_EOK ||
-                pin_alternate_config(gd32_can_gpio[i].tx_alternate, &tx_af) != RT_EOK ||
-                pin_alternate_config(gd32_can_gpio[i].rx_alternate, &rx_af) != RT_EOK)
+            get_pin_config(gd32_can_gpio[i].rx_pin_name, &rx_port, &rx_pin, &rx_clk) != RT_EOK ||
+            pin_alternate_config(gd32_can_gpio[i].tx_alternate, &tx_af) != RT_EOK ||
+            pin_alternate_config(gd32_can_gpio[i].rx_alternate, &rx_af) != RT_EOK)
         {
             return -RT_EINVAL;
         }
@@ -240,7 +237,7 @@ static rt_uint32_t get_can_baudrate_index(rt_uint32_t baudrate)
 
 #if defined(SOC_SERIES_GD32H77x_H78X) && defined(RT_CAN_USING_CANFD)
 static rt_bool_t _can_timing_segments(rt_uint32_t quanta, rt_bool_t data_phase,
-        struct gd32_baudrate_tbl *timing)
+                                      struct gd32_baudrate_tbl *timing)
 {
     rt_uint32_t segment_1;
     rt_uint32_t min_prop = data_phase ? 0U : 1U;
@@ -265,12 +262,12 @@ static rt_bool_t _can_timing_segments(rt_uint32_t quanta, rt_bool_t data_phase,
 }
 
 static rt_err_t _can_fd_timing_get(const struct can_configure *cfg,
-        struct gd32_baudrate_tbl *nominal, struct gd32_baudrate_tbl *data)
+                                   struct gd32_baudrate_tbl *nominal, struct gd32_baudrate_tbl *data)
 {
     rt_uint32_t clock = rcu_clock_freq_get(CK_APB2);
 
     if (cfg->baud_rate < CAN10kBaud || cfg->baud_rate > CAN1MBaud ||
-            cfg->baud_rate_fd < cfg->baud_rate || cfg->baud_rate_fd > 8000000U)
+        cfg->baud_rate_fd < cfg->baud_rate || cfg->baud_rate_fd > 8000000U)
     {
         return -RT_EINVAL;
     }
@@ -280,12 +277,12 @@ static rt_err_t _can_fd_timing_get(const struct can_configure *cfg,
         rt_uint32_t bit_clock = clock / prescaler;
 
         if (clock % prescaler != 0U || bit_clock % cfg->baud_rate != 0U ||
-                bit_clock % cfg->baud_rate_fd != 0U)
+            bit_clock % cfg->baud_rate_fd != 0U)
         {
             continue;
         }
         if (_can_timing_segments(bit_clock / cfg->baud_rate, RT_FALSE, nominal) &&
-                _can_timing_segments(bit_clock / cfg->baud_rate_fd, RT_TRUE, data))
+            _can_timing_segments(bit_clock / cfg->baud_rate_fd, RT_TRUE, data))
         {
             nominal->prescaler = prescaler;
             data->prescaler = prescaler;
@@ -305,8 +302,8 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     rt_uint32_t interrupt_mask;
     rt_bool_t error_interrupt;
 #ifdef RT_CAN_USING_CANFD
-    struct gd32_baudrate_tbl nominal_timing = {0};
-    struct gd32_baudrate_tbl data_timing = {0};
+    struct gd32_baudrate_tbl nominal_timing = { 0 };
+    struct gd32_baudrate_tbl data_timing = { 0 };
 #endif
 #endif
 
@@ -317,8 +314,8 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 
 #if defined(SOC_SERIES_GD32H77x_H78X)
     if (cfg->sndboxnumber == 0U || cfg->sndboxnumber > GD32_CAN_TX_MAILBOX_NUM ||
-            (can->parent.ref_count != 0U &&
-             (cfg->sndboxnumber != can->config.sndboxnumber || cfg->msgboxsz != can->config.msgboxsz)))
+        (can->parent.ref_count != 0U &&
+         (cfg->sndboxnumber != can->config.sndboxnumber || cfg->msgboxsz != can->config.msgboxsz)))
     {
         return -RT_EINVAL;
     }
@@ -332,7 +329,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
         return -RT_ENOSYS;
     }
     if (cfg->enable_canfd > 1U ||
-            (cfg->enable_canfd && _can_fd_timing_get(cfg, &nominal_timing, &data_timing) != RT_EOK))
+        (cfg->enable_canfd && _can_fd_timing_get(cfg, &nominal_timing, &data_timing) != RT_EOK))
     {
         return -RT_EINVAL;
     }
@@ -974,8 +971,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_BAUD_FD:
 #if defined(SOC_SERIES_GD32H77x_H78X) && defined(RT_CAN_USING_CANFD)
     {
-        struct gd32_baudrate_tbl nominal = {0};
-        struct gd32_baudrate_tbl data = {0};
+        struct gd32_baudrate_tbl nominal = { 0 };
+        struct gd32_baudrate_tbl data = { 0 };
 
         config.baud_rate_fd = (rt_uint32_t)arg;
         if (_can_fd_timing_get(&config, &nominal, &data) != RT_EOK)
@@ -1044,7 +1041,7 @@ static rt_err_t _can_message_validate(struct gd32_can_device *can_dev, const str
 }
 
 static rt_ssize_t _can_mailbox_send(struct gd32_can_device *can_dev,
-        const struct rt_can_msg *pmsg, rt_uint32_t box_num)
+                                    const struct rt_can_msg *pmsg, rt_uint32_t box_num)
 {
     rt_uint32_t mailbox = box_num + GD32_CAN_TX_MAILBOX_FIRST;
 
@@ -1069,7 +1066,7 @@ static rt_ssize_t _can_mailbox_send(struct gd32_can_device *can_dev,
     can_dev->tx_message[box_num].brs = pmsg->brs;
     if (pmsg->fd_frame && pmsg->len > 8U)
     {
-        static const rt_uint8_t lengths[] = {12U, 16U, 20U, 24U, 32U, 48U, 64U};
+        static const rt_uint8_t lengths[] = { 12U, 16U, 20U, 24U, 32U, 48U, 64U };
 
         for (rt_uint32_t index = 0U; index < sizeof(lengths); index++)
         {
@@ -1453,7 +1450,7 @@ static void _can_ewmc_isr(struct rt_can_device *can)
     rt_uint32_t errtype;
 
     if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_ERR_SUMMARY) == SET ||
-            can_interrupt_flag_get(can_x, CAN_INT_FLAG_ERR_SUMMARY_FD) == SET)
+        can_interrupt_flag_get(can_x, CAN_INT_FLAG_ERR_SUMMARY_FD) == SET)
     {
         errtype = CAN_ERR1(can_x);
         if ((errtype & (CAN_ERR1_STFERR | CAN_ERR1_STFFERR)) != 0U)
@@ -1480,12 +1477,12 @@ static void _can_ewmc_isr(struct rt_can_device *can)
         can->status.errcode = _can_error_code_get(errtype);
 
         if (((errtype & CAN_ERR1_ACKERR) != 0U) ||
-                ((errtype & CAN_ERR1_BOF) != 0U) ||
-                (((errtype & CAN_ERR1_TS) != 0U) &&
-                 ((errtype & (CAN_ERR1_STFERR | CAN_ERR1_FMERR | CAN_ERR1_CRCERR |
-                              CAN_ERR1_BDERR | CAN_ERR1_BRERR | CAN_ERR1_STFFERR |
-                              CAN_ERR1_FMFERR | CAN_ERR1_CRCFERR | CAN_ERR1_BDFERR |
-                              CAN_ERR1_BRFERR)) != 0U)))
+            ((errtype & CAN_ERR1_BOF) != 0U) ||
+            (((errtype & CAN_ERR1_TS) != 0U) &&
+             ((errtype & (CAN_ERR1_STFERR | CAN_ERR1_FMERR | CAN_ERR1_CRCERR |
+                          CAN_ERR1_BDERR | CAN_ERR1_BRERR | CAN_ERR1_STFFERR |
+                          CAN_ERR1_FMFERR | CAN_ERR1_CRCFERR | CAN_ERR1_BDFERR |
+                          CAN_ERR1_BRFERR)) != 0U)))
         {
             for (rt_uint32_t box_num = 0U; box_num < GD32_CAN_TX_MAILBOX_NUM; box_num++)
             {
@@ -1587,7 +1584,7 @@ static void _can_tx_isr(struct rt_can_device *can)
             rt_uint32_t event = RT_CAN_EVENT_TX_DONE;
 
             if ((can_dev->tx_abort_mask & BIT(box_num)) != 0U ||
-                    can_mailbox_code_get(can_x, mailbox) != CAN_MB_TX_STATUS_INACTIVE)
+                can_mailbox_code_get(can_x, mailbox) != CAN_MB_TX_STATUS_INACTIVE)
             {
                 can_dev->tx_abort_mask &= (rt_uint16_t)~BIT(box_num);
                 can_mailbox_transmit_inactive(can_x, mailbox);
@@ -1763,7 +1760,7 @@ int rt_hw_can_init(void)
 {
     struct can_configure config = CANDEFAULTCONFIG;
 #if !defined(SOC_SERIES_GD32H77x_H78X)
-    can_filter_parameter_struct filter_config = {0};
+    can_filter_parameter_struct filter_config = { 0 };
 #endif
 
     config.privmode = RT_CAN_MODE_NOPRIV;

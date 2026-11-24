@@ -92,7 +92,6 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             usbh_data_recev(&gd_usb_core, buffer, pipe->pipe_index, nbytes);
         }
 
-
         rt_completion_wait(&urb_completion, timeout);
 
         rt_thread_mdelay(1);

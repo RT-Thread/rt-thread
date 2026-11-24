@@ -21,10 +21,10 @@
 #include <drv_log.h>
 
 #ifndef SDRAM_HEAP_BEGIN
-#define SDRAM_HEAP_BEGIN    SDRAM_BANK_ADDR
+#define SDRAM_HEAP_BEGIN SDRAM_BANK_ADDR
 #endif
 #ifndef SDRAM_HEAP_SIZE
-#define SDRAM_HEAP_SIZE     SDRAM_SIZE
+#define SDRAM_HEAP_SIZE SDRAM_SIZE
 #endif
 
 static exmc_sdram_parameter_struct        sdram_init_struct;
@@ -38,7 +38,6 @@ static uint32_t sdram_refresh_count;
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap system_heap;
 #endif
-
 
 rt_weak void rt_hw_sdram_gpio_init(void)
 {
@@ -63,8 +62,7 @@ rt_weak void rt_hw_sdram_gpio_init(void)
                 GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
     gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_8 | GPIO_PIN_9 |
                   GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_8 | GPIO_PIN_9 |
-                            GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
+    gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
 
     /* NBL0(PE0),NBL1(PE1),D4(PE7),D5(PE8),D6(PE9),D7(PE10),D8(PE11),D9(PE12),D10(PE13),D11(PE14),D12(PE15) pin configuration */
     gpio_af_set(GPIOE, GPIO_AF_12, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_7  | GPIO_PIN_8 |
@@ -73,9 +71,7 @@ rt_weak void rt_hw_sdram_gpio_init(void)
     gpio_mode_set(GPIOE, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_7  | GPIO_PIN_8 |
                   GPIO_PIN_9  | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
                   GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOE, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_7  | GPIO_PIN_8 |
-                            GPIO_PIN_9  | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
-                            GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
+    gpio_output_options_set(GPIOE, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
     /* A0(PF0),A1(PF1),A2(PF2),A3(PF3),A4(PF4),A5(PF5),NRAS(PF11),A6(PF12),A7(PF13),A8(PF14),A9(PF15) pin configuration */
     gpio_af_set(GPIOF, GPIO_AF_12, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_2  | GPIO_PIN_3  |
@@ -84,18 +80,14 @@ rt_weak void rt_hw_sdram_gpio_init(void)
     gpio_mode_set(GPIOF, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_2  | GPIO_PIN_3  |
                   GPIO_PIN_4  | GPIO_PIN_5  | GPIO_PIN_11 | GPIO_PIN_12 |
                   GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOF, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0  | GPIO_PIN_1  | GPIO_PIN_2  | GPIO_PIN_3  |
-                            GPIO_PIN_4  | GPIO_PIN_5  | GPIO_PIN_11 | GPIO_PIN_12 |
-                            GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
+    gpio_output_options_set(GPIOF, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
     /* A10(PG0),A11(PG1),A12(PG2),A14(PG4),A15(PG5),SDCLK(PG8),NCAS(PG15) pin configuration */
     gpio_af_set(GPIOG, GPIO_AF_12, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
                 GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
     gpio_mode_set(GPIOG, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
                   GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
-    gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 |
-                            GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
-
+    gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, SDRAM_GPIO_SPEED, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15);
 }
 
 #if defined(SOC_SERIES_GD32H77x_H78X)
@@ -125,11 +117,20 @@ static uint32_t sdram_clock_hz_get(void)
     switch (EXMC_SDCTL(EXMC_SDRAM_DEVICE0) &
             (EXMC_SDCTL_SDCLK | EXMC_SDCTL_SDCLK_2))
     {
-    case EXMC_SDCLK_PERIODS_2_CK_EXMC: divider = 2U; break;
-    case EXMC_SDCLK_PERIODS_3_CK_EXMC: divider = 3U; break;
-    case EXMC_SDCLK_PERIODS_4_CK_EXMC: divider = 4U; break;
-    case EXMC_SDCLK_PERIODS_5_CK_EXMC: divider = 5U; break;
-    default: return 0U;
+    case EXMC_SDCLK_PERIODS_2_CK_EXMC:
+        divider = 2U;
+        break;
+    case EXMC_SDCLK_PERIODS_3_CK_EXMC:
+        divider = 3U;
+        break;
+    case EXMC_SDCLK_PERIODS_4_CK_EXMC:
+        divider = 4U;
+        break;
+    case EXMC_SDCLK_PERIODS_5_CK_EXMC:
+        divider = 5U;
+        break;
+    default:
+        return 0U;
     }
     return clock_hz / divider;
 }
@@ -377,8 +378,8 @@ INIT_BOARD_EXPORT(SDRAM_Init);
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
 #ifdef RT_USING_MEMHEAP_AS_HEAP
-#define SDRAM_TEST_SIZE      (1024U * 1024U)
-#define SDRAM_TEST_PASSES    8U
+#define SDRAM_TEST_SIZE   (1024U * 1024U)
+#define SDRAM_TEST_PASSES 8U
 
 #if SDRAM_DATA_WIDTH_IN_NUMBER == 8
 typedef uint8_t sdram_test_data_t;
@@ -438,14 +439,14 @@ int sdram_test(void)
         return -RT_ENOMEM;
     }
     buffer = (volatile sdram_test_data_t *)RT_ALIGN((rt_uintptr_t)allocation,
-                                                   RT_CPU_CACHE_LINE_SZ);
+                                                    RT_CPU_CACHE_LINE_SZ);
 
     rt_kprintf("SDRAM test: buffer=%p, size=%u KiB, access=%u-bit, passes=%u\n",
                (void *)buffer, SDRAM_TEST_SIZE / 1024U,
                (unsigned int)(sizeof(*buffer) * 8U), SDRAM_TEST_PASSES);
     rt_kprintf("CPU sequential access; timing includes cache maintenance.\n");
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE,
-                        (void *)buffer, SDRAM_TEST_SIZE);
+                         (void *)buffer, SDRAM_TEST_SIZE);
     __DSB();
 
     start_time = rt_tick_get();
@@ -502,7 +503,7 @@ int sdram_test(void)
     return -RT_ENOSYS;
 #endif /* RT_USING_MEMHEAP_AS_HEAP */
 }
-MSH_CMD_EXPORT(sdram_test, test SDRAM read/write speed and data integrity);
+MSH_CMD_EXPORT(sdram_test, test SDRAM read / write speed and data integrity);
 #endif /* FINSH_USING_MSH */
 #endif /* DRV_DEBUG */
 #endif /* BSP_USING_SDRAM */

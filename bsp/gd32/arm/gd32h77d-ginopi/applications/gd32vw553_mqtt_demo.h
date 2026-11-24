@@ -10,10 +10,10 @@
 #include <rtthread.h>
 
 typedef void (*gd32vw553_mqtt_receive_callback_t)(const char *topic,
-                                                   const void *payload,
-                                                   rt_size_t payload_length);
+                                                  const void *payload,
+                                                  rt_size_t payload_length);
 typedef void (*gd32vw553_mqtt_status_callback_t)(const char *status,
-                                                  int result);
+                                                 int result);
 
 int gd32vw553_mqtt_demo_start(void);
 int gd32vw553_mqtt_demo_publish(const char *topic, const char *payload);

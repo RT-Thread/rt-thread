@@ -14,7 +14,8 @@
 #include <rtdevice.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 rt_err_t rt_hw_ospi_device_attach(const char *bus_name,

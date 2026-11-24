@@ -11,54 +11,55 @@
 #include <board.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #ifndef BSP_SDIO_CLK_PIN
-#define BSP_SDIO_CLK_PIN       "PD6"
+#define BSP_SDIO_CLK_PIN "PD6"
 #endif
 #ifndef BSP_SDIO_CLK_AFIO
-#define BSP_SDIO_CLK_AFIO      "AF11"
+#define BSP_SDIO_CLK_AFIO "AF11"
 #endif
 
 #ifndef BSP_SDIO_CMD_PIN
-#define BSP_SDIO_CMD_PIN       "PD7"
+#define BSP_SDIO_CMD_PIN "PD7"
 #endif
 #ifndef BSP_SDIO_CMD_AFIO
-#define BSP_SDIO_CMD_AFIO      "AF11"
+#define BSP_SDIO_CMD_AFIO "AF11"
 #endif
 
 #ifndef BSP_SDIO_D0_PIN
-#define BSP_SDIO_D0_PIN        "PF4"
+#define BSP_SDIO_D0_PIN "PF4"
 #endif
 #ifndef BSP_SDIO_D0_AFIO
-#define BSP_SDIO_D0_AFIO       "AF10"
+#define BSP_SDIO_D0_AFIO "AF10"
 #endif
 
 #ifndef BSP_SDIO_D1_PIN
-#define BSP_SDIO_D1_PIN        "PG10"
+#define BSP_SDIO_D1_PIN "PG10"
 #endif
 #ifndef BSP_SDIO_D1_AFIO
-#define BSP_SDIO_D1_AFIO       "AF11"
+#define BSP_SDIO_D1_AFIO "AF11"
 #endif
 
 #ifndef BSP_SDIO_D2_PIN
-#define BSP_SDIO_D2_PIN        "PG11"
+#define BSP_SDIO_D2_PIN "PG11"
 #endif
 #ifndef BSP_SDIO_D2_AFIO
-#define BSP_SDIO_D2_AFIO       "AF10"
+#define BSP_SDIO_D2_AFIO "AF10"
 #endif
 
 #ifndef BSP_SDIO_D3_PIN
-#define BSP_SDIO_D3_PIN        "PG12"
+#define BSP_SDIO_D3_PIN "PG12"
 #endif
 #ifndef BSP_SDIO_D3_AFIO
-#define BSP_SDIO_D3_AFIO       "AF10"
+#define BSP_SDIO_D3_AFIO "AF10"
 #endif
 
 #ifdef BSP_SDIO_USING_CARD_DETECT
 #ifndef BSP_SDIO_CD_PIN
-#define BSP_SDIO_CD_PIN        "PE10"
+#define BSP_SDIO_CD_PIN "PE10"
 #endif
 #endif
 

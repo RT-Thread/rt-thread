@@ -11,7 +11,6 @@
 #ifndef __DRV_OTGFS_HOST_H__
 #define __DRV_OTGFS_HOST_H__
 
-
 #include <rtthread.h>
 
 #include "drv_usb_host.h"

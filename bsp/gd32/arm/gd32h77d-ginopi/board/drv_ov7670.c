@@ -24,45 +24,46 @@
 
 #ifdef BSP_USING_OV7670
 
-#define DBG_TAG                         "drv.ov7670"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "drv.ov7670"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define OV7670_I2C_BUS_NAME             "hwi2c2"
-#define OV7670_SCCB_ADDRESS             0x21U
-#define OV7670_SCCB_WIRE_ADDRESS        (OV7670_SCCB_ADDRESS << 1U)
-#define OV7670_XCLK_TARGET_HZ           24000000U
-#define OV7670_CAPTURE_TIMEOUT_MS       500U
-#define OV7670_SCCB_PSC                 0U
-#define OV7670_SCCB_SCL_DELAY           1U
-#define OV7670_SCCB_SDA_DELAY           0U
-#define OV7670_SCCB_SCL_HIGH            0x98U
-#define OV7670_SCCB_SCL_LOW             0xF1U
-#define OV7670_SCCB_RETRY_COUNT         3U
-#define OV7670_SCCB_RETRY_DELAY_US      1000U
-#define OV7670_SCCB_TIMEOUT_MS          20U
-#define OV7670_SCCB_RECOVERY_DELAY_US   5U
-#define OV7670_SCCB_RECOVERY_PULSES     9U
-#define OV7670_SCCB_ERROR_FLAGS         (I2C_FLAG_NACK | I2C_FLAG_BERR | \
-                                         I2C_FLAG_LOSTARB | I2C_FLAG_OUERR | \
-                                         I2C_FLAG_TIMEOUT)
-#define OV7670_SCCB_CLEAR_FLAGS         (OV7670_SCCB_ERROR_FLAGS | \
-                                         I2C_FLAG_STPDET)
-#define OV7670_CLOCK_SAMPLE_COUNT       4096U
-#define OV7670_CAPTURE_LINE_WORDS       162U
-#define OV7670_CAPTURE_LINE_BYTES       (OV7670_CAPTURE_LINE_WORDS * \
-                                         sizeof(rt_uint32_t))
-#define OV7670_CAPTURE_SIZE             (OV7670_CAPTURE_LINE_BYTES * \
-                                         OV7670_HEIGHT)
-#define OV7670_DMA_WORD_COUNT           (OV7670_CAPTURE_SIZE / \
-                                         sizeof(rt_uint32_t))
-#define OV7670_LINE_CROP_BYTES          ((OV7670_CAPTURE_LINE_BYTES - \
-                                          OV7670_WIDTH * \
-                                          OV7670_BYTES_PER_PIXEL) / 2U)
-#define OV7670_DMA_FLAGS                (DMA_INT_FLAG_FEE | DMA_INT_FLAG_SDE | \
-                                         DMA_INT_FLAG_TAE | DMA_INT_FLAG_FTF)
-#define OV7670_DMA_INTERRUPTS           (DMA_INT_FEE | DMA_INT_SDE | \
-                                         DMA_INT_TAE | DMA_INT_FTF)
+#define OV7670_I2C_BUS_NAME           "hwi2c2"
+#define OV7670_SCCB_ADDRESS           0x21U
+#define OV7670_SCCB_WIRE_ADDRESS      (OV7670_SCCB_ADDRESS << 1U)
+#define OV7670_XCLK_TARGET_HZ         24000000U
+#define OV7670_CAPTURE_TIMEOUT_MS     500U
+#define OV7670_SCCB_PSC               0U
+#define OV7670_SCCB_SCL_DELAY         1U
+#define OV7670_SCCB_SDA_DELAY         0U
+#define OV7670_SCCB_SCL_HIGH          0x98U
+#define OV7670_SCCB_SCL_LOW           0xF1U
+#define OV7670_SCCB_RETRY_COUNT       3U
+#define OV7670_SCCB_RETRY_DELAY_US    1000U
+#define OV7670_SCCB_TIMEOUT_MS        20U
+#define OV7670_SCCB_RECOVERY_DELAY_US 5U
+#define OV7670_SCCB_RECOVERY_PULSES   9U
+#define OV7670_SCCB_ERROR_FLAGS       (I2C_FLAG_NACK | I2C_FLAG_BERR |     \
+                                       I2C_FLAG_LOSTARB | I2C_FLAG_OUERR | \
+                                       I2C_FLAG_TIMEOUT)
+#define OV7670_SCCB_CLEAR_FLAGS       (OV7670_SCCB_ERROR_FLAGS | \
+                                       I2C_FLAG_STPDET)
+#define OV7670_CLOCK_SAMPLE_COUNT     4096U
+#define OV7670_CAPTURE_LINE_WORDS     162U
+#define OV7670_CAPTURE_LINE_BYTES     (OV7670_CAPTURE_LINE_WORDS * \
+                                       sizeof(rt_uint32_t))
+#define OV7670_CAPTURE_SIZE           (OV7670_CAPTURE_LINE_BYTES * \
+                                       OV7670_HEIGHT)
+#define OV7670_DMA_WORD_COUNT         (OV7670_CAPTURE_SIZE / \
+                                       sizeof(rt_uint32_t))
+#define OV7670_LINE_CROP_BYTES        ((OV7670_CAPTURE_LINE_BYTES -   \
+                                        OV7670_WIDTH *                \
+                                            OV7670_BYTES_PER_PIXEL) / \
+                                       2U)
+#define OV7670_DMA_FLAGS              (DMA_INT_FLAG_FEE | DMA_INT_FLAG_SDE | \
+                                       DMA_INT_FLAG_TAE | DMA_INT_FLAG_FTF)
+#define OV7670_DMA_INTERRUPTS         (DMA_INT_FEE | DMA_INT_SDE | \
+                                       DMA_INT_TAE | DMA_INT_FTF)
 
 struct ov7670_device
 {
@@ -665,7 +666,7 @@ void DCI_IRQHandler(void)
     rt_interrupt_enter();
     flags = DCI_STAT1;
     dci_interrupt_flag_clear(flags & (DCI_INT_FLAG_EF | DCI_INT_FLAG_OVR |
-                                     DCI_INT_FLAG_ESE));
+                                      DCI_INT_FLAG_ESE));
     ov7670_capture_update(flags, RT_FALSE, RT_FALSE);
     __DSB();
     rt_interrupt_leave();
@@ -691,9 +692,9 @@ static void ov7670_compact_frame(void)
     for (row = 0U; row < OV7670_HEIGHT; row++)
     {
         rt_memmove(ov7670_frame_buffer +
-                   row * OV7670_WIDTH * OV7670_BYTES_PER_PIXEL,
+                       row * OV7670_WIDTH * OV7670_BYTES_PER_PIXEL,
                    ov7670_frame_buffer +
-                   row * OV7670_CAPTURE_LINE_BYTES + OV7670_LINE_CROP_BYTES,
+                       row * OV7670_CAPTURE_LINE_BYTES + OV7670_LINE_CROP_BYTES,
                    OV7670_WIDTH * OV7670_BYTES_PER_PIXEL);
     }
 }
@@ -793,7 +794,7 @@ static rt_err_t ov7670_device_init(rt_device_t device)
 }
 
 static rt_ssize_t ov7670_device_read(rt_device_t device, rt_off_t position,
-                                      void *buffer, rt_size_t size)
+                                     void *buffer, rt_size_t size)
 {
     rt_err_t result;
 
@@ -823,7 +824,7 @@ static rt_ssize_t ov7670_device_read(rt_device_t device, rt_off_t position,
 }
 
 static rt_err_t ov7670_device_control(rt_device_t device, int command,
-                                       void *args)
+                                      void *args)
 {
     RT_UNUSED(device);
     if (args == RT_NULL)
@@ -841,8 +842,7 @@ static rt_err_t ov7670_device_control(rt_device_t device, int command,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-static const struct rt_device_ops ov7670_device_ops =
-{
+static const struct rt_device_ops ov7670_device_ops = {
     ov7670_device_init,
     RT_NULL,
     RT_NULL,

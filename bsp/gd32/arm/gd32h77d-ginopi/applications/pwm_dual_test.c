@@ -11,16 +11,16 @@
 
 #ifdef BSP_USING_PWM_DUAL_TEST
 
-#define PWM2_DEVICE_NAME          "pwm2"
-#define PWM2_DEVICE_CHANNEL       2
-#define PWM30_DEVICE_NAME         "pwm30"
-#define PWM30_DEVICE_CHANNEL      3
-#define PWM_TEST_PERIOD_NS        500000U
-#define PWM_TEST_STEP_NS          5000U
-#define PWM_TEST_DELAY_MS         50U
-#define PWM_TEST_THREAD_STACK     1024U
-#define PWM_TEST_THREAD_PRIORITY  20U
-#define PWM_TEST_THREAD_TICK      10U
+#define PWM2_DEVICE_NAME         "pwm2"
+#define PWM2_DEVICE_CHANNEL      2
+#define PWM30_DEVICE_NAME        "pwm30"
+#define PWM30_DEVICE_CHANNEL     3
+#define PWM_TEST_PERIOD_NS       500000U
+#define PWM_TEST_STEP_NS         5000U
+#define PWM_TEST_DELAY_MS        50U
+#define PWM_TEST_THREAD_STACK    1024U
+#define PWM_TEST_THREAD_PRIORITY 20U
+#define PWM_TEST_THREAD_TICK     10U
 
 static struct rt_device_pwm *pwm2_device;
 static struct rt_device_pwm *pwm30_device;

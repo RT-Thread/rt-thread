@@ -17,35 +17,35 @@
 
 #ifdef BSP_USING_FLASH_FATFS
 
-#define DBG_TAG                         "drv.qspi_flash"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "drv.qspi_flash"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define GD25Q64E_DEVICE_NAME            "qspi_flash0"
-#define GD25Q64E_BUS_NAME               "ospi0"
-#define GD25Q64E_SECTOR_SIZE            (4U * 1024U)
-#define GD25Q64E_PAGE_SIZE              256U
+#define GD25Q64E_DEVICE_NAME "qspi_flash0"
+#define GD25Q64E_BUS_NAME    "ospi0"
+#define GD25Q64E_SECTOR_SIZE (4U * 1024U)
+#define GD25Q64E_PAGE_SIZE   256U
 
-#define GD25Q64E_EXPECTED_ID            0xC84017U
+#define GD25Q64E_EXPECTED_ID 0xC84017U
 
-#define GD25Q64E_CMD_WRITE_ENABLE       0x06U
-#define GD25Q64E_CMD_READ_STATUS1       0x05U
-#define GD25Q64E_CMD_READ_STATUS2       0x35U
-#define GD25Q64E_CMD_WRITE_STATUS2      0x31U
-#define GD25Q64E_CMD_READ_ID            0x9FU
-#define GD25Q64E_CMD_RESET_ENABLE       0x66U
-#define GD25Q64E_CMD_RESET_MEMORY       0x99U
-#define GD25Q64E_CMD_QUAD_READ          0x6BU
-#define GD25Q64E_CMD_QUAD_PAGE_PROGRAM  0x32U
-#define GD25Q64E_CMD_ERASE_4K           0x20U
+#define GD25Q64E_CMD_WRITE_ENABLE      0x06U
+#define GD25Q64E_CMD_READ_STATUS1      0x05U
+#define GD25Q64E_CMD_READ_STATUS2      0x35U
+#define GD25Q64E_CMD_WRITE_STATUS2     0x31U
+#define GD25Q64E_CMD_READ_ID           0x9FU
+#define GD25Q64E_CMD_RESET_ENABLE      0x66U
+#define GD25Q64E_CMD_RESET_MEMORY      0x99U
+#define GD25Q64E_CMD_QUAD_READ         0x6BU
+#define GD25Q64E_CMD_QUAD_PAGE_PROGRAM 0x32U
+#define GD25Q64E_CMD_ERASE_4K          0x20U
 
-#define GD25Q64E_STATUS_WIP             0x01U
-#define GD25Q64E_STATUS_WEL             0x02U
-#define GD25Q64E_STATUS2_QE             0x02U
+#define GD25Q64E_STATUS_WIP 0x01U
+#define GD25Q64E_STATUS_WEL 0x02U
+#define GD25Q64E_STATUS2_QE 0x02U
 
-#define GD25Q64E_READ_DUMMY_CYCLES      8U
-#define GD25Q64E_PROGRAM_TIMEOUT_MS     1000U
-#define GD25Q64E_ERASE_TIMEOUT_MS       2000U
+#define GD25Q64E_READ_DUMMY_CYCLES  8U
+#define GD25Q64E_PROGRAM_TIMEOUT_MS 1000U
+#define GD25Q64E_ERASE_TIMEOUT_MS   2000U
 
 static struct rt_qspi_device *gd25q64e_device;
 static struct rt_mutex gd25q64e_lock;
@@ -63,7 +63,7 @@ static rt_err_t gd25q64e_transfer(rt_uint8_t instruction,
                                   rt_size_t size,
                                   rt_uint8_t data_lines)
 {
-    struct rt_qspi_message message = {0};
+    struct rt_qspi_message message = { 0 };
     rt_ssize_t result;
 
     message.instruction.content = instruction;
@@ -135,8 +135,7 @@ static rt_err_t gd25q64e_wait_status(rt_uint8_t mask,
         {
             rt_thread_mdelay(1);
         }
-    }
-    while ((rt_uint32_t)((rt_uint32_t)rt_tick_get_millisecond() - start_ms) < timeout_ms);
+    } while ((rt_uint32_t)((rt_uint32_t)rt_tick_get_millisecond() - start_ms) < timeout_ms);
 
     return -RT_ETIMEOUT;
 }
@@ -152,9 +151,9 @@ static rt_err_t gd25q64e_write_enable(void)
     }
 
     return gd25q64e_wait_status(GD25Q64E_STATUS_WEL,
-                                 GD25Q64E_STATUS_WEL,
-                                 GD25Q64E_PROGRAM_TIMEOUT_MS,
-                                 RT_FALSE);
+                                GD25Q64E_STATUS_WEL,
+                                GD25Q64E_PROGRAM_TIMEOUT_MS,
+                                RT_FALSE);
 }
 
 static rt_err_t gd25q64e_set_qe(void)
@@ -173,8 +172,8 @@ static rt_err_t gd25q64e_set_qe(void)
     if (result == RT_EOK)
     {
         result = gd25q64e_transfer(GD25Q64E_CMD_WRITE_STATUS2, 1,
-                                    0, 0, 0, 0,
-                                    &status2, RT_NULL, 1, 1);
+                                   0, 0, 0, 0,
+                                   &status2, RT_NULL, 1, 1);
     }
     if (result == RT_EOK)
     {
@@ -187,13 +186,12 @@ static rt_err_t gd25q64e_set_qe(void)
         result = gd25q64e_read_status2(&status2);
     }
 
-    return result == RT_EOK && (status2 & GD25Q64E_STATUS2_QE) != 0U ?
-           RT_EOK : -RT_EIO;
+    return result == RT_EOK && (status2 & GD25Q64E_STATUS2_QE) != 0U ? RT_EOK : -RT_EIO;
 }
 
 static rt_err_t gd25q64e_read_id(rt_uint32_t *flash_id)
 {
-    rt_uint8_t id[3] = {0};
+    rt_uint8_t id[3] = { 0 };
     rt_err_t result;
 
     result = gd25q64e_transfer(GD25Q64E_CMD_READ_ID, 1,
@@ -225,7 +223,7 @@ static rt_err_t gd25q64e_reset(void)
 
 static int gd25q64e_init(void)
 {
-    struct rt_qspi_configuration configuration = {0};
+    struct rt_qspi_configuration configuration = { 0 };
     rt_device_t device;
     rt_uint32_t flash_id = 0;
     rt_err_t result;
@@ -461,14 +459,12 @@ static int gd25q64e_erase(long offset, rt_size_t size)
     return result == RT_EOK ? (int)size : result;
 }
 
-const struct fal_flash_dev gd25q64e_flash =
-{
+const struct fal_flash_dev gd25q64e_flash = {
     .name = "gd25q64e",
     .addr = 0,
     .len = GD25Q64E_FLASH_SIZE,
     .blk_size = GD25Q64E_SECTOR_SIZE,
-    .ops =
-    {
+    .ops = {
         .init = gd25q64e_init,
         .read = gd25q64e_read,
         .write = gd25q64e_write,

@@ -19,39 +19,39 @@
 
 #include "gd32h77x_78x_ipa.h"
 
-#define DBG_TAG                         "lvgl.disp"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "lvgl.disp"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define LCD_DEVICE_NAME                 "lcd"
-#define TOUCH_DEVICE_NAME               "gt911"
-#define TOUCH_POINT_COUNT               5U
+#define LCD_DEVICE_NAME   "lcd"
+#define TOUCH_DEVICE_NAME "gt911"
+#define TOUCH_POINT_COUNT 5U
 
-#define LCD_BYTES_PER_PIXEL             2U
+#define LCD_BYTES_PER_PIXEL 2U
 
 #if defined(BSP_USING_OV7670)
-#define LVGL_DISPLAY_WIDTH              LV_HOR_RES_MAX
-#define LVGL_DISPLAY_HEIGHT             LV_VER_RES_MAX
-#define LVGL_USE_DIRECT_FRAMEBUFFER     0
-#define LVGL_USE_IPA_FRAMEBUFFER        1
-#define LCD_DRAW_BUFFER_LINES           32U
+#define LVGL_DISPLAY_WIDTH          LV_HOR_RES_MAX
+#define LVGL_DISPLAY_HEIGHT         LV_VER_RES_MAX
+#define LVGL_USE_DIRECT_FRAMEBUFFER 0
+#define LVGL_USE_IPA_FRAMEBUFFER    1
+#define LCD_DRAW_BUFFER_LINES       32U
 #elif LV_USE_DEMO_SMARTWATCH && !defined(BSP_USING_LVGL_BOARD_DEMO)
-#define LVGL_DISPLAY_WIDTH              384U
-#define LVGL_DISPLAY_HEIGHT             384U
-#define LVGL_USE_DIRECT_FRAMEBUFFER     0
+#define LVGL_DISPLAY_WIDTH          384U
+#define LVGL_DISPLAY_HEIGHT         384U
+#define LVGL_USE_DIRECT_FRAMEBUFFER 0
 #else
-#define LVGL_DISPLAY_WIDTH              LV_HOR_RES_MAX
-#define LVGL_DISPLAY_HEIGHT             LV_VER_RES_MAX
-#define LVGL_USE_DIRECT_FRAMEBUFFER     0
+#define LVGL_DISPLAY_WIDTH          LV_HOR_RES_MAX
+#define LVGL_DISPLAY_HEIGHT         LV_VER_RES_MAX
+#define LVGL_USE_DIRECT_FRAMEBUFFER 0
 #endif
 
 #ifndef LVGL_USE_IPA_FRAMEBUFFER
-#define LVGL_USE_IPA_FRAMEBUFFER        0
-#define LCD_DRAW_BUFFER_LINES           150U
+#define LVGL_USE_IPA_FRAMEBUFFER 0
+#define LCD_DRAW_BUFFER_LINES    150U
 #endif
 
 #if !LVGL_USE_DIRECT_FRAMEBUFFER
-#define LCD_DRAW_BUFFER_SIZE            (LVGL_DISPLAY_WIDTH * LCD_DRAW_BUFFER_LINES * LCD_BYTES_PER_PIXEL)
+#define LCD_DRAW_BUFFER_SIZE (LVGL_DISPLAY_WIDTH * LCD_DRAW_BUFFER_LINES * LCD_BYTES_PER_PIXEL)
 #endif
 
 static rt_device_t lcd_device;
@@ -102,8 +102,8 @@ static void lcd_ipa_init(void)
 }
 
 static rt_err_t lcd_ipa_copy(const void *source, void *destination,
-                              rt_uint32_t width, rt_uint32_t height,
-                              rt_uint32_t source_stride, rt_uint32_t destination_stride)
+                             rt_uint32_t width, rt_uint32_t height,
+                             rt_uint32_t source_stride, rt_uint32_t destination_stride)
 {
     rt_tick_t start;
     rt_uint32_t flags;
@@ -250,10 +250,22 @@ static void lcd_flush(lv_display_t *display, const lv_area_t *area, uint8_t *col
     }
     else
     {
-        if (area->x1 < lcd_pending_area.x1) lcd_pending_area.x1 = area->x1;
-        if (area->y1 < lcd_pending_area.y1) lcd_pending_area.y1 = area->y1;
-        if (area->x2 > lcd_pending_area.x2) lcd_pending_area.x2 = area->x2;
-        if (area->y2 > lcd_pending_area.y2) lcd_pending_area.y2 = area->y2;
+        if (area->x1 < lcd_pending_area.x1)
+        {
+            lcd_pending_area.x1 = area->x1;
+        }
+        if (area->y1 < lcd_pending_area.y1)
+        {
+            lcd_pending_area.y1 = area->y1;
+        }
+        if (area->x2 > lcd_pending_area.x2)
+        {
+            lcd_pending_area.x2 = area->x2;
+        }
+        if (area->y2 > lcd_pending_area.y2)
+        {
+            lcd_pending_area.y2 = area->y2;
+        }
     }
     if (lv_display_flush_is_last(display))
     {
@@ -313,9 +325,9 @@ static void lcd_flush(lv_display_t *display,
     IPA_FMADDR = (rt_uint32_t)color_p;
     IPA_DMADDR = (rt_uint32_t)lcd_info.framebuffer +
                  (rt_uint32_t)2U *
-                 ((rt_uint32_t)lcd_info.width *
-                  ((rt_uint32_t)area->y1 + lcd_viewport_y) +
-                  (rt_uint32_t)area->x1 + lcd_viewport_x);
+                     ((rt_uint32_t)lcd_info.width *
+                          ((rt_uint32_t)area->y1 + lcd_viewport_y) +
+                      (rt_uint32_t)area->x1 + lcd_viewport_x);
     IPA_FLOFF = 0U;
     IPA_DLOFF = (rt_uint32_t)lcd_info.width - width;
     IPA_FPCTL = FOREGROUND_PPF_RGB565;
@@ -418,7 +430,7 @@ void lv_port_disp_init(void)
         (lcd_info.bits_per_pixel != 16U) ||
         (lcd_info.framebuffer == RT_NULL) ||
         (lcd_info.smem_len < framebuffer_size *
-                             ((LVGL_USE_DIRECT_FRAMEBUFFER || LVGL_USE_IPA_FRAMEBUFFER) ? 2U : 1U)))
+                                 ((LVGL_USE_DIRECT_FRAMEBUFFER || LVGL_USE_IPA_FRAMEBUFFER) ? 2U : 1U)))
     {
         LOG_E("invalid %s framebuffer", LCD_DEVICE_NAME);
         rt_device_close(lcd_device);

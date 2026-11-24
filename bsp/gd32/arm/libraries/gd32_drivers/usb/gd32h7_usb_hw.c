@@ -29,7 +29,7 @@
 #ifndef USE_ULPI_PHY
 
 #if !defined(BSP_USB_HOST_VBUS_PORT_RCC) || \
-    !defined(BSP_USB_HOST_VBUS_PORT) || \
+    !defined(BSP_USB_HOST_VBUS_PORT) ||     \
     !defined(BSP_USB_HOST_VBUS_PIN)
 #error "Please define the USB host VBUS control pin in board.h"
 #endif
@@ -111,7 +111,6 @@ void usb_gpio_config(void)
     /* ULPI_STP(PH2) GPIO pin configuration */
     gpio_mode_set(GPIOH, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_2);
     gpio_output_options_set(GPIOH, GPIO_OTYPE_PP, GPIO_OSPEED_85MHZ, GPIO_PIN_2);
-
 
     /* ULPI_CK(PH5) GPIO pin configuration */
     gpio_mode_set(GPIOH, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_5);
@@ -236,10 +235,10 @@ void USBHS0_WKUP_IRQHandler(void)
 #ifndef USE_IRC48M
         rcu_usb48m_clock_config(IDX_USBHS0, RCU_USB48MSRC_PLL0R);
 #else
-            /* enable IRC48M clock */
+        /* enable IRC48M clock */
         rcu_osci_on(RCU_IRC48M);
 
-            /* wait till IRC48M is ready */
+        /* wait till IRC48M is ready */
         while (SUCCESS != rcu_osci_stab_wait(RCU_IRC48M))
         {
         }
@@ -277,10 +276,10 @@ void USBHS1_WKUP_IRQHandler(void)
 #ifndef USE_IRC48M
         rcu_usb48m_clock_config(IDX_USBHS1, RCU_USB48MSRC_PLL1Q);
 #else
-            /* enable IRC48M clock */
+        /* enable IRC48M clock */
         rcu_osci_on(RCU_IRC48M);
 
-            /* wait till IRC48M is ready */
+        /* wait till IRC48M is ready */
         while (SUCCESS != rcu_osci_stab_wait(RCU_IRC48M))
         {
         }
@@ -499,7 +498,6 @@ void usb_intr_config(uint32_t usb_periph)
 
 #endif /* USB_DEDICATED_EP1_ENABLED */
 }
-
 
 #if defined(RT_USING_USB_HOST)
 /*!

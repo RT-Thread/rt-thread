@@ -72,7 +72,7 @@ static void alarm_usage(void)
 
 static int rtc_alarm(int argc, char **argv)
 {
-    struct rt_alarm_setup setup = {0};
+    struct rt_alarm_setup setup = { 0 };
     struct timeval now;
     time_t deadline;
     rt_int64_t deadline_seconds;
@@ -188,5 +188,5 @@ static int rtc_alarm(int argc, char **argv)
     alarm_log_time("Armed", deadline);
     return RT_EOK;
 }
-MSH_CMD_EXPORT(rtc_alarm, set a one-shot RTC alarm or use status/stop/help);
+MSH_CMD_EXPORT(rtc_alarm, set a one - shot RTC alarm or use status / stop / help);
 #endif

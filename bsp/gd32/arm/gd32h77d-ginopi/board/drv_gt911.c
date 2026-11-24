@@ -32,7 +32,7 @@ int rt_hw_gt911_port_init(void)
 {
     struct rt_touch_info info;
     rt_device_t touch_device;
-    char product_id[6] = {0};
+    char product_id[6] = { 0 };
     rt_err_t result;
     rt_tick_t start;
 
@@ -82,8 +82,7 @@ int rt_hw_gt911_port_init(void)
         }
         /* The controller restores its configuration after the soft reset. */
         rt_thread_mdelay(20);
-    }
-    while (rt_tick_get() - start < rt_tick_from_millisecond(GT911_CONFIG_TIMEOUT_MS));
+    } while (rt_tick_get() - start < rt_tick_from_millisecond(GT911_CONFIG_TIMEOUT_MS));
 
     if (info.range_x == 0 || info.range_y == 0 || info.point_num == 0)
     {

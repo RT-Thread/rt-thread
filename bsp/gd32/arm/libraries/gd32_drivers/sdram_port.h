@@ -30,39 +30,39 @@
 
 #if defined(SOC_SERIES_GD32H77x_H78X) && defined(BSP_USING_OV7670)
 /* Keep the camera configuration validated with internal rendering and IPA. */
-#define SDRAM_BURST_READ                DISABLE
+#define SDRAM_BURST_READ DISABLE
 #else
-#define SDRAM_BURST_READ                ENABLE
+#define SDRAM_BURST_READ ENABLE
 #endif
 
 /* read pipe delay: 0, 1, 2 */
 #if defined(SOC_SERIES_GD32H77x_H78X)
 /* The Gino board port selects CK_AHB (300 MHz).
  * Refresh is derived from the actual clock, not a nominal PLL target. */
-#define SDRAM_USE_PLL1R_EXMC            0
-#define SDRAM_REFRESH_PERIOD_MS         64U
-#define SDRAM_REFRESH_ROWS              8192U
+#define SDRAM_USE_PLL1R_EXMC    0
+#define SDRAM_REFRESH_PERIOD_MS 64U
+#define SDRAM_REFRESH_ROWS      8192U
 #if defined(BSP_USING_OV7670)
-#define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_2_CK_EXMC
+#define SDRAM_RPIPE_DELAY EXMC_PIPELINE_DELAY_2_CK_EXMC
 #else
-#define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_1_CK_EXMC
+#define SDRAM_RPIPE_DELAY EXMC_PIPELINE_DELAY_1_CK_EXMC
 #endif
 #if defined(BSP_USING_OV7670)
 /* CK_AHB / 3 = 100 MHz; non-camera projects retain their 150 MHz clock. */
-#define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_3_CK_EXMC
+#define SDCLOCK_PERIOD EXMC_SDCLK_PERIODS_3_CK_EXMC
 #else
-#define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_2_CK_EXMC
+#define SDCLOCK_PERIOD EXMC_SDCLK_PERIODS_2_CK_EXMC
 #endif
-#define SDRAM_GPIO_SPEED                GPIO_OSPEED_85MHZ
+#define SDRAM_GPIO_SPEED GPIO_OSPEED_85MHZ
 
 /* Keep the 150 MHz timing-cycle counts; 100 MHz increases their duration. */
-#define LOADTOACTIVEDELAY               2
-#define EXITSELFREFRESHDELAY            15
-#define SELFREFRESHTIME                 14
-#define ROWCYCLEDELAY                   9
-#define WRITERECOVERYTIME               3
-#define RPDELAY                         4
-#define RCDDELAY                        4
+#define LOADTOACTIVEDELAY    2
+#define EXITSELFREFRESHDELAY 15
+#define SELFREFRESHTIME      14
+#define ROWCYCLEDELAY        9
+#define WRITERECOVERYTIME    3
+#define RPDELAY              4
+#define RCDDELAY             4
 #else
 #define SDRAM_RPIPE_DELAY               EXMC_PIPELINE_DELAY_2_HCLK
 #define SDCLOCK_PERIOD                  EXMC_SDCLK_PERIODS_3_HCLK
@@ -86,8 +86,8 @@
 #define RCDDELAY                        3
 #endif
 
-#define SDRAM_SIZE                      ((uint32_t)0x2000000)
-#define SDRAM_TIMEOUT                   ((uint32_t)0x0000FFFF)
+#define SDRAM_SIZE    ((uint32_t)0x2000000)
+#define SDRAM_TIMEOUT ((uint32_t)0x0000FFFF)
 
 /* memory mode register */
 #define SDRAM_MODEREG_BURST_LENGTH_1             ((uint16_t)0x0000)

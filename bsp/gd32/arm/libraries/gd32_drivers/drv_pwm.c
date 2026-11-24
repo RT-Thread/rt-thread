@@ -50,22 +50,20 @@ struct gd32_pwm
 
 static struct gd32_pwm gd32_pwm_obj[] = {
 #ifdef BSP_USING_PWM0
-    {
-        .name = "pwm0",
-        .timerx = TIMER0,
-        .apb_of = CK_APB2,
-        .channels = {
-            {GPIOC, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_1},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_2},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_3},
-        },
-        .nchannels = {
-            {GPIOB, GPIO_AF_1, GPIO_PIN_13},
-            {GPIOB, GPIO_AF_1, GPIO_PIN_14},
-            {GPIOB, GPIO_AF_1, GPIO_PIN_15},
-        }
-    },
+    { .name = "pwm0",
+      .timerx = TIMER0,
+      .apb_of = CK_APB2,
+      .channels = {
+          { GPIOC, GPIO_AF_1, GPIO_PIN_0 },
+          { GPIOA, GPIO_AF_1, GPIO_PIN_1 },
+          { GPIOA, GPIO_AF_1, GPIO_PIN_2 },
+          { GPIOA, GPIO_AF_1, GPIO_PIN_3 },
+      },
+      .nchannels = {
+          { GPIOB, GPIO_AF_1, GPIO_PIN_13 },
+          { GPIOB, GPIO_AF_1, GPIO_PIN_14 },
+          { GPIOB, GPIO_AF_1, GPIO_PIN_15 },
+      } },
 #endif
 
 #ifdef BSP_USING_PWM1
@@ -74,10 +72,10 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER1,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_1},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_2},
-            {GPIOB, GPIO_AF_1, GPIO_PIN_2},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_1 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_2 },
+            { GPIOB, GPIO_AF_1, GPIO_PIN_2 },
         },
     },
 #endif
@@ -89,18 +87,18 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .apb_of = CK_APB1,
         .channels = {
 #if defined(BSP_PWM2_CH1_PIN) && defined(BSP_PWM2_CH1_AFIO)
-            {0},
+            { 0 },
             {
                 .pin_name = BSP_PWM2_CH1_PIN,
                 .alternate = BSP_PWM2_CH1_AFIO,
             },
-            {0},
-            {0},
+            { 0 },
+            { 0 },
 #else
-            {GPIOA, GPIO_AF_1, GPIO_PIN_6},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_7},
-            {GPIOB, GPIO_AF_2, GPIO_PIN_0},
-            {GPIOB, GPIO_AF_2, GPIO_PIN_1},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_6 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_7 },
+            { GPIOB, GPIO_AF_2, GPIO_PIN_0 },
+            { GPIOB, GPIO_AF_2, GPIO_PIN_1 },
 #endif
         },
     },
@@ -112,10 +110,10 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER3,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_1},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_2},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_3},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_1 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_2 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_3 },
         },
     },
 #endif
@@ -126,31 +124,26 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER4,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_2, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_2, GPIO_PIN_1},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_2},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_3},
+            { GPIOA, GPIO_AF_2, GPIO_PIN_0 },
+            { GPIOA, GPIO_AF_2, GPIO_PIN_1 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_2 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_3 },
         },
     },
 #endif
 
 #ifdef BSP_USING_PWM7
-    {
-        .name = "pwm7",
-        .timerx = TIMER7,
-        .apb_of = CK_APB2,
-        .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_1},
-            {GPIOC, GPIO_AF_1, GPIO_PIN_8},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_3},
-        },
-        .nchannels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_5},
-            {GPIOB, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOB, GPIO_AF_1, GPIO_PIN_1},
-        }
-    },
+    { .name = "pwm7", .timerx = TIMER7, .apb_of = CK_APB2, .channels = {
+                                                               { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
+                                                               { GPIOA, GPIO_AF_1, GPIO_PIN_1 },
+                                                               { GPIOC, GPIO_AF_1, GPIO_PIN_8 },
+                                                               { GPIOA, GPIO_AF_1, GPIO_PIN_3 },
+                                                           },
+      .nchannels = {
+          { GPIOA, GPIO_AF_1, GPIO_PIN_5 },
+          { GPIOB, GPIO_AF_1, GPIO_PIN_0 },
+          { GPIOB, GPIO_AF_1, GPIO_PIN_1 },
+      } },
 #endif
 
 #ifdef BSP_USING_PWM8
@@ -159,8 +152,8 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER8,
         .apb_of = CK_APB2,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_2},
-            {GPIOA, GPIO_AF_3, GPIO_PIN_3},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_2 },
+            { GPIOA, GPIO_AF_3, GPIO_PIN_3 },
         }, // L1 general-purpose timer is a two-channel timer
     },
 #endif
@@ -171,7 +164,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER9,
         .apb_of = CK_APB2,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
         }, // L2 general-purpose timer is a single-channel timer
     },
 #endif
@@ -182,7 +175,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER10,
         .apb_of = CK_APB2,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
         }, // L2 general-purpose timer is a single-channel timer
     },
 #endif
@@ -193,8 +186,8 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER11,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-            {GPIOA, GPIO_AF_1, GPIO_PIN_1},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
+            { GPIOA, GPIO_AF_1, GPIO_PIN_1 },
         }, // L1 general-purpose timer is a two-channel timer
     },
 #endif
@@ -205,7 +198,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER12,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_0},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_0 },
         }, // L2 general-purpose timer is a single-channel timer
     },
 #endif
@@ -216,7 +209,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER13,
         .apb_of = CK_APB1,
         .channels = {
-            {GPIOA, GPIO_AF_1, GPIO_PIN_7},
+            { GPIOA, GPIO_AF_1, GPIO_PIN_7 },
         }, // L2 general-purpose timer is a single-channel timer
     },
 #endif
@@ -227,8 +220,8 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER30,
         .apb_of = CK_APB1,
         .channels = {
-            {0},
-            {0},
+            { 0 },
+            { 0 },
             {
                 .pin_name = BSP_PWM30_CH2_PIN,
                 .alternate = BSP_PWM30_CH2_AFIO,

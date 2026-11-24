@@ -26,8 +26,8 @@
 #if defined(SOC_SERIES_GD32E50x) || defined(SOC_SERIES_GD32F10x) || defined(SOC_SERIES_GD32F20x) || defined(SOC_SERIES_GD32F30x)
     #define GPIO_OSPEED               GPIO_OSPEED_50MHZ
 #elif (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
-    #define GPIO_OTYPE                GPIO_OTYPE_PP
-    #define GPIO_OSPEED               GPIO_OSPEED_60MHZ
+#define GPIO_OTYPE  GPIO_OTYPE_PP
+#define GPIO_OSPEED GPIO_OSPEED_60MHZ
 #elif defined(SOC_SERIES_GD32F4xx) || defined(SOC_SERIES_GD32F5xx) || defined(SOC_SERIES_GD32E23x)
     #define GPIO_OTYPE                GPIO_OTYPE_PP
     #define GPIO_OSPEED               GPIO_OSPEED_50MHZ

@@ -30,8 +30,8 @@
 #include "gd32vw553_mqtt_demo.h"
 #endif
 
-#define DBG_TAG                         "app.board.backend"
-#define DBG_LVL                         DBG_INFO
+#define DBG_TAG "app.board.backend"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define BOARD_DEMO_WORKER_STACK         8192U
@@ -117,9 +117,10 @@ static rt_mutex_t demo_state_lock;
 static rt_mq_t demo_command_queue;
 static rt_thread_t demo_worker_thread;
 
-const char *const board_demo_storage_roots[BOARD_DEMO_STORAGE_COUNT] =
-{
-    "/flash", "/sd", "/udisk",
+const char * const board_demo_storage_roots[BOARD_DEMO_STORAGE_COUNT] = {
+    "/flash",
+    "/sd",
+    "/udisk",
 };
 
 #ifdef RT_USING_CAN
@@ -478,10 +479,8 @@ static void board_demo_fs_list(const char *path)
             entries[count].size = 0U;
             if (stat(full_path, &file_status) == 0)
             {
-                entries[count].is_directory = S_ISDIR(file_status.st_mode) ?
-                                              RT_TRUE : RT_FALSE;
-                entries[count].size = entries[count].is_directory ? 0U :
-                                      (rt_uint32_t)file_status.st_size;
+                entries[count].is_directory = S_ISDIR(file_status.st_mode) ? RT_TRUE : RT_FALSE;
+                entries[count].size = entries[count].is_directory ? 0U : (rt_uint32_t)file_status.st_size;
             }
         }
         count++;
@@ -667,7 +666,7 @@ static void board_demo_can_add_frame(const struct rt_can_msg *message,
     {
         rt_memmove(&demo_state.can_frames[1], &demo_state.can_frames[0],
                    (demo_state.can_frame_count - 1U) *
-                   sizeof(demo_state.can_frames[0]));
+                       sizeof(demo_state.can_frames[0]));
     }
 
     frame = &demo_state.can_frames[0];
@@ -831,8 +830,7 @@ static void board_demo_can_poll(void)
             board_demo_can_add_frame(&message, RT_FALSE);
             count++;
         }
-    }
-    while ((length == sizeof(message)) && (count < 8U));
+    } while ((length == sizeof(message)) && (count < 8U));
 }
 
 static void board_demo_can_worker_entry(void *parameter)
@@ -986,8 +984,7 @@ static rt_err_t board_demo_pwm_apply_channel(struct rt_device_pwm *device,
         return result;
     }
 
-    return enabled ? rt_pwm_enable(device, channel) :
-                     rt_pwm_disable(device, channel);
+    return enabled ? rt_pwm_enable(device, channel) : rt_pwm_disable(device, channel);
 }
 
 static void board_demo_pwm_apply(const struct board_demo_command *command)
@@ -998,9 +995,9 @@ static void board_demo_pwm_apply(const struct board_demo_command *command)
     if ((demo_pwm2_device == RT_NULL) || (demo_pwm30_device == RT_NULL))
     {
         demo_pwm2_device = (struct rt_device_pwm *)
-                           rt_device_find(BOARD_DEMO_PWM2_DEVICE_NAME);
+            rt_device_find(BOARD_DEMO_PWM2_DEVICE_NAME);
         demo_pwm30_device = (struct rt_device_pwm *)
-                            rt_device_find(BOARD_DEMO_PWM30_DEVICE_NAME);
+            rt_device_find(BOARD_DEMO_PWM30_DEVICE_NAME);
     }
     if ((demo_pwm2_device == RT_NULL) || (demo_pwm30_device == RT_NULL))
     {
@@ -1202,7 +1199,7 @@ static rt_ssize_t board_demo_i2c_probe(struct rt_i2c_bus_device *bus,
     message.flags = RT_I2C_WR;
 
     result = rt_i2c_bus_lock(bus,
-                            rt_tick_from_millisecond(BOARD_DEMO_I2C_LOCK_TIMEOUT_MS));
+                             rt_tick_from_millisecond(BOARD_DEMO_I2C_LOCK_TIMEOUT_MS));
     if (result != RT_EOK)
     {
         return result == -RT_ETIMEOUT ? -RT_EBUSY : result;
@@ -1283,8 +1280,7 @@ static void board_demo_i2c_scan(const char *bus_name)
         if (result != RT_EOK)
         {
             board_demo_bus_log(RT_FALSE, "FAIL 0x%02X: %s (%d)", address,
-                               result == -RT_ETIMEOUT ? "bus/probe timeout" :
-                               (result == -RT_EBUSY ? "bus in use" : "transfer error"),
+                               result == -RT_ETIMEOUT ? "bus/probe timeout" : (result == -RT_EBUSY ? "bus in use" : "transfer error"),
                                result);
             break;
         }
@@ -1296,7 +1292,7 @@ static void board_demo_i2c_scan(const char *bus_name)
 
 _update:
     elapsed_ms = (rt_uint32_t)(((rt_uint64_t)(rt_tick_get() - start_tick) * 1000U) /
-                              RT_TICK_PER_SECOND);
+                               RT_TICK_PER_SECOND);
     board_demo_bus_log(RT_FALSE, "%s %s | %u/112 | %u devices | %u ms",
                        result == RT_EOK ? "DONE" : "STOPPED", bus_name,
                        probed, count, elapsed_ms);
@@ -1321,8 +1317,7 @@ _update:
     {
         rt_snprintf(demo_state.i2c_status, sizeof(demo_state.i2c_status),
                     "%s stopped at 0x%02X: %s (%d)", bus_name, address,
-                    result == -RT_ETIMEOUT ? "timeout" :
-                    (result == -RT_EBUSY ? "bus in use" : "transfer error"), result);
+                    result == -RT_ETIMEOUT ? "timeout" : (result == -RT_EBUSY ? "bus in use" : "transfer error"), result);
     }
     demo_state.i2c_sequence++;
     rt_mutex_release(demo_state_lock);

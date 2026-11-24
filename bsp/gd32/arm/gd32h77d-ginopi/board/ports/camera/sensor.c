@@ -61,8 +61,7 @@ int sensor_read_reg(uint16_t reg_addr)
 
 int sensor_write_reg(uint16_t reg_addr, uint16_t reg_data)
 {
-    return (sensor.write_reg != RT_NULL) ?
-           sensor.write_reg(&sensor, reg_addr, reg_data) : -1;
+    return (sensor.write_reg != RT_NULL) ? sensor.write_reg(&sensor, reg_addr, reg_data) : -1;
 }
 
 int sensor_set_pixformat(pixformat_t pixformat)

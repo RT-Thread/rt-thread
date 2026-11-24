@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
-void writespeed(const char* filename, int total_length, int block_size)
+void writespeed(const char *filename, int total_length, int block_size)
 {
     int fd, index, length;
     char *buff_ptr;
@@ -55,7 +55,7 @@ void writespeed(const char* filename, int total_length, int block_size)
             break;
         }
 
-        index ++;
+        index++;
     }
     tick = rt_tick_get() - tick;
 
@@ -73,33 +73,32 @@ FINSH_FUNCTION_EXPORT(writespeed, perform file write test);
 
 static void cmd_writespeed(int argc, char *argv[])
 {
-    char* filename;
+    char *filename;
     int length;
     int block_size;
 
-    if(argc == 4)
+    if (argc == 4)
     {
         filename = argv[1];
         length = atoi(argv[2]);
         block_size = atoi(argv[3]);
     }
-    else if(argc == 2)
+    else if (argc == 2)
     {
         filename = argv[1];
         block_size = 512;
-        length = 1024*1024;
+        length = 1024 * 1024;
     }
     else
     {
-       rt_kprintf("Usage:\nwritespeed [file_path] [length] [block_size]\n");
-       rt_kprintf("writespeed [file_path] with default length 1MB and block size 512\n");
-       return;
+        rt_kprintf("Usage:\nwritespeed [file_path] [length] [block_size]\n");
+        rt_kprintf("writespeed [file_path] with default length 1MB and block size 512\n");
+        return;
     }
     writespeed(filename, length, block_size);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
 #endif /* RT_USING_FINSH */
-
 
 /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
@@ -119,7 +118,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
-void readspeed(const char* filename, int block_size)
+void readspeed(const char *filename, int block_size)
 {
     int fd;
     char *buff_ptr;
@@ -148,7 +147,10 @@ void readspeed(const char* filename, int block_size)
         int length;
         length = read(fd, buff_ptr, block_size);
 
-        if (length <= 0) break;
+        if (length <= 0)
+        {
+            break;
+        }
         total_length += length;
     }
     tick = rt_tick_get() - tick;
@@ -158,7 +160,7 @@ void readspeed(const char* filename, int block_size)
     rt_free(buff_ptr);
 
     /* calculate read speed */
-    rt_kprintf("File read speed: %d byte/s\n", total_length /tick * RT_TICK_PER_SECOND);
+    rt_kprintf("File read speed: %d byte/s\n", total_length / tick * RT_TICK_PER_SECOND);
 }
 
 #ifdef RT_USING_FINSH
@@ -167,24 +169,24 @@ FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
 
 static void cmd_readspeed(int argc, char *argv[])
 {
-    char* filename;
+    char *filename;
     int block_size;
 
-    if(argc == 3)
+    if (argc == 3)
     {
         filename = argv[1];
         block_size = atoi(argv[2]);
     }
-    else if(argc == 2)
+    else if (argc == 2)
     {
         filename = argv[1];
         block_size = 512;
     }
     else
     {
-       rt_kprintf("Usage:\nreadspeed [file_path] [block_size]\n");
-       rt_kprintf("readspeed [file_path] with default block size 512\n");
-       return;
+        rt_kprintf("Usage:\nreadspeed [file_path] [block_size]\n");
+        rt_kprintf("readspeed [file_path] with default block size 512\n");
+        return;
     }
     readspeed(filename, block_size);
 }

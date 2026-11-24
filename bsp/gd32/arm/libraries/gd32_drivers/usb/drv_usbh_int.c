@@ -11,11 +11,11 @@
 #include "drv_usbh_int.h"
 #include "drv_otghs_host.h"
 
-#if defined(__CC_ARM)        /*!< ARM compiler */
+#if defined(__CC_ARM) /*!< ARM compiler */
 #pragma O0
-#elif defined(__GNUC__)        /*!< GNU compiler */
+#elif defined(__GNUC__) /*!< GNU compiler */
 #pragma GCC optimize("O0")
-#elif defined(__TASKING__)    /*!< TASKING compiler */
+#elif defined(__TASKING__) /*!< TASKING compiler */
 #pragma optimize = 0
 #endif /* __CC_ARM */
 
@@ -140,7 +140,7 @@ static inline void usb_pp_halt(usb_core_driver *udev,
     \param[out] none
     \retval     operation status
 */
-#if defined(__ICCARM__)      /*!< IAR compiler */
+#if defined(__ICCARM__) /*!< IAR compiler */
 #pragma optimize = none
 #endif /* __ICCARM */
 static uint32_t usbh_int_port(usb_core_driver *udev)
@@ -248,7 +248,7 @@ static uint32_t usbh_int_pipe(usb_core_driver *udev)
     \param[out] none
     \retval     operation status
 */
-#if defined(__ICCARM__)      /*!< IAR compiler */
+#if defined(__ICCARM__) /*!< IAR compiler */
 #pragma optimize = none
 #endif /* __ICCARM */
 static uint32_t usbh_int_pipe_in(usb_core_driver *udev, uint32_t pp_num)
@@ -409,7 +409,7 @@ static uint32_t usbh_int_pipe_in(usb_core_driver *udev, uint32_t pp_num)
     \param[out] none
     \retval     operation status
 */
-#if defined(__ICCARM__)      /*!< IAR compiler */
+#if defined(__ICCARM__) /*!< IAR compiler */
 #pragma optimize = none
 #endif /* __ICCARM */
 static uint32_t usbh_int_pipe_out(usb_core_driver *udev, uint32_t pp_num)
@@ -550,7 +550,7 @@ static uint32_t usbh_int_pipe_out(usb_core_driver *udev, uint32_t pp_num)
     \param[out] none
     \retval     operation status
 */
-#if defined(__ICCARM__)      /*!< IAR compiler */
+#if defined(__ICCARM__) /*!< IAR compiler */
 #pragma optimize = none
 #endif /* __ICCARM */
 static uint32_t usbh_int_rxfifonoempty(usb_core_driver *udev)
@@ -630,7 +630,7 @@ static uint32_t usbh_int_rxfifonoempty(usb_core_driver *udev)
     \param[out] none
     \retval     operation status
 */
-#if defined(__ICCARM__)      /*!< IAR compiler */
+#if defined(__ICCARM__) /*!< IAR compiler */
 #pragma optimize = none
 #endif /* __ICCARM */
 static uint32_t usbh_int_txfifoempty(usb_core_driver *udev, usb_pipe_mode pp_mode)
