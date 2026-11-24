@@ -527,7 +527,7 @@ static void test_libc_memory_sizes(void)
         set_redzone_byte(dst + size, 0x5a);
         for (offset = 0; offset <= size; offset++)
         {
-            uassert_true(rt_asan_accessible_size(src + offset, &available));
+            uassert_true(rt_asan_accessible_size(src + offset, (rt_size_t)-1, &available));
             uassert_int_equal(available, size - offset);
         }
         for (j = 0; j < sizeof(functions) / sizeof(functions[0]); j++)
@@ -1164,6 +1164,50 @@ static void test_libc_format_arguments(void)
     rt_free(dst);
 }
 
+static void test_libc_query_limits(void)
+{
+    static const size_t lengths[] = { 0, 1, 7, 8, 63, 64, 65, 127, 128, 129 };
+    size_t (* volatile get_length)(const char *) = strlen;
+    size_t (* volatile get_bounded)(const char *, size_t) = strnlen;
+    char *p = rt_malloc(256);
+    size_t i, offset;
+    rt_size_t available;
+    rt_uint32_t before;
+
+    uassert_not_null(p);
+    if (!p)
+    {
+        return;
+    }
+    before = rt_asan_report_count_get();
+    for (offset = 0; offset < 8; offset++)
+    {
+        for (i = 0; i < sizeof(lengths) / sizeof(lengths[0]); i++)
+        {
+            size_t length = lengths[i];
+            memset(p, 'a', 256);
+            p[offset + length] = 0;
+            uassert_int_equal(get_length(p + offset), length);
+            uassert_int_equal(get_bounded(p + offset, length), length);
+            uassert_int_equal(get_bounded(p + offset, length + 1), length);
+            uassert_int_equal(get_bounded(p + offset, (size_t)-1), length);
+        }
+    }
+    available = 123;
+    uassert_false(rt_asan_accessible_size(p + 256, 0, &available));
+    uassert_int_equal(available, 123);
+    uassert_false(rt_asan_accessible_size(p, 256, &available));
+    uassert_int_equal(available, 123);
+    uassert_true(rt_asan_accessible_size(p, 257, &available));
+    uassert_int_equal(available, 256);
+    memset(p, 'a', 256);
+    uassert_int_equal(get_bounded(p, 256), 256);
+    uassert_int_equal(rt_asan_report_count_get(), before);
+    uassert_int_equal(get_bounded(p, 257), 256);
+    uassert_true(rt_asan_report_count_get() > before);
+    rt_free(p);
+}
+
 static void test_libc_shadow_bounds(void)
 {
     char *p = rt_malloc(16);
@@ -1175,20 +1219,20 @@ static void test_libc_shadow_bounds(void)
     {
         return;
     }
-    uassert_true(rt_asan_accessible_size(p, &available));
+    uassert_true(rt_asan_accessible_size(p, (rt_size_t)-1, &available));
     uassert_int_equal(available, 16);
-    uassert_true(rt_asan_accessible_size(p + 4, &available));
+    uassert_true(rt_asan_accessible_size(p + 4, (rt_size_t)-1, &available));
     uassert_int_equal(available, 12);
-    uassert_true(rt_asan_accessible_size(p + 16, &available));
+    uassert_true(rt_asan_accessible_size(p + 16, (rt_size_t)-1, &available));
     uassert_int_equal(available, 0);
-    uassert_false(rt_asan_accessible_size(outside, &available));
+    uassert_false(rt_asan_accessible_size(outside, (rt_size_t)-1, &available));
     rt_free(p);
 
     /* Ending coverage is not evidence of an allocation's end. */
     p = rt_malloc((rt_size_t)RT_ASAN_SHADOW_SIZE * 8 + 64);
     if (p)
     {
-        uassert_false(rt_asan_accessible_size(p, &available));
+        uassert_false(rt_asan_accessible_size(p, (rt_size_t)-1, &available));
         uassert_int_equal(sprintf(p, "%s", "abc"), 3);
         uassert_str_equal(p, "abc");
         rt_free(p);
@@ -1239,6 +1283,8 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_libc_all_uaf_entries);
     failures += utest_handle_get()->failed_num;
     UTEST_UNIT_RUN(test_libc_format_arguments);
+    failures += utest_handle_get()->failed_num;
+    UTEST_UNIT_RUN(test_libc_query_limits);
     failures += utest_handle_get()->failed_num;
     UTEST_UNIT_RUN(test_libc_shadow_bounds);
     failures += utest_handle_get()->failed_num;

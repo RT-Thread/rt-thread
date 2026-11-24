@@ -64,6 +64,13 @@ menuconfig RT_USING_ASAN
                 limits output; attempted overflows are reported, even when
                 the supplied snprintf limit exceeds the allocation.
 
+                String preflight queries honor read limits and stop at NUL,
+                checking at most 64 application bytes per chunk. Long shadow
+                searches release their lock between chunks. This bounds scan
+                work per lock hold, not total call time, SMP lock contention
+                or allocator/reporting latency. An already masked caller
+                retains its interrupt state.
+
                 Invalid memory/string inputs skip the operation after a
                 report. Invalid formatting inputs return -1; heap output
                 overflows are truncated and reported. The program continues.

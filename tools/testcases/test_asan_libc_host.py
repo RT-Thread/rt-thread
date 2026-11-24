@@ -34,12 +34,14 @@ FORMAT_ONCE_FIXTURE = r'''
 static char storage[10];
 static unsigned int calls;
 static size_t native_limit;
-rt_bool_t rt_asan_accessible_size(const void *ptr, rt_size_t *size)
+rt_bool_t rt_asan_accessible_size(const void *ptr, rt_size_t limit, rt_size_t *size)
 {
     uintptr_t address = (uintptr_t)ptr;
     uintptr_t begin = (uintptr_t)storage;
     if (address < begin || address > begin + sizeof(storage)) return RT_FALSE;
-    *size = begin + sizeof(storage) - address;
+    size_t available = begin + sizeof(storage) - address;
+    if (available >= limit) return RT_FALSE;
+    *size = available;
     return RT_TRUE;
 }
 rt_bool_t rt_asan_check_read(const void *ptr, rt_size_t size)
@@ -49,7 +51,7 @@ rt_bool_t rt_asan_check_read(const void *ptr, rt_size_t size)
 rt_bool_t rt_asan_check_write(void *ptr, rt_size_t size)
 {
     rt_size_t available;
-    return !rt_asan_accessible_size(ptr, &available) || size <= available;
+    return !rt_asan_accessible_size(ptr, (rt_size_t)-1, &available) || size <= available;
 }
 /* This is the real formatter reached through GNU ld's __real_vsnprintf.
  * Count calls independently of the wrapper, without overlapping arguments.
@@ -119,18 +121,22 @@ static char source[16] __attribute__((aligned(16)));
 static char output[256];
 static unsigned int reports;
 int __real_vsnprintf(char *, size_t, const char *, va_list);
-rt_bool_t rt_asan_accessible_size(const void *ptr, rt_size_t *size)
+rt_bool_t rt_asan_accessible_size(const void *ptr, rt_size_t limit, rt_size_t *size)
 {
     uintptr_t address = (uintptr_t)ptr, begin = (uintptr_t)source;
     if (address >= begin && address <= begin + sizeof(source))
     {
-        *size = address < begin + 10 ? begin + 10 - address : 0;
+        size_t available = address < begin + 10 ? begin + 10 - address : 0;
+        if (available >= limit) return RT_FALSE;
+        *size = available;
         return RT_TRUE;
     }
     begin = (uintptr_t)output;
     if (address >= begin && address <= begin + sizeof(output))
     {
-        *size = begin + sizeof(output) - address;
+        size_t available = begin + sizeof(output) - address;
+        if (available >= limit) return RT_FALSE;
+        *size = available;
         return RT_TRUE;
     }
     return RT_FALSE;
@@ -138,7 +144,7 @@ rt_bool_t rt_asan_accessible_size(const void *ptr, rt_size_t *size)
 rt_bool_t rt_asan_check_read(const void *ptr, rt_size_t size)
 {
     rt_size_t available;
-    if (size && rt_asan_accessible_size(ptr, &available) && size > available)
+    if (size && rt_asan_accessible_size(ptr, (rt_size_t)-1, &available) && size > available)
     {
         reports++;
         return RT_FALSE;

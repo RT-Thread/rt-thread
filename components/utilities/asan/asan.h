@@ -45,12 +45,19 @@ void rt_asan_heap_init(void *begin_addr, void *end_addr);
 rt_bool_t rt_asan_check_read(const void *addr, rt_size_t size);
 rt_bool_t rt_asan_check_write(void *addr, rt_size_t size);
 
-#ifdef RT_ASAN_USING_LIBC
-/* Return RT_TRUE only when the covered shadow contains a poisoned boundary
- * at/after addr. *size is the readable/writable prefix before that boundary.
- * RT_FALSE means the boundary is unknown, including coverage ending first.
+/* Internal query/string batch size in application bytes. A shadow query
+ * releases its lock after each batch; callers already masking interrupts
+ * retain their original interrupt state.
  */
-rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t *size);
+#define RT_ASAN_QUERY_CHUNK_SIZE 64
+
+#ifdef RT_ASAN_USING_LIBC
+/* Return RT_TRUE only for poison inside [addr, addr + limit). *size is the
+ * prefix before that poison. RT_FALSE means no covered poison was found,
+ * including a zero limit or coverage ending first; *size is then unchanged.
+ * The query never examines bytes beyond limit and uses bounded lock batches.
+ */
+rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t limit, rt_size_t *size);
 #endif
 
 /* Internal system-heap integration. The caller must hold the heap lock.

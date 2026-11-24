@@ -116,14 +116,14 @@ rt_inline rt_bool_t asan_addr_in_range(rt_uintptr_t addr)
     return addr >= asan_heap_base && addr < asan_heap_limit;
 }
 
-/* check whether [addr, addr+size) touches any poisoned byte */
-static rt_bool_t asan_range_is_poisoned(rt_uintptr_t addr, rt_size_t size)
+/* Find the first covered poisoned byte, with bounded work per lock hold.
+ * Batches are independent snapshots, as the access following a check is not
+ * atomic with allocator updates either. No printing occurs under this lock.
+ */
+static rt_bool_t asan_find_poison(rt_uintptr_t addr, rt_size_t size, rt_size_t *prefix)
 {
-    rt_uintptr_t off;
+    rt_size_t checked = 0;
     rt_size_t n;
-    rt_uint8_t shadow;
-    rt_bool_t poisoned = RT_FALSE;
-    rt_base_t level;
 
     if (!size || addr >= asan_heap_limit)
     {
@@ -138,25 +138,42 @@ static rt_bool_t asan_range_is_poisoned(rt_uintptr_t addr, rt_size_t size)
         }
         addr = asan_heap_base;
         size -= n;
+        checked = n;
     }
     size = ASAN_MIN(size, asan_heap_limit - addr);
-    level = asan_lock();
     while (size)
     {
-        off = addr - asan_heap_base;
-        n = ASAN_MIN(ASAN_SHADOW_SCALE - (off & (ASAN_SHADOW_SCALE - 1)), size);
-        shadow = asan_shadow[off >> 3];
-        if (shadow && (shadow >= ASAN_SHADOW_SCALE ||
-                       (off & (ASAN_SHADOW_SCALE - 1)) + n > shadow))
+        rt_size_t batch = ASAN_MIN(size, RT_ASAN_QUERY_CHUNK_SIZE);
+        rt_base_t level = asan_lock();
+
+        while (batch)
         {
-            poisoned = RT_TRUE;
-            break;
+            rt_uintptr_t off = addr - asan_heap_base;
+            rt_size_t offset = off & (ASAN_SHADOW_SCALE - 1);
+            rt_uint8_t shadow = asan_shadow[off >> 3];
+            n = ASAN_MIN(ASAN_SHADOW_SCALE - offset, batch);
+            if (shadow && (shadow >= ASAN_SHADOW_SCALE || offset + n > shadow))
+            {
+                if (prefix)
+                {
+                    *prefix = checked + ((shadow < ASAN_SHADOW_SCALE && offset < shadow) ? shadow - offset : 0);
+                }
+                asan_unlock(level);
+                return RT_TRUE;
+            }
+            addr += n;
+            checked += n;
+            size -= n;
+            batch -= n;
         }
-        addr += n;
-        size -= n;
+        asan_unlock(level);
     }
-    asan_unlock(level);
-    return poisoned;
+    return RT_FALSE;
+}
+
+static rt_bool_t asan_range_is_poisoned(rt_uintptr_t addr, rt_size_t size)
+{
+    return asan_find_poison(addr, size, RT_NULL);
 }
 
 static void asan_locate_block(rt_uintptr_t addr)
@@ -237,45 +254,13 @@ static void asan_report(rt_uintptr_t addr, rt_size_t size, rt_bool_t is_write, r
 
 /* ---- explicit library access checks ---- */
 #ifdef RT_ASAN_USING_LIBC
-rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t *size)
+rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t limit, rt_size_t *size)
 {
-    rt_uintptr_t current = (rt_uintptr_t)addr;
-    rt_uintptr_t off;
-    rt_size_t count = 0;
-    rt_uint8_t shadow;
-    rt_size_t offset;
-    rt_base_t level;
-
-    if (!asan_addr_in_range(current))
+    if (!asan_addr_in_range((rt_uintptr_t)addr))
     {
         return RT_FALSE;
     }
-    level = asan_lock();
-    while (current < asan_heap_limit)
-    {
-        off = current - asan_heap_base;
-        offset = off & (ASAN_SHADOW_SCALE - 1);
-        shadow = asan_shadow[off >> 3];
-        if (shadow)
-        {
-            if (shadow < ASAN_SHADOW_SCALE && offset < shadow)
-            {
-                if (shadow - offset >= asan_heap_limit - current)
-                {
-                    break;
-                }
-                count += shadow - offset;
-            }
-            *size = count;
-            asan_unlock(level);
-            return RT_TRUE;
-        }
-        offset = ASAN_MIN(ASAN_SHADOW_SCALE - offset, asan_heap_limit - current);
-        count += offset;
-        current += offset;
-    }
-    asan_unlock(level);
-    return RT_FALSE;
+    return asan_find_poison((rt_uintptr_t)addr, limit, size);
 }
 #endif
 

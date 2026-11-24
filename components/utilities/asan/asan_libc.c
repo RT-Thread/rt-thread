@@ -29,27 +29,39 @@ int __real_vsnprintf(char *dst, size_t size, const char *fmt, va_list args);
 
 static rt_bool_t check_string(const char *src, size_t limit, size_t *length)
 {
-    rt_size_t available = 0;
-    rt_bool_t bounded = RT_FALSE;
     size_t i = 0;
 
-    if (limit)
-    {
-        bounded = rt_asan_accessible_size(src, &available);
-    }
     while (i < limit)
     {
-        if (bounded && i >= available)
+        rt_size_t available = 0;
+        size_t chunk = limit - i;
+        size_t end;
+        rt_bool_t bounded;
+
+        if (chunk > RT_ASAN_QUERY_CHUNK_SIZE)
+        {
+            chunk = RT_ASAN_QUERY_CHUNK_SIZE;
+        }
+        bounded = rt_asan_accessible_size(src + i, chunk, &available);
+        end = i + (bounded ? available : chunk);
+        /* A poisoned byte later in this chunk is irrelevant if NUL comes
+         * first. Read characters only after releasing the shadow lock.
+         */
+        while (i < end)
+        {
+            if (!src[i])
+            {
+                *length = i;
+                return RT_TRUE;
+            }
+            i++;
+        }
+        if (bounded)
         {
             *length = i;
             rt_asan_check_read(src + i, 1);
             return RT_FALSE;
         }
-        if (!src[i])
-        {
-            break;
-        }
-        i++;
     }
     *length = i;
     return RT_TRUE;
@@ -469,7 +481,7 @@ static int checked_format(char *dst, size_t size, const char *fmt, va_list args,
     }
     if (size)
     {
-        bounded = rt_asan_accessible_size(dst, &available);
+        bounded = rt_asan_accessible_size(dst, size, &available);
         if (bounded && !available)
         {
             rt_asan_check_write(dst, 1);
