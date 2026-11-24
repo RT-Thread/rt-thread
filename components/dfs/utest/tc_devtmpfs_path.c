@@ -8,10 +8,11 @@
  * 2026-10-17     Yaodong Han  boundary regression tests for devtmpfs path
  *                             components (devtmpfs_create_vnode/_path_separate
  *                             and devtmpfs_file_lookup/_get_subdir)
- * 2026-11-24     Yaodong Han  prove the creation path with O_EXCL, remove the
- *                             node at the end of each round, run every length
- *                             twice, and issue the filesystem calls from a
- *                             thread whose stack fits devtmpfs frames
+ * 2026-11-24     Yaodong Han  prove the creation path with O_EXCL, keep nodes
+ *                             that were already there, clean up on every exit
+ *                             path, collect the result of all lengths in a
+ *                             single test unit, and run the filesystem calls
+ *                             on a thread whose stack fits devtmpfs frames
  */
 
 #include <rtthread.h>
@@ -55,13 +56,18 @@ static char tc_path[TC_PATH_BUF_SIZE];
  * issued from a worker thread with a stack large enough for it.
  */
 #define TC_WORKER_STACK_SIZE 8192
-#define TC_WORKER_PRIORITY   20
+
+/* a fixed priority would trip the range check on kernels with few levels */
+#define TC_WORKER_PRIORITY (RT_THREAD_PRIORITY_MAX / 2)
 
 /* give up if the worker has not finished within this many milliseconds */
 #define TC_WORKER_TIMEOUT_MS 5000
 
 /* every length is exercised twice, to prove the state is clean between rounds */
 #define TC_ROUNDS 2
+
+/* rotating job slots, see tc_run_once() */
+#define TC_JOB_SLOTS 4
 
 /*
  * Caller-side stack guard. devtmpfs_create_vnode() and devtmpfs_file_lookup()
@@ -127,16 +133,31 @@ static rt_size_t tc_build_path(rt_size_t len)
     return mnt_len + 1 + len;
 }
 
+struct tc_case
+{
+    rt_size_t len;
+    rt_bool_t expect_ok;
+    const char *label;
+};
+
+static const struct tc_case tc_cases[] = {
+    { 8, RT_TRUE, "short component" },
+    { TC_NAME_MAX - 2, RT_TRUE, "254 byte component" },
+    { TC_NAME_MAX - 1, RT_TRUE, "255 byte component" },
+    { TC_NAME_MAX, RT_FALSE, "256 byte component" },
+    { TC_NAME_MAX + 44, RT_FALSE, "300 byte component" },
+};
+
 /*
- * Exercise both entry points for one component length:
+ * Exercise both entry points for one component length and one round:
  *   - devtmpfs_file_lookup()  through dfs_file_stat()
  *   - devtmpfs_create_vnode() through open(O_CREAT | O_EXCL)
- * and verify that neither one touches neighbouring stack data.
  *
- * O_EXCL is what makes this meaningful across rounds: without it open() would
- * happily return a node left over from an earlier round and the creation path
- * would never run. A successful open() therefore proves that this round
- * created the node, and the node is removed again before returning.
+ * O_EXCL is what makes a round meaningful: without it open() would reopen a
+ * node left behind and the creation path would never run again. A node that
+ * already exists is deliberately left alone - the exclusive create reports it
+ * and the test fails, instead of removing somebody else's node. The node this
+ * round created is recorded in `created` and removed again on every exit path.
  *
  * Returns 0 on success, a negative code otherwise.
  */
@@ -145,108 +166,120 @@ static int tc_roundtrip(rt_size_t len, rt_bool_t expect_ok)
     rt_uint8_t guard[TC_GUARD_SIZE];
     struct stat st;
     rt_bool_t created = RT_FALSE;
-    int fd;
+    int fd = -1;
+    int ret = 0;
 
     tc_build_path(len);
-
-    if (expect_ok)
-    {
-        /* drop whatever a previous round left behind, so that O_EXCL below
-         * really exercises the creation path */
-        (void)unlink(tc_path);
-    }
 
     tc_guard_fill(guard);
 
     /* lookup path first: the node does not exist yet, this must not crash */
     (void)dfs_file_stat(tc_path, &st);
 
-    /* creation path: this is where _path_separate() runs */
     fd = open(tc_path, O_CREAT | O_EXCL | O_RDWR, 0644);
 
     if (!tc_guard_intact(guard))
     {
-        rt_kprintf("guard corrupted for component length %u\n",
-                   (unsigned int)len);
-        return -2;
+        rt_kprintf("len %u: stack guard corrupted by open()\n", (unsigned int)len);
+        ret = -2;
+        goto out;
     }
 
     if (expect_ok)
     {
         if (fd < 0)
         {
-            rt_kprintf("expected success for component length %u, got %d\n",
+            rt_kprintf("len %u: expected creation, open() returned %d; a node "
+                       "that already exists is not removed by this test\n",
                        (unsigned int)len, fd);
-            return -3;
+            ret = -3;
+            goto out;
         }
+
         created = RT_TRUE;
         close(fd);
+        fd = -1;
 
         /* the node must now be visible through the lookup path */
         tc_guard_fill(guard);
         if (dfs_file_stat(tc_path, &st) != 0)
         {
-            if (tc_guard_intact(guard))
-            {
-                rt_kprintf("node not found after creation, len %u\n",
-                           (unsigned int)len);
-            }
-            (void)unlink(tc_path);
-            return -4;
+            rt_kprintf("len %u: node not found after creation\n", (unsigned int)len);
+            ret = -4;
+            goto out;
+        }
+
+        if (!tc_guard_intact(guard))
+        {
+            rt_kprintf("len %u: stack guard corrupted by lookup\n", (unsigned int)len);
+            ret = -2;
+            goto out;
         }
     }
     else
     {
         if (fd >= 0)
         {
+            /* an overlong component must never create anything */
+            created = RT_TRUE;
             close(fd);
-            (void)unlink(tc_path);
-            rt_kprintf("expected rejection for component length %u\n",
+            fd = -1;
+            rt_kprintf("len %u: expected rejection, open() succeeded\n",
                        (unsigned int)len);
-            return -5;
+            ret = -5;
+            goto out;
         }
 
-        /* a rejected component must not have created anything either */
         tc_guard_fill(guard);
         if (dfs_file_stat(tc_path, &st) == 0)
         {
-            if (tc_guard_intact(guard))
-            {
-                rt_kprintf("overlong component still resolved, len %u\n",
-                           (unsigned int)len);
-            }
-            return -6;
+            rt_kprintf("len %u: overlong component still resolved\n",
+                       (unsigned int)len);
+            ret = -6;
+            goto out;
+        }
+
+        if (!tc_guard_intact(guard))
+        {
+            rt_kprintf("len %u: stack guard corrupted by lookup\n", (unsigned int)len);
+            ret = -2;
+            goto out;
         }
     }
 
-    if (!tc_guard_intact(guard))
+out:
+    /* single exit: always close the descriptor, and remove only the node this
+     * round created - also when a later check already failed */
+    if (fd >= 0)
     {
-        return -2;
+        close(fd);
     }
 
     if (created)
     {
-        /* only the node this round created is removed, and it has to be gone
-         * afterwards - otherwise the next round would not create it again */
         if (unlink(tc_path) != 0)
         {
-            rt_kprintf("cannot remove the node created for length %u\n",
+            rt_kprintf("len %u: cannot remove the node created by this round\n",
                        (unsigned int)len);
-            return -7;
+            if (ret == 0)
+            {
+                ret = -7;
+            }
         }
-
-        if (dfs_file_stat(tc_path, &st) == 0)
+        else if (dfs_file_stat(tc_path, &st) == 0)
         {
-            rt_kprintf("node still present after unlink, len %u\n",
-                       (unsigned int)len);
-            return -8;
+            rt_kprintf("len %u: node still present after unlink\n", (unsigned int)len);
+            if (ret == 0)
+            {
+                ret = -8;
+            }
         }
     }
 
-    return 0;
+    return ret;
 }
 
-struct tc_worker_ctx
+struct tc_job
 {
     rt_size_t len;
     rt_bool_t expect_ok;
@@ -254,43 +287,53 @@ struct tc_worker_ctx
     int result;
 };
 
-static struct tc_worker_ctx tc_ctx;
+static struct tc_job tc_jobs[TC_JOB_SLOTS];
+static rt_uint32_t tc_job_seq;
 
 static void tc_worker_entry(void *parameter)
 {
-    tc_ctx.result = tc_roundtrip(tc_ctx.len, tc_ctx.expect_ok);
-    tc_ctx.finished = RT_TRUE;
+    struct tc_job *job = (struct tc_job *)parameter;
+
+    job->result = tc_roundtrip(job->len, job->expect_ok);
+    job->finished = RT_TRUE;
 }
 
 /* run one round on a worker thread with room for devtmpfs' stack frames */
 static int tc_run_once(rt_size_t len, rt_bool_t expect_ok)
 {
+    struct tc_job *job = &tc_jobs[tc_job_seq % TC_JOB_SLOTS];
     rt_thread_t tid;
     rt_int32_t waited = 0;
 
-    tc_ctx.len = len;
-    tc_ctx.expect_ok = expect_ok;
-    tc_ctx.finished = RT_FALSE;
-    tc_ctx.result = -100;
+    /*
+     * Every round takes its own slot, so a worker that overruns its timeout
+     * cannot write into the result of a later round.
+     */
+    tc_job_seq++;
 
-    tid = rt_thread_create("dtfstc", tc_worker_entry, RT_NULL,
+    job->len = len;
+    job->expect_ok = expect_ok;
+    job->finished = RT_FALSE;
+    job->result = -100;
+
+    tid = rt_thread_create("dtfstc", tc_worker_entry, job,
                            TC_WORKER_STACK_SIZE, TC_WORKER_PRIORITY, 10);
     if (tid == RT_NULL)
     {
-        rt_kprintf("cannot create worker thread with a %d byte stack\n",
+        rt_kprintf("cannot create a worker thread with a %d byte stack\n",
                    TC_WORKER_STACK_SIZE);
         return -100;
     }
 
     rt_thread_startup(tid);
 
-    while (tc_ctx.finished != RT_TRUE && waited < TC_WORKER_TIMEOUT_MS)
+    while (job->finished != RT_TRUE && waited < TC_WORKER_TIMEOUT_MS)
     {
         rt_thread_mdelay(1);
         waited++;
     }
 
-    if (tc_ctx.finished != RT_TRUE)
+    if (job->finished != RT_TRUE)
     {
         rt_kprintf("worker did not finish within %d ms\n", TC_WORKER_TIMEOUT_MS);
         return -101;
@@ -299,54 +342,46 @@ static int tc_run_once(rt_size_t len, rt_bool_t expect_ok)
     /* the worker returns from its entry, so rt_thread_exit() puts it on the
      * defunct list and the idle thread reclaims it; nothing to delete here */
 
-    return tc_ctx.result;
+    return job->result;
 }
 
-static int tc_run(rt_size_t len, rt_bool_t expect_ok)
+/*
+ * All component lengths are checked inside a single test unit: the utest
+ * framework resets its failure counter on every UTEST_UNIT_RUN(), so spreading
+ * the lengths over several units would let a later passing unit hide an
+ * earlier failing one.
+ */
+static void test_devtmpfs_path_components(void)
 {
-    int round;
+    rt_size_t i;
+    rt_size_t round;
+    rt_bool_t stop = RT_FALSE;
+    int failures = 0;
     int ret;
 
-    for (round = 0; round < TC_ROUNDS; round++)
+    for (i = 0; i < sizeof(tc_cases) / sizeof(tc_cases[0]) && stop == RT_FALSE; i++)
     {
-        ret = tc_run_once(len, expect_ok);
-        if (ret != 0)
+        for (round = 0; round < TC_ROUNDS; round++)
         {
-            return ret;
+            ret = tc_run_once(tc_cases[i].len, tc_cases[i].expect_ok);
+            if (ret != 0)
+            {
+                rt_kprintf("case %s, round %u failed with %d\n",
+                           tc_cases[i].label, (unsigned int)(round + 1), ret);
+                failures++;
+
+                /* a worker that did not come back still owns the shared path
+                 * buffer; stop here instead of starting another round */
+                if (ret == -101)
+                {
+                    stop = RT_TRUE;
+                }
+                break;
+            }
         }
     }
 
-    return 0;
-}
-
-/* len == DIRENT_NAME_MAX - 2: comfortably inside the buffer */
-static void test_devtmpfs_component_254(void)
-{
-    uassert_int_equal(tc_run(TC_NAME_MAX - 2, RT_TRUE), 0);
-}
-
-/* len == DIRENT_NAME_MAX - 1: the last length that still fits (+ terminator) */
-static void test_devtmpfs_component_255(void)
-{
-    uassert_int_equal(tc_run(TC_NAME_MAX - 1, RT_TRUE), 0);
-}
-
-/* len == DIRENT_NAME_MAX: no room for the terminator, must be rejected */
-static void test_devtmpfs_component_256(void)
-{
-    uassert_int_equal(tc_run(TC_NAME_MAX, RT_FALSE), 0);
-}
-
-/* well past the buffer: must be rejected as well */
-static void test_devtmpfs_component_300(void)
-{
-    uassert_int_equal(tc_run(TC_NAME_MAX + 44, RT_FALSE), 0);
-}
-
-/* a normal, short component must keep working (no regression) */
-static void test_devtmpfs_component_short(void)
-{
-    uassert_int_equal(tc_run(8, RT_TRUE), 0);
+    uassert_int_equal(failures, 0);
 }
 
 static rt_err_t utest_tc_init(void)
@@ -366,20 +401,14 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    /* every round removes the node it created; this is only a safety net in
-     * case a case aborted half way through */
-    (void)unlink(tc_path);
-
+    /* every round removes the node it created; nothing is left to guess here,
+     * and a node this test did not create is deliberately not touched */
     return RT_EOK;
 }
 
 static void testcase(void)
 {
-    UTEST_UNIT_RUN(test_devtmpfs_component_short);
-    UTEST_UNIT_RUN(test_devtmpfs_component_254);
-    UTEST_UNIT_RUN(test_devtmpfs_component_255);
-    UTEST_UNIT_RUN(test_devtmpfs_component_256);
-    UTEST_UNIT_RUN(test_devtmpfs_component_300);
+    UTEST_UNIT_RUN(test_devtmpfs_path_components);
 }
 UTEST_TC_EXPORT(testcase, "components.dfs.devtmpfs_path_tc", utest_tc_init, utest_tc_cleanup, 30);
 
