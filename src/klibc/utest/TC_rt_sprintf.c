@@ -167,6 +167,9 @@ SPRINTF_TEST_CASE(zero_flag)
     SPRINTF_CHECK("42", buffer, "%0ld", 42L);
     SPRINTF_CHECK("-42", buffer, "%0d", -42);
     SPRINTF_CHECK("00042", buffer, "%05d", 42);
+    SPRINTF_CHECK("     ", buffer, "%05.0d", 0);
+    SPRINTF_CHECK("  007", buffer, "%05.3d", 7);
+    SPRINTF_CHECK("00007", buffer, "%05.*d", -1, 7);
     SPRINTF_CHECK("-0042", buffer, "%05d", -42);
     SPRINTF_CHECK("000000000000042", buffer, "%015d", 42);
     SPRINTF_CHECK("-00000000000042", buffer, "%015d", -42);
