@@ -25,7 +25,8 @@
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #if defined(RT_UTEST_ASAN) && defined(RT_HOOK_USING_FUNC_PTR)

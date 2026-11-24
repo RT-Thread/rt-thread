@@ -32,9 +32,9 @@
  */
 
 /* ---- shadow memory ---- */
-static rt_uintptr_t asan_heap_base;                          /* first checked address */
-static rt_uintptr_t asan_heap_limit;                         /* base + coverage */
-static rt_uint8_t asan_shadow[RT_ASAN_SHADOW_SIZE];         /* 8 bytes -> 1 byte */
+static rt_uintptr_t asan_heap_base;                 /* first checked address */
+static rt_uintptr_t asan_heap_limit;                /* base + coverage */
+static rt_uint8_t asan_shadow[RT_ASAN_SHADOW_SIZE]; /* 8 bytes -> 1 byte */
 
 /* Use hardware locks: scheduler-aware spinlocks can access heap-allocated
  * thread objects and recursively enter the sanitizer. Never print or call
@@ -73,7 +73,7 @@ rt_uint32_t rt_asan_report_count_get(void)
 }
 
 #define ASAN_SHADOW_SCALE 8
-#define ASAN_POISON       0xF8   /* whole granule poisoned */
+#define ASAN_POISON       0xF8 /* whole granule poisoned */
 #define ASAN_MIN(a, b)    ((a) < (b) ? (a) : (b))
 
 /* ---- allocation tracking table ---- */
@@ -340,8 +340,12 @@ void __asan_storeN_noabort(rt_uintptr_t addr, rt_size_t size)
 }
 
 /* misc symbols referenced by some GCC versions */
-void __asan_init(void) {}
-void __asan_handle_no_return(void) {}
+void __asan_init(void)
+{
+}
+void __asan_handle_no_return(void)
+{
+}
 
 /* ---- poison / unpoison (allocator integration) ---- */
 static void asan_unpoison_range(rt_uintptr_t addr, rt_size_t size)
@@ -373,11 +377,11 @@ static void asan_unpoison_range(rt_uintptr_t addr, rt_size_t size)
 
         if (k + n == ASAN_SHADOW_SCALE)
         {
-            *sh = 0;                    /* whole granule addressable */
+            *sh = 0; /* whole granule addressable */
         }
         else
         {
-            *sh = (rt_uint8_t)(k + n);   /* addressable prefix through this range */
+            *sh = (rt_uint8_t)(k + n); /* addressable prefix through this range */
         }
 
         a += n;
@@ -413,11 +417,11 @@ static void asan_poison_range(rt_uintptr_t addr, rt_size_t size)
 
         if (n == ASAN_SHADOW_SCALE)
         {
-            *sh = ASAN_POISON;          /* whole granule poisoned */
+            *sh = ASAN_POISON; /* whole granule poisoned */
         }
         else
         {
-            *sh = k;                    /* only first k bytes stay addressable */
+            *sh = k; /* only first k bytes stay addressable */
         }
 
         a += n;
@@ -478,7 +482,7 @@ static rt_uint32_t asan_track_find(rt_uintptr_t ptr)
         }
     }
 
-    return RT_ASAN_TRACK_MAX;   /* not found */
+    return RT_ASAN_TRACK_MAX; /* not found */
 }
 
 /* The user pointer is aligned independently of the underlying heap's alignment.

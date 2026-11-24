@@ -22,8 +22,8 @@
 #define RT_KLIB_NO_ASAN
 #endif
 
-#if defined(RT_KLIBC_USING_LIBC_MEMSET) || \
-    defined(RT_KLIBC_USING_LIBC_MEMCPY) || \
+#if defined(RT_KLIBC_USING_LIBC_MEMSET) ||  \
+    defined(RT_KLIBC_USING_LIBC_MEMCPY) ||  \
     defined(RT_KLIBC_USING_LIBC_MEMMOVE) || \
     defined(RT_KLIBC_USING_LIBC_MEMCMP) ||  \
     defined(RT_KLIBC_USING_LIBC_STRSTR) ||  \

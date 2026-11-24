@@ -86,7 +86,7 @@ static void test_asan_overflow_write(void)
     }
 
     before = rt_asan_report_count_get();
-    p[12] = 0x41;   /* heap-buffer-overflow write (redzone [10, 16)) */
+    p[12] = 0x41; /* heap-buffer-overflow write (redzone [10, 16)) */
     after = rt_asan_report_count_get();
 
     rt_free((void *)p);
@@ -109,7 +109,7 @@ static void test_asan_overflow_read(void)
     }
 
     before = rt_asan_report_count_get();
-    v = p[12];   /* heap-buffer-overflow read (redzone [10, 16)) */
+    v = p[12]; /* heap-buffer-overflow read (redzone [10, 16)) */
     after = rt_asan_report_count_get();
 
     (void)v;
@@ -132,8 +132,8 @@ static void test_asan_no_false_positive(void)
     }
 
     before = rt_asan_report_count_get();
-    p[0] = 0x01;   /* first in-bounds byte */
-    p[9] = 0x02;   /* last in-bounds byte */
+    p[0] = 0x01; /* first in-bounds byte */
+    p[9] = 0x02; /* last in-bounds byte */
     after = rt_asan_report_count_get();
 
     rt_free((void *)p);
@@ -164,7 +164,7 @@ static void test_asan_realloc_overflow(void)
     }
 
     before = rt_asan_report_count_get();
-    q[22] = 0x41;   /* heap-buffer-overflow write (redzone [20, 24)) */
+    q[22] = 0x41; /* heap-buffer-overflow write (redzone [20, 24)) */
     after = rt_asan_report_count_get();
 
     rt_free((void *)q);
@@ -190,7 +190,7 @@ static void test_asan_uaf_read(void)
     rt_free((void *)p);
 
     before = rt_asan_report_count_get();
-    v = p[0];   /* use-after-free read */
+    v = p[0]; /* use-after-free read */
     after = rt_asan_report_count_get();
 
     (void)v;
@@ -214,7 +214,7 @@ static void test_asan_uaf_write(void)
     rt_free((void *)p);
 
     before = rt_asan_report_count_get();
-    p[0] = 0x41;   /* use-after-free write */
+    p[0] = 0x41; /* use-after-free write */
     after = rt_asan_report_count_get();
 
     uassert_true(after > before);
