@@ -81,7 +81,7 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     ARCH_ABI = ' -mcmodel=medlow '
-    DEVICE = ARCH_ABI  + ' -DUSE_NONVECTOR_MODE=1 ' + ' -ffunction-sections -fdata-sections -fno-common '
+    DEVICE = ARCH_ABI  + ' -DUSE_NONVECTOR_MODE=1 -DRT_CPU_CACHE_LINE_SZ=64 ' + ' -ffunction-sections -fdata-sections -fno-common '
     CFLAGS = DEVICE
     AFLAGS = CFLAGS
     LFLAGS  = ARCH_ABI + '  --specs=nano.specs --specs=nosys.specs -nostartfiles -Wl,--gc-sections '
