@@ -215,6 +215,41 @@ static time_t iso9660_convert_unixtime2(struct iso9660_date2 *date)
     return mktime(&tm);
 }
 
+/*
+ * Advance to the next directory record. The caller must have validated that
+ * the current record length fits in the current sector.
+ *
+ * Returns 0 on success, -1 at the end of the directory.
+ */
+static int iso9660_next_dirent(struct iso9660 *iso,
+        struct iso9660_dir **dirent, rt_uint32_t *lba, rt_size_t *sz)
+{
+    rt_uint32_t dlen = rt_le32_to_cpu((*dirent)->len);
+
+    *dirent = (void *)*dirent + dlen;
+    *sz += dlen;
+
+    if (ISO9660_BLKSZ - *sz < sizeof(**dirent))
+    {
+        /* Sector end, goto the next sector */
+        if (rt_device_read(iso->dev, ++*lba, iso->swap, 1) <= 0)
+        {
+            return -1;
+        }
+
+        *dirent = (void *)iso->swap;
+        *sz = 0;
+    }
+
+    if (rt_le32_to_cpu((*dirent)->first_sector) == 0)
+    {
+        /* Is end, no found. */
+        return -1;
+    }
+
+    return 0;
+}
+
 static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
         struct iso9660_iterate *it)
 {
@@ -289,23 +324,8 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
                 break;
             }
 
-            dirent = (void *)dirent + dlen;
-            sz += dlen;
-
-            if (ISO9660_BLKSZ - sz < sizeof(*dirent))
+            if (iso9660_next_dirent(iso, &dirent, &lba, &sz) < 0)
             {
-                /* Sector end, goto the next sector */
-                if (rt_device_read(iso->dev, ++lba, iso->swap, 1) <= 0)
-                {
-                    goto _fail;
-                }
-                dirent = (void *)iso->swap;
-                sz = 0;
-            }
-
-            if (rt_le32_to_cpu(dirent->first_sector) == 0)
-            {
-                /* Is end, no found. */
                 goto _fail;
             }
         }
@@ -367,12 +387,8 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
                 /* Iterate end */
                 return RT_NULL;
             }
-
-            /* No next entry */
-            continue;
         }
-
-        if (!rt_strncmp(sname, path, len))
+        else if (!rt_strncmp(sname, path, len))
         {
             /* The end of path, found ok */
             if (!path[len])
@@ -381,7 +397,7 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
                 return fd;
             }
 
-            /* Next entry */
+            /* Enter the sub directory */
             lba = rt_le32_to_cpu(dirent->first_sector);
             if (rt_device_read(iso->dev, lba, iso->swap, 1) <= 0)
             {
@@ -392,6 +408,13 @@ static struct iso9660_fd *iso9660_lookup(struct iso9660 *iso, const char *path,
 
             path += len + 1;
             len = strchrnul(path, '/') - path;
+            continue;
+        }
+
+        /* Not the entry we are looking for, or more entries requested */
+        if (iso9660_next_dirent(iso, &dirent, &lba, &sz) < 0)
+        {
+            goto _fail;
         }
     } while (len);
 
