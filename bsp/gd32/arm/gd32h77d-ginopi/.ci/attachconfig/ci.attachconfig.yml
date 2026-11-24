@@ -1,0 +1,200 @@
+# Copyright (c) 2026, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Each project extends the minimal UART1/PIN default configuration.
+# Serial V2 and UART DMA are not supported by this SDK port.
+peripheral.uart_v1:
+  kconfig:
+    - CONFIG_BSP_USING_SERIAL_V1=y
+    - CONFIG_BSP_USING_UART0=y
+    - CONFIG_BSP_USING_UART2=y
+    - CONFIG_BSP_USING_UART3=y
+    - CONFIG_BSP_USING_UART4=y
+
+peripheral.ethernet:
+  kconfig:
+    - CONFIG_BSP_USING_ETH=y
+
+peripheral.usb_device_hs:
+  kconfig:
+    - CONFIG_BSP_USING_USB=y
+    - CONFIG_BSP_USB_USING_DEVICE=y
+    - CONFIG_BSP_USB_DEVICE_USING_HS=y
+
+peripheral.usb_device_fs:
+  kconfig:
+    - CONFIG_BSP_USING_USB=y
+    - CONFIG_BSP_USB_USING_DEVICE=y
+    - CONFIG_BSP_USB_DEVICE_USING_FS=y
+
+peripheral.usb_host:
+  kconfig:
+    - CONFIG_BSP_USING_USB=y
+    - CONFIG_BSP_USB_USING_DEVICE=n
+    - CONFIG_BSP_USB_USING_HOST=y
+
+peripheral.sdram:
+  kconfig:
+    - CONFIG_BSP_USING_SDRAM=y
+
+peripheral.i2c1:
+  kconfig:
+    - CONFIG_BSP_USING_I2C=y
+    - CONFIG_BSP_USING_HARD_I2C=y
+    - CONFIG_BSP_USING_HARD_I2C1=y
+
+peripheral.spi3:
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI3=y
+
+peripheral.pwm:
+  kconfig:
+    - CONFIG_BSP_USING_PWM=y
+    - CONFIG_BSP_USING_PWM1=y
+    - CONFIG_BSP_USING_PWM2=y
+    - CONFIG_BSP_USING_PWM30=y
+
+peripheral.sdio1:
+  kconfig:
+    - CONFIG_BSP_SDIO_USING_SDIO1=y
+
+peripheral.sdcard_fatfs:
+  depends:
+    - peripheral.sdio1
+  kconfig:
+    - CONFIG_BSP_USING_FS=y
+    - CONFIG_BSP_USING_SDCARD_FATFS=y
+    - CONFIG_RT_USING_DFS_V1=y
+
+peripheral.rtc_alarm0:
+  kconfig:
+    - CONFIG_BSP_USING_ONCHIP_RTC=y
+    - CONFIG_BSP_USING_ALARM=y
+    - CONFIG_BSP_USING_ALARM0=y
+
+peripheral.rtc_alarm1:
+  kconfig:
+    - CONFIG_BSP_USING_ONCHIP_RTC=y
+    - CONFIG_BSP_USING_ALARM=y
+    - CONFIG_BSP_USING_ALARM1=y
+
+peripheral.watchdog:
+  kconfig:
+    - CONFIG_RT_USING_WDT=y
+
+peripheral.can1:
+  kconfig:
+    - CONFIG_BSP_USING_CAN=y
+    - CONFIG_BSP_USING_CAN1=y
+
+peripheral.canfd1:
+  depends:
+    - peripheral.can1
+  kconfig:
+    - CONFIG_RT_CAN_USING_CANFD=y
+
+peripheral.ospi0:
+  kconfig:
+    - CONFIG_BSP_USING_OSPI0=y
+
+peripheral.ospi0_mdma:
+  depends:
+    - peripheral.ospi0
+  kconfig:
+    - CONFIG_BSP_OSPI0_USING_MDMA=y
+
+peripheral.flash_fatfs:
+  depends:
+    - peripheral.ospi0
+  kconfig:
+    - CONFIG_BSP_USING_FS=y
+    - CONFIG_BSP_USING_FLASH_FATFS=y
+    - CONFIG_RT_USING_DFS_V1=y
+    - CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE=4096
+
+peripheral.lcd_mipi:
+  kconfig:
+    - CONFIG_BSP_USING_LCD_MIPI=y
+
+peripheral.touch_gt911:
+  depends:
+    - peripheral.lcd_mipi
+  kconfig:
+    - CONFIG_BSP_USING_TOUCH_GT911=y
+
+peripheral.camera:
+  kconfig:
+    - CONFIG_BSP_USING_OV7670=y
+
+package.lvgl:
+  depends:
+    - peripheral.touch_gt911
+  kconfig:
+    - CONFIG_PKG_USING_LVGL=y
+    - CONFIG_PKG_LVGL_USING_LATEST=y
+
+package.gd32vw553_wifi:
+  kconfig:
+    - CONFIG_BSP_USING_GD32VW553_AT=y
+    - CONFIG_BSP_USING_GD32VW553_MQTT_DEMO=n
+
+package.gd32vw553_mqtt:
+  depends:
+    - package.gd32vw553_wifi
+  kconfig:
+    - CONFIG_BSP_USING_GD32VW553_MQTT_DEMO=y
+
+application.board_demo:
+  depends:
+    - package.lvgl
+    - peripheral.flash_fatfs
+  kconfig:
+    - CONFIG_BSP_USING_LVGL_BOARD_DEMO=y
+    - CONFIG_PKG_LVGL_THREAD_STACK_SIZE=8192
+
+application.usb_cdc:
+  depends:
+    - peripheral.usb_device_hs
+  kconfig:
+    - CONFIG_BSP_USING_USB_CDC_EXAMPLE=y
+
+application.sdram_heap_test:
+  depends:
+    - peripheral.sdram
+  kconfig:
+    - CONFIG_RT_USING_MEMHEAP_AS_HEAP=y
+    - CONFIG_RT_USING_MEMHEAP_AUTO_BINDING=y
+    - CONFIG_BSP_USING_SDRAM_HEAP_TEST=y
+
+application.filesystem_test:
+  depends:
+    - peripheral.flash_fatfs
+  kconfig:
+    - CONFIG_BSP_USING_FILESYSTEM_TEST=y
+
+application.pwm_dual_test:
+  depends:
+    - peripheral.pwm
+  kconfig:
+    - CONFIG_BSP_USING_PWM_DUAL_TEST=y
+
+application.rtc_alarm0:
+  depends:
+    - peripheral.rtc_alarm0
+  kconfig:
+    - CONFIG_BSP_USING_RTC_ALARM_EXAMPLE=y
+
+application.rtc_alarm1:
+  depends:
+    - peripheral.rtc_alarm1
+  kconfig:
+    - CONFIG_BSP_USING_RTC_ALARM_EXAMPLE=y
+
+application.ov7670_preview:
+  depends:
+    - package.lvgl
+    - peripheral.camera
+  kconfig:
+    - CONFIG_BSP_USING_OV7670_PREVIEW=y
