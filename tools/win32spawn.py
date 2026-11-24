@@ -24,8 +24,32 @@
 
 import os
 import subprocess
+import tempfile
+
+# CreateProcess rejects a command line longer than 32767 characters.
+_WIN32_CMDLINE_LIMIT = 32000
+
+def _response_file_arg(arg):
+    # GCC's @file reader (buildargv) treats '\' as an escape character,
+    # unlike the Windows command line, so backslashes must be doubled.
+    arg = arg.replace('\\', '\\\\')
+    # Arguments SCons already quoted keep their own grouping.
+    if '"' not in arg and (' ' in arg or '\t' in arg):
+        arg = '"' + arg + '"'
+    return arg
+
+def _write_response_file(args):
+    fd, path = tempfile.mkstemp(prefix='rtthread-', suffix='.rsp')
+    with os.fdopen(fd, 'w') as f:
+        # A space separator matches the original command line: whitespace
+        # inside quotes stays part of the argument, as it does on Windows.
+        f.write(' '.join(_response_file_arg(arg) for arg in args))
+    return path
 
 class Win32Spawn:
+    def __init__(self, gnu_response_file=False):
+        self.gnu_response_file = gnu_response_file
+
     def spawn(self, sh, escape, cmd, args, env):
         # deal with the cmd build-in commands which cannot be used in
         # subprocess.Popen
@@ -41,6 +65,11 @@ class Win32Spawn:
         newargs = ' '.join(args[1:])
         cmdline = cmd + " " + newargs
 
+        rsp = None
+        if self.gnu_response_file and len(cmdline) > _WIN32_CMDLINE_LIMIT:
+            rsp = _write_response_file(args[1:])
+            cmdline = cmd + ' @"' + rsp + '"'
+
         # Make sure the env is constructed by strings
         _e = dict([(k, str(v)) for k, v in env.items()])
 
@@ -51,15 +80,20 @@ class Win32Spawn:
         os.environ['PATH'] = _e['PATH']
 
         try:
-            proc = subprocess.Popen(cmdline, env=_e, shell=False)
-        except Exception as e:
-            print('Error in calling command:' + cmdline.split(' ')[0])
-            print('Exception: ' + os.strerror(e.errno))
-            if (os.strerror(e.errno) == "No such file or directory"):
-                print ("\nPlease check Toolchains PATH setting.\n")
+            try:
+                proc = subprocess.Popen(cmdline, env=_e, shell=False)
+            except Exception as e:
+                print('Error in calling command:' + cmdline.split(' ')[0])
+                print('Exception: ' + str(e))
+                if e.errno == 2 and getattr(e, 'winerror', None) != 206:
+                    print ("\nPlease check Toolchains PATH setting.\n")
 
-            return e.errno
+                return e.errno
+            return proc.wait()
         finally:
             os.environ['PATH'] = old_path
-
-        return proc.wait()
+            if rsp is not None:
+                try:
+                    os.remove(rsp)
+                except OSError:
+                    pass

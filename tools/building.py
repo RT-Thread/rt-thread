@@ -328,7 +328,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
-        win32_spawn = Win32Spawn()
+        win32_spawn = Win32Spawn(rtconfig.PLATFORM == 'gcc')
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
 
@@ -473,7 +473,7 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
 
     # patch for win32 spawn
     if env['PLATFORM'] == 'win32':
-        win32_spawn = Win32Spawn()
+        win32_spawn = Win32Spawn(rtconfig.PLATFORM == 'gcc')
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
 
