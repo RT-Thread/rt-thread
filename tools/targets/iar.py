@@ -321,9 +321,19 @@ def IARProject(env, target, script):
                     path = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
                 state.text = path
 
+    from tempfile import NamedTemporaryFile
+
     xml_indent(root)
-    with open(target, 'w') as out:
-        out.write(etree.tostring(root, encoding='utf-8').decode())
+    temp_path = None
+    try:
+        with NamedTemporaryFile(mode='wb', dir=project_path, delete=False) as out:
+            temp_path = out.name
+            tree.write(out, encoding='utf-8', xml_declaration=True)
+        os.replace(temp_path, target)
+        temp_path = None
+    finally:
+        if temp_path is not None:
+            os.unlink(temp_path)
 
     # Determine the active configuration from the BSP via an optional board-specific hook.
     active_config = None
