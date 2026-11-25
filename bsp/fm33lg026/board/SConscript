@@ -1,0 +1,29 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB + '/libraries/CMSIS/Device/FM/FM33xx/Source/Templates'
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/gcc/startup_fm33lg0xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/ARM/startup_fm33lg0xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/iar/startup_fm33lg0xx.s']
+
+# FM33LG0XX
+# You can select chips from the list above
+CPPDEFINES = ['FM33LG0XX']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

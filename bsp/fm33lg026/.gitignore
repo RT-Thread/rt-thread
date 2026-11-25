@@ -1,0 +1,7 @@
+# Keil MDK user files
+*.uvguix.*
+*.uvoptx
+*.scvd
+
+# Build output
+build/
