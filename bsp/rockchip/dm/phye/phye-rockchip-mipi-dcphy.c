@@ -8,13 +8,8 @@
  * 2023-09-23     GuEe-GUI     first version
  */
 
-#include <drivers/clk.h>
-#include <drivers/misc.h>
-#include <drivers/ofw_io.h>
-#include <drivers/phye.h>
-#include <drivers/platform.h>
-#include <drivers/reset.h>
-#include <drivers/syscon.h>
+#include <rtdevice.h>
+#include <rtthread.h>
 
 #define DBG_TAG "phye.dcphy"
 #define DBG_LVL DBG_INFO
@@ -467,7 +462,7 @@ static rt_err_t rk_mipi_dcphy_probe(struct rt_platform_device *pdev)
 
     dev->user_data = dcphy;
 
-    LOG_I("MIPI DCPHY %s probed", np->name);
+    LOG_D("MIPI DCPHY %s probed", np->name);
 
     return RT_EOK;
 

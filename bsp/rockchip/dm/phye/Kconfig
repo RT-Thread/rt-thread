@@ -24,3 +24,21 @@ config RT_PHYE_ROCKCHIP_INNO_DSIDPHY
     depends on RT_USING_PHYE
     depends on RT_USING_CLK
     default n
+
+config RT_PHYE_ROCKCHIP_HDPTX_HDMI
+    bool "Rockchip Samsung HDPTX HDMI PHY (rk3588)"
+    depends on RT_USING_PHYE
+    depends on RT_USING_CLK
+    depends on RT_MFD_SYSCON
+    default n
+
+config RT_PHYE_ROCKCHIP_INNO_HDMI
+    bool "Rockchip Innosilicon HDMI PHY (rk3528)"
+    depends on RT_USING_PHYE
+    depends on RT_USING_CLK
+    depends on RT_USING_PIN
+    depends on RT_MFD_SYSCON
+    default n
+    help
+        RK3528 HDMI PHY and clk_hdmiphy_pixel_io provider.
+        Supports table-based 8-bit RGB TMDS clocks up to 297 MHz.

@@ -17,7 +17,9 @@
 #define VOP2FB_VP_STRIDE                            0x100
 
 #define VOP2_VP_DSP_CTRL                            0xC00
+#define VOP2_VP_CLK_CTRL                            0xC0C
 #define VOP2_VP_DSP_BG                              0xC2C
+#define VOP2_VP_BCSH_CTRL                           0xC60
 #define RK3568_VP0_PRE_SCAN_HTIMING                 0xC30
 #define RK3568_VP0_POST_DSP_HACT_INFO               0xC34
 #define RK3568_VP0_POST_DSP_VACT_INFO               0xC38
@@ -28,6 +30,15 @@
 #define VOP2_VP_DSP_HACT_ST_END                     0xC4C
 #define VOP2_VP_DSP_VTOTAL_VS_END                   0xC50
 #define VOP2_VP_DSP_VACT_ST_END                     0xC54
+#define VOP2_VP_BCSH_CTRL                           0xC60
+#define VOP2_VP_BCSH_BCS                            0xC64
+#define VOP2_VP_BCSH_COLOR                          0xC6C
+
+#define VOP2_VP_BCSH_R2Y_EN_SHIFT                   4
+#define VOP2_VP_BCSH_Y2R_CSC_MODE_SHIFT             2
+#define VOP2_VP_BCSH_R2Y_CSC_MODE_SHIFT             6
+#define VOP2_VP_BCSH_OUT_MODE_NORMAL                (3U << 30)
+#define VOP2_VP_BCSH_EN_SHIFT                       31
 
 #define VOP2_OVL_CTRL                               0x600
 #define VOP2_OVL_MODE_SEL_SHIFT                     0
@@ -37,10 +48,12 @@
 #define RK3568_BG_MIX_CTRL_MASK                     0xff
 #define RK3568_BG_MIX_CTRL_SHIFT                    24
 #define RK3568_OVL_LAYERSEL_REGDONE_IMD_SHIFT       28
+#define RK3588_OVL_CFG_DONE_PORT_SHIFT              30
 #define RK3568_POST_HORIZONTAL_SCALEDOWN_EN_SHIFT   0
 #define RK3568_POST_VERTICAL_SCALEDOWN_EN_SHIFT     1
 
 #define RK3568_DSP_IF_EN                            0x028
+#define RK3568_DSP_IF_CTRL                          0x02c
 #define RK3568_DSP_IF_POL                           0x030
 
 #define RK3568_VP0_INT_EN                           0x0A0
@@ -52,6 +65,19 @@
 #define VOP2_VP_OUT_MODE_MASK                       0xf
 #define VOP2_VP_PRE_DITHER_DOWN_EN_SHIFT            16
 #define VOP2_VP_DITHER_DOWN_EN_SHIFT                17
+#define VOP2_VP_POST_DSP_OUT_R2Y_SHIFT              15
+#define VOP2_VP_DSP_DATA_SWAP_SHIFT                 8
+#define VOP2_VP_DSP_RG_SWAP_SHIFT                   10
+#define VOP2_VP_DSP_RB_SWAP_SHIFT                   9
+#define VOP2_VP_BCSH_R2Y_EN_SHIFT                   4
+#define VOP2_VP_BCSH_R2Y_CSC_MODE_SHIFT             6
+#define VOP2_VP_GAMMA_UPDATE_EN_SHIFT               22
+#define VOP2_VP_DSP_LUT_EN_SHIFT                    28
+
+#define RK3588_GAMMA_LUT_LEN                        1024
+#define RK3588_LUT_PORT_GAMMA_SHIFT                 12
+#define RK3588_LUT_PORT_GAMMA_MASK                  0x3
+
 
 #define RK3568_HDMI0_EN_SHIFT                       1
 #define RK3568_EDP0_EN_SHIFT                        3
@@ -80,6 +106,18 @@
 #define RK3568_IF_CTRL_RGB_DCLK_POL_SHIFT           3
 #define RK3568_IF_CTRL_RGB_PIN_POL_SHIFT            0
 #define RK3568_IF_PIN_POL_MASK                      0x7
+
+/* RK3588 HDMI0 uses the HDMI/eDP combo0 interface. */
+#define RK3588_HDMI0_EN_SHIFT                       3
+#define RK3588_HDMI0_MUX_SHIFT                      16
+#define RK3588_HDMI0_DCLK_DIV_SHIFT                 16
+#define RK3588_HDMI0_PIXCLK_DIV_SHIFT               18
+
+#define RK3588_GRF_VOP_CON2                         0x0008
+#define RK3588_GRF_VOP_HDMI0_EN                     RT_BIT(1)
+#define RK3588_GRF_VO1_CON0                         0x0000
+#define RK3588_GRF_VO1_HDMI0_PIN_POL_SHIFT          5
+#define RK3588_GRF_VO1_HDMI_PIN_POL_MASK            0x3
 
 #define RK3568_HSYNC_POSITIVE                       RT_BIT(0)
 #define RK3568_VSYNC_POSITIVE                       RT_BIT(1)

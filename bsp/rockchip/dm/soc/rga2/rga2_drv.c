@@ -485,6 +485,7 @@ static rt_err_t rockchip_rga2_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id rockchip_rga2_ofw_ids[] =
 {
     { .compatible = "rockchip,rga2" },
+    { .compatible = "rockchip,rga2_core0" },
     { /* sentinel */ }
 };
 
