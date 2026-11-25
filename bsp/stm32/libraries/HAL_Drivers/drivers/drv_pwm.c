@@ -165,10 +165,11 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
 
     stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
-/* Some series may only have APBPERIPH_BASE, don't have HAL_RCC_GetPCLK2Freq */
-#if defined(APBPERIPH_BASE)
+#if defined(SOC_SERIES_STM32N6)
+    tim_clock = HAL_RCCEx_GetTIMGFreq();
+#elif defined(APBPERIPH_BASE)
     tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
-#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+#elif defined(APB2PERIPH_BASE)
     if ((rt_uint32_t)htim->Instance >= APB2PERIPH_BASE)
     {
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler);
@@ -177,10 +178,8 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
     {
         tim_clock = (rt_uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler);
     }
-#endif
-
-#if defined(SOC_SERIES_STM32N6)
-    tim_clock = HAL_RCCEx_GetTIMGFreq();
+#else
+    tim_clock = 0;
 #endif
 
     return tim_clock;
@@ -257,7 +256,8 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc = period / MAX_PERIOD + 1;
+    /* Use the minimum prescaler while reserving one count for 100% duty cycle. */
+    psc = period > 0 ? (period - 1) / MAX_PERIOD + 1 : 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
 
@@ -297,7 +297,8 @@ static rt_err_t drv_pwm_set_period(TIM_HandleTypeDef *htim, struct rt_pwm_config
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc = period / MAX_PERIOD + 1;
+    /* Use the minimum prescaler while reserving one count for 100% duty cycle. */
+    psc = period > 0 ? (period - 1) / MAX_PERIOD + 1 : 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
 
