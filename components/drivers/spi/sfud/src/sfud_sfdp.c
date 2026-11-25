@@ -67,7 +67,7 @@ static bool read_sfdp_header(sfud_flash *flash);
 static bool read_basic_header(const sfud_flash *flash, sfdp_para_header *basic_header);
 static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header);
 #ifdef SFUD_USING_OSPI
-static void read_ospi_erase_cmd(sfud_flash *flash);
+static void read_erase_cmd_4b(sfud_flash *flash);
 #endif
 
 /* ../port/sfup_port.c */
@@ -93,7 +93,7 @@ bool sfud_read_sfdp(sfud_flash *flash)
 #ifdef SFUD_USING_OSPI
         if (result)
         {
-            read_ospi_erase_cmd(flash);
+            read_erase_cmd_4b(flash);
         }
 #endif
         return result;
@@ -345,7 +345,8 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header)
             sfdp->eraser[j].size = 1L << table[28 + 2 * i];
             sfdp->eraser[j].cmd = table[28 + 2 * i + 1];
 #ifdef SFUD_USING_OSPI
-            sfdp->eraser[j].ospi_cmd = sfdp->eraser[j].cmd;
+            sfdp->eraser[j].cmd_4b = sfdp->eraser[j].cmd;
+            sfdp->eraser[j].type_index = i;
 #endif
             SFUD_DEBUG("Flash device supports %ldKB block erase. Command is 0x%02X.", sfdp->eraser[j].size / 1024,
                        sfdp->eraser[j].cmd);
@@ -369,9 +370,12 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header)
                     sfdp->eraser[j].size = temp_size;
                     sfdp->eraser[j].cmd = temp_cmd;
 #ifdef SFUD_USING_OSPI
-                    uint8_t temp_ospi_cmd = sfdp->eraser[i].ospi_cmd;
-                    sfdp->eraser[i].ospi_cmd = sfdp->eraser[j].ospi_cmd;
-                    sfdp->eraser[j].ospi_cmd = temp_ospi_cmd;
+                    uint8_t temp_cmd_4b = sfdp->eraser[i].cmd_4b;
+                    uint8_t temp_type_index = sfdp->eraser[i].type_index;
+                    sfdp->eraser[i].cmd_4b = sfdp->eraser[j].cmd_4b;
+                    sfdp->eraser[i].type_index = sfdp->eraser[j].type_index;
+                    sfdp->eraser[j].cmd_4b = temp_cmd_4b;
+                    sfdp->eraser[j].type_index = temp_type_index;
 #endif
                 }
             }
@@ -383,14 +387,14 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header)
 }
 
 #ifdef SFUD_USING_OSPI
-static void read_ospi_erase_cmd(sfud_flash *flash)
+static void read_erase_cmd_4b(sfud_flash *flash)
 {
     sfud_sfdp *sfdp = &flash->sfdp;
     uint8_t header[8] = { 0 };
     uint8_t map[8] = { 0 };
-    int h;
+    int h, j;
 
-    /* Find the sector map table (0x84) and read the OPI erase commands. */
+    /* Find the 4-byte address instruction table (0x84) and read the 4-byte erase commands. */
     for (h = 0; h < 8; h++)
     {
         uint32_t header_addr = 8 + (uint32_t)h * 8;
@@ -414,13 +418,18 @@ static void read_ospi_erase_cmd(sfud_flash *flash)
             {
                 return;
             }
-            if (map_len >= 6 && map[4] != 0x00 && map[4] != 0xFF && sfdp->eraser[0].size != 0)
+            /* Match the 4-byte command to the eraser by its BFPT erase type index. */
+            for (j = 0; j < SFUD_SFDP_ERASE_TYPE_MAX_NUM; j++)
             {
-                sfdp->eraser[0].ospi_cmd = map[4];
-            }
-            if (map_len >= 6 && map[5] != 0x00 && map[5] != 0xFF && sfdp->eraser[1].size != 0)
-            {
-                sfdp->eraser[1].ospi_cmd = map[5];
+                uint8_t type_index = sfdp->eraser[j].type_index;
+                if (sfdp->eraser[j].size == 0 || type_index >= 4)
+                {
+                    continue;
+                }
+                if (map[4 + type_index] != 0x00 && map[4 + type_index] != 0xFF)
+                {
+                    sfdp->eraser[j].cmd_4b = map[4 + type_index];
+                }
             }
         }
     }

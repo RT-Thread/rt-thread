@@ -307,7 +307,8 @@ typedef struct
         uint32_t size;                           /**< erase sector size (bytes). 0x00: not available */
         uint8_t cmd;                             /**< erase command */
 #ifdef SFUD_USING_OSPI
-        uint8_t ospi_cmd;                        /**< OPI erase command base opcode */
+        uint8_t cmd_4b;                          /**< erase command for 4-byte addressing */
+        uint8_t type_index;                      /**< erase type index (0-based) in the BFPT */
 #endif
     } eraser[SFUD_SFDP_ERASE_TYPE_MAX_NUM];      /**< supported eraser types table */
     //TODO lots of fast read-related stuff (like modes supported and number of wait states/dummy cycles needed in each)

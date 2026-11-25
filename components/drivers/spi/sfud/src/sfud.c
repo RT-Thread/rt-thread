@@ -841,7 +841,7 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size)
 #ifdef SFUD_USING_OSPI
             if (spi->ospi_write_read && spi->get_ospi_mode && (spi->get_ospi_mode(spi) != SFUD_OSPI_MODE_OFF))
             {
-                cur_erase_cmd = flash->sfdp.eraser[eraser_index].ospi_cmd;
+                cur_erase_cmd = flash->sfdp.eraser[eraser_index].cmd_4b;
             }
 #endif
             cur_erase_size = flash->sfdp.eraser[eraser_index].size;
