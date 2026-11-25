@@ -63,7 +63,11 @@ struct dfs_vnode
 
     struct dfs_mnt *mnt;    /* which mounted file system does this vnode belong to */
 
+#ifdef RT_USING_DFS_LARGE_FILE
+    off_t size;
+#else
     size_t size;
+#endif
     uint32_t nlink;
 
     const struct dfs_file_ops *fops;
