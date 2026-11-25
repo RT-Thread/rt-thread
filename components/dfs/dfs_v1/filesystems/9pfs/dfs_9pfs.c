@@ -205,6 +205,11 @@ int p9_transaction(struct p9_connection *conn,
         return P9_TRANSPORT_ERROR;
     }
 
+    if (rx_size < P9_MSG_TAG + sizeof(rt_uint16_t) || rx_size > conn->msg_size)
+    {
+        return P9_READ_UNEXPECTED_DATA;
+    }
+
     if (get_rx_value16_of(conn, P9_MSG_TAG) !=
         get_tx_value16_of(conn, P9_MSG_TAG))
     {
@@ -213,10 +218,16 @@ int p9_transaction(struct p9_connection *conn,
 
     if (get_rx_value8_of(conn, P9_MSG_ID) == P9_MSG_ERR)
     {
-        rt_uint32_t err_len = rt_min_t(rt_uint32_t, sizeof(conn->error) - 1,
-                                       get_rx_value16_of(conn, P9_MSG_ERR_STR_LEN));
+        rt_uint32_t err_len = 0;
 
-        rt_strncpy(conn->error, (void *)&conn->rx_buffer[P9_MSG_ERR_STR], err_len);
+        if (rx_size >= P9_MSG_ERR_STR)
+        {
+            err_len = rt_min_t(rt_uint32_t, sizeof(conn->error) - 1,
+                               get_rx_value16_of(conn, P9_MSG_ERR_STR_LEN));
+            err_len = rt_min_t(rt_uint32_t, err_len, rx_size - P9_MSG_ERR_STR);
+            rt_strncpy(conn->error, (void *)&conn->rx_buffer[P9_MSG_ERR_STR], err_len);
+        }
+        conn->error[err_len] = '\0';
 
         return P9_R_ERROR;
     }
@@ -699,7 +710,7 @@ static int dfs_9pfs_close(struct dfs_file *fd)
 
 static ssize_t dfs_9pfs_read(struct dfs_file *fd, void *buf, size_t count)
 {
-    int rc;
+    int rc = 0; /* the loop below may not run at all (count == 0) */
     size_t tcount = 0;
     rt_uint32_t max_count, set, size, got, rx_size = 0;
     struct p9_file *p9f = fd->vnode->data;
@@ -725,43 +736,53 @@ static ssize_t dfs_9pfs_read(struct dfs_file *fd, void *buf, size_t count)
 
         if (!(rc = p9_transaction(conn, size, &rx_size)))
         {
-            if (rx_size < P9_MSG_READ_DATA)
+            if (rx_size < P9_MSG_READ_DATA || rx_size > conn->msg_size)
             {
-                /* the reply does not even hold the count field */
-                tcount = p9_to_fs_err(P9_READ_UNEXPECTED_DATA);
+                /* the reply does not hold the count field or exceeds rx_buffer */
+                rc = P9_READ_UNEXPECTED_DATA;
                 break;
             }
 
             got = get_rx_value32_of(conn, P9_MSG_READ_COUNT);
 
             /*
-             * Never trust the wire: the file data must fit into the data
-             * that was actually received.
+             * Never trust the wire: reject replies claiming more bytes
+             * than actually received or requested.
              */
-            if (got > rx_size - P9_MSG_READ_DATA)
-            {
-                got = rx_size - P9_MSG_READ_DATA;
-            }
-
             if (got == 0)
             {
+                /* end of file: report what has been read so far */
                 break;
             }
-            else if (got <= set)
+            else if (got <= set && got <= rx_size - P9_MSG_READ_DATA)
             {
                 fd->pos += got;
 
-                rt_memcpy(buf, conn->rx_buffer + P9_MSG_READ_DATA, got);
+                rt_memcpy((char *)buf + tcount, conn->rx_buffer + P9_MSG_READ_DATA, got);
             }
             else
             {
-                tcount = p9_to_fs_err(P9_READ_UNEXPECTED_DATA);
+                rc = P9_READ_UNEXPECTED_DATA;
                 break;
             }
 
             count -= got;
             tcount += got;
         }
+        else
+        {
+            break;
+        }
+    }
+
+    /*
+     * POSIX short read: a failure is only reported when nothing was
+     * transferred yet. Returning an error after some bytes have been moved
+     * would make the caller retry from the original offset.
+     */
+    if (rc != 0 && tcount == 0)
+    {
+        tcount = p9_to_fs_err(rc);
     }
 
     rt_mutex_release(&conn->lock);
@@ -771,9 +792,9 @@ static ssize_t dfs_9pfs_read(struct dfs_file *fd, void *buf, size_t count)
 
 static ssize_t dfs_9pfs_write(struct dfs_file *fd, const void *buf, size_t count)
 {
-    int rc;
+    int rc = 0; /* the loop below may not run at all (count == 0) */
     size_t tcount = 0;
-    rt_uint32_t max_count, set, size, got;
+    rt_uint32_t max_count, set, size, got, rx_size = 0;
     struct p9_file *p9f = fd->vnode->data;
     struct p9_connection *conn = p9f->connection;
 
@@ -793,27 +814,57 @@ static ssize_t dfs_9pfs_write(struct dfs_file *fd, const void *buf, size_t count
         size = put_value32(conn, size, p9f->fid);
         size = put_value64(conn, size, fd->pos);
         size = put_value32(conn, size, set);
-        rt_memcpy(conn->tx_buffer + P9_MSG_WRITE_DATA, buf, set);
+        rt_memcpy(conn->tx_buffer + P9_MSG_WRITE_DATA, (const char *)buf + tcount, set);
         size += set;
         put_tx_value32_of(conn, P9_MSG_SIZE, size);
 
-        if (!(rc = p9_transaction(conn, size, RT_NULL)))
+        if (!(rc = p9_transaction(conn, size, &rx_size)))
         {
+            if (rx_size < P9_MSG_WRITE_COUNT + sizeof(rt_uint32_t) ||
+                rx_size > conn->msg_size)
+            {
+                /* the reply does not hold the count field or exceeds rx_buffer */
+                rc = P9_READ_UNEXPECTED_DATA;
+                break;
+            }
+
             got = get_rx_value32_of(conn, P9_MSG_WRITE_COUNT);
 
-            if (got <= set)
+            if (got == 0)
             {
-                fd->pos += set;
+                /* no progress: retrying the same request would spin forever */
+                rc = P9_READ_UNEXPECTED_DATA;
+                break;
+            }
+            else if (got <= set)
+            {
+                /* the server may accept a short write */
+                fd->pos += got;
             }
             else
             {
-                tcount = p9_to_fs_err(P9_READ_UNEXPECTED_DATA);
+                rc = P9_READ_UNEXPECTED_DATA;
                 break;
             }
 
             count -= got;
             tcount += got;
         }
+        else
+        {
+            break;
+        }
+    }
+
+    /*
+     * POSIX short write: a failure is only reported when nothing was
+     * transferred yet. Returning an error after some bytes have been
+     * accepted would make the caller rewrite them from the original offset
+     * and duplicate the data.
+     */
+    if (rc != 0 && tcount == 0)
+    {
+        tcount = p9_to_fs_err(rc);
     }
 
     rt_mutex_release(&conn->lock);
@@ -886,9 +937,9 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
 
     if (!(rc = p9_transaction(conn, size, &rx_size)))
     {
-        if (rx_size < P9_MSG_READ_DATA)
+        if (rx_size < P9_MSG_READ_DATA || rx_size > conn->msg_size)
         {
-            /* the reply does not even hold the count field */
+            /* the reply does not hold the count field or exceeds rx_buffer */
             rt_mutex_release(&conn->lock);
             return -EIO;
         }
@@ -896,18 +947,23 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
         ret = get_rx_value32_of(conn, P9_MSG_READ_COUNT);
 
         /*
-         * Never trust the wire: the directory entries must fit into the
-         * data that was actually received.
+         * Never trust the wire: reject replies claiming more payload bytes
+         * than actually received.
          */
         if (ret > rx_size - P9_MSG_READ_DATA)
         {
-            ret = rx_size - P9_MSG_READ_DATA;
+            rt_mutex_release(&conn->lock);
+            return -EIO;
         }
         off = P9_MSG_READ_DATA - P9_MSG_STAT_SIZE;
 
-        for (int i = 0; (rt_int32_t)ret > 0; off += stat_size, ret -= stat_size, ++i)
+        for (int i = 0; ret > 0; off += stat_size, ret -= stat_size, ++i)
         {
-            if (ret < sizeof(rt_uint16_t))
+            rt_uint16_t name_len;
+            rt_uint16_t copy_len;
+
+            if (ret < sizeof(rt_uint16_t) ||
+                off + P9_MSG_STAT_SIZE + sizeof(rt_uint16_t) > rx_size)
             {
                 /* not even the size field of the next record is left */
                 break;
@@ -917,21 +973,17 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
              * size[2] type[2] dev[4] qid[1+4+8] mode[4] atime[4] mtime[4] length[8]
              */
             stat_size = get_rx_value16_of(conn, off + P9_MSG_STAT_SIZE) + sizeof(rt_uint16_t);
-            if (stat_size > ret)
+            if (stat_size < P9_MSG_STAT_NAME_LEN - P9_MSG_STAT_SIZE + sizeof(rt_uint16_t) ||
+                stat_size > ret ||
+                off + P9_MSG_STAT_SIZE + stat_size > rx_size)
             {
-                /* the record overruns the received data */
+                /* the record is malformed or overruns the received data */
                 break;
             }
 
             if (i < fd->pos)
             {
                 continue;
-            }
-
-            if (stat_size < P9_MSG_STAT_NAME_LEN - P9_MSG_STAT_SIZE + sizeof(rt_uint16_t))
-            {
-                /* the record cannot hold the fields up to the name length */
-                break;
             }
 
             if (get_rx_value16_of(conn, off + P9_MSG_STAT_TYPE) & P9_STAT_MODE_DIR)
@@ -953,17 +1005,26 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
              * n_gid[4]
              * n_muid[4]
              */
-            dirp->d_namlen = get_rx_value16_of(conn, off + P9_MSG_STAT_NAME_LEN);
-            if (P9_MSG_STAT_NAME - P9_MSG_STAT_SIZE + dirp->d_namlen > stat_size)
+            name_len = get_rx_value16_of(conn, off + P9_MSG_STAT_NAME_LEN);
+            if ((rt_uint32_t)(P9_MSG_STAT_NAME - P9_MSG_STAT_SIZE) + name_len > stat_size ||
+                off + P9_MSG_STAT_NAME + name_len > rx_size)
             {
-                /* the name overruns this record */
+                /* the name overruns this record or the received reply */
                 break;
             }
+
+            copy_len = rt_min_t(rt_uint16_t, name_len, sizeof(dirp->d_name) - 1);
+            if (copy_len > RT_UINT8_MAX)
+            {
+                copy_len = RT_UINT8_MAX;
+            }
+
+            dirp->d_namlen = (rt_uint8_t)copy_len;
             dirp->d_reclen = (rt_uint16_t)sizeof(struct dirent);
             rt_strncpy(dirp->d_name,
                        (void *)conn->rx_buffer + off + P9_MSG_STAT_NAME,
-                       dirp->d_namlen);
-            dirp->d_name[dirp->d_namlen] = '\0';
+                       copy_len);
+            dirp->d_name[copy_len] = '\0';
 
             if (!rt_strcmp(dirp->d_name, ".") || !rt_strcmp(dirp->d_name, ".."))
             {
