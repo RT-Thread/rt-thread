@@ -377,7 +377,7 @@ static inline output_gadget_t buffer_gadget(char *buffer, size_t buffer_size)
 static inline printf_size_t strnlen_s_(const char *str, printf_size_t maxsize)
 {
     const char *s;
-    for (s = str; *s && maxsize--; ++s);
+    for (s = str; maxsize && *s; ++s, --maxsize);
     return (printf_size_t)(s - str);
 }
 
@@ -1167,6 +1167,10 @@ static inline void format_string_loop(output_gadget_t *output, const char *forma
             {
                 const int precision_ = va_arg(args, int);
                 precision = precision_ > 0 ? (printf_size_t)precision_ : 0U;
+                if (precision_ < 0)
+                {
+                    flags &= ~FLAGS_PRECISION;
+                }
                 ADVANCE_IN_FORMAT_STRING(format);
             }
         }
@@ -1412,7 +1416,7 @@ static inline void format_string_loop(output_gadget_t *output, const char *forma
             }
             else
             {
-                printf_size_t l = strnlen_s_(p, precision ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
+                printf_size_t l = strnlen_s_(p, (flags & FLAGS_PRECISION) ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
                 // pre padding
                 if (flags & FLAGS_PRECISION)
                 {
@@ -1426,7 +1430,7 @@ static inline void format_string_loop(output_gadget_t *output, const char *forma
                     }
                 }
                 // string output
-                while ((*p != 0) && (!(flags & FLAGS_PRECISION) || precision))
+                while ((!(flags & FLAGS_PRECISION) || precision) && (*p != 0))
                 {
                     putchar_via_gadget(output, *(p++));
                     --precision;

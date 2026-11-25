@@ -37,6 +37,7 @@ import rtconfig
 import platform
 import logging
 from SCons.Script import *
+from SCons.Util import CLVar
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
@@ -682,10 +683,25 @@ def _PretreatListParameters(target_list):
 
     return True # permit to add this list to the parameter
 
+def _AppendGroupFlags(name, flags):
+    # BSPs may use argument lists, including arguments containing spaces.
+    # Tokenize group strings before appending to those lists; CLVar also
+    # handles the string LOCAL_*FLAGS additions in local_group().
+    if not isinstance(Env.get(name, ''), str):
+        Env[name] = CLVar(Env.get(name, []))
+        flags = CLVar(flags)
+    Env.AppendUnique(**{name: flags})
+
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
         return []
+
+    # Local groups concatenate strings even when no global flags are added.
+    for flag in ['CFLAGS', 'CCFLAGS', 'CXXFLAGS', 'LINKFLAGS', 'ASFLAGS']:
+        value = Env.get(flag, '')
+        if isinstance(value, (list, tuple)):
+            Env[flag] = CLVar(value)
 
     # find exist group and get path of group
     group_path = ''
@@ -708,15 +724,15 @@ def DefineGroup(name, src, depend, **parameters):
     if 'CFLAGS' in group:
         target = group['CFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CFLAGS = target)
+            _AppendGroupFlags('CFLAGS', target)
     if 'CCFLAGS' in group:
         target = group['CCFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CCFLAGS = target)
+            _AppendGroupFlags('CCFLAGS', target)
     if 'CXXFLAGS' in group:
         target = group['CXXFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CXXFLAGS = target)
+            _AppendGroupFlags('CXXFLAGS', target)
     if 'CPPPATH' in group:
         target = group['CPPPATH']
         if _PretreatListParameters(target) == True:
@@ -732,11 +748,11 @@ def DefineGroup(name, src, depend, **parameters):
     if 'LINKFLAGS' in group:
         target = group['LINKFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(LINKFLAGS = target)
+            _AppendGroupFlags('LINKFLAGS', target)
     if 'ASFLAGS' in group:
         target = group['ASFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(ASFLAGS = target)
+            _AppendGroupFlags('ASFLAGS', target)
     if 'LOCAL_CPPPATH' in group:
         paths = []
         for item in group['LOCAL_CPPPATH']:

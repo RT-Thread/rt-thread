@@ -1,0 +1,37 @@
+from building import *
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+if not GetDepend('RT_ASAN_USING_LIBC'):
+    SrcRemove(src, ['asan_libc.c'])
+CPPPATH = [cwd]
+CFLAGS = ''
+LINKFLAGS = ''
+
+if GetDepend('RT_ASAN_USING_LIBC') and rtconfig.PLATFORM != 'gcc':
+    raise RuntimeError('ASan libc wrappers require GCC and GNU ld --wrap')
+
+# DefineGroup adds CFLAGS/CXXFLAGS/LINKFLAGS to the shared build environment.
+# The runtime is provided here and does not need libasan.
+if rtconfig.PLATFORM == 'gcc':
+    CFLAGS = ' -fsanitize=kernel-address -fno-omit-frame-pointer'
+    LINKFLAGS = ' -fsanitize=kernel-address'
+    if GetDepend('RT_ASAN_USING_LIBC'):
+        libc_functions = ['memcpy', 'memmove', 'memset', 'strlen', 'strnlen',
+                          'strcpy', 'strncpy', 'strcat', 'strncat',
+                          'sprintf', 'vsprintf', 'snprintf', 'vsnprintf']
+        CFLAGS += ''.join(' -fno-builtin-' + name for name in libc_functions)
+        LINKFLAGS += ''.join(' -Wl,--wrap=' + name for name in libc_functions)
+
+# The ASan runtime itself must not be instrumented, otherwise it would
+# recurse infinitely. '-fno-sanitize=kernel-address' is appended after the
+# global '-fsanitize=kernel-address' and therefore overrides it.
+group = DefineGroup('asan', src, depend=['RT_USING_ASAN'], CPPPATH=CPPPATH,
+                    CFLAGS=CFLAGS, CXXFLAGS=CFLAGS, LINKFLAGS=LINKFLAGS,
+                    LOCAL_CFLAGS=' -fno-sanitize=kernel-address')
+
+# Do not extend in place: DefineGroup retains the runtime source list.
+group = group + SConscript('utest/SConscript')
+
+Return('group')
