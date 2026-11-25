@@ -1,0 +1,8 @@
+config RT_INPUT_TOUCHSCREEN_SUNXI_TPADC
+    bool "Allwinner Sunxi TPADC resistive touchscreen"
+    depends on RT_INPUT_TOUCHSCREEN
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_OFW
+    depends on RT_USING_PINCTRL
+    default n

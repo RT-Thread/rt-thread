@@ -65,8 +65,13 @@ static rt_ubase_t to_color(rt_ubase_t color, rt_ubase_t in_color_max, rt_ubase_t
 static rt_ubase_t gray_reordering(rt_ubase_t red, rt_ubase_t red_off,
                                   rt_ubase_t green, rt_ubase_t green_off,
                                   rt_ubase_t blue, rt_ubase_t blue_off,
-                                  rt_ubase_t in_color_max, rt_ubase_t out_color_max)
+                                  rt_ubase_t in_color_max, const struct fb_var_screeninfo *var)
 {
+    rt_ubase_t out_color_max = RT_GENMASK(var->green.length - 1, 0);
+
+    out_color_max = rt_max_t(rt_ubase_t, out_color_max, RT_GENMASK(var->red.length - 1, 0));
+    out_color_max = rt_max_t(rt_ubase_t, out_color_max, RT_GENMASK(var->blue.length - 1, 0));
+
     return to_grayscale(to_color(red, in_color_max, out_color_max),
                         to_color(green, in_color_max, out_color_max),
                         to_color(blue, in_color_max, out_color_max));
@@ -75,25 +80,23 @@ static rt_ubase_t gray_reordering(rt_ubase_t red, rt_ubase_t red_off,
 static rt_ubase_t rgb_reordering(rt_ubase_t red, rt_ubase_t red_off,
                                  rt_ubase_t green, rt_ubase_t green_off,
                                  rt_ubase_t blue, rt_ubase_t blue_off,
-                                 rt_ubase_t in_color_max, rt_ubase_t out_color_max)
+                                 rt_ubase_t in_color_max, const struct fb_var_screeninfo *var)
 {
-    return (to_color(red, in_color_max, out_color_max) << red_off) |
-           (to_color(green, in_color_max, out_color_max) << green_off) |
-           (to_color(blue, in_color_max, out_color_max) << blue_off);
+    return (to_color(red, in_color_max, RT_GENMASK(var->red.length - 1, 0)) << red_off) |
+           (to_color(green, in_color_max, RT_GENMASK(var->green.length - 1, 0)) << green_off) |
+           (to_color(blue, in_color_max, RT_GENMASK(var->blue.length - 1, 0)) << blue_off);
 }
 
 rt_err_t rt_graphic_logo_render(struct rt_graphic_device *gdev)
 {
     rt_err_t err;
-    int fb_color_max;
     rt_ubase_t xlate, none_alpha;
     rt_ubase_t red_off, green_off, blue_off;
-    rt_ubase_t red_mask, green_mask, blue_mask;
     rt_uint8_t *logo, *fb, bytes_per_pixel;
     rt_ubase_t (*color_reordering)(rt_ubase_t, rt_ubase_t,
                                    rt_ubase_t, rt_ubase_t,
                                    rt_ubase_t, rt_ubase_t,
-                                   rt_ubase_t, rt_ubase_t);
+                                   rt_ubase_t, const struct fb_var_screeninfo *);
     struct fb_var_screeninfo var;
     struct rt_device_rect_info rect;
     struct rt_device_graphic_info info;
@@ -162,13 +165,8 @@ rt_err_t rt_graphic_logo_render(struct rt_graphic_device *gdev)
     logo = startup_logo;
 
     red_off = var.red.offset;
-    red_mask = RT_GENMASK(var.red.length - 1, 0);
     green_off = var.green.offset;
-    green_mask = RT_GENMASK(var.green.length - 1, 0);
     blue_off = var.blue.offset;
-    blue_mask = RT_GENMASK(var.blue.length - 1, 0);
-
-    fb_color_max = rt_max_t(int, rt_max_t(int, red_mask, green_mask), blue_mask);
 
     if (var.transp.length)
     {
@@ -186,7 +184,7 @@ rt_err_t rt_graphic_logo_render(struct rt_graphic_device *gdev)
             rt_ubase_t color = color_reordering(logo[0], red_off,
                                                 logo[1], green_off,
                                                 logo[2], blue_off,
-                                                fb_color_max, startup_logo_color_max) |
+                                                startup_logo_color_max, &var) |
                                                 none_alpha;
 
             rt_memcpy(fb, &color, bytes_per_pixel);

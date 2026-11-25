@@ -1,0 +1,22 @@
+config RT_ADC_SUNXI_GPADC
+    bool "Allwinner Sunxi GPADC"
+    depends on RT_USING_ADC
+    depends on RT_USING_DM
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default n
+    help
+      Enable the General Purpose ADC found on supported Allwinner SoCs.
+
+config RT_INPUT_SUNXI_LRADC
+    bool "Allwinner Sunxi LRADC ladder keys"
+    depends on RT_USING_INPUT
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_OFW
+    depends on RT_USING_RESET
+    default n
+    help
+      Enable the low-resolution ADC keypad controller found on supported
+      Allwinner SoCs. The driver reads key voltage/code child nodes from the
+      LRADC device-tree node and registers one input device.

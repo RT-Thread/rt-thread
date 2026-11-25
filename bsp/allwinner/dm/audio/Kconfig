@@ -1,0 +1,85 @@
+config RT_AUDIO_SUNXI_CODEC
+    bool "Allwinner Sunxi integrated audio codec"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable playback through the F101 integrated DAC. The driver uses the
+      standard RT-Thread audio and DMA interfaces and supports 48 kHz-family
+      PCM sample rates with 16-, 24-, or 32-bit mono and stereo streams.
+
+config RT_AUDIO_SUN50I_H616_CODEC
+    bool "Allwinner H616 integrated audio codec"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable PCM playback through the H616 internal DAC and LINEOUT pins.
+      The driver supports 16- and 24/32-bit mono or stereo PCM in both
+      44.1 kHz and 48 kHz sample-rate families.
+
+config RT_AUDIO_SUN50I_H616_AHUB
+    bool "Allwinner H616 AHUB HDMI output"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_OFW
+    depends on RT_USING_RESET
+    depends on RT_GRAPHIC_FB_SUN50I_H616_DE33
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable PCM playback through the H616 Audio Hub's fixed APBIF0 to
+      internal HDMI I2S1 route. The driver pairs the AHUB DAUDIO node with
+      the APBIF0 DMA node supplied by firmware and supports 16-, 24-, and
+      32-bit HDMI LPCM streams with up to eight channels.
+
+config RT_AUDIO_SUNXI_I2S0
+    bool "Allwinner Sunxi I2S0 output"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable the F101 I2S0 controller as a standard RT-Thread audio output.
+      The controller is configured as an I2S clock master and supports the
+      48 kHz-family PCM rates up to 192 kHz with 16-, 24-, or 32-bit samples.
+
+config RT_AUDIO_SUNXI_OWA
+    bool "Allwinner Sunxi OWA output"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable the F101 OWA (S/PDIF) controller as a standard RT-Thread audio
+      output. It emits IEC 60958 PCM through the OWA TX pin and supports the
+      48 kHz-family PCM rates up to 192 kHz.

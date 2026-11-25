@@ -1,0 +1,6 @@
+config RT_RESET_SUN252I_F101
+    bool "Allwinner Sun252i F101 reset controller"
+    depends on RT_USING_RESET
+    depends on RT_USING_OFW
+    depends on RT_CLK_SUN252I_F101
+    default n
