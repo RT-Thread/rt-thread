@@ -31,5 +31,9 @@ config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
 
+config BSP_UART_DEFAULT_BAUDRATE
+    int "Default UART baud rate"
+    default 115200
+
 rsource "../libraries/drivers/Kconfig"
 rsource "../libraries/Kconfig"

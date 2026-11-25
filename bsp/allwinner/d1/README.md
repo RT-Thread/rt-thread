@@ -1,8 +1,18 @@
 # RT-Thread全志D1移植
 
-全志 d1-allwinner-nezha 属于 riscv64 平台
+全志 D1 是采用玄铁 C906 RV64 处理器的 RISC-V SoC。本 BSP 已在
+Sipeed Lichee RV 86 Panel 类 D1 硬件上验证 RT-Smart 启动和交互式
+`msh />` shell。
 
-## 编译环境搭建
+## 硬件配置
+
+- SoC：Allwinner D1
+- CPU：T-Head/XuanTie C906 RV64
+- 验证板卡：Sipeed Lichee RV 86 Panel 类 D1 板卡
+- 控制台：UART0，115200 8N1
+- 内核加载地址：`0x45000000`
+
+## 编译环境
 
 - 拉取 RT-Thread Smart的代码仓库 `git clone https://gitee.com/guozhanxin/rtthread-smart.git`
 
@@ -36,10 +46,19 @@
 
 ## 开发与编译
 
-- windows 下使用RT-Thread ENV 工具， `menuconfig` 配置工程，`scons` 编译工程
+- windows 下使用 RT-Thread ENV 工具，`menuconfig` 配置工程，`scons` 编译工程
 
-- ubuntu 下 使用shell 终端： `scons --menuconfig` 配置工程， `scons` 编译工程
+- Linux 下进入本 BSP 目录，设置包含
+  `riscv64-unknown-linux-musl-` 工具链的目录后编译：
 
+```sh
+cd bsp/allwinner/d1
+RTT_EXEC_PATH=/path/to/riscv64-musl-toolchain/bin scons -j
+sh generateimg.sh
+```
+
+生成的 `rtthread.img` 是加载地址和入口地址均为 `0x45000000` 的
+U-Boot legacy kernel image。
 
 ## 下载验证
 
