@@ -1,0 +1,11 @@
+menu "Touch Test"
+
+config RT_UTEST_TOUCH
+    bool "Touch framework Test"
+    default n
+    depends on RT_USING_TOUCH && !RT_TOUCH_PIN_IRQ
+    help
+        Run the touch framework test with a simulated device. No touch
+        hardware is required.
+
+endmenu
