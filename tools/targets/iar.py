@@ -23,9 +23,11 @@
 #
 
 import os
+import re
 import sys
 import string
 import utils
+from copy import deepcopy
 
 from SCons.Script import *
 
@@ -40,13 +42,14 @@ iar_workspace = r'''<?xml version="1.0" encoding="iso-8859-1"?>
 
 <workspace>
   <project>
-    <path>$WS_DIR$\%s</path>
-  </project>
+    <path>$WS_DIR$\%(project)s</path>
+  </project>%(active_config)s
   <batchBuild/>
 </workspace>
 
 
 '''
+
 
 def IARAddGroup(parent, name, files, project_path):
     group = SubElement(parent, 'group')
@@ -69,24 +72,146 @@ def IARAddGroup(parent, name, files, project_path):
         else:
             file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
-def IARWorkspace(target):
-    # make an workspace
+def _update_iar_wsdt(wsdt_path, project_name, active_config):
+    """Update <CurrentConfigs><Project> in the IAR session file to set the active configuration."""
+    config_str = '%s/%s' % (project_name, active_config)
+
+    if not os.path.exists(wsdt_path):
+        os.makedirs(os.path.dirname(wsdt_path), exist_ok=True)
+        tree = etree.ElementTree(etree.Element('Workspace'))
+    else:
+        tree = etree.parse(wsdt_path)
+
+    root = tree.getroot()
+    cfg_dict = root.find('ConfigDictionary')
+    if cfg_dict is None:
+        cfg_dict = SubElement(root, 'ConfigDictionary')
+    cur_cfgs = cfg_dict.find('CurrentConfigs')
+    if cur_cfgs is None:
+        cur_cfgs = SubElement(cfg_dict, 'CurrentConfigs')
+    proj_elem = cur_cfgs.find('Project')
+    if proj_elem is None:
+        proj_elem = SubElement(cur_cfgs, 'Project')
+    proj_elem.text = config_str
+    tree.write(wsdt_path, encoding='utf-8', xml_declaration=True)
+
+def _split_iar_linkflags(linkflags):
+    tokens = re.findall(r'(?:[^\s"]+|"[^"]*")+', linkflags)
+    if re.sub(r'\s+', '', ''.join(tokens)) != re.sub(r'\s+', '', linkflags):
+        raise ValueError('Invalid quoting in IAR linker flags: %s' % linkflags)
+
+    defines = []
+    extra = []
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token == '--config_def':
+            index += 1
+            if index == len(tokens):
+                raise ValueError('Missing value for --config_def')
+            define = tokens[index]
+        elif token.startswith('--config_def='):
+            define = token[len('--config_def='):]
+        else:
+            extra.append(token)
+            index += 1
+            continue
+
+        if define.startswith('"') and define.endswith('"'):
+            define = define[1:-1]
+        if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*=.+', define):
+            raise ValueError('Invalid IAR configuration definition: %s' % define)
+        defines.append(define)
+        index += 1
+
+    return defines, ' '.join(extra)
+
+def IARWorkspace(target, active_config=None):
+    # make an workspace, optionally setting the active configuration
     workspace = target.replace('.ewp', '.eww')
+    project_name = os.path.splitext(os.path.basename(target))[0]
+    active_elem = ''
+    if active_config:
+        active_elem = '\n  <activeConfig>\n    <name>%s/%s</name>\n  </activeConfig>' % (project_name, active_config)
     out = open(workspace, 'w')
-    xml = iar_workspace % target
+    xml = iar_workspace % {'project': target, 'active_config': active_elem}
     out.write(xml)
     out.close()
+
+def _prepare_existing_project(tree, template_tree):
+    root = tree.getroot()
+    template_root = template_tree.getroot()
+    managed_options = {
+        'CCIncludePath2', 'newCCIncludePaths', 'CCDefines',
+        'IlinkConfigDefines', 'IlinkUseExtraOptions', 'IlinkExtraOptions',
+        'IlinkAdditionalLibs',
+    }
+    if getattr(sys.modules.get('rtconfig'), 'IAR_USE_TEMPLATE_ICF', False):
+        managed_options.add('IlinkIcfFile')
+
+    def get_options(config):
+        options = {}
+        for settings in config.findall('settings'):
+            data = settings.find('data')
+            if data is None:
+                continue
+            for option in data.findall('option'):
+                name = option.findtext('name')
+                if name in managed_options:
+                    key = (settings.findtext('name'), name)
+                    if key in options:
+                        raise ValueError('Duplicate IAR option %s in configuration %s' %
+                                         (name, config.findtext('name')))
+                    options[key] = (data, option)
+        return options
+
+    templates = {}
+    for config in template_root.findall('configuration'):
+        name = config.findtext('name')
+        if not name or name in templates:
+            raise ValueError('Missing or duplicate IAR template configuration name: %s' % name)
+        templates[name] = config
+
+    existing_names = set()
+    for config in root.findall('configuration'):
+        name = config.findtext('name')
+        if not name or name in existing_names:
+            raise ValueError('Missing or duplicate IAR project configuration name: %s' % name)
+        existing_names.add(name)
+        if name not in templates:
+            raise ValueError('IAR project configuration %s is missing from template.ewp' % name)
+        existing_options = get_options(config)
+        template_options = get_options(templates[name])
+        if existing_options.keys() != template_options.keys():
+            raise ValueError('IAR generated options for configuration %s do not match template.ewp' % name)
+        for key, (data, option) in existing_options.items():
+            index = list(data).index(option)
+            data.remove(option)
+            data.insert(index, deepcopy(template_options[key][1]))
+
+    for name, config in templates.items():
+        if name not in existing_names:
+            root.append(deepcopy(config))
+
+    for group in root.findall('group'):
+        root.remove(group)
+    for group in template_root.findall('group'):
+        root.append(deepcopy(group))
 
 def IARProject(env, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
-    tree = etree.parse('template.ewp')
+    template_tree = etree.parse('template.ewp')
+    if os.path.exists(target) and os.path.getsize(target) > 0:
+        tree = etree.parse(target)
+        _prepare_existing_project(tree, template_tree)
+    else:
+        tree = template_tree
     root = tree.getroot()
-
-    out = open(target, 'w')
 
     CPPPATH = []
     CPPDEFINES = env.get('CPPDEFINES', [])
+
     LOCAL_CPPDEFINES = []
     LINKFLAGS = ''
     CFLAGS = ''
@@ -118,7 +243,7 @@ def IARProject(env, target, script):
 
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:
-            LINKFLAGS += group['LINKFLAGS']
+            LINKFLAGS += ' ' + group['LINKFLAGS']
 
         if 'LIBS' in group and group['LIBS']:
             for item in group['LIBS']:
@@ -136,6 +261,16 @@ def IARProject(env, target, script):
         inc = _make_path_relative(project_path, os.path.normpath(path))
         paths[inc] = None  # 使用 dict 去重并保持插入顺序
     paths = list(paths.keys())
+
+    config_defines, extra_linkflags = _split_iar_linkflags(LINKFLAGS)
+
+    if config_defines or extra_linkflags:
+        for config in tree.findall('configuration'):
+            names = [option.findtext('name') for option in config.findall('settings/data/option')]
+            if config_defines and 'IlinkConfigDefines' not in names:
+                raise ValueError('IAR configuration has no IlinkConfigDefines option')
+            if extra_linkflags and ('IlinkUseExtraOptions' not in names or 'IlinkExtraOptions' not in names):
+                raise ValueError('IAR configuration has no linker extra options')
 
     # setting options
     options = tree.findall('configuration/settings/data/option')
@@ -160,6 +295,23 @@ def IARProject(env, target, script):
                 state = SubElement(option, 'state')
                 state.text = define
 
+        if name.text == 'IlinkConfigDefines':
+            for define in config_defines:
+                state = SubElement(option, 'state')
+                state.text = define
+
+        if name.text == 'IlinkUseExtraOptions' and extra_linkflags:
+            state = option.find('state')
+            if state is None:
+                state = SubElement(option, 'state')
+            state.text = '1'
+
+        if name.text == 'IlinkExtraOptions' and extra_linkflags:
+            state = option.find('state')
+            if state is None:
+                state = SubElement(option, 'state')
+            state.text = ' '.join(filter(None, [state.text, extra_linkflags]))
+
         if name.text == 'IlinkAdditionalLibs':
             for path in Libs:
                 state = SubElement(option, 'state')
@@ -169,11 +321,57 @@ def IARProject(env, target, script):
                     path = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
                 state.text = path
 
-    xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8').decode())
-    out.close()
+    from tempfile import NamedTemporaryFile
 
-    IARWorkspace(target)
+    xml_indent(root)
+    temp_path = None
+    try:
+        with NamedTemporaryFile(mode='wb', dir=project_path, delete=False) as out:
+            temp_path = out.name
+            tree.write(out, encoding='utf-8', xml_declaration=True)
+        os.replace(temp_path, target)
+        temp_path = None
+    finally:
+        if temp_path is not None:
+            os.unlink(temp_path)
+
+    # Determine the active configuration from the BSP via an optional board-specific hook.
+    active_config = None
+    try:
+        import rtconfig
+        if hasattr(rtconfig, 'iar_get_active_config'):
+            active_config = rtconfig.iar_get_active_config()
+    except Exception as e:
+        print('Warning: could not get IAR active config: %s' % e)
+
+    IARWorkspace(target, active_config)
+
+    # update settings/project.wsdt to set the active configuration
+    if active_config:
+        wsdt_path = os.path.join('settings', os.path.splitext(os.path.basename(target))[0] + '.wsdt')
+
+        project_name = os.path.splitext(os.path.basename(target))[0]
+        _update_iar_wsdt(wsdt_path, project_name, active_config)
+
+        # The IAR IDE keeps the workspace/session state in memory and writes it
+        # back on close, which can overwrite the active configuration we just
+        # generated. Remind the user to close the workspace before regenerating.
+        print('IAR active configuration set to: %s' % active_config)
+        print('Note: if the IAR workspace (.eww) is currently open, close it '
+              'before regenerating the project, otherwise the active target '
+              'will not be updated.')
+
+    # Initialize debugger and build settings only when project files do not exist.
+    import shutil
+    ewd_template = os.path.join(project_path, 'template.ewd')
+    ewd_target   = target.replace('.ewp', '.ewd')
+    if os.path.exists(ewd_template) and not os.path.exists(ewd_target):
+        shutil.copy2(ewd_template, ewd_target)
+
+    ewt_template = os.path.join(project_path, 'template.ewt')
+    ewt_target   = target.replace('.ewp', '.ewt')
+    if os.path.exists(ewt_template) and not os.path.exists(ewt_target):
+        shutil.copy2(ewt_template, ewt_target)
 
 def IARPath():
     import rtconfig

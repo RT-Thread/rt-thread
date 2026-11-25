@@ -216,10 +216,24 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     return group
 
 # The common part of making MDK4/5 project
-def MDK45Project(env, tree, target, script):
+def MDK45Project(env, tree, target, script, target_names=None):
     project_path = os.path.dirname(os.path.abspath(target))
 
     root = tree.getroot()
+    targets = tree.findall('Targets/Target')
+    if target_names is None:
+        selected_targets = [targets[0]]
+    else:
+        target_names = set(target_names)
+        available_names = {node.findtext('TargetName') for node in targets}
+        missing_names = target_names - available_names
+        if missing_names:
+            raise ValueError('Keil targets not found in template: %s' % ', '.join(sorted(missing_names)))
+        selected_targets = [node for node in targets if node.findtext('TargetName') in target_names]
+        if not selected_targets:
+            raise ValueError('KEIL_BUILD_TARGETS must include at least one target')
+    first_target = selected_targets[0]
+
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
 
@@ -231,11 +245,14 @@ def MDK45Project(env, tree, target, script):
     CFLAGS = ''
     ProjectFiles = []
 
-    # add group
-    groups = tree.find('Targets/Target/Groups')
+    import copy
+
+    # add groups to the first target; they will be copied to the selected targets afterward
+    groups = first_target.find('Groups')
     if groups is None:
-        groups = SubElement(tree.find('Targets/Target'), 'Groups')
+        groups = SubElement(first_target, 'Groups')
     groups.clear() # clean old groups
+
     for group in script:
         group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
 
@@ -284,25 +301,43 @@ def MDK45Project(env, tree, target, script):
                     else:
                         group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
-    # write include path, definitions and link flags
-    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
     # Keep the same include path precedence as the SCons build environment.
     paths = [_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH]
-    IncludePath.text = ';'.join(dict.fromkeys(paths))
+    include_path_text = ';'.join(dict.fromkeys(paths))
+    define_text = ', '.join(set(CPPDEFINES))
 
-    Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
-    Define.text = ', '.join(set(CPPDEFINES))
+    for target_node in selected_targets:
+        if target_node is not first_target:
+            existing_groups = target_node.find('Groups')
+            if existing_groups is not None:
+                target_node.remove(existing_groups)
+            target_node.append(copy.deepcopy(groups))
 
-    if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
-        uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
-        uC99.text = '1'
+        inc = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+        if inc is not None:
+            inc.text = include_path_text
 
-    if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
-        uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
-        uGnu.text = '1'
+        dfn = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/Define')
+        if dfn is not None:
+            dfn.text = define_text
 
-    Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
-    Misc.text = LINKFLAGS
+        if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
+            uC99 = target_node.find('TargetOption/TargetArmAds/Cads/uC99')
+            if uC99 is not None:
+                uC99.text = '1'
+
+        if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
+            uGnu = target_node.find('TargetOption/TargetArmAds/Cads/uGnu')
+            if uGnu is not None:
+                uGnu.text = '1'
+
+        misc = target_node.find('TargetOption/TargetArmAds/LDads/Misc')
+        if misc is not None:
+            if target_names is None:
+                misc.text = LINKFLAGS
+            else:
+                template_flags = (misc.text or '').strip()
+                misc.text = ' '.join(filter(None, (template_flags, LINKFLAGS.strip())))
 
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode())
@@ -355,7 +390,8 @@ def MDK5Project(env, target, script):
 
     template_tree = etree.parse('template.uvprojx')
 
-    MDK45Project(env, template_tree, target, script)
+    import rtconfig
+    MDK45Project(env, template_tree, target, script, getattr(rtconfig, 'KEIL_BUILD_TARGETS', None))
 
     # remove project.uvopt file
     project_uvopt = os.path.abspath(target).replace('uvprojx', 'uvoptx')
@@ -364,21 +400,44 @@ def MDK5Project(env, target, script):
     # copy uvopt file
     if os.path.exists('template.uvoptx'):
         import shutil
-        shutil.copy2('template.uvoptx', '{}.uvoptx'.format(os.path.splitext(target)[0]))
-        # build with UV4.exe
+        project_uvoptx = '{}.uvoptx'.format(os.path.splitext(target)[0])
+        shutil.copy2('template.uvoptx', project_uvoptx)
 
+        # Set the active target from the BSP via an optional board-specific hook.
+        # The hook returns the active target name so we build the matching target.
+        active_target_name = None
+        try:
+            import rtconfig
+            if hasattr(rtconfig, 'update_keil_active_target'):
+                active_target_name = rtconfig.update_keil_active_target(project_uvoptx)
+        except Exception as e:
+            print('Warning: could not set Keil active target: %s' % e)
+
+        # build with UV4.exe
         if shutil.which('UV4.exe') is not None:
-            target_name = template_tree.find('Targets/Target/TargetName')
-            print('target_name:', target_name.text)
+            # Prefer the active target reported by the BSP hook; fall back to the
+            # template's first target only when no hook is available.
+            if not active_target_name:
+                target_name = template_tree.find('Targets/Target/TargetName')
+                active_target_name = target_name.text
+            print('target_name:', active_target_name)
+
+            # Use the actual generated project file name (honors --project-name).
+            uvprojx_name = os.path.basename(target)
+
             log_file_path = 'keil.log'
             if os.path.exists(log_file_path):
                 os.remove(log_file_path)
             log_thread = threading.Thread(target=monitor_log_file, args=(log_file_path,))
             log_thread.start()
-            cmd = 'UV4.exe -b project.uvprojx -q -j0 -t '+ target_name.text +' -o '+log_file_path
+            import subprocess
+            cmd = [
+                'UV4.exe', '-b', uvprojx_name, '-q', '-j0',
+                '-t', active_target_name, '-o', log_file_path,
+            ]
             print('Start to build keil project')
-            print(cmd)
-            os.system(cmd)
+            print(subprocess.list2cmdline(cmd))
+            subprocess.run(cmd, check=False)
         else:
             print('UV4.exe is not available, please check your keil installation')
 
