@@ -1003,9 +1003,15 @@ static void ulog_voutput_ctx(rt_uint32_t level, const char *tag, rt_bool_t newli
     {
         /* a synchronous backend is logging again: format into a static buffer
          * as wide as the console buffer and print it directly, so that the
-         * message is not truncated and the va_list is never handed to
-         * rt_kprintf() as an ordinary argument */
+         * va_list is never handed to rt_kprintf() as an ordinary argument.
+         * The buffer follows RT_CONSOLEBUF_SIZE, not ULOG_LINE_BUF_SIZE: the
+         * message is going to the console, and it must not be cut by the ulog
+         * line buffer before rt_kprintf() gets a chance to print it. */
+#ifdef RT_CONSOLEBUF_SIZE
+        static char recursion_buf[RT_CONSOLEBUF_SIZE];
+#else
         static char recursion_buf[ULOG_LINE_BUF_SIZE];
+#endif
 
         rt_vsnprintf(recursion_buf, sizeof(recursion_buf), format, args);
         rt_kprintf("%s", recursion_buf);
