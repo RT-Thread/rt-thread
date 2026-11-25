@@ -164,6 +164,10 @@ jobs:
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/i2c.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/can.cfg"
+          - platform: { UTEST: "A9-smp",        RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "components/can.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/dlmodule.cfg"
 
     env:
@@ -347,6 +351,12 @@ jobs:
             grep -q '^#define RT_UTEST_DLMODULE' $TEST_BSP_ROOT/rtconfig.h
             python3 tools/ci/test_run_dlmodule_qemu.py
           fi
+          if [[ "$TEST_CONFIG_FILE" == "components/can.cfg" ]]; then
+            if ! grep -Eq '^#define[[:space:]]+RT_UTEST_CAN_FRAMEWORK([[:space:]]|$)' "$TEST_BSP_ROOT/rtconfig.h"; then
+              echo "Error: CAN Framework utest is not enabled in rtconfig.h."
+              exit 1
+            fi
+          fi
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
       - name: QEMU Run Test
@@ -442,9 +452,24 @@ jobs:
                 -append "console=ttyS0 earlycon=sbi" \
                 > qemu_output_$TEST_QEMU_ARCH.log 2>&1 &
           elif [[ "${{ matrix.platform.QEMU_ARCH }}"  == "arm" ]]; then 
+            qemu_smp_args=()
+            if [[ "$TEST_CONFIG_FILE" == "components/can.cfg" ]]; then
+              if [[ "${{ matrix.platform.SMP_RUN }}" == "smp" ]]; then
+                cpus=$(awk '$1 == "#define" && $2 == "RT_CPUS_NR" {print $3}' "$TEST_BSP_ROOT/rtconfig.h")
+                if ! grep -Eq '^#define[[:space:]]+RT_USING_SMP([[:space:]]|$)' "$TEST_BSP_ROOT/rtconfig.h" ||
+                   [[ ! "$cpus" =~ ^[0-9]+$ ]] || (( cpus < 2 )); then
+                  echo "Error: CAN SMP test requires an SMP configuration with at least two CPUs."
+                  exit 1
+                fi
+                qemu_smp_args=(-smp "$cpus")
+              else
+                qemu_smp_args=(-smp 1)
+              fi
+            fi
             qemu-system-$TEST_QEMU_ARCH \
                 -nographic \
                 -M $TEST_QEMU_MACHINE \
+                "${qemu_smp_args[@]}" \
                 -kernel $TEST_BSP_ROOT/rtthread.bin  \
                 -sd $TEST_BSP_ROOT/sd.bin  \
                 > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
@@ -558,6 +583,14 @@ jobs:
         run: |
           testcase=components.drivers.i2c.framework
           if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" qemu_output_${TEST_QEMU_ARCH}.log; then
+            echo "Error: $testcase did not report a passing result."
+            exit 1
+          fi
+      - name: Verify CAN test execution
+        if: ${{ matrix.config_file == 'components/can.cfg' }}
+        run: |
+          testcase=components.drivers.can.can_framework_tc
+          if ! grep -Fq "[  PASSED  ] [ result   ] testcase ($testcase)" "qemu_output_${TEST_QEMU_ARCH}.log"; then
             echo "Error: $testcase did not report a passing result."
             exit 1
           fi
