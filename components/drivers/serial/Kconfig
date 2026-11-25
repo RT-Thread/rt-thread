@@ -12,6 +12,31 @@ menuconfig RT_USING_SERIAL
                 bool "RT_USING_SERIAL_V1"
             config RT_USING_SERIAL_V2
                 bool "RT_USING_SERIAL_V2"
+                help
+                    Enable the Serial V2 device driver framework, which unifies
+                    polling, interrupt, and DMA transfers behind blocking and
+                    non-blocking I/O modes (RT_SERIAL_RX_BLOCKING /
+                    RT_SERIAL_RX_NON_BLOCKING and RT_SERIAL_TX_BLOCKING /
+                    RT_SERIAL_TX_NON_BLOCKING).
+
+                    When enabled, the build compiles dev_serial_v2.c and includes
+                    drivers/dev_serial_v2.h instead of the V1 implementation.
+                    Buffer sizes are configured per device via rx_bufsz and
+                    tx_bufsz in struct serial_configure (allocated dynamically on
+                    open when non-zero, or using polling when set to 0), and
+                    RX ringbuffer overflow handling is controlled by
+                    RT_USING_SERIAL_MODE.
+
+                    Requires RT_USING_SERIAL (with RT_USING_DEVICE and
+                    RT_USING_DEVICE_IPC), RT_USING_HEAP when buffered RX/TX is
+                    used, and a BSP UART driver adapted to Serial V2
+                    rt_uart_ops (including a valid transmit callback).
+
+                    Mutually exclusive with RT_USING_SERIAL_V1 and disables the
+                    global RT_SERIAL_RB_BUFSZ option. Applications and BSP
+                    drivers written for legacy V1 open flags
+                    (RT_DEVICE_FLAG_INT_RX/TX, RT_DEVICE_FLAG_DMA_RX/TX) are
+                    incompatible without adaptation.
         endchoice
 
         choice RT_USING_SERIAL_MODE
