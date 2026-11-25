@@ -1,0 +1,22 @@
+config RT_ETHERNET_REALTEK
+    bool "Realtek RTL8125 Ethernet"
+    depends on RT_USING_PCI
+    depends on !RT_LWIP_USING_HW_CHECKSUM
+    default n
+    help
+        Enable the RT-Thread native PCI driver for Realtek RTL8125/RTL8162
+        Ethernet controllers. The driver implements one TX/RX queue, interrupt
+        driven receive, descriptor-ring DMA, link change reporting, and
+        10/100/1000/2500M auto-negotiation.
+        Requires lwIP software checksums; disable the global hardware checksum
+        option before enabling this driver.
+
+config RT_REALTEK_PTP
+    bool "PTP supported"
+    depends on RT_ETHERNET_REALTEK
+    depends on RT_USING_PTP
+    default n
+    help
+        Register the RTL8125 hardware PTP clock with the RT-Thread PTP
+        framework. Supported operations include gettime, settime, adjtime,
+        adjfreq, and PPS where the selected hardware PTP block supports it.
