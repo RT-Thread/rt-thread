@@ -1448,6 +1448,9 @@ struct rt_device
         (rt_device_t dev, char *buf, int len);          /**< for dynamic device */
 
     void                     *user_data;                /**< device private data */
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+    struct rt_mutex lifecycle_lock; /**< serialize init, open and close */
+#endif
 };
 
 /**

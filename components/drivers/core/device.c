@@ -18,6 +18,9 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+#include <rthw.h>
+#endif
 
 #define DBG_TAG           "kernel.device"
 #ifdef RT_DEBUG_DEVICE
@@ -74,7 +77,9 @@ rt_err_t rt_device_register(rt_device_t dev,
     if (rt_device_find(name) != RT_NULL)
         return -RT_ERROR;
 
-    rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+    rt_mutex_init(&dev->lifecycle_lock, name, RT_IPC_FLAG_PRIO);
+#endif
     dev->flag = flags;
     dev->ref_count = 0;
     dev->open_flag = 0;
@@ -83,6 +88,8 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->fops = RT_NULL;
     rt_wqueue_init(&(dev->wait_queue));
 #endif /* RT_USING_POSIX_DEVIO */
+
+    rt_object_init(&(dev->parent), RT_Object_Class_Device, name);
 
 #if defined (RT_USING_DFS_V2) && defined (RT_USING_DFS_DEVFS)
     dfs_devfs_device_add(dev);
@@ -108,6 +115,9 @@ rt_err_t rt_device_unregister(rt_device_t dev)
 
     rt_object_detach(&(dev->parent));
 
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+    rt_mutex_detach(&dev->lifecycle_lock);
+#endif
     return RT_EOK;
 }
 RTM_EXPORT(rt_device_unregister);
@@ -176,6 +186,70 @@ void rt_device_destroy(rt_device_t dev)
 RTM_EXPORT(rt_device_destroy);
 #endif /* RT_USING_HEAP */
 
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+static rt_err_t _device_lock(rt_device_t dev)
+{
+    rt_err_t result;
+
+    if (rt_interrupt_get_nest())
+    {
+        return -RT_EPERM;
+    }
+    /* Board initialization can open the console before the scheduler starts. */
+    if (rt_thread_self() != RT_NULL)
+    {
+        if (rt_critical_level() || rt_hw_interrupt_is_disabled())
+        {
+            return -RT_EPERM;
+        }
+        result = rt_mutex_take(&dev->lifecycle_lock, RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+        /* A recursive callback would observe an unfinished state transition. */
+        if (rt_mutex_get_hold(&dev->lifecycle_lock) > 1)
+        {
+            rt_mutex_release(&dev->lifecycle_lock);
+            return -RT_EBUSY;
+        }
+    }
+    return RT_EOK;
+}
+
+static void _device_unlock(rt_device_t dev)
+{
+    if (rt_thread_self() != RT_NULL)
+    {
+        rt_mutex_release(&dev->lifecycle_lock);
+    }
+}
+#else
+#define _device_lock(dev)   RT_EOK
+#define _device_unlock(dev) ((void)0)
+#endif /* RT_USING_DEVICE_LIFECYCLE_LOCK */
+
+static rt_err_t _device_activate(rt_device_t dev)
+{
+    rt_err_t result;
+
+    if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+    {
+        if (device_init != RT_NULL)
+        {
+            result = device_init(dev);
+            if (result != RT_EOK)
+            {
+                LOG_E("To initialize device:%.*s failed. The error code is %d",
+                      RT_NAME_MAX, dev->parent.name, result);
+                return result;
+            }
+        }
+        dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+    }
+    return RT_EOK;
+}
+
 /**
  * @brief This function will initialize the specified device.
  *
@@ -185,28 +259,25 @@ RTM_EXPORT(rt_device_destroy);
  */
 rt_err_t rt_device_init(rt_device_t dev)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
 
     RT_ASSERT(dev != RT_NULL);
-
-    /* get device_init handler */
-    if (device_init != RT_NULL)
+#ifdef RT_USING_DEVICE_LIFECYCLE_LOCK
+    /* An explicitly initialized, unregistered device has no mutex yet. */
+    if (rt_object_get_type(&dev->parent) != RT_Object_Class_Device)
     {
-        if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
-        {
-            result = device_init(dev);
-            if (result != RT_EOK)
-            {
-                LOG_E("To initialize device:%.*s failed. The error code is %d",
-                      RT_NAME_MAX, dev->parent.name, result);
-            }
-            else
-            {
-                dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
-            }
-        }
+        return device_init != RT_NULL ? _device_activate(dev) : RT_EOK;
     }
-
+#endif
+    result = _device_lock(dev);
+    if (result == RT_EOK)
+    {
+        if (device_init != RT_NULL)
+        {
+            result = _device_activate(dev);
+        }
+        _device_unlock(dev);
+    }
     return result;
 }
 
@@ -221,35 +292,30 @@ rt_err_t rt_device_init(rt_device_t dev)
  */
 rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
 
     /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
-    /* if device is not initialized, initialize it. */
-    if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
+    result = _device_lock(dev);
+    if (result != RT_EOK)
     {
-        if (device_init != RT_NULL)
-        {
-            result = device_init(dev);
-            if (result != RT_EOK)
-            {
-                LOG_E("To initialize device:%.*s failed. The error code is %d",
-                      RT_NAME_MAX, dev->parent.name, result);
+        return result;
+    }
 
-                return result;
-            }
-        }
-
-        dev->flag |= RT_DEVICE_FLAG_ACTIVATED;
+    result = _device_activate(dev);
+    if (result != RT_EOK)
+    {
+        goto out;
     }
 
     /* device is a stand alone device and opened */
     if ((dev->flag & RT_DEVICE_FLAG_STANDALONE) &&
         (dev->open_flag & RT_DEVICE_OFLAG_OPEN))
     {
-        return -RT_EBUSY;
+        result = -RT_EBUSY;
+        goto out;
     }
 
     /* device is not opened or opened by other oflag, call device_open interface */
@@ -278,6 +344,8 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
         RT_ASSERT(dev->ref_count != 0);
     }
 
+out:
+    _device_unlock(dev);
     return result;
 }
 RTM_EXPORT(rt_device_open);
@@ -291,30 +359,35 @@ RTM_EXPORT(rt_device_open);
  */
 rt_err_t rt_device_close(rt_device_t dev)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
 
     /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
-    if (dev->ref_count == 0)
-        return -RT_ERROR;
-
-    dev->ref_count--;
-
-    if (dev->ref_count != 0)
-        return RT_EOK;
-
-    /* call device_close interface */
-    if (device_close != RT_NULL)
+    result = _device_lock(dev);
+    if (result != RT_EOK)
     {
-        result = device_close(dev);
+        return result;
     }
 
-    /* set open flag */
-    if (result == RT_EOK || result == -RT_ENOSYS)
-        dev->open_flag = RT_DEVICE_OFLAG_CLOSE;
+    if (dev->ref_count == 0)
+    {
+        result = -RT_ERROR;
+    }
+    else if (--dev->ref_count == 0)
+    {
+        if (device_close != RT_NULL)
+        {
+            result = device_close(dev);
+        }
+        if (result == RT_EOK || result == -RT_ENOSYS)
+        {
+            dev->open_flag = RT_DEVICE_OFLAG_CLOSE;
+        }
+    }
 
+    _device_unlock(dev);
     return result;
 }
 RTM_EXPORT(rt_device_close);

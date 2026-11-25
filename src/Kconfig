@@ -412,6 +412,18 @@ config RT_USING_DEVICE
     depends on !RT_USING_NANO
     default y
 
+config RT_USING_DEVICE_LIFECYCLE_LOCK
+    bool "Serialize device init, open and close"
+    depends on RT_USING_DEVICE && RT_USING_MUTEX
+    default n
+    help
+        Add a priority-inheriting mutex to each registered device. Threads
+        sharing a device wait for its driver callbacks and reference updates
+        to finish. A driver may operate on another device in a consistent
+        lock order. Re-entering the same device returns -RT_EBUSY.
+        These operations require a schedulable thread after early board init.
+        Callers must quiesce users before unregistering a device.
+
 config RT_USING_DEVICE_OPS
     bool "Using ops for each device object"
     depends on RT_USING_DEVICE
