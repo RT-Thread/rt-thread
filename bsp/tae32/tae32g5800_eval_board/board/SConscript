@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+tae32g58xx_ll_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/TAE32G58xx_Firmware_Library/TAE32G58xx_Device/Src/startup_tae32g58xx.c']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/TAE32G58xx_Firmware_Library/TAE32G58xx_Device/Src/startup_tae32g58xx.c']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/TAE32G58xx_Firmware_Library/TAE32G58xx_Device/Src/startup_tae32g58xx.c']
+
+CPPDEFINES = ['TAE32G5800']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
