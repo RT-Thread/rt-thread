@@ -26,13 +26,13 @@
  *   BSP submits once and reports the selected mailbox -> slot.pending=true
  *   -> terminal retires that mailbox only, with no retry or software queue.
  *
- * wait_sem is a bounded counting "TX state changed" notification, not a
- * mailbox-count semaphore. Its token capacity matches the number of visible
- * hardware mailboxes so multiple state changes are not collapsed in the
- * scan-to-wait window. Blocking senders and rt_can_tx_drain() must still recheck
- * state after waking because a token does not reserve a mailbox and may be stale.
- * Each blocking slot has its own completion for the terminal of that specific
- * hardware mailbox.
+ * wait_event has one bit per visible mailbox. A private sender waits for its
+ * mailbox bit, while ordinary senders and drain wait for eligible mailbox changes.
+ * Waiters do not consume bits on wake: a competing waiter could otherwise lose a
+ * notification between its scan and sleep. Only a failed state scan clears the
+ * relevant bits under tx_lock, and all notifications are published under that
+ * same lock. A bit is not a mailbox reservation. Each blocking slot retains its
+ * own completion for the terminal of that specific hardware mailbox.
  *
  * can->tx_lock protects runtime publication, accepting and per-mailbox slots.
  * BSP send callbacks are required to be immediate hardware-submit
@@ -80,32 +80,69 @@ static rt_tick_t _tx_remaining(rt_tick_t start, rt_tick_t timeout)
 }
 
 /**
- * @brief Test the complete Generic TX idle invariant while tx_lock is held.
+ * @brief Return the mailboxes that prevent TX from being idle, under tx_lock.
  *
  * @param can CAN device that owns the TX runtime.
  * @param tx Published TX runtime.
- * @return RT_TRUE only when every mailbox slot has no pending terminal and is FREE.
+ * @return Mask of pending or non-FREE slots; zero means TX is idle.
  */
-static rt_bool_t _tx_idle_locked(struct rt_can_device *can, struct rt_can_tx *tx)
+static rt_uint32_t _tx_busy_mask_locked(struct rt_can_device *can, struct rt_can_tx *tx)
 {
     rt_uint32_t i;
+    /* Each bit records a slot that still prevents drain completion. */
+    rt_uint32_t busy_mask = 0;
 
     for (i = 0; i < can->config.sndboxnumber; i++)
     {
         if (tx->slots[i].pending || tx->slots[i].state != RT_CAN_TX_SLOT_FREE)
         {
-            return RT_FALSE;
+            busy_mask |= 1UL << i;
         }
     }
 
-    return RT_TRUE;
+    return busy_mask;
+}
+
+/**
+ * @brief Return the event mask covering all configured TX mailboxes.
+ *
+ * The open path validates the mailbox count as 1 through 32. Shifting a full
+ * 32-bit mask right avoids an undefined shift when all 32 bits are needed.
+ *
+ * @param can CAN device with a validated TX runtime.
+ * @return Mask with one bit per visible mailbox.
+ */
+static rt_uint32_t _tx_mailbox_mask(struct rt_can_device *can)
+{
+    return (rt_uint32_t)(0xffffffffUL >> (32U - can->config.sndboxnumber));
+}
+
+/**
+ * @brief Discard stale notifications after a failed scan, under tx_lock.
+ *
+ * The caller holds tx_lock across the scan and this clear; every publisher also
+ * holds tx_lock. Use the event's own spinlock for the bitmap, in that lock order.
+ * rt_event_recv(CLEAR, 0) is not usable here: even a zero-time receive requires
+ * scheduler availability. A non-clearing receive after unlocking cannot steal
+ * another waiter's notification, including in the scan-to-wait window.
+ *
+ * @param tx Published TX runtime.
+ * @param mask Mailboxes whose current wait condition is unsatisfied.
+ */
+static void _tx_clear_wait_event_locked(struct rt_can_tx *tx, rt_uint32_t mask)
+{
+    /* Serialize the event bitmap update against rt_event_send/recv. */
+    rt_base_t level = rt_spin_lock_irqsave(&tx->wait_event.spinlock);
+
+    tx->wait_event.set &= ~mask;
+    rt_spin_unlock_irqrestore(&tx->wait_event.spinlock, level);
 }
 
 /**
  * @brief Allocate the simplified TX runtime and publish it under tx_lock.
  *
- * sndchange is a 32-bit public mailbox bitmap, so reject configurations that
- * cannot be represented once here instead of silently truncating every TX event.
+ * sndchange and the event mask are 32-bit mailbox bitmaps. Reject configurations
+ * that cannot be represented before allocating or shifting any mailbox bits.
  */
 rt_err_t rt_can_tx_open(struct rt_can_device *can)
 {
@@ -117,7 +154,7 @@ rt_err_t rt_can_tx_open(struct rt_can_device *can)
 
     RT_ASSERT(can != RT_NULL);
 
-    if (can->config.sndboxnumber == 0 || can->ops == RT_NULL || can->ops->sendmsg == RT_NULL)
+    if (can->config.sndboxnumber == 0 || can->config.sndboxnumber > 32U || can->ops == RT_NULL || can->ops->sendmsg == RT_NULL)
     {
         return -RT_EINVAL;
     }
@@ -136,23 +173,9 @@ rt_err_t rt_can_tx_open(struct rt_can_device *can)
         tx->slots[i].state = RT_CAN_TX_SLOT_FREE;
     }
 
-    result = rt_sem_init(&tx->wait_sem, "cantx", 0, RT_IPC_FLAG_PRIO);
+    result = rt_event_init(&tx->wait_event, "cantx", RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
-        rt_free(tx);
-        return result;
-    }
-    /*
-     * Preserve up to one wake credit per visible mailbox so distinct mailbox
-     * transitions cannot collapse while senders move from rescan to sleep.
-     * A token still means only "TX state changed"; consumers must rescan state.
-     */
-    result = rt_sem_control(&tx->wait_sem,
-                            RT_IPC_CMD_SET_VLIMIT,
-                            (void *)(rt_ubase_t)can->config.sndboxnumber);
-    if (result != RT_EOK)
-    {
-        rt_sem_detach(&tx->wait_sem);
         rt_free(tx);
         return result;
     }
@@ -162,7 +185,7 @@ rt_err_t rt_can_tx_open(struct rt_can_device *can)
     if (can->can_tx != RT_NULL)
     {
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
-        rt_sem_detach(&tx->wait_sem);
+        rt_event_detach(&tx->wait_event);
         rt_free(tx);
         return -RT_EBUSY;
     }
@@ -199,7 +222,7 @@ void rt_can_tx_close(struct rt_can_device *can)
 
     if (tx != RT_NULL)
     {
-        rt_sem_detach(&tx->wait_sem);
+        rt_event_detach(&tx->wait_event);
         rt_free(tx);
     }
 }
@@ -262,7 +285,7 @@ rt_err_t rt_can_tx_begin_management(struct rt_can_device *can, rt_bool_t *was_ac
 
     *was_accepting = tx->accepting;
     tx->accepting = RT_FALSE;
-    if (!force && !_tx_idle_locked(can, tx))
+    if (!force && _tx_busy_mask_locked(can, tx) != 0)
     {
         tx->accepting = *was_accepting;
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
@@ -289,7 +312,7 @@ rt_bool_t rt_can_tx_is_idle(struct rt_can_device *can)
 
     level = rt_spin_lock_irqsave(&can->tx_lock);
     tx = can->can_tx;
-    idle = tx == RT_NULL ? RT_TRUE : _tx_idle_locked(can, tx);
+    idle = (tx == RT_NULL || _tx_busy_mask_locked(can, tx) == 0) ? RT_TRUE : RT_FALSE;
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
     return idle;
@@ -334,34 +357,19 @@ void rt_can_tx_retire_after_stop(struct rt_can_device *can)
             }
         }
         tx->accepting = RT_FALSE;
+        /* FORCE_STOP requires quiesced writers; wake all masks to recheck admission/idle. */
+        (void)rt_event_send(&tx->wait_event, _tx_mailbox_mask(can));
     }
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
-
-    if (tx != RT_NULL)
-    {
-        /*
-        * FORCE_STOP requires the application to quiesce all TX writers first.
-        * RESET wakes already suspended waiters, while the bounded wake credits
-        * do not guarantee coverage of threads racing into rt_sem_take().
-        */
-        (void)rt_sem_control(&tx->wait_sem, RT_IPC_CMD_RESET, RT_NULL);
-
-        /* Retain wake credits for senders still between mailbox scan and sem_take. */
-        for (mailbox = 0; mailbox < can->config.sndboxnumber; mailbox++)
-        {
-            (void)rt_sem_release(&tx->wait_sem);
-        }
-    }
 }
 
 /**
  * @brief Send one frame with a single hard deadline across mailbox wait and TX terminal wait.
  *
- * wait_sem is a shared TX-state-change notification for any blocking sender that
- * must rescan mailboxes. The selected slot completion is different: it belongs to
- * this frame only and reports that mailbox's TX_DONE/TX_FAIL terminal. Both waits
- * consume the same @p timeout budget, so mailbox contention cannot extend the
- * per-frame deadline.
+ * wait_event notifies blocking senders about changes to their eligible mailboxes.
+ * The selected slot completion is different: it belongs to this frame only and
+ * reports that mailbox's TX_DONE/TX_FAIL terminal. Both waits consume the same
+ * @p timeout budget, so mailbox contention cannot extend the per-frame deadline.
  */
 static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
                                    const struct rt_can_msg *message,
@@ -375,6 +383,8 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
     rt_uint32_t last;
     rt_uint32_t mailbox;
     rt_uint32_t selected = 0;
+    /* Event bits for the mailbox or mailboxes this sender is allowed to use. */
+    rt_uint32_t wait_mask;
     rt_err_t wait_result;
     rt_ssize_t result;
     rt_base_t level;
@@ -405,11 +415,13 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
             }
             first = message->priv;
             last = message->priv + 1U;
+            wait_mask = 1UL << first;
         }
         else
         {
             first = 0;
             last = can->config.sndboxnumber;
+            wait_mask = _tx_mailbox_mask(can);
         }
 
         for (mailbox = first; mailbox < last; mailbox++)
@@ -448,6 +460,11 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
         {
             can->status.dropedsndpkg++;
         }
+        else if (!submitted)
+        {
+            /* All eligible mailboxes are busy; discard only their stale notifications. */
+            _tx_clear_wait_event_locked(tx, wait_mask);
+        }
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
         if (submitted)
@@ -465,11 +482,8 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
             return -RT_ETIMEOUT;
         }
 
-        /*
-         * A wake only means TX state changed. Another blocking/NB sender may win
-         * the freed mailbox, so always rescan instead of treating the wake as ownership.
-         */
-        wait_result = rt_sem_take(&tx->wait_sem, remaining);
+        /* A non-clearing wake only requests a rescan; it does not reserve a mailbox. */
+        wait_result = rt_event_recv(&tx->wait_event, wait_mask, RT_EVENT_FLAG_OR, remaining, RT_NULL);
         if (wait_result != RT_EOK)
         {
             return wait_result;
@@ -520,10 +534,9 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
     slot->state = RT_CAN_TX_SLOT_FREE;
     can->status.sndchange &= ~(1UL << selected);
 
+    /* Publish FREE before unlocking so a failed scan cannot erase this notification. */
+    (void)rt_event_send(&tx->wait_event, 1UL << selected);
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
-
-    /* FREE is another TX state change, not a terminal count. */
-    (void)rt_sem_release(&tx->wait_sem);
     return result;
 }
 
@@ -699,22 +712,28 @@ void rt_can_tx_isr_core(struct rt_can_device *can, int event)
         }
     }
 
-    (void)rt_sem_release(&tx->wait_sem);
+    if (mailbox < can->config.sndboxnumber && tx->slots[mailbox].state == RT_CAN_TX_SLOT_FREE)
+    {
+        /* ACTIVE terminal owners notify mailbox availability only when they release the slot. */
+        (void)rt_event_send(&tx->wait_event, 1UL << mailbox);
+    }
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
 }
 
 /**
  * @brief Wait until no Generic CAN TX is hardware-owned and every blocking slot is free.
  *
- * The caller must stop TX producers first. wait_sem is intentionally reused as a
- * state-change notification; one wake does not imply idle, so the loop must recheck
- * every mailbox slot until the deadline expires.
+ * The caller must stop TX producers first. Wait for mailbox changes using the
+ * shared event; a wake does not imply idle, so recheck all slots. Clear stale
+ * bits only after a non-idle scan under tx_lock.
  */
 rt_err_t rt_can_tx_drain_core(struct rt_can_device *can, rt_tick_t timeout)
 {
     struct rt_can_tx *tx;
     rt_tick_t start;
     rt_tick_t remaining;
+    /* Mask of currently busy mailboxes, whose changes may make TX idle. */
+    rt_uint32_t wait_mask;
     rt_err_t result;
     rt_base_t level;
 
@@ -725,11 +744,18 @@ rt_err_t rt_can_tx_drain_core(struct rt_can_device *can, rt_tick_t timeout)
     {
         level = rt_spin_lock_irqsave(&can->tx_lock);
         tx = can->can_tx;
-        if (tx == RT_NULL || _tx_idle_locked(can, tx))
+        if (tx == RT_NULL)
         {
             rt_spin_unlock_irqrestore(&can->tx_lock, level);
             return RT_EOK;
         }
+        wait_mask = _tx_busy_mask_locked(can, tx);
+        if (wait_mask == 0)
+        {
+            rt_spin_unlock_irqrestore(&can->tx_lock, level);
+            return RT_EOK;
+        }
+        _tx_clear_wait_event_locked(tx, wait_mask);
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
         remaining = _tx_remaining(start, timeout);
@@ -738,7 +764,7 @@ rt_err_t rt_can_tx_drain_core(struct rt_can_device *can, rt_tick_t timeout)
             return -RT_ETIMEOUT;
         }
 
-        result = rt_sem_take(&tx->wait_sem, remaining);
+        result = rt_event_recv(&tx->wait_event, wait_mask, RT_EVENT_FLAG_OR, remaining, RT_NULL);
         if (result != RT_EOK)
         {
             return result;

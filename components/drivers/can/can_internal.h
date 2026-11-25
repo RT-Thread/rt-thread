@@ -85,15 +85,15 @@ struct rt_can_tx_slot
 struct rt_can_tx
 {
     struct rt_can_tx_slot *slots; /**< Fixed slot array, one per visible mailbox. */
-    struct rt_semaphore wait_sem; /**< Bounded TX-state-change notification. */
+    struct rt_event wait_event;   /**< Mailbox-indexed TX-state-change notification. */
     rt_bool_t accepting;          /**< Whether normal TX admission is open. */
 };
 
 /**
  * @brief Allocate and publish the Generic TX runtime.
  *
- * Creates one blocking slot per framework-visible hardware mailbox and a bounded
- * counting TX-state-change semaphore. Tokens are wake credits, not mailbox
+ * Creates one blocking slot per framework-visible hardware mailbox and one
+ * shared event with a bit for each mailbox. Event bits are notifications, not
  * reservations, so waiters must rescan TX state after waking. Publication is
  * serialized by can->tx_lock.
  *

@@ -1,6 +1,7 @@
 menuconfig RT_USING_CAN
     bool "Using CAN device drivers"
     default n
+    select RT_USING_EVENT
     help
         Enable this option to include the CAN device driver framework.
 
@@ -34,6 +35,7 @@ if RT_USING_CAN
     config RT_CANSND_BOX_NUM
         int "Number of CAN TX mailboxes"
         default 1
+        range 1 32
         help
             Number of hardware TX mailboxes visible to blocking Generic CAN TX.
 
