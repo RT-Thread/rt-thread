@@ -12,10 +12,9 @@ NONCACHEABLE_SIZE = DEFINED(_noncacheable_size) ? _noncacheable_size : 256K;
 
 MEMORY
 {
-    ILM (wx) : ORIGIN = 0x00000000, LENGTH = 256K
-    DLM (w) : ORIGIN = 0x00080000, LENGTH = 256K
-    AXI_SRAM (wx) : ORIGIN = 0x01080000, LENGTH = 512K
-    AXI_SRAM1 (w) : ORIGIN = 0x01100000, LENGTH = 768K
+    ILM (wx) : ORIGIN = 0, LENGTH = 256K
+    DLM (w) : ORIGIN = 0x80000, LENGTH = 256K
+    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 1280K
     NONCACHEABLE_RAM (wx) : ORIGIN = 0x11C0000, LENGTH = NONCACHEABLE_SIZE
     SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = SDRAM_SIZE
     AHB_SRAM (w) : ORIGIN = 0xF0300000, LENGTH = 32k
@@ -88,53 +87,65 @@ SECTIONS
 
         /* RT-Thread related sections - end */
 
-
         /* section information for usbh class */
         . = ALIGN(8);
         __usbh_class_info_start__ = .;
         KEEP(*(.usbh_class_info))
         __usbh_class_info_end__ = .;
-		. = ALIGN(8);
+
+        PROVIDE (__etext = .);
+        PROVIDE (_etext = .);
+        PROVIDE (etext = .);
     } > AXI_SRAM
-
-    .eh_frame :
-    {
-        __eh_frame_start = .;
-        KEEP(*(.eh_frame))
-        __eh_frame_end = .;
-    }  > AXI_SRAM
-
-    .eh_frame_hdr :
-    {
-        KEEP(*(.eh_frame_hdr))
-    }  > AXI_SRAM
-    __eh_frame_hdr_start = SIZEOF(.eh_frame_hdr) > 0 ? ADDR(.eh_frame_hdr) : 0;
-    __eh_frame_hdr_end = SIZEOF(.eh_frame_hdr) > 0 ? . : 0;
 
     .rel : {
         KEEP(*(.rel*))
     } > AXI_SRAM
 
-     PROVIDE (__etext = .);
-     PROVIDE (_etext = .);
-     PROVIDE (etext = .);
-
     .fast_ram (NOLOAD) : {
         KEEP(*(.fast_ram))
     } > DLM
 
-    /* NOTE:
-       Please keep in mind that the load section for rw data is after .text section
-       Here end user should avoid place any NOLOAD sections (such as .bss) in the space between .text section
-       and data load section if all sections are placed into the same adjacent space. Otherwise, the following conditions must be taken into account:
-         1. The size for all NOLOAD sections smust be added during computing __data_load_addr__
-         2. the generated binary file will be larger because the space occupied by
-             NOLOAD sections will be filled
-     */
-    __data_load_addr__ = __etext;
-    .data : AT(__data_load_addr__) {
-        __data_start__ = .;
+    .bss(NOLOAD) : {
         . = ALIGN(8);
+        __bss_start__ = .;
+        *(.bss)
+        *(.bss*)
+        *(.sbss*)
+        *(.scommon)
+        *(.scommon*)
+        *(.dynsbss*)
+        *(COMMON)
+        . = ALIGN(8);
+        _end = .;
+        __bss_end__ = .;
+    } > DLM
+
+    /* Note: .tbss and .tdata should be adjacent */
+    .tbss(NOLOAD) : {
+        . = ALIGN(8);
+        __tbss_start__ = .;
+        *(.tbss*)
+        *(.tcommon*)
+        _end = .;
+        __tbss_end__ = .;
+    } > DLM
+
+    __tdata_load_addr__ = etext;
+    .tdata : AT(etext) {
+        . = ALIGN(8);
+        __tdata_start__ = .;
+        __thread_pointer = .;
+        *(.tdata)
+        *(.tdata*)
+        . = ALIGN(8);
+        __tdata_end__ = .;
+    } > DLM
+
+    __data_load_addr__ = etext + __tdata_end__ - __tdata_start__;
+    .data : AT(etext + __tdata_end__ - __tdata_start__) {
+        . = ALIGN(8);
+        __data_start__ = .;
         __global_pointer$ = . + 0x800;
         *(.data)
         *(.data*)
@@ -184,27 +195,18 @@ SECTIONS
         PROVIDE (__edata = .);
         PROVIDE (_edata = .);
         PROVIDE (edata = .);
-    } > AXI_SRAM
+    } > DLM
 
-    __fast_load_addr__ = __data_load_addr__ + SIZEOF(.data);
-    .fast : AT(__fast_load_addr__) {
-        PROVIDE(__ramfunc_start__ = .);
+    __fast_load_addr__ = etext + __data_end__ - __tdata_start__;
+    .fast : AT(etext + __data_end__ - __tdata_start__) {
         . = ALIGN(8);
+        PROVIDE(__ramfunc_start__ = .);
         *(.fast)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
     } > AXI_SRAM
 
-    __noncacheable_init_load_addr__ = __fast_load_addr__ + SIZEOF(.fast);
-    .noncacheable.init : AT(__noncacheable_init_load_addr__) {
-        . = ALIGN(8);
-        __noncacheable_init_start__ = .;
-        KEEP(*(.noncacheable.init))
-        __noncacheable_init_end__ = .;
-        . = ALIGN(8);
-    } > NONCACHEABLE_RAM
-
-     __fast_ram_init_load_addr__ = __noncacheable_init_load_addr__ + SIZEOF(.noncacheable.init);
+    __fast_ram_init_load_addr__ = __noncacheable_init_load_addr__ + SIZEOF(.noncacheable.init);
     .fast_ram.init : AT(__fast_ram_init_load_addr__) {
         . = ALIGN(8);
         __fast_ram_init_start__ = .;
@@ -214,45 +216,23 @@ SECTIONS
         . = ALIGN(8);
     } > DLM
 
-    /* Note: .tbss and .tdata should be adjacent */
-    __tdata_load_addr__ = __fast_ram_init_load_addr__ + SIZEOF(.fast_ram.init);
-    .tdata : AT(__tdata_load_addr__) {
+    .fast_ram.bss (NOLOAD) : {
         . = ALIGN(8);
-        __tdata_start__ = .;
-        __thread_pointer = .;
-        *(.tdata)
-        *(.tdata*)
-        *(.gnu.linkonce.td.*)
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
         . = ALIGN(8);
-        __tdata_end__ = .;
-    } > AXI_SRAM
+    } > DLM
 
-    /* Note: Place all NOLOAD sections together */
-    .tbss(NOLOAD) : {
-        . += SIZEOF(.noncacheable.init);
+    __noncacheable_init_load_addr__ = etext + __data_end__ - __tdata_start__ + __ramfunc_end__ - __ramfunc_start__;
+    .noncacheable.init : AT(etext + __data_end__ - __tdata_start__ + __ramfunc_end__ - __ramfunc_start__) {
         . = ALIGN(8);
-        __tbss_start__ = .;
-        *(.tbss*)
-        *(.gnu.linkonce.tb.*)
-        *(.tcommon*)
-        _end = .;
-        __tbss_end__ = .;
-    } > AXI_SRAM1
-
-    .bss(NOLOAD) : {
+        __noncacheable_init_start__ = .;
+        KEEP(*(.noncacheable.init))
+        __noncacheable_init_end__ = .;
         . = ALIGN(8);
-        __bss_start__ = .;
-        *(.bss)
-        *(.bss*)
-        *(.sbss*)
-        *(.scommon)
-        *(.scommon*)
-        *(.dynsbss*)
-        *(COMMON)
-        . = ALIGN(8);
-        _end = .;
-        __bss_end__ = .;
-    } > AXI_SRAM1
+    } > NONCACHEABLE_RAM
 
     .noncacheable.bss (NOLOAD) : {
         . = ALIGN(8);
@@ -284,11 +264,11 @@ SECTIONS
         PROVIDE (_stack = .);
         PROVIDE (_stack_in_dlm = .);
         PROVIDE (__rt_rvstack = .);
-    } > AXI_SRAM1
+    } > DLM
 
     .framebuffer (NOLOAD) : {
         KEEP(*(.framebuffer))
-    } > AXI_SRAM1
+    } > AXI_SRAM
 
     .heap (NOLOAD) : {
         . = ALIGN(8);
@@ -296,7 +276,7 @@ SECTIONS
         . += HEAP_SIZE;
         __heap_end__ = .;
 
-    } > AXI_SRAM1
+    } > AXI_SRAM
 
     .sdram (NOLOAD) : {
         . = ALIGN(8);

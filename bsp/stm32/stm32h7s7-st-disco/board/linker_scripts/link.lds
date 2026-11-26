@@ -115,10 +115,10 @@ SECTIONS
 
     .stack (NOLOAD) :
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         _sstack = .;
         . = . + _system_stack_size;
-        . = ALIGN(4);
+        . = ALIGN(8);
         _estack = .;
     } >RAM
 

@@ -238,6 +238,10 @@ void CAN_Receive(CAN_TypeDef * CANx, CAN_RXMessage *msg)
 
     msg->remote = (CANx->FRAME.INFO & CAN_INFO_RTR_Msk) >> CAN_INFO_RTR_Pos;
     msg->size = (CANx->FRAME.INFO & CAN_INFO_DLC_Msk) >> CAN_INFO_DLC_Pos;
+    if (msg->size > 8)
+    {
+        msg->size = 8;
+    }
 
     if(msg->format == CAN_FRAME_STD)
     {

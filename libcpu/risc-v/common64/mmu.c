@@ -12,6 +12,7 @@
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -85,6 +86,23 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     uint32_t hartid = rt_hw_cpu_id();
     uintptr_t ptr = (uintptr_t)aspace->page_table + (uintptr_t)(hartid * ARCH_PAGE_SIZE);
     uintptr_t page_table = (uintptr_t)rt_kmem_v2p((void *)ptr);
+
+    if (page_table == (uintptr_t)ARCH_MAP_FAILED)
+    {
+        /*
+         * During early K230 bring-up the page table pointer held by the kernel
+         * aspace can still be a low physical address, before the kernel has
+         * switched to the high virtual mapping. The formal kernel aspace only
+         * maps the high virtual range, so rt_kmem_v2p() cannot translate that
+         * low pointer, while SATP needs the physical address of the page
+         * table. Use such a low pointer as-is; a high virtual address that
+         * fails to translate is a real error and is not rewritten here.
+         */
+        if (ptr < KERNEL_VADDR_START)
+        {
+            page_table = ptr;
+        }
+    }
 #ifndef RT_USING_SMP
     current_mmu_table = aspace->page_table;
 #else
@@ -632,14 +650,14 @@ static inline void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
-    rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    rt_mpr_start = (void *)((rt_ubase_t)rt_ioremap_start - rt_mpr_size);
     LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start,
           rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
 {
-    rt_mpr_start = vaddr - rt_mpr_size;
+    rt_mpr_start = (void *)((rt_ubase_t)vaddr - rt_mpr_size);
 }
 #endif
 
@@ -1057,6 +1075,9 @@ void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
             vs += EARLY_MAP_PAGE_SIZE_2M;
         }
 #endif
+        /* flush page table entries from data cache before enabling MMU */
+        rt_hw_cpu_dcache_clean(early_pgtbl, ARCH_PAGE_SIZE);
+
         /* apply new mapping */
         asm volatile("sfence.vma x0, x0");
         write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));
@@ -1077,6 +1098,25 @@ rt_inline int _pgtbl_order(void)
     }
     return order;
 }
+
+#ifdef RT_USING_SMART
+/*
+ * Early identity mappings may overlap the user address range. Clear those
+ * entries so they are not inherited by a user address space.
+ */
+static void _clear_user_pgtbl_entries(rt_ubase_t *table)
+{
+    int i;
+    /* Use the runtime top-level index so Sv39/Sv48/Sv57 all work. */
+    int start_idx = GET_LVL_INDEX(USER_VADDR_START, 1);
+    int end_idx = GET_LVL_INDEX(USER_VADDR_TOP - 1, 1);
+
+    for (i = start_idx; i <= end_idx; i++)
+    {
+        table[i] = 0;
+    }
+}
+#endif /* RT_USING_SMART */
 
 /**
  * @brief Creates and initializes a new MMU page table.
@@ -1111,6 +1151,9 @@ void *rt_hw_mmu_pgtbl_create(void)
         rt_ubase_t *dst = (rt_ubase_t *)((rt_ubase_t)mmu_table +
                                          (rt_ubase_t)(h * ARCH_PAGE_SIZE));
         rt_memcpy(dst, src, ARCH_PAGE_SIZE);
+#ifdef RT_USING_SMART
+        _clear_user_pgtbl_entries(dst);
+#endif
     }
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table,
                          (rt_ubase_t)(1 << order) * ARCH_PAGE_SIZE);
@@ -1121,6 +1164,11 @@ void *rt_hw_mmu_pgtbl_create(void)
         return RT_NULL;
     }
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
+
+#ifdef RT_USING_SMART
+    _clear_user_pgtbl_entries(mmu_table);
+#endif
+
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
 #endif
 

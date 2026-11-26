@@ -1,0 +1,8 @@
+__pycache__/
+build/
+*.bin
+*.elf
+!drivers/esos.elf
+*.map
+*.old
+.sconsign.dblite

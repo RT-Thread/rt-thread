@@ -1,0 +1,200 @@
+menu "CAN Test"
+
+config RT_UTEST_CAN
+    bool "CAN Send and Receive Test"
+    default n
+    select RT_USING_CAN
+
+if RT_UTEST_CAN
+
+    choice
+        prompt "CAN Test Topology"
+        default RT_CAN_TC_USING_SELF_LOOPBACK
+
+        config RT_CAN_TC_USING_SELF_LOOPBACK
+            bool "Single CAN Self Loopback"
+            help
+                Use one CAN controller to send and receive its own frame. This
+                mode uses CAN loopback configuration and is suitable for boards
+                that support controller loopback or TX/RX self-loop wiring.
+
+        config RT_CAN_TC_USING_EXTERNAL_DEVICE
+            bool "Single CAN with External CAN Device"
+            help
+                Use one CAN controller connected through a CAN transceiver to an
+                external CAN node. The external node must follow the configured
+                transmit and receive frame agreement.
+
+        config RT_CAN_TC_USING_DUAL_DEVICE
+            bool "Two Connected CAN Devices"
+            help
+                Use two CAN controllers connected to the same CAN bus and verify
+                frame transfer in both directions.
+
+    endchoice
+
+    config RT_CAN_TC_DEVICE_NAME
+        string "Device Name for Single CAN Test"
+        default "can1"
+        depends on RT_CAN_TC_USING_SELF_LOOPBACK || RT_CAN_TC_USING_EXTERNAL_DEVICE
+
+    config RT_CAN_TC_TX_DEVICE_NAME
+        string "TX Device Name for Two CAN Test"
+        default "can1"
+        depends on RT_CAN_TC_USING_DUAL_DEVICE
+
+    config RT_CAN_TC_RX_DEVICE_NAME
+        string "RX Device Name for Two CAN Test"
+        default "can2"
+        depends on RT_CAN_TC_USING_DUAL_DEVICE
+
+    config RT_CAN_TC_EXTERNAL_USING_SEND_TEST
+        bool "Enable External Device Send Test"
+        default y
+        depends on RT_CAN_TC_USING_EXTERNAL_DEVICE
+        help
+            Send one standard data frame to the external CAN node. The external
+            node should receive standard ID RT_CAN_TC_TX_FRAME_ID with DLC 8 and
+            payload 0x10, 0x11, ..., 0x17.
+
+    config RT_CAN_TC_EXTERNAL_USING_RECEIVE_TEST
+        bool "Enable External Device Receive Test"
+        default y
+        depends on RT_CAN_TC_USING_EXTERNAL_DEVICE
+        help
+            Wait for one standard data frame from the external CAN node. The
+            external node should send standard ID RT_CAN_TC_RX_FRAME_ID with DLC
+            8 and payload 0x20, 0x21, ..., 0x27.
+
+    config RT_CAN_TC_USING_NONBLOCKING_SEND_TEST
+        bool "Enable Nonblocking Send Test"
+        default n
+        help
+            Send one standard data frame with rt_can_msg.nonblocking set to 1.
+            Self-loopback and dual-device tests verify the frame end to end.
+            The external-device test only verifies that the frame is accepted or
+            queued because the common CAN API has no TX-complete wait interface.
+            Enable this only when the CAN driver implements sendmsg_nonblocking.
+
+    config RT_CAN_TC_TX_FRAME_ID
+        hex "External Device TX Frame ID"
+        range 0 0x7FF
+        default 0x321
+        depends on RT_CAN_TC_USING_EXTERNAL_DEVICE
+
+    config RT_CAN_TC_RX_FRAME_ID
+        hex "External Device RX Frame ID"
+        range 0 0x7FF
+        default 0x322
+        depends on RT_CAN_TC_USING_EXTERNAL_DEVICE
+
+    config RT_CAN_TC_NONBLOCKING_TX_FRAME_ID
+        hex "Nonblocking TX Frame ID"
+        range 0 0x7FF
+        default 0x323
+        depends on RT_CAN_TC_USING_NONBLOCKING_SEND_TEST
+
+    config RT_CAN_TC_BAUD_RATE
+        int "Primary Arbitration Baud Rate for CAN Test"
+        range 10000 1000000
+        default 500000
+        help
+            Select one of the standard CAN rates: 10000, 20000, 50000, 100000,
+            125000, 250000, 500000, 800000, or 1000000 bit/s. This rate is
+            always tested. Self-loopback and dual-device tests can select
+            additional rates. The external-device topology uses only this rate
+            because the peer cannot be switched automatically.
+
+    menu "Additional Arbitration Baud Rates"
+        depends on RT_CAN_TC_USING_SELF_LOOPBACK || RT_CAN_TC_USING_DUAL_DEVICE
+
+        config RT_CAN_TC_TEST_BAUD_RATE_10K
+            bool "Test 10 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_20K
+            bool "Test 20 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_50K
+            bool "Test 50 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_100K
+            bool "Test 100 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_125K
+            bool "Test 125 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_250K
+            bool "Test 250 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_500K
+            bool "Test 500 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_800K
+            bool "Test 800 kbit/s"
+            default n
+
+        config RT_CAN_TC_TEST_BAUD_RATE_1M
+            bool "Test 1 Mbit/s"
+            default n
+
+        comment "The primary arbitration rate is always tested"
+
+    endmenu
+
+    config RT_CAN_TC_USING_CANFD
+        bool "Enable CAN FD Test"
+        depends on RT_CAN_USING_CANFD
+        default n
+        help
+            In addition to classic CAN frames, verify CAN FD frames with an
+            extended payload. This is an explicit per-device capability test;
+            enable it only for CAN FD capable controllers and drivers. CAN FD
+            frames are tested only at the primary arbitration rate.
+
+    config RT_CAN_TC_CANFD_DATA_BAUD_RATE
+        int "CAN FD Data Phase Baud Rate"
+        range 10000 10000000
+        default 2000000
+        depends on RT_CAN_TC_USING_CANFD
+        help
+            The data phase may use the same rate as the arbitration phase.
+            Select a higher rate when testing effective bit-rate switching.
+
+    config RT_CAN_TC_CANFD_DATA_LENGTH
+        int "Maximum CAN FD Payload Length"
+        range 12 64
+        default 16
+        depends on RT_CAN_TC_USING_CANFD
+        help
+            Valid CAN FD payload lengths are 12, 16, 20, 24, 32, 48, and 64
+            bytes. Other values in the numeric range are rejected at runtime.
+
+    config RT_CAN_TC_CANFD_BRS
+        bool "Enable CAN FD Bit Rate Switching"
+        default y
+        depends on RT_CAN_TC_USING_CANFD
+
+    config RT_CAN_TC_EXTERNAL_READY_DELAY_MS
+        int "External Node Ready Delay in Milliseconds"
+        range 0 60000
+        default 1000
+        depends on RT_CAN_TC_USING_EXTERNAL_DEVICE
+        help
+            Delay after the DUT is configured and prints the frame agreement.
+            This gives the external node time to start its ordered frame sequence.
+
+    config RT_CAN_TC_TIMEOUT_MS
+        int "RX Timeout in Milliseconds"
+        range 1000 60000
+        default 10000
+
+endif
+
+endmenu

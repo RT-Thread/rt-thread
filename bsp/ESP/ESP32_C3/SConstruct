@@ -9,7 +9,9 @@ def elf2image(target, source, env):
     print("Creating esp32c3 image...")
 
     image = CHIP_DEFS["esp32c3"].BOOTLOADER_IMAGE()
-    image.min_rev = 3
+    image.min_rev = 0
+    image.min_rev_full = 3
+    image.max_rev_full = 199
     image.entrypoint = e.entrypoint
     image.flash_mode = 2 # flash_mode: dio
 

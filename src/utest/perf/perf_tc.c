@@ -70,7 +70,7 @@ testcase_function test_func_ptrs[] = {
     rt_perf_thread_event,
     rt_perf_thread_mq,
     rt_perf_thread_mbox,
-    rt_perf_irq_latency,    /* Timer Interrupt Source */
+    rt_perf_irq_latency, /* Timer Interrupt Source */
     RT_NULL
 };
 
@@ -89,7 +89,9 @@ void rt_perf_start_impl(rt_perf_t *perf, rt_clock_timerval_t *timeout)
     if (hw_dev)
     {
         if (timeout == RT_NULL)
+        {
             timeout = &timeout_s;
+        }
         rt_device_write(hw_dev, 0, timeout, sizeof(rt_clock_timerval_t));
     }
     perf->begin_time = rt_perf_get_timer_us();
@@ -100,7 +102,9 @@ void rt_perf_stop(rt_perf_t *perf)
     perf->real_time = rt_perf_get_timer_us() - perf->begin_time;
 
     if (perf->local_modify)
+    {
         perf->local_modify(perf);
+    }
     if (perf->real_time > perf->max_time)
     {
         perf->max_time = perf->real_time;
@@ -115,7 +119,9 @@ void rt_perf_stop(rt_perf_t *perf)
     perf->tot_time += perf->real_time;
 
     if (hw_dev)
+    {
         rt_device_control(hw_dev, CLOCK_TIMER_CTRL_STOP, NULL);
+    }
 }
 
 static rt_int32_t split_double(double num, rt_uint32_t type)
@@ -148,9 +154,13 @@ void rt_perf_dump(rt_perf_t *perf)
     }
 
     if (perf->count)
+    {
         perf->avg_time = (double)perf->tot_time / perf->count;
+    }
     else
+    {
         perf->avg_time = 0.0;
+    }
 
     rt_sprintf(avg_str, "%u.%04u", GET_INT(perf->avg_time), GET_DECIMALS(perf->avg_time));
 
@@ -219,7 +229,7 @@ static rt_err_t utest_tc_init(void)
         return ret;
     }
 
-    timeout_s.sec = 10;      /* No modification is necessary here, use the fixed value */
+    timeout_s.sec = 10; /* No modification is necessary here, use the fixed value */
     timeout_s.usec = 0;
 
     return ret;
@@ -228,7 +238,9 @@ static rt_err_t utest_tc_init(void)
 static rt_err_t utest_tc_cleanup(void)
 {
     if (hw_dev)
+    {
         rt_device_close(hw_dev);
+    }
     return RT_EOK;
 }
 

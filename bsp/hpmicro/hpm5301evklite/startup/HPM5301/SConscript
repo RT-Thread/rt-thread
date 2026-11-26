@@ -15,7 +15,7 @@ if rtconfig.PLATFORM == 'gcc':
     src += [os.path.join('toolchains', 'gcc', 'port_gcc.S')]
 
 CPPPATH = [cwd]
-CPPDEFINES=['D45', rtconfig.CHIP_NAME]
+CPPDEFINES=['D25', rtconfig.CHIP_NAME]
 
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 

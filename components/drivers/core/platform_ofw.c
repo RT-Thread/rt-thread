@@ -20,6 +20,7 @@
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/core/dm.h>
+#include <drivers/misc.h>
 
 #include "../ofw/ofw_internal.h"
 
@@ -42,6 +43,20 @@ static const struct rt_ofw_node_id platform_ofw_ids[] =
     { /* sentinel */ }
 };
 
+static void ofw_address_to_string(char *buffer, rt_size_t size, rt_uint64_t address)
+{
+    rt_uint32_t address_hi = rt_upper_32_bits(address);
+
+    if (address_hi)
+    {
+        rt_snprintf(buffer, size, "%x%08x", address_hi, rt_lower_32_bits(address));
+    }
+    else
+    {
+        rt_snprintf(buffer, size, "%x", rt_lower_32_bits(address));
+    }
+}
+
 static void ofw_device_rename(struct rt_device *dev)
 {
     rt_uint32_t mask;
@@ -60,18 +75,21 @@ static void ofw_device_rename(struct rt_device *dev)
     {
         if (!rt_ofw_get_address(np, 0, &addr, RT_NULL))
         {
+            char addr_str[sizeof(addr) * 2 + 1];
             const char *node_name = rt_fdt_node_name(np->full_name);
             rt_size_t tag_len = strchrnul(node_name, '@') - node_name;
 
+            ofw_address_to_string(addr_str, sizeof(addr_str), addr);
+
             if (!rt_ofw_prop_read_u32(np, "mask", &mask))
             {
-                rt_dm_dev_set_name(dev, dev_name ? "%lx.%x.%.*s:%s" : "%lx.%x.%.*s",
-                    addr, __rt_ffs(mask) - 1, tag_len, node_name, dev_name);
+                rt_dm_dev_set_name(dev, dev_name ? "%s.%x.%.*s:%s" : "%s.%x.%.*s",
+                    addr_str, __rt_ffs(mask) - 1, tag_len, node_name, dev_name);
             }
             else
             {
-                rt_dm_dev_set_name(dev, dev_name ? "%lx.%.*s:%s" : "%lx.%.*s",
-                    addr, tag_len, node_name, dev_name);
+                rt_dm_dev_set_name(dev, dev_name ? "%s.%.*s:%s" : "%s.%.*s",
+                    addr_str, tag_len, node_name, dev_name);
             }
 
             return;

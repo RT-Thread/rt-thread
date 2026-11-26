@@ -1,9 +1,10 @@
+import os
 Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
 src     = []
-CPPPATH = [cwd]
+CPPPATH = [cwd, os.path.join(cwd, '..', 'terminal')]
 
 if GetDepend(['RT_UTEST_LWP', 'RT_USING_SMART']):
     src += ['condvar_timedwait_tc.c', 'condvar_broadcast_tc.c', 'condvar_signal_tc.c']

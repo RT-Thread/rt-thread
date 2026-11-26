@@ -2,7 +2,7 @@ menu "Hardware Drivers Config"
 
 config SOC_HPM6P00
     bool
-    select SOC_HPM6P00_SERIES
+    select SOC_SERIES_HPM6P00
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -87,6 +87,11 @@ menu "On-chip Peripheral Drivers"
                         int "UART1 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART1_DMA_PINGPONG_BUFSIZE
+                        int "Set UART1 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART2
                 bool "Enable UART2"
@@ -114,6 +119,11 @@ menu "On-chip Peripheral Drivers"
                         int "UART2 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART2_DMA_PINGPONG_BUFSIZE
+                        int "Set UART2 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART3
                 bool "Enable UART3"
@@ -141,10 +151,15 @@ menu "On-chip Peripheral Drivers"
                         int "UART3 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART3_DMA_PINGPONG_BUFSIZE
+                        int "Set UART3 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART3_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART4
                 bool "Enable UART4"
-                default n
+                default y
                 if BSP_USING_UART4
                     config BSP_UART4_RX_USING_DMA
                         bool "Enable UART4 RX DMA"
@@ -168,6 +183,11 @@ menu "On-chip Peripheral Drivers"
                         int "UART4 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART4_DMA_PINGPONG_BUFSIZE
+                        int "Set UART4 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART4_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART5
                 bool "Enable UART5"
@@ -195,6 +215,11 @@ menu "On-chip Peripheral Drivers"
                         int "UART5 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART5_DMA_PINGPONG_BUFSIZE
+                        int "Set UART5 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART5_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART6
                 bool "Enable UART6"
@@ -222,6 +247,11 @@ menu "On-chip Peripheral Drivers"
                         int "UART6 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART6_DMA_PINGPONG_BUFSIZE
+                        int "Set UART6 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART6_RX_USING_DMA
+                        default 128
                 endif
             menuconfig BSP_USING_UART7
                 bool "Enable UART7"
@@ -249,9 +279,32 @@ menu "On-chip Peripheral Drivers"
                         int "UART7 Interrupt Priority"
                         range 1 7
                         default 1
+                    config BSP_UART7_DMA_PINGPONG_BUFSIZE
+                        int "Set UART7 RX DMA ping-pong buffer size"
+                        range 32 8192
+                        depends on RT_USING_SERIAL_V2 && BSP_UART7_RX_USING_DMA
+                        default 128
+                endif
+            menuconfig BSP_USING_PUART
+                bool "Enable PUART"
+                default n
+                if BSP_USING_PUART
+                    config BSP_PUART_RX_BUFSIZE
+                        int "Set PUART RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 1024
+                    config BSP_PUART_TX_BUFSIZE
+                        int "Set PUART TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 128
+                    config BSP_PUART_IRQ_PRIORITY
+                        int "PUART Interrupt Priority"
+                        range 1 7
+                        default 1
                 endif
         endif
-
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
@@ -269,7 +322,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI0 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice BSP_SPI0_CS_SEL
+                    choice
                         prompt "Select SPI0 CS TYPE"
                         default BSP_SPI0_USING_SOFT_CS
                         config BSP_SPI0_USING_SOFT_CS
@@ -277,7 +330,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI0_USING_HARD_CS
                             bool "Enable SPI0 hardware cs"
                     endchoice
-                    choice BSP_SPI0_IO_MODE_SEL
+                    choice
                         prompt "Select SPI0 IO mode"
                         default BSP_SPI0_USING_SINGLE_IO
                         config BSP_SPI0_USING_SINGLE_IO
@@ -299,7 +352,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI1 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice BSP_SPI1_CS_SEL
+                    choice
                         prompt "Select SPI1 CS TYPE"
                         default BSP_SPI1_USING_SOFT_CS
                         config BSP_SPI1_USING_SOFT_CS
@@ -307,7 +360,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI1_USING_HARD_CS
                             bool "Enable SPI1 hardware cs"
                     endchoice
-                    choice BSP_SPI1_IO_MODE_SEL
+                    choice
                         prompt "Select SPI1 IO mode"
                         default BSP_SPI1_USING_SINGLE_IO
                         config BSP_SPI1_USING_SINGLE_IO
@@ -329,7 +382,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI2 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice BSP_SPI2_CS_SEL
+                    choice
                         prompt "Select SPI2 CS TYPE"
                         default BSP_SPI2_USING_SOFT_CS
                         config BSP_SPI2_USING_SOFT_CS
@@ -337,7 +390,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI2_USING_HARD_CS
                             bool "Enable SPI2 hardware cs"
                     endchoice
-                    choice BSP_SPI2_IO_MODE_SEL
+                    choice
                         prompt "Select SPI2 IO mode"
                         default BSP_SPI2_USING_SINGLE_IO
                         config BSP_SPI2_USING_SINGLE_IO
@@ -359,7 +412,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI3 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice BSP_SPI3_CS_SEL
+                    choice
                         prompt "Select SPI3 CS TYPE"
                         default BSP_SPI3_USING_SOFT_CS
                         config BSP_SPI3_USING_SOFT_CS
@@ -367,7 +420,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI3_USING_HARD_CS
                             bool "Enable SPI3 hardware cs"
                     endchoice
-                    choice BSP_SPI3_IO_MODE_SEL
+                    choice
                         prompt "Select SPI3 IO mode"
                         default BSP_SPI3_USING_SINGLE_IO
                         config BSP_SPI3_USING_SINGLE_IO
@@ -388,7 +441,7 @@ menu "On-chip Peripheral Drivers"
        select RT_USING_PHY if BSP_USING_ETH
 
        if BSP_USING_ETH
-           choice BSP_ETH0_SEL
+           choice
                prompt "ETH"
                default BSP_USING_ETH0
 
@@ -405,6 +458,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_GPTMR
             config BSP_USING_GPTMR0
                 bool "Enable GPTMR0"
+                depends on !HPM_USING_VECTOR_PREEMPTED_MODE
                 default n
                 if BSP_USING_GPTMR0
                     config BSP_GPTMR0_IRQ_PRIORITY
@@ -436,6 +490,15 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_GPTMR3
                     config BSP_GPTMR3_IRQ_PRIORITY
                     int "GPTMR3 Interrupt Priority"
+                    range 1 7
+                    default 1
+                endif
+            config BSP_USING_PTMR
+                bool "Enable PTMR"
+                default n
+                if BSP_USING_PTMR
+                    config BSP_PTMR_IRQ_PRIORITY
+                    int "PTMR Interrupt Priority"
                     range 1 7
                     default 1
                 endif
@@ -496,7 +559,6 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-
     menuconfig BSP_USING_XPI_FLASH
         bool "Enable XPI FLASH"
         default n
@@ -539,7 +601,6 @@ menu "On-chip Peripheral Drivers"
                 default n
        endif
 
-
     menuconfig BSP_USING_EWDG
         bool "Enable EWDG"
         default n
@@ -556,7 +617,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_PWMV2
         bool "Enable PWM"
         default n
-        select RT_USING_PWM if BSP_USING_PWMV2
+        select RT_USING_PWM
 
     menuconfig BSP_USING_MCAN
         bool "Enable MCAN"
@@ -604,7 +665,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
-        select RT_USING_ADC if BSP_USING_ADC
+        select RT_USING_ADC
         if BSP_USING_ADC
             menuconfig BSP_USING_ADC16
                 bool "Enable ADC16"
@@ -622,13 +683,362 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_ADC3
                         bool "Enable ADC3"
                         default n
+                    config BSP_USING_ADC1
+                        bool "Enable ADC1"
+                        default n
+                    config BSP_USING_ADC2
+                        bool "Enable ADC2"
+                        default n
                 endif
          endif
 
+    menuconfig BSP_USING_WDG
+        bool "Enable WDG"
+        default n
+        select RT_USING_WDT if BSP_USING_WDG
+
+    menuconfig BSP_USING_CRC
+        bool "Enable CRC"
+        default n
+
+    menuconfig BSP_USING_TSNS
+        bool "Enable TSNS (Temperature Sensor)"
+        default n
+
+    menuconfig BSP_USING_ACMP
+        bool "Enable ACMP (Analog Comparator)"
+        default n
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+
+    menuconfig BSP_USING_QEIV2
+        bool "Enable QEIV2 (Quadrature Encoder Interface V2)"
+        default n
+
+    menuconfig BSP_USING_QEOV2
+        bool "Enable QEOV2 (Quadrature Encoder Output V2)"
+        default n
+
+    menuconfig BSP_USING_RDC
+        bool "Enable RDC (Resolver to Digital Converter)"
+        default n
+
+    menuconfig BSP_USING_SEI
+        bool "Enable SEI (Synchronous Encoder Interface)"
+        default n
+
+    menuconfig BSP_USING_MTGV2
+        bool "Enable MTGV2 (Motor Timing Generator V2)"
+        default n
+
+    menuconfig BSP_USING_VSC
+        bool "Enable VSC"
+        default n
+
+    menuconfig BSP_USING_CLC
+        bool "Enable CLC"
+        default n
+
+    menuconfig BSP_USING_SDM
+        bool "Enable SDM (Sigma-Delta Modulator)"
+        default n
+
+    menuconfig BSP_USING_PLB
+        bool "Enable PLB"
+        default n
+
+    menuconfig BSP_USING_PPI
+        bool "Enable PPI (Parallel Port Interface)"
+        default n
+
+    menuconfig BSP_USING_LOBS
+        bool "Enable LOBS"
+        default n
+
+    menuconfig BSP_USING_PTPC
+        bool "Enable PTPC (PTP Controller)"
+        default n
+
+    menuconfig BSP_USING_RNG
+        bool "Enable RNG (Random Number Generator)"
+        default n
+
+    menuconfig BSP_USING_SDP
+        bool "Enable SDP (Secure Data Processing)"
+        default n
+
+    menuconfig BSP_USING_MCHTMR
+        bool "Enable MCHTMR (Machine Timer)"
+        default n
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable Software I2C"
+        default n
+        select RT_USING_I2C if BSP_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+
+            config BSP_USING_SOFT_I2C_TIMING_DELAY_US
+                int "Soft I2C timing delay in microseconds"
+                range 1 1000
+                default 1
+
+            config BSP_USING_SOFT_I2C_TIMING_TIMEOUT
+                int "Soft I2C timing timeout"
+                range 10 10000
+                default 100
+            
+            config BSP_USING_SOFT_I2C0
+                bool "Enable Soft I2C0"
+                default n
+            if BSP_USING_SOFT_I2C0
+                config BSP_SOFT_I2C0_SCL_PIN
+                    string "Soft I2C0 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C0_SDA_PIN
+                    string "Soft I2C0 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C1
+                bool "Enable Soft I2C1"
+                default n
+            if BSP_USING_SOFT_I2C1
+                config BSP_SOFT_I2C1_SCL_PIN
+                    string "Soft I2C1 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C1_SDA_PIN
+                    string "Soft I2C1 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C2
+                bool "Enable Soft I2C2"
+                default n
+            if BSP_USING_SOFT_I2C2
+                config BSP_SOFT_I2C2_SCL_PIN
+                    string "Soft I2C2 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C2_SDA_PIN
+                    string "Soft I2C2 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C3
+                bool "Enable Soft I2C3"
+                default n
+            if BSP_USING_SOFT_I2C3
+                config BSP_SOFT_I2C3_SCL_PIN
+                    string "Soft I2C3 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C3_SDA_PIN
+                    string "Soft I2C3 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C4
+                bool "Enable Soft I2C4"
+                default n
+            if BSP_USING_SOFT_I2C4
+                config BSP_SOFT_I2C4_SCL_PIN
+                    string "Soft I2C4 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C4_SDA_PIN
+                    string "Soft I2C4 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C5
+                bool "Enable Soft I2C5"
+                default n
+            if BSP_USING_SOFT_I2C5
+                config BSP_SOFT_I2C5_SCL_PIN
+                    string "Soft I2C5 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C5_SDA_PIN
+                    string "Soft I2C5 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C6
+                bool "Enable Soft I2C6"
+                default n
+            if BSP_USING_SOFT_I2C6
+                config BSP_SOFT_I2C6_SCL_PIN
+                    string "Soft I2C6 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C6_SDA_PIN
+                    string "Soft I2C6 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C7
+                bool "Enable Soft I2C7"
+                default n
+            if BSP_USING_SOFT_I2C7
+                config BSP_SOFT_I2C7_SCL_PIN
+                    string "Soft I2C7 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C7_SDA_PIN
+                    string "Soft I2C7 SDA pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_I2C8
+                bool "Enable Soft I2C8"
+                default n
+            if BSP_USING_SOFT_I2C8
+                config BSP_SOFT_I2C8_SCL_PIN
+                    string "Soft I2C8 SCL pin name"
+                    default "None"
+                config BSP_SOFT_I2C8_SDA_PIN
+                    string "Soft I2C8 SDA pin name"
+                    default "None"
+            endif
+
+        endif
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable Software SPI"
+        default n
+        select RT_USING_SPI if BSP_USING_SOFT_SPI
+        select RT_USING_PIN if BSP_USING_SOFT_SPI
+        select RT_USING_SPI_BITOPS if BSP_USING_SOFT_SPI
+        if BSP_USING_SOFT_SPI
+
+            config BSP_USING_SOFT_SPI_TIMING_DELAY_US
+                int "Soft SPI timing delay in microseconds"
+                range 1 1000
+                default 1
+
+            config BSP_USING_SOFT_SPI0
+                bool "Enable Soft SPI0"
+                default n
+            if BSP_USING_SOFT_SPI0
+                config BSP_SOFT_SPI0_SCK_PIN
+                    string "Soft SPI0 SCK pin name"
+                    default "None"
+                config BSP_SOFT_SPI0_MOSI_PIN
+                    string "Soft SPI0 MOSI pin name"
+                    default "None"
+                config BSP_SOFT_SPI0_MISO_PIN
+                    string "Soft SPI0 MISO pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_SPI1
+                bool "Enable Soft SPI1"
+                default n
+            if BSP_USING_SOFT_SPI1
+                config BSP_SOFT_SPI1_SCK_PIN
+                    string "Soft SPI1 SCK pin name"
+                    default "None"
+                config BSP_SOFT_SPI1_MOSI_PIN
+                    string "Soft SPI1 MOSI pin name"
+                    default "None"
+                config BSP_SOFT_SPI1_MISO_PIN
+                    string "Soft SPI1 MISO pin name"
+                    default "None"
+            endif
+
+            config BSP_USING_SOFT_SPI2
+                bool "Enable Soft SPI2"
+                default n
+            if BSP_USING_SOFT_SPI2
+                config BSP_SOFT_SPI2_SCK_PIN
+                    string "Soft SPI2 SCK pin name"
+                    default "None"
+                config BSP_SOFT_SPI2_MOSI_PIN
+                    string "Soft SPI2 MOSI pin name"
+                    default "None"
+                config BSP_SOFT_SPI2_MISO_PIN
+                    string "Soft SPI2 MISO pin name"
+                    default "None"
+            endif
+
+        endif
+
 endmenu
 
+menu "HPMicro Interrupt Config"
+endmenu
 
+menu "HPMicro RT-Thread Interrupt Framework"
+endmenu
 
+menu "HPMicro Use Generic Startup Implementation"
+    config HPM_BSP_USING_GENERIC_STARTUP
+        bool "Enable this to use the common/startup/generic implementation"
+        default n
+        depends on HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        help
+            Enable this to use the common/startup/generic implementation.
+            This option is only available when RT-Thread Interrupt Framework is enabled.
+endmenu
+
+menu "HPMicro RT-Thread backtrace configuration (experimental)"
+    config HPM_ENABLE_RTTHREAD_BACKTRACE_PORT
+        bool "Enable RT-Thread Backtrace for HPMicro BSP"
+        default n
+        help
+            Enable RT-Thread Backtrace to support backtrace feature
+
+    config HPM_USE_RTTHREAD_BACKTRACE_IN_EXCEPTION_HANDLER
+        select HPM_ENABLE_RTTHREAD_BACKTRACE_PORT
+        bool "Use RT-Thread Backtrace in Exception Handler"
+        default n
+        help
+            Use RT-Thread Backtrace in Exception Handler to print backtrace information
+endmenu
 
 endmenu
 
+menu "Third-Party Add-ons"
+
+menu "Segger SystemView Config"
+    config BSP_USING_SYSTEMVIEW
+        select RT_USING_SYSTEMVIEW
+        select RT_USING_LEGACY
+        bool "Enable Segger SystemView"
+        default n
+
+    if BSP_USING_SYSTEMVIEW
+        menuconfig BSP_SYSTEMVIEW_RTT_SECTION
+            bool "enable SystemView RTT section"
+            default y
+            if BSP_SYSTEMVIEW_RTT_SECTION
+                config SEGGER_RTT_SECTION
+                    string "segger rtt section"
+                    default ".noncacheable.bss"
+                config SEGGER_RTT_BUFFER_SECTION
+                    string "segger rtt buffer section"
+                    default ".noncacheable.bss"
+                config SEGGER_SYSVIEW_SECTION
+                    string "segger sysview section"
+                    default ".noncacheable.bss"
+            endif
+    endif
+endmenu
+
+menu "RT-Thread Insight Config"
+    config BSP_USING_RTI
+        select BSP_USING_MCHTMR
+        select RT_USING_RTI
+        select RT_USING_RT_TUNNEL
+        bool "Enable RT-Thread Insight(experimental)"
+        default n
+
+    if BSP_USING_RTI
+        config RT_TUNNEL_USE_NONCACHE_RAM
+            bool "Enable RT-Thread Insight Non-cacheable RAM support"
+            default y
+            help
+                Enable this to use non-cacheable RAM for RT-Thread Insight data transfer.
+                This option is useful when RT-Thread Insight is used with cache enabled.
+
+    endif
+
+endmenu
+
+endmenu

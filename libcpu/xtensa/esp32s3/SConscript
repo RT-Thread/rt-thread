@@ -1,0 +1,25 @@
+# RT-Thread building script for ESP32-S3 (Xtensa LX7) CPU port
+
+from building import *
+import os
+from env_package import find_package_path
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*_gcc.S')
+
+# Resolve ESP-IDF package the same way idf_port does (for xtensa_context.h).
+bsp_root = os.path.normpath(os.path.join(cwd, '..', '..', '..', 'bsp', 'ESP', 'ESP32_S3'))
+PKG_IDF = find_package_path(bsp_root, 'ESP-IDF-latest',
+                            marker='components/xtensa/esp32s3/include')
+
+_xtensa_freertos_inc = PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos'
+_xtensa_portable = PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa'
+_xtensa_inc = PKG_IDF + '/components/xtensa/include'
+_xtensa_s3_inc = PKG_IDF + '/components/xtensa/esp32s3/include'
+
+CPPPATH = [cwd, _xtensa_freertos_inc, _xtensa_portable, _xtensa_inc, _xtensa_s3_inc]
+ASFLAGS = ' '.join(['-I' + p for p in CPPPATH])
+
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+
+Return('group')

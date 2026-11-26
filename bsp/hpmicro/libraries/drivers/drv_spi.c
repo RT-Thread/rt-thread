@@ -31,6 +31,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+/* Set default IO mode to SINGLE_IO if not specified */
 #if defined(BSP_USING_SPI0)
 #ifndef BSP_SPI0_USING_QUAD_IO
 #ifndef BSP_SPI0_USING_DUAL_IO
@@ -146,279 +147,271 @@ typedef struct {
 static rt_err_t hpm_spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg);
 static rt_ssize_t hpm_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *msg);
 
+/* Macros to reduce repetitive SPI configuration code */
+#define HPM_SPI_BUS_NAME_MODE(idx) HPM_SPI_BUS_NAME_MODE_##idx
+#define HPM_SPI_IO_MODE(idx) HPM_SPI_IO_MODE_##idx
+
+/* Bus name based on IO mode */
+#if defined(BSP_SPI0_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_0 .bus_name = "spi0", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI0_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_0 .bus_name = "dspi0", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI0_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_0 .bus_name = "qspi0", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI1_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_1 .bus_name = "spi1", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI1_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_1 .bus_name = "dspi1", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI1_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_1 .bus_name = "qspi1", .spi_io_mode = spi_quad_io_mode,
+#endif 
+
+#if defined(BSP_SPI2_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_2 .bus_name = "spi2", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI2_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_2 .bus_name = "dspi2", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI2_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_2 .bus_name = "qspi2", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI3_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_3 .bus_name = "spi3", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI3_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_3 .bus_name = "dspi3", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI3_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_3 .bus_name = "qspi3", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI4_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_4 .bus_name = "spi4", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI4_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_4 .bus_name = "dspi4", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI4_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_4 .bus_name = "qspi4", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI5_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_5 .bus_name = "spi5", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI5_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_5 .bus_name = "dspi5", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI5_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_5 .bus_name = "qspi5", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI6_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_6 .bus_name = "spi6", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI6_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_6 .bus_name = "dspi6", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI6_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_6 .bus_name = "qspi6", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+#if defined(BSP_SPI7_USING_SINGLE_IO)
+#define HPM_SPI_BUS_NAME_MODE_7 .bus_name = "spi7", .spi_io_mode = spi_single_io_mode,
+#elif defined(BSP_SPI7_USING_DUAL_IO)
+#define HPM_SPI_BUS_NAME_MODE_7 .bus_name = "dspi7", .spi_io_mode = spi_dual_io_mode,
+#elif defined(BSP_SPI7_USING_QUAD_IO)
+#define HPM_SPI_BUS_NAME_MODE_7 .bus_name = "qspi7", .spi_io_mode = spi_quad_io_mode,
+#endif
+
+/* DMA configuration per instance */
+#if defined(BSP_SPI0_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_0 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_0
+#endif
+
+#if defined(BSP_SPI1_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_1 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_1
+#endif
+
+#if defined(BSP_SPI2_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_2 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_2
+#endif
+
+#if defined(BSP_SPI3_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_3 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_3
+#endif
+
+#if defined(BSP_SPI4_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_4 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_4
+#endif
+
+#if defined(BSP_SPI5_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_5 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_5
+#endif
+
+#if defined(BSP_SPI6_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_6 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_6
+#endif
+
+#if defined(BSP_SPI7_USING_DMA)
+#define HPM_SPI_DMA_CONFIG_7 .enable_dma = RT_TRUE,
+#else
+#define HPM_SPI_DMA_CONFIG_7
+#endif
+
+/* IRQ priority configuration per instance */
+#if defined(BSP_SPI0_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_0 .spi_irq_priority = BSP_SPI0_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_0 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI1_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_1 .spi_irq_priority = BSP_SPI1_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_1 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI2_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_2 .spi_irq_priority = BSP_SPI2_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_2 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI3_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_3 .spi_irq_priority = BSP_SPI3_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_3 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI4_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_4 .spi_irq_priority = BSP_SPI4_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_4 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI5_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_5 .spi_irq_priority = BSP_SPI5_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_5 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI6_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_6 .spi_irq_priority = BSP_SPI6_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_6 .spi_irq_priority = 1,
+#endif
+
+#if defined(BSP_SPI7_IRQ_PRIORITY)
+#define HPM_SPI_IRQ_PRIORITY_7 .spi_irq_priority = BSP_SPI7_IRQ_PRIORITY,
+#else
+#define HPM_SPI_IRQ_PRIORITY_7 .spi_irq_priority = 1,
+#endif
+
+/* CS pin init configuration per instance */
+#if !defined(BSP_SPI0_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_0 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_0 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI1_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_1 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_1 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI2_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_2 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_2 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI3_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_3 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_3 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI4_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_4 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_4 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI5_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_5 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_5 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI6_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_6 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_6 .spi_pins_init = init_spi_pins,
+#endif
+
+#if !defined(BSP_SPI7_USING_HARD_CS)
+#define HPM_SPI_PINS_INIT_7 .spi_pins_init = init_spi_pins_with_gpio_as_cs,
+#else
+#define HPM_SPI_PINS_INIT_7 .spi_pins_init = init_spi_pins,
+#endif
+
+/* Main SPI configuration macro */
+#define HPM_SPI_CONFIG(idx) \
+    { \
+        HPM_SPI_BUS_NAME_MODE_##idx \
+        .spi_base = HPM_SPI##idx, \
+        .clk_name = clock_spi##idx, \
+        HPM_SPI_DMA_CONFIG_##idx \
+        .tx_dmamux = HPM_DMA_SRC_SPI##idx##_TX, \
+        .rx_dmamux = HPM_DMA_SRC_SPI##idx##_RX, \
+        .spi_irq   = IRQn_SPI##idx, \
+        HPM_SPI_IRQ_PRIORITY_##idx \
+        HPM_SPI_PINS_INIT_##idx \
+    }
+
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+/* Macro for ISR handler declaration and implementation */
+#define HPM_SPI_ISR_HANDLER(idx) \
+    SDK_DECLARE_EXT_ISR_M(IRQn_SPI##idx, spi##idx##_isr); \
+    void spi##idx##_isr(void) \
+    { \
+        handle_spi_isr(HPM_SPI##idx); \
+    }
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
+
 static struct hpm_spi hpm_spis[] =
 {
 #if defined(BSP_USING_SPI0)
-    {
-#if defined(BSP_SPI0_USING_SINGLE_IO)
-        .bus_name = "spi0",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI0_USING_DUAL_IO)
-        .bus_name = "dspi0",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI0_USING_QUAD_IO)
-        .bus_name = "qspi0",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI0,
-        .clk_name = clock_spi0,
-#if defined(BSP_SPI0_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI0_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI0_RX,
-        .spi_irq   = IRQn_SPI0,
-#if defined(BSP_SPI0_IRQ_PRIORITY)
-        .spi_irq_priority = BSP_SPI0_IRQ_PRIORITY,
-#else
-        .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI0_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(0),
 #endif
 #if defined(BSP_USING_SPI1)
-    {
-#if defined(BSP_SPI1_USING_SINGLE_IO)
-        .bus_name = "spi1",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI1_USING_DUAL_IO)
-        .bus_name = "dspi1",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI1_USING_QUAD_IO)
-        .bus_name = "qspi1",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI1,
-        .clk_name = clock_spi1,
-#if defined(BSP_SPI1_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI1_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI1_RX,
-        .spi_irq   = IRQn_SPI1,
-#if defined(BSP_SPI1_IRQ_PRIORITY)
-       .spi_irq_priority = BSP_SPI1_IRQ_PRIORITY,
-#else
-       .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI1_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(1),
 #endif
 #if defined(BSP_USING_SPI2)
-    {
-#if defined(BSP_SPI2_USING_SINGLE_IO)
-        .bus_name = "spi2",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI2_USING_DUAL_IO)
-        .bus_name = "dspi2",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI2_USING_QUAD_IO)
-        .bus_name = "qspi2",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI2,
-        .clk_name = clock_spi2,
-#if defined(BSP_SPI2_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI2_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI2_RX,
-        .spi_irq   = IRQn_SPI2,
-#if defined(BSP_SPI2_IRQ_PRIORITY)
-      .spi_irq_priority = BSP_SPI2_IRQ_PRIORITY,
-#else
-      .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI2_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(2),
 #endif
 #if defined(BSP_USING_SPI3)
-    {
-#if defined(BSP_SPI3_USING_SINGLE_IO)
-        .bus_name = "spi3",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI3_USING_DUAL_IO)
-        .bus_name = "dspi3",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI3_USING_QUAD_IO)
-        .bus_name = "qspi3",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI3,
-        .clk_name = clock_spi3,
-#if defined(BSP_SPI3_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI3_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI3_RX,
-        .spi_irq   = IRQn_SPI3,
-#if defined(BSP_SPI3_IRQ_PRIORITY)
-        .spi_irq_priority = BSP_SPI3_IRQ_PRIORITY,
-#else
-        .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI3_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(3),
 #endif
 #if defined(BSP_USING_SPI4)
-    {
-#if defined(BSP_SPI4_USING_SINGLE_IO)
-        .bus_name = "spi4",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI4_USING_DUAL_IO)
-        .bus_name = "dspi4",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI4_USING_QUAD_IO)
-        .bus_name = "qspi4",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI4,
-        .clk_name = clock_spi4,
-#if defined(BSP_SPI4_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI4_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI4_RX,
-        .spi_irq   = IRQn_SPI4,
-#if defined(BSP_SPI4_IRQ_PRIORITY)
-       .spi_irq_priority = BSP_SPI4_IRQ_PRIORITY,
-#else
-       .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI4_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(4),
 #endif
 #if defined(BSP_USING_SPI5)
-    {
-#if defined(BSP_SPI5_USING_SINGLE_IO)
-        .bus_name = "spi5",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI5_USING_DUAL_IO)
-        .bus_name = "dspi5",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI5_USING_QUAD_IO)
-        .bus_name = "qspi5",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI5,
-        .clk_name = clock_spi5,
-#if defined(BSP_SPI5_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI5_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI5_RX,
-        .spi_irq   = IRQn_SPI5,
-#if defined(BSP_SPI5_IRQ_PRIORITY)
-        .spi_irq_priority = BSP_SPI5_IRQ_PRIORITY,
-#else
-        .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI5_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(5),
 #endif
 #if defined(BSP_USING_SPI6)
-    {
-#if defined(BSP_SPI6_USING_SINGLE_IO)
-        .bus_name = "spi6",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI6_USING_DUAL_IO)
-        .bus_name = "dspi6",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI6_USING_QUAD_IO)
-        .bus_name = "qspi6",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI6,
-        .clk_name = clock_spi6,
-#if defined(BSP_SPI6_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI6_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI6_RX,
-        .spi_irq   = IRQn_SPI6,
-#if defined(BSP_SPI6_IRQ_PRIORITY)
-        .spi_irq_priority = BSP_SPI6_IRQ_PRIORITY,
-#else
-        .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI6_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(6),
 #endif
 #if defined(BSP_USING_SPI7)
-    {
-#if defined(BSP_SPI7_USING_SINGLE_IO)
-        .bus_name = "spi7",
-        .spi_io_mode = spi_single_io_mode,
-#endif
-#if defined(BSP_SPI7_USING_DUAL_IO)
-        .bus_name = "dspi7",
-        .spi_io_mode = spi_dual_io_mode,
-#endif
-#if defined(BSP_SPI7_USING_QUAD_IO)
-        .bus_name = "qspi7",
-        .spi_io_mode = spi_quad_io_mode,
-#endif
-        .spi_base = HPM_SPI7,
-        .clk_name = clock_spi7,
-#if defined(BSP_SPI7_USING_DMA)
-        .enable_dma = RT_TRUE,
-#endif
-        .tx_dmamux = HPM_DMA_SRC_SPI7_TX,
-        .rx_dmamux = HPM_DMA_SRC_SPI7_RX,
-        .spi_irq   = IRQn_SPI7,
-#if defined(BSP_SPI7_IRQ_PRIORITY)
-        .spi_irq_priority = BSP_SPI7_IRQ_PRIORITY,
-#else
-        .spi_irq_priority = 1,
-#endif
-#if !defined BSP_SPI7_USING_HARD_CS
-        .spi_pins_init = init_spi_pins_with_gpio_as_cs,
-#else
-        .spi_pins_init = init_spi_pins,
-#endif
-    },
+    HPM_SPI_CONFIG(7),
 #endif
 };
 static struct rt_spi_ops hpm_spi_ops =
@@ -427,7 +420,11 @@ static struct rt_spi_ops hpm_spi_ops =
     .xfer = hpm_spi_xfer,
 };
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 static inline void handle_spi_isr(SPI_Type *ptr)
+#else
+static inline void handle_spi_isr(int vector, SPI_Type *ptr)
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 {
     volatile uint32_t irq_status;
     RT_ASSERT(ptr != RT_NULL);
@@ -449,69 +446,39 @@ static inline void handle_spi_isr(SPI_Type *ptr)
     rt_hw_interrupt_enable(level);
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 #if defined(BSP_USING_SPI0)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI0, spi0_isr);
-void spi0_isr(void)
-{
-    handle_spi_isr(HPM_SPI0);
-}
+HPM_SPI_ISR_HANDLER(0)
 #endif
 
 #if defined(BSP_USING_SPI1)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI1, spi1_isr);
-void spi1_isr(void)
-{
-    handle_spi_isr(HPM_SPI1);
-}
+HPM_SPI_ISR_HANDLER(1)
 #endif
 
 #if defined(BSP_USING_SPI2)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI2, spi2_isr);
-void spi2_isr(void)
-{
-    handle_spi_isr(HPM_SPI2);
-}
+HPM_SPI_ISR_HANDLER(2)
 #endif
 
 #if defined(BSP_USING_SPI3)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI3, spi3_isr);
-void spi3_isr(void)
-{
-    handle_spi_isr(HPM_SPI3);
-}
+HPM_SPI_ISR_HANDLER(3)
 #endif
 
 #if defined(BSP_USING_SPI4)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI4, spi4_isr);
-void spi4_isr(void)
-{
-    handle_spi_isr(HPM_SPI4);
-}
+HPM_SPI_ISR_HANDLER(4)
 #endif
 
 #if defined(BSP_USING_SPI5)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI5, spi5_isr);
-void spi5_isr(void)
-{
-    handle_spi_isr(HPM_SPI5);
-}
+HPM_SPI_ISR_HANDLER(5)
 #endif
 
 #if defined(BSP_USING_SPI6)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI6, spi6_isr);
-void spi6_isr(void)
-{
-    handle_spi_isr(HPM_SPI6);
-}
+HPM_SPI_ISR_HANDLER(6)
 #endif
 
 #if defined(BSP_USING_SPI7)
-SDK_DECLARE_EXT_ISR_M(IRQn_SPI7, spi7_isr);
-void spi7_isr(void)
-{
-    handle_spi_isr(HPM_SPI7);
-}
+HPM_SPI_ISR_HANDLER(7)
 #endif
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
 void spi_dma_channel_tc_callback(DMA_Type *ptr, uint32_t channel, void *user_data)
 {
@@ -538,14 +505,20 @@ static rt_err_t hpm_spi_configure(struct rt_spi_device *device, struct rt_spi_co
     spi_timing_config_t timing_config = { 0 };
     spi_format_config_t format_config = { 0 };
     struct hpm_spi *spi = RT_NULL;
+    struct rt_spi_configuration *spi_cfg = RT_NULL;
     hpm_stat_t stat = status_success;
     spi = (struct hpm_spi *)(device->bus->parent.user_data);
     RT_ASSERT(spi != RT_NULL);
+#ifdef RT_USING_QSPI
+    struct rt_qspi_device *qspi_dev = (struct rt_qspi_device *)device;
+    spi_cfg = (struct rt_spi_configuration *)&qspi_dev->config.parent;
+    RT_ASSERT((spi_cfg->data_width > 0) && (spi_cfg->data_width <= 32));
+#else
     /* hpm spi data width support 1 ~ 32 */
     RT_ASSERT((cfg->data_width > 0) && (cfg->data_width <= 32));
-
+    spi_cfg = cfg;
+#endif
     spi->spi_pins_init(spi->spi_base);
-    struct rt_spi_configuration *spi_cfg = cfg;
 
     if (spi_cfg->mode & RT_SPI_SLAVE) {
         spi_slave_get_default_format_config(&format_config);
@@ -571,11 +544,11 @@ static rt_err_t hpm_spi_configure(struct rt_spi_device *device, struct rt_spi_co
         }
     }
 
-    format_config.common_config.data_len_in_bits = cfg->data_width;
-    format_config.common_config.cpha = (cfg->mode & RT_SPI_CPHA) ? spi_sclk_sampling_even_clk_edges : spi_sclk_sampling_odd_clk_edges;
-    format_config.common_config.cpol = (cfg->mode & RT_SPI_CPOL) ? spi_sclk_high_idle : spi_sclk_low_idle;
-    format_config.common_config.lsb  = (cfg->mode & RT_SPI_MSB) ? false : true;
-    format_config.common_config.mosi_bidir = cfg->mode & RT_SPI_3WIRE ? true : false;
+    format_config.common_config.data_len_in_bits = spi_cfg->data_width;
+    format_config.common_config.cpha = (spi_cfg->mode & RT_SPI_CPHA) ? spi_sclk_sampling_even_clk_edges : spi_sclk_sampling_odd_clk_edges;
+    format_config.common_config.cpol = (spi_cfg->mode & RT_SPI_CPOL) ? spi_sclk_high_idle : spi_sclk_low_idle;
+    format_config.common_config.lsb  = (spi_cfg->mode & RT_SPI_MSB) ? false : true;
+    format_config.common_config.mosi_bidir = spi_cfg->mode & RT_SPI_3WIRE ? true : false;
     spi_format_init(spi->spi_base, &format_config);
 
 
@@ -642,47 +615,59 @@ static rt_err_t hpm_spi_check_params(struct rt_spi_device *device, struct rt_spi
             return -RT_EINVAL;
         }
 
-        if (qspi_cfg->qspi_dl_width != 0) {
-            switch (qspi_cfg->qspi_dl_width)
+        if (qspi_msg->qspi_data_lines != 0) {
+            if ((qspi_msg->qspi_data_lines != 1) && (qspi_msg->qspi_data_lines != 2) && (qspi_msg->qspi_data_lines != 4)) {
+                LOG_E("dspi/qspi only support data phase qspi lines 1/2/4 for master\n");
+                return -RT_EINVAL;
+            }
+            if ((qspi_cfg->qspi_dl_width != 0) && (qspi_msg->qspi_data_lines > qspi_cfg->qspi_dl_width)) {
+                LOG_E("msg data_lines must not exceed qspi_dl_width, qspi_dl_width=%d, data_lines=%d\n",
+                      qspi_cfg->qspi_dl_width, qspi_msg->qspi_data_lines);
+                return -RT_EINVAL;
+            }
+        }
+
+        if ((qspi_cfg->qspi_dl_width != 0) && (qspi_msg->address.qspi_lines > qspi_cfg->qspi_dl_width)) {
+            LOG_E("msg address_lines must not exceed qspi_dl_width, qspi_dl_width=%d, address_lines=%d\n",
+                  qspi_cfg->qspi_dl_width, qspi_msg->address.qspi_lines);
+            return -RT_EINVAL;
+        }
+
+        if (qspi_msg->dummy_cycles != 0) {
+            switch (qspi_msg->qspi_data_lines)
             {
             case 1:
-                if (qspi_msg->dummy_cycles != 0) {
-                    if ((qspi_msg->dummy_cycles > (4 * 8))) {
-                        LOG_E("spi only support dummy phase cycles < 32 for master\n");
-                        return -RT_EINVAL;
-                    }
-                    if ((qspi_msg->dummy_cycles != 0) && (qspi_msg->dummy_cycles % 8)) {
-                        LOG_E("The number of cycles should be an integer multiple of 8 for spi master\n");
-                        return -RT_EINVAL;
-                    }
+                if ((qspi_msg->dummy_cycles > (4 * 8))) {
+                    LOG_E("spi only support dummy phase cycles < 32 for master\n");
+                    return -RT_EINVAL;
+                }
+                if (qspi_msg->dummy_cycles % 8) {
+                    LOG_E("The number of cycles should be an integer multiple of 8 for spi master\n");
+                    return -RT_EINVAL;
                 }
                 break;
             case 2:
-                if (qspi_msg->dummy_cycles != 0) {
-                    if (qspi_msg->dummy_cycles > (4 * 4)) {
-                        LOG_E("dspi only support dummy phase cycles < 16 for master\n");
-                        return -RT_EINVAL;
-                    }
-                    if (qspi_msg->dummy_cycles % 4) {
-                        LOG_E("The number of cycles should be an integer multiple of 4 for spi master\n");
-                        return -RT_EINVAL;
-                    }
+                if (qspi_msg->dummy_cycles > (4 * 4)) {
+                    LOG_E("dspi only support dummy phase cycles < 16 for master\n");
+                    return -RT_EINVAL;
+                }
+                if (qspi_msg->dummy_cycles % 4) {
+                    LOG_E("The number of cycles should be an integer multiple of 4 for spi master\n");
+                    return -RT_EINVAL;
                 }
                 break;
             case 4:
-                if (qspi_msg->dummy_cycles != 0) {
-                    if (qspi_msg->dummy_cycles > (4 * 2)) {
-                        LOG_E("qspi only support dummy phase cycles < 8 for master\n");
-                        return -RT_EINVAL;
-                    }
-                    if (qspi_msg->dummy_cycles % 2) {
-                        LOG_E("The number of cycles should be an integer multiple of 2 for spi master\n");
-                        return -RT_EINVAL;
-                    }
+                if (qspi_msg->dummy_cycles > (4 * 2)) {
+                    LOG_E("qspi only support dummy phase cycles < 8 for master\n");
+                    return -RT_EINVAL;
+                }
+                if (qspi_msg->dummy_cycles % 2) {
+                    LOG_E("The number of cycles should be an integer multiple of 2 for spi master\n");
+                    return -RT_EINVAL;
                 }
                 break;
             default:
-                LOG_E("spi only support data phase qspi lines 1/2/4 for master\n");
+                LOG_E("dummy phase requires data phase qspi lines 1/2/4 for master\n");
                 return -RT_EINVAL;
             }
         }
@@ -699,8 +684,6 @@ bool hpm_qspi_parse_phase_message(struct rt_spi_device *device, struct rt_qspi_m
     struct hpm_spi *spi = (struct hpm_spi *)(device->bus->parent.user_data);
 #ifdef RT_USING_QSPI
     struct rt_qspi_message *qspi_msg = (struct rt_qspi_message *)msg;
-    struct rt_qspi_device *qspi_dev = (struct rt_qspi_device *)device;
-    struct rt_qspi_configuration *qspi_cfg = (struct rt_qspi_configuration *)&qspi_dev->config;
     if ((device->bus->mode == RT_SPI_BUS_MODE_QSPI) && ((device->config.mode & RT_SPI_MASTER) == RT_SPI_MASTER)) {
         if (msg->instruction.qspi_lines == 1) {
             (*cmd) = msg->instruction.content;
@@ -784,32 +767,19 @@ bool hpm_qspi_parse_phase_message(struct rt_spi_device *device, struct rt_qspi_m
                     break;
             }
         }
-        if (qspi_cfg->qspi_dl_width == 1) {
-            if (msg->qspi_data_lines == 1) {
-                spi->control_config.common_config.data_phase_fmt = spi_single_io_mode;
-            } else {
-                LOG_E("msg data_lines must be 1  when qspi_dl_width is 1, but msg data_lines is %d\n", msg->qspi_data_lines);
-            }
-        } else if (qspi_cfg->qspi_dl_width == 2) {
-            if (msg->qspi_data_lines == 1) {
-                spi->control_config.common_config.data_phase_fmt = spi_dual_io_mode;
-            } else if (msg->qspi_data_lines == 2) {
-                spi->control_config.common_config.data_phase_fmt = spi_quad_io_mode;
-            } else {
-                LOG_E("msg data_lines must be 1 or 2 when qspi_dl_width is 2, but msg data_lines is %d\n", msg->qspi_data_lines);
-            }
-        } else if (qspi_cfg->qspi_dl_width == 4) {
-            if (msg->qspi_data_lines == 1) {
-                spi->control_config.common_config.data_phase_fmt = spi_single_io_mode;
-            } else if (msg->qspi_data_lines == 2) {
-                spi->control_config.common_config.data_phase_fmt = spi_dual_io_mode;
-            } else if (msg->qspi_data_lines == 4) {
-                spi->control_config.common_config.data_phase_fmt = spi_quad_io_mode;
-            } else {
-                spi->control_config.common_config.data_phase_fmt = spi_single_io_mode;
-            }
-        } else {
-            spi->control_config.common_config.data_phase_fmt = spi_single_io_mode;
+        switch (qspi_msg->qspi_data_lines) {
+        case 1:
+            control_config->common_config.data_phase_fmt = spi_single_io_mode;
+            break;
+        case 2:
+            control_config->common_config.data_phase_fmt = spi_dual_io_mode;
+            break;
+        case 4:
+            control_config->common_config.data_phase_fmt = spi_quad_io_mode;
+            break;
+        default:
+            control_config->common_config.data_phase_fmt = spi_single_io_mode;
+            break;
         }
     }
 #endif
@@ -858,6 +828,7 @@ static rt_ssize_t hpm_spi_xfer_polling(struct rt_spi_device *device, struct rt_s
     hpm_stat_t spi_stat = status_success;
     struct rt_spi_message *_msg = (struct rt_spi_message *)msg;
     struct rt_spi_message *spi_msg = (struct rt_spi_message *)_msg;
+    uint8_t data_len_in_bytes = spi_get_data_length_in_bytes(spi->spi_base);
 #ifdef RT_USING_QSPI
     struct rt_qspi_message *qspi_msg = RT_NULL;
 #endif
@@ -888,16 +859,16 @@ static rt_ssize_t hpm_spi_xfer_polling(struct rt_spi_device *device, struct rt_s
         if (hpm_spi_check_params(device, _msg) != RT_EOK) {
             return -RT_EINVAL;
         }
+        remaining_size = _msg->length;
 #ifdef RT_USING_QSPI
         qspi_msg = (struct rt_qspi_message *)_msg;
         need_dummy = hpm_qspi_parse_phase_message(device, qspi_msg, &spi->control_config, &cmd, &addr);
-        remaining_size = _msg->length;
         if (remaining_size == 0) {
             actual_len = hpm_spi_send_no_data(spi->spi_base, &spi->control_config, &cmd, &addr,  qspi_msg);
         }
 #endif
         while (remaining_size > 0) {
-            transfer_len = MIN(SPI_SOC_TRANSFER_COUNT_MAX, remaining_size);
+            transfer_len = MIN(SPI_SOC_TRANSFER_COUNT_MAX * data_len_in_bytes, remaining_size);
             /* Next sub-packet: Disable CMD and ADDR phase for the following packet */
             if (index > 0) {
                 spi->control_config.master_config.cmd_enable = RT_FALSE;
@@ -905,7 +876,7 @@ static rt_ssize_t hpm_spi_xfer_polling(struct rt_spi_device *device, struct rt_s
             }
             if ((_msg->send_buf != NULL) && (_msg->recv_buf != NULL)) {
                 spi->control_config.common_config.trans_mode = spi_trans_write_read_together;
-                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, tx_buf, transfer_len, rx_buf, transfer_len);
+                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, tx_buf, transfer_len / data_len_in_bytes, rx_buf, transfer_len / data_len_in_bytes);
             }
             else if (_msg->send_buf != NULL) {
                 if ((need_dummy == RT_TRUE) && (index == 0)) {
@@ -913,7 +884,7 @@ static rt_ssize_t hpm_spi_xfer_polling(struct rt_spi_device *device, struct rt_s
                 } else {
                     spi->control_config.common_config.trans_mode = spi_trans_write_only;
                 }
-                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, (uint8_t*) tx_buf, transfer_len, NULL, 0);
+                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, (uint8_t*) tx_buf, transfer_len / data_len_in_bytes, NULL, 0);
             }
             else if (_msg->recv_buf != NULL){
                 if ((need_dummy == RT_TRUE) && (index == 0)) {
@@ -921,7 +892,7 @@ static rt_ssize_t hpm_spi_xfer_polling(struct rt_spi_device *device, struct rt_s
                 } else {
                     spi->control_config.common_config.trans_mode = spi_trans_read_only;
                 }
-                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, NULL, 0, rx_buf, transfer_len);
+                spi_stat = spi_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, NULL, 0, rx_buf, transfer_len / data_len_in_bytes);
             }
             if (spi_stat != status_success) {
                 actual_len = -RT_EIO;
@@ -1020,9 +991,6 @@ static hpm_stat_t hpm_spi_rx_dma_start(struct rt_spi_device *device)
 
 static void hpm_spi_transfer_data_cache_handle(struct rt_spi_message *msg, spi_dma_buf_ctx_t *ctx, rt_uint32_t len)
 {
-    rt_uint32_t transfer_len;
-    rt_uint8_t *tx_buf = RT_NULL;
-    rt_uint8_t *rx_buf = RT_NULL;
     uint32_t aligned_start = 0;
     uint32_t aligned_end = 0;
     uint32_t aligned_size = 0;
@@ -1073,21 +1041,26 @@ static hpm_stat_t hpm_spi_transmit_use_fifo(struct rt_spi_device *device, struct
 {
     hpm_stat_t stat = status_fail;
     struct hpm_spi *spi = (struct hpm_spi *)(device->bus->parent.user_data);
-    if (((*remaining_size) <= SPI_SOC_FIFO_DEPTH) && ((device->config.mode & RT_SPI_MASTER) == RT_SPI_MASTER)
+    uint8_t data_len_in_bytes = spi_get_data_length_in_bytes(spi->spi_base);
+    rt_uint32_t transfer_count = (*remaining_size) / data_len_in_bytes;
+
+    if ((transfer_count <= SPI_SOC_FIFO_DEPTH) && ((device->config.mode & RT_SPI_MASTER) == RT_SPI_MASTER)
     && (msg->send_buf != NULL) && (msg->recv_buf == NULL)) {
+        /* Clear the semaphore */
+        while (rt_sem_take(spi->spi_xfer_done_sem, 0) == RT_EOK) {
+        }
         spi_enable_interrupt(spi->spi_base, spi_end_int);
         if ((*need_dummy) == RT_TRUE) {
             spi->control_config.common_config.trans_mode = spi_trans_dummy_write;
         } else {
             spi->control_config.common_config.trans_mode = spi_trans_write_only;
         }
-        stat = spi_control_init(spi->spi_base, &spi->control_config, (*remaining_size), 0);
+        stat = spi_control_init(spi->spi_base, &spi->control_config, transfer_count, 0);
         if (stat != status_success) {
             return stat;
         }
-        uint8_t data_len_in_bytes = spi_get_data_length_in_bytes(spi->spi_base);
         if (msg->send_buf != NULL) {
-            for (uint8_t j = 0; j < (*remaining_size); j++) {
+            for (uint8_t j = 0; j < transfer_count; j++) {
                 switch (data_len_in_bytes) {
                 case 1:
                     spi->spi_base->DATA = *(uint8_t *)msg->send_buf;
@@ -1114,24 +1087,24 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
 {
     spi_dma_buf_ctx_t dma_buf_ctx = {0};
     rt_uint8_t cmd = 0;
-    rt_uint32_t addr = 0, aligned_len = 0;
+    rt_uint32_t addr = 0;
     rt_uint32_t remaining_size = msg->length;
     rt_uint32_t transfer_len;
     rt_uint8_t *tx_buf = RT_NULL;
     rt_uint8_t *rx_buf = RT_NULL;
-    uint32_t aligned_start = 0;
-    uint32_t aligned_end = 0;
-    uint32_t aligned_size = 0;
     rt_ssize_t actual_len = 0;
     bool need_dummy = RT_FALSE;
     hpm_stat_t stat = status_success;
     rt_uint32_t index;
     struct rt_spi_message *_msg = (struct rt_spi_message *)msg;
-    struct rt_spi_message *spi_msg = (struct rt_spi_message *)_msg;
 #ifdef RT_USING_QSPI
     struct rt_qspi_message *qspi_msg = RT_NULL;
 #endif
     struct hpm_spi *spi = (struct hpm_spi *)(device->bus->parent.user_data);
+    uint8_t data_len_in_bytes = spi_get_data_length_in_bytes(spi->spi_base);
+    /* Clear the semaphore */
+    while (rt_sem_take(spi->spi_xfer_done_sem, 0) == RT_EOK) {
+    }
     spi_enable_interrupt(spi->spi_base, spi_end_int);
     while (_msg != RT_NULL) {
         index = 0;
@@ -1154,7 +1127,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
                     _msg = _msg->next;
                     continue;
                 }
-                hpm_spi_transfer_data_cache_handle(_msg, &dma_buf_ctx, msg->length);
+                hpm_spi_transfer_data_cache_handle(_msg, &dma_buf_ctx, _msg->length);
                 tx_buf = dma_buf_ctx.aligned_tx_buf;
                 rx_buf = dma_buf_ctx.aligned_rx_buf;
                 dma_mgr_disable_chn_irq(&spi->rx_dma, DMA_MGR_INTERRUPT_MASK_TC);
@@ -1162,7 +1135,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
             }
         }
         while (remaining_size > 0) {
-            transfer_len = MIN(SPI_SOC_TRANSFER_COUNT_MAX, remaining_size);
+            transfer_len = MIN(SPI_SOC_TRANSFER_COUNT_MAX * data_len_in_bytes, remaining_size);
             /* Next sub-packet: Disable CMD and ADDR phase for the following packet */
             if (index > 0) {
                 spi->control_config.master_config.cmd_enable = RT_FALSE;
@@ -1190,7 +1163,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
                     break;
                 }
                 /* third: config spi */
-                stat = spi_control_init(spi->spi_base, &spi->control_config, transfer_len, transfer_len);
+                stat = spi_control_init(spi->spi_base, &spi->control_config, transfer_len / data_len_in_bytes, transfer_len / data_len_in_bytes);
                 if (stat != status_success) {
                     break;
                 }
@@ -1221,7 +1194,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
                 } else {
                     spi->control_config.common_config.trans_mode = spi_trans_write_only;
                 }
-                stat = spi_setup_dma_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, transfer_len, RT_NULL);
+                stat = spi_setup_dma_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, transfer_len / data_len_in_bytes, RT_NULL);
                 if (stat != status_success) {
                     break;
                 }
@@ -1253,7 +1226,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
                 if (stat != status_success) {
                     break;
                 }
-                stat = spi_setup_dma_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, RT_NULL, transfer_len);
+                stat = spi_setup_dma_transfer(spi->spi_base, &spi->control_config, &cmd, &addr, RT_NULL, transfer_len / data_len_in_bytes);
                 if (stat != status_success) {
                     break;
                 }
@@ -1272,7 +1245,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
             index++;
         }
         if (l1c_dc_is_enabled() && (_msg->length > 0)) {
-            if (((rt_uint32_t)msg->send_buf % HPM_L1C_CACHELINE_SIZE) || (_msg->length % HPM_L1C_CACHELINE_SIZE)) {
+            if (((rt_uint32_t)_msg->send_buf % HPM_L1C_CACHELINE_SIZE) || (_msg->length % HPM_L1C_CACHELINE_SIZE)) {
                 if (dma_buf_ctx.aligned_tx_buf != RT_NULL) {
                     rt_free_align(dma_buf_ctx.raw_alloc_tx_buf);
                     dma_buf_ctx.raw_alloc_tx_buf = RT_NULL;
@@ -1281,7 +1254,7 @@ static rt_ssize_t hpm_spi_xfer_dma(struct rt_spi_device *device, struct rt_spi_m
             }
             if ((l1c_dc_is_enabled() == true) && (_msg->recv_buf != RT_NULL) && (dma_buf_ctx.aligned_rx_buf != RT_NULL)) {
                 l1c_dc_invalidate((uint32_t) dma_buf_ctx.aligned_rx_buf, dma_buf_ctx.aligned_size);
-                if (((rt_uint32_t)msg->recv_buf % HPM_L1C_CACHELINE_SIZE) || (_msg->length % HPM_L1C_CACHELINE_SIZE)) {
+                if (((rt_uint32_t)_msg->recv_buf % HPM_L1C_CACHELINE_SIZE) || (_msg->length % HPM_L1C_CACHELINE_SIZE)) {
                     rt_memcpy(_msg->recv_buf, dma_buf_ctx.aligned_rx_buf, _msg->length);
                     rt_free_align(dma_buf_ctx.raw_alloc_rx_buf);
                     dma_buf_ctx.raw_alloc_rx_buf = RT_NULL;
@@ -1371,9 +1344,10 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #ifdef RT_USING_QSPI
     struct rt_qspi_device *qspi_dev;
     qspi_dev = (struct rt_qspi_device *) rt_malloc(sizeof(struct rt_qspi_device));
+    RT_ASSERT(qspi_dev != RT_NULL);
+    rt_memset(qspi_dev, 0, sizeof(struct rt_qspi_device));
     qspi_dev->enter_qspi_mode = enter_qspi_mode;
     qspi_dev->exit_qspi_mode = exit_qspi_mode;
-    RT_ASSERT(qspi_dev != RT_NULL);
     result = rt_spi_bus_attach_device(&qspi_dev->parent, device_name, bus_name, (void*)callback);
     RT_ASSERT(result == RT_EOK);
     struct hpm_spi *spi = RT_NULL;
@@ -1435,8 +1409,18 @@ int rt_hw_spi_init(void)
             chg_config.dst_addr = (uint32_t)&spi->spi_base->DATA;
             chg_config.en_dmamux = true;
             chg_config.dmamux_src = spi->tx_dmamux;
-            dma_mgr_setup_channel(&spi->tx_dma, &chg_config);
-            dma_mgr_install_chn_tc_callback(&spi->tx_dma, spi_dma_channel_tc_callback, (void *)&hpm_spis[i]);
+            stat = dma_mgr_setup_channel(&spi->tx_dma, &chg_config);
+            if (stat != status_success)
+            {
+                LOG_E("[spi%d]tx dma setup channel failed\n", i);
+                return -RT_ERROR;
+            }
+            stat = dma_mgr_install_chn_tc_callback(&spi->tx_dma, spi_dma_channel_tc_callback, (void *)&hpm_spis[i]);
+            if (stat != status_success)
+            {
+                LOG_E("[spi%d]tx dma install callback failed\n", i);
+                return -RT_ERROR;
+            }
             /* spi rx dma config */
             stat = dma_mgr_request_resource(&spi->rx_dma);
             if (stat != status_success) {
@@ -1450,8 +1434,18 @@ int rt_hw_spi_init(void)
             chg_config.dst_addr_ctrl = DMA_MGR_ADDRESS_CONTROL_INCREMENT;
             chg_config.en_dmamux = true;
             chg_config.dmamux_src = spi->rx_dmamux;
-            dma_mgr_setup_channel(&spi->rx_dma, &chg_config);
-            dma_mgr_install_chn_tc_callback(&spi->rx_dma, spi_dma_channel_tc_callback, (void *)&hpm_spis[i]);
+            stat = dma_mgr_setup_channel(&spi->rx_dma, &chg_config);
+            if (stat != status_success)
+            {
+                LOG_E("[spi%d]rx dma setup channel failed\n", i);
+                return -RT_ERROR;
+            }
+            stat = dma_mgr_install_chn_tc_callback(&spi->rx_dma, spi_dma_channel_tc_callback, (void *)&hpm_spis[i]);
+            if (stat != status_success)
+            {
+                LOG_E("[spi%d]rx dma install callback failed\n", i);
+                return -RT_ERROR;
+            }
 
             intc_m_enable_irq_with_priority(hpm_spis[i].spi_irq, hpm_spis[i].spi_irq_priority);
             dma_mgr_enable_dma_irq_with_priority(&spi->tx_dma, 1);
@@ -1472,7 +1466,7 @@ int rt_hw_spi_init(void)
         hpm_spis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
         if (hpm_spis[i].xfer_sem == RT_NULL)
         {
-            ret = RT_ENOMEM;
+            ret = -RT_ENOMEM;
             break;
         }
 
@@ -1480,7 +1474,7 @@ int rt_hw_spi_init(void)
         hpm_spis[i].spi_xfer_done_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
         if (hpm_spis[i].spi_xfer_done_sem == RT_NULL)
         {
-            ret = RT_ENOMEM;
+            ret = -RT_ENOMEM;
             break;
         }
 
@@ -1488,7 +1482,7 @@ int rt_hw_spi_init(void)
         hpm_spis[i].rxdma_xfer_done_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
         if (hpm_spis[i].rxdma_xfer_done_sem == RT_NULL)
         {
-            ret = RT_ENOMEM;
+            ret = -RT_ENOMEM;
             break;
         }
 
@@ -1496,9 +1490,14 @@ int rt_hw_spi_init(void)
         hpm_spis[i].txdma_xfer_done_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
         if (hpm_spis[i].txdma_xfer_done_sem == RT_NULL)
         {
-            ret = RT_ENOMEM;
+            ret = -RT_ENOMEM;
             break;
         }
+
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register SPI device to irq table */
+        rt_hw_interrupt_install(hpm_spis[i].spi_irq, (rt_isr_handler_t)handle_spi_isr, hpm_spis[i].spi_base, hpm_spis[i].bus_name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
     }
 
     return ret;

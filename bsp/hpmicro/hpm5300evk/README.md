@@ -71,7 +71,7 @@ Open RT-Thread ENV command-line, and change directory to this BSP directory, the
 
 - Users can download the project via the below command:
   ```console
-  %OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm5300.cfg -f boards\debug_scripts\boards\hpm5300evk.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
+  %OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm5300.cfg -f board\debug_scripts\openocd\boards\hpm5300evk.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"
   ```
 
 - Users can debug the project via the below command:
@@ -79,7 +79,7 @@ Open RT-Thread ENV command-line, and change directory to this BSP directory, the
   - Connect debugger via `OpenOCD`:
 
 ```console
-%OPENOCD_HPMICRO%\openocd.exe -f boards\debug_scripts\probes\ft2232.cfg -f boards\debug_scripts\soc\hpm5300.cfg -f boards\debug_scripts\boards\hpm5300evk.cfg
+%OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\openocd\probes\ft2232.cfg -f board\debug_scripts\openocd\soc\hpm5300.cfg -f board\debug_scripts\openocd\boards\hpm5300evk.cfg
 ```
   - Start Debugger via `GDB`:
 

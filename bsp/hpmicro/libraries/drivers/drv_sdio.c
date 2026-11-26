@@ -28,7 +28,6 @@
 #include "hpm_sdxc_drv.h"
 #include "hpm_l1c_drv.h"
 
-
 #define CACHELINE_SIZE                  HPM_L1C_CACHELINE_SIZE
 #define SDXC_ADMA_TABLE_WORDS           SDXC_AMDA3_DESC_MIN_WORDS
 #define SDXC_AMDA_ADDR_ALIGNMENT        (4U)
@@ -97,7 +96,7 @@ static hpm_stat_t hpm_sdmmc_transfer_polling(struct hpm_mmcsd *mmcsd, sdxc_adma_
 static hpm_stat_t hpm_sdmmc_transfer_interrupt_driven(struct hpm_mmcsd *mmcsd, sdxc_adma_config_t *dma_config, sdxc_xfer_t *xfer);
 static hpm_stat_t hpm_sdmmc_transfer(struct hpm_mmcsd *mmcsd, sdxc_adma_config_t *dma_config, sdxc_xfer_t *xfer);
 static rt_int32_t hpm_sdmmc_execute_tuning(struct rt_mmcsd_host *host, rt_int32_t opcode);
-static rt_err_t hpm_sdmmc_signal_voltage_switch(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg);
+static rt_int32_t hpm_sdmmc_switch_uhs_voltage(struct rt_mmcsd_host *host);
 
 static void hpm_sdmmc_power_on_via_pin(struct hpm_mmcsd *mmcsd);
 static void hpm_sdmmc_power_off_via_pin(struct hpm_mmcsd *mmcsd);
@@ -152,7 +151,7 @@ static void hpm_sdmmc_switch_to_1v8_via_pin(struct hpm_mmcsd *mmcsd)
 }
 
 
-static rt_err_t hpm_sdmmc_signal_voltage_switch(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
+static rt_int32_t hpm_sdmmc_switch_uhs_voltage(struct rt_mmcsd_host *host)
 {
     struct hpm_mmcsd *mmcsd = (struct hpm_mmcsd *) host->private_data;
     SDXC_Type *base = mmcsd->sdxc_base;
@@ -174,17 +173,9 @@ static rt_err_t hpm_sdmmc_signal_voltage_switch(struct rt_mmcsd_host *host, stru
         return -RT_ETIMEOUT;
     }
 
-    /* 3. Switch to 1.8V/3.3V */
-    if (ios->signal_voltage == MMCSD_SIGNAL_VOLTAGE_330)
-    {
-        hpm_sdmmc_switch_to_3v3_via_pin(mmcsd);
-        sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_3v3);
-    }
-    else
-    {
-        hpm_sdmmc_switch_to_1v8_via_pin(mmcsd);
-        sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_1v8);
-    }
+    /* 3. Switch to 1.8V */
+    hpm_sdmmc_switch_to_1v8_via_pin(mmcsd);
+    sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_1v8);
 
     /* 4. spec:host delay 5ms,  host: give more delay time here */
     rt_thread_mdelay(10);
@@ -221,7 +212,7 @@ static const struct rt_mmcsd_host_ops hpm_mmcsd_host_ops =
     .get_card_status = NULL,
     .enable_sdio_irq = hpm_sdmmc_enable_sdio_irq,
     .execute_tuning = hpm_sdmmc_execute_tuning,
-    .signal_voltage_switch = hpm_sdmmc_signal_voltage_switch,
+    .switch_uhs_voltage = hpm_sdmmc_switch_uhs_voltage,
 };
 
 void hpm_sdmmc_isr(struct hpm_mmcsd *mmcsd)
@@ -249,7 +240,6 @@ void hpm_sdmmc_isr(struct hpm_mmcsd *mmcsd)
 }
 
 #if defined(BSP_USING_SDXC0)
-void sdxc0_isr(void);
 /* Place the ADMA table to non-cacheable region */
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(8) static uint32_t s_sdxc0_adma_table[SDXC_ADMA_TABLE_WORDS];
 
@@ -316,15 +306,16 @@ static struct hpm_mmcsd s_hpm_sdxc0 =
     .data_buf_size = BSP_SDXC0_CACHEABLE_BUFFER_SIZE_IN_SECTOR * SDMMC_DEFAULT_SECTOR_SIZE,
 #endif
 };
-SDK_DECLARE_EXT_ISR_M(IRQn_SDXC0, sdxc0_isr);
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void sdxc0_isr(void)
 {
     hpm_sdmmc_isr(&s_hpm_sdxc0);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_SDXC0, sdxc0_isr);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 #endif
 
 #if defined(BSP_USING_SDXC1)
-void sdxc1_isr(void);
 /* Place the ADMA table to non-cacheable region */
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(8) static uint32_t s_sdxc1_adma_table[SDXC_ADMA_TABLE_WORDS];
 #if defined(BSP_SDXC1_NONCACHEABLE_BUFFER_SIZE_IN_SECTOR)
@@ -388,12 +379,21 @@ static struct hpm_mmcsd s_hpm_sdxc1 =
     .data_buf_size = BSP_SDXC1_CACHEABLE_BUFFER_SIZE_IN_SECTOR * SDMMC_DEFAULT_SECTOR_SIZE,
 #endif
 };
-SDK_DECLARE_EXT_ISR_M(IRQn_SDXC1, sdxc1_isr);
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void sdxc1_isr(void)
 {
     hpm_sdmmc_isr(&s_hpm_sdxc1);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_SDXC1, sdxc1_isr);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 #endif
+
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+void sdxc_isr(int vector, struct hpm_mmcsd *sdxc)
+{
+    hpm_sdmmc_isr(sdxc);
+}
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
 static struct hpm_mmcsd *hpm_sdxcs[] =
 {
@@ -1170,6 +1170,11 @@ int rt_hw_sdio_init(void)
         intc_m_enable_irq_with_priority(mmcsd->irq_num, mmcsd->irq_priority);
 
         mmcsd_change(host);
+
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register SDXC device to irq table */
+        rt_hw_interrupt_install(mmcsd->irq_num, (rt_isr_handler_t)sdxc_isr, hpm_sdxcs[i], mmcsd->name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
     }
 
     if (err != RT_EOK)

@@ -4,7 +4,14 @@ from building import *
 group = []
 cwd = GetCurrentDir()
 
-if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_RISCV64'):
+new_riscv_common = GetDepend('RT_USING_RISCV_NEW_COMMON')
+legacy_mmu_arch = (GetDepend('ARCH_ARM_CORTEX_A') or
+                   GetDepend('ARCH_ARMV8') or
+                   (GetDepend('ARCH_RISCV64') and not new_riscv_common))
+new_riscv_mmu_arch = (new_riscv_common and
+                      GetDepend('ARCH_MM_MMU'))
+
+if legacy_mmu_arch or new_riscv_mmu_arch:
     src = Glob('*.c') + Glob('*_gcc.S')
     SrcRemove(src, ['ioremap-nommu.c'])
     if not GetDepend('RT_USING_MEMBLOCK'):

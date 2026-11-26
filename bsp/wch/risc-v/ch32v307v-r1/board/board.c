@@ -9,6 +9,7 @@
  */
 
 #include "board.h"
+#include <drv_common.h>
 #include <stdint.h>
 #include "drv_usart.h"
 #include "drv_gpio.h"
@@ -40,7 +41,7 @@ void rt_hw_board_init()
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-    rt_system_heap_init((void *) HEAP_BEGIN, (void *) HEAP_END);
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
     /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
@@ -57,10 +58,9 @@ void rt_hw_board_init()
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-
 }
 
-void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void SysTick_Handler(void) WCH_IRQ_ATTR;
 void SysTick_Handler(void)
 {
     GET_INT_SP();
@@ -71,5 +71,4 @@ void SysTick_Handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
     FREE_INT_SP();
-
 }

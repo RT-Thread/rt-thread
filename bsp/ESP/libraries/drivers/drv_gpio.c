@@ -37,14 +37,19 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
-    switch  (mode)
+    switch (mode)
     {
-        case PIN_MODE_INPUT:
-            gpio_set_direction(pin, GPIO_MODE_INPUT);
-        case PIN_MODE_OUTPUT:
-            gpio_set_direction(pin, GPIO_MODE_OUTPUT);
-        case PIN_MODE_OUTPUT_OD:
-            gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT_OD);
+    case PIN_MODE_INPUT:
+        gpio_set_direction(pin, GPIO_MODE_INPUT);
+        break;
+    case PIN_MODE_OUTPUT:
+        gpio_set_direction(pin, GPIO_MODE_OUTPUT);
+        break;
+    case PIN_MODE_OUTPUT_OD:
+        gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT_OD);
+        break;
+    default:
+        break;
     }
     /*TODO:set gpio out put mode */
 }
@@ -53,7 +58,6 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_base_t pin,
                                    rt_uint8_t irq_mode, void (*hdr)(void *args), void *args)
 {
-
     /*TODO: start irq handle */
     return -RT_ENOSYS;
 }
@@ -71,8 +75,7 @@ static rt_err_t mcu_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 
-const static struct rt_pin_ops _mcu_pin_ops =
-{
+const static struct rt_pin_ops _mcu_pin_ops = {
     mcu_pin_mode,
     mcu_pin_write,
     mcu_pin_read,

@@ -1,4 +1,5 @@
 from building import *
+import os
 
 group = []
 
@@ -6,7 +7,6 @@ if not GetDepend(['RT_USING_WDT']):
     Return('group')
 
 cwd = GetCurrentDir()
-list = os.listdir(cwd)
 CPPPATH = [cwd + '/../include']
 
 src = ['dev_watchdog.c']
@@ -18,5 +18,10 @@ if GetDepend(['RT_WDT_I6300ESB']):
     src += ['watchdog-i6300esb.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

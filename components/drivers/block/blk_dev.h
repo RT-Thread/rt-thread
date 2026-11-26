@@ -46,4 +46,85 @@ rt_err_t disk_remove_blk_dev(struct rt_blk_device *blk, rt_bool_t lockless);
 
 rt_uint32_t blk_request_ioprio(void);
 
+static inline rt_err_t blk_get_geometry_k(struct rt_device *dev, struct rt_device_blk_geometry *geo)
+{
+    struct rt_blk_disk *disk;
+    struct rt_blk_device *blk;
+    struct rt_device_blk_geometry disk_geo;
+    rt_err_t err;
+
+    if (!geo)
+    {
+        return -RT_EINVAL;
+    }
+
+    disk = to_blk_disk(dev);
+    if (disk && disk->__magic == RT_BLK_DISK_MAGIC)
+    {
+        err = disk->ops->getgeome(disk, &disk_geo);
+        if (err != RT_EOK)
+        {
+            return err;
+        }
+        rt_memcpy(geo, &disk_geo, sizeof(*geo));
+        return RT_EOK;
+    }
+
+    blk = to_blk(dev);
+    if (blk && blk->disk)
+    {
+        disk = blk->disk;
+        err = disk->ops->getgeome(disk, &disk_geo);
+        if (err != RT_EOK)
+        {
+            return err;
+        }
+        geo->bytes_per_sector = disk_geo.bytes_per_sector;
+        geo->block_size = disk_geo.block_size;
+        geo->sector_count = blk->sector_count;
+        return RT_EOK;
+    }
+
+    return -RT_EINVAL;
+}
+
+static inline rt_err_t blk_get_total_size_k(struct rt_device *dev, rt_uint64_t *total)
+{
+    struct rt_blk_disk *disk;
+    struct rt_blk_device *blk;
+    struct rt_device_blk_geometry disk_geo;
+    rt_err_t err;
+
+    if (!total)
+    {
+        return -RT_EINVAL;
+    }
+
+    disk = to_blk_disk(dev);
+    if (disk && disk->__magic == RT_BLK_DISK_MAGIC)
+    {
+        err = disk->ops->getgeome(disk, &disk_geo);
+        if (err != RT_EOK)
+        {
+            return err;
+        }
+        *total = (rt_uint64_t)disk_geo.bytes_per_sector * disk_geo.sector_count;
+        return RT_EOK;
+    }
+
+    blk = to_blk(dev);
+    if (blk && blk->disk)
+    {
+        disk = blk->disk;
+        err = disk->ops->getgeome(disk, &disk_geo);
+        if (err != RT_EOK)
+        {
+            return err;
+        }
+        *total = (rt_uint64_t)disk_geo.bytes_per_sector * blk->sector_count;
+        return RT_EOK;
+    }
+
+    return -RT_EINVAL;
+}
 #endif /* __BLK_DEV_H__ */

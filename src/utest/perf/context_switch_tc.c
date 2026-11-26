@@ -53,8 +53,10 @@ static rt_sem_t complete_sem = RT_NULL;
 
 static void local_modify_time(rt_perf_t *perf)
 {
-    if(perf)
+    if (perf)
+    {
         perf->real_time = perf->real_time - perf->tmp_time;
+    }
 }
 
 static void perf_thread_event1(void *parameter)
@@ -78,7 +80,7 @@ static void perf_thread_event2(void *parameter)
         rt_sem_release(sem2);
         rt_perf_stop(perf);
 
-        rt_mutex_take(perf->lock,RT_WAITING_FOREVER);
+        rt_mutex_take(perf->lock, RT_WAITING_FOREVER);
         perf->count -= 1;
         perf->tmp_time = perf->real_time;
         rt_mutex_release(perf->lock);
@@ -96,10 +98,10 @@ rt_err_t context_switch_test(rt_perf_t *perf)
     rt_thread_t thread1 = RT_NULL;
     rt_thread_t thread2 = RT_NULL;
 
-# if __STDC_VERSION__ >= 199901L
-    rt_strcpy(perf->name,__func__);
+#if __STDC_VERSION__ >= 199901L
+    rt_strcpy(perf->name, __func__);
 #else
-    rt_strcpy(perf->name,"context_switch_test");
+    rt_strcpy(perf->name, "context_switch_test");
 #endif
 
     perf->local_modify = local_modify_time;
@@ -108,7 +110,7 @@ rt_err_t context_switch_test(rt_perf_t *perf)
     complete_sem = rt_sem_create("complete_sem", 0, RT_IPC_FLAG_FIFO);
 
     thread1 = rt_thread_create("perf_thread_event1", perf_thread_event1, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (thread1 == RT_NULL)
     {
         LOG_E("perf_thread_event1 create failed.");
@@ -116,7 +118,7 @@ rt_err_t context_switch_test(rt_perf_t *perf)
     }
 
     thread2 = rt_thread_create("perf_thread_event2", perf_thread_event2, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (thread2 == RT_NULL)
     {
         LOG_E("perf_thread_event2 create failed.");

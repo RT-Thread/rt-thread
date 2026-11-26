@@ -21,6 +21,12 @@ ESP32_C3:
   gcc: riscv32-esp-elf-gcc
   menuconfig: true
   rtconfig.h: true
+ESP32_C6:
+  .config: true
+  README.md: true
+  gcc: riscv32-esp-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
 Infineon/psoc6-cy8ckit-062-BLE:
   .config: true
   README.md: true
@@ -1620,6 +1626,12 @@ renesas/ra8m1-ek:
   README.md: true
   gcc: arm-none-eabi-gcc
   mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+renesas/rh850/qemu-rh850-u2c:
+  .config: true
+  README.md: true
+  gcc: v850-elf-gcc
   menuconfig: true
   rtconfig.h: true
 renesas/rzt2m_rsk:

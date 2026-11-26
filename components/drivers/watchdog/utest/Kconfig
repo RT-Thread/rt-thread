@@ -1,0 +1,64 @@
+menu "Watchdog Test"
+    depends on RT_USING_WDT
+
+config RT_UTEST_WDT
+    bool "Watchdog Smoke Test"
+    default n
+    help
+        Validate watchdog device find/open and timeout set/get. Optional
+        start/keepalive/stop is off by default to avoid board reset when the
+        hardware cannot stop the WDT.
+
+if RT_UTEST_WDT
+
+    config RT_UTEST_WDT_DEVICE_NAME
+        string "Watchdog Device Name"
+        default "wdt"
+        help
+            Device name registered by the BSP, usually "wdt".
+
+    config RT_UTEST_WDT_TIMEOUT_SEC
+        int "Timeout Used by Smoke Test (Seconds)"
+        range 1 60
+        default 5
+        help
+            Timeout value written by SET_TIMEOUT and checked by GET_TIMEOUT.
+            The value read back may differ by up to
+            RT_UTEST_WDT_TIMEOUT_TOL seconds because watchdog timeouts are
+            derived from a divided low-speed clock (e.g. STM32 LSI 32kHz).
+
+    config RT_UTEST_WDT_TIMEOUT_TOL
+        int "Accepted Readback Tolerance (Seconds)"
+        range 0 5
+        default 1
+        help
+            Absolute tolerance between the programmed timeout and the value
+            read back through GET_TIMEOUT. 0 requires an exact round-trip.
+
+    config RT_UTEST_WDT_STOPPABLE
+        bool "Watchdog Can Be Stopped (RT_DEVICE_CTRL_WDT_STOP)"
+        default n
+        help
+            Some watchdog blocks (e.g. STM32 IWDG) cannot be stopped at all.
+            rt_device_close() on a watchdog issues RT_DEVICE_CTRL_WDT_STOP and
+            fails with -RT_ERROR when the driver has no STOP support, which
+            would also leave the device reference count incremented and break
+            a second run of this suite.
+
+            With this option disabled (default) the test never closes the
+            device: it is a hardware-global singleton, so the handle is only
+            released by the test case and a re-run reuses the already opened
+            device. Enable it on BSPs whose watchdog really supports STOP to
+            exercise the close path.
+
+    config RT_UTEST_WDT_START
+        bool "Also Start/Keepalive/Stop Watchdog"
+        default n
+        help
+            When enabled, the test starts the WDT with the configured timeout,
+            feeds it once, then stops it. Keep this off unless the BSP WDT can
+            be stopped safely; otherwise the board may reset if STOP fails.
+
+endif
+
+endmenu

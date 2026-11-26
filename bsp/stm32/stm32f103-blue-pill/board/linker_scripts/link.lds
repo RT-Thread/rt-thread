@@ -3,10 +3,13 @@
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
+_ROM_SIZE = DEFINED(_ROM_SIZE) ? _ROM_SIZE : 128k;
+_RAM_SIZE = DEFINED(_RAM_SIZE) ? _RAM_SIZE : 20k;
+
 MEMORY
 {
-    ROM (rx) : ORIGIN = 0x08000000, LENGTH = 128k /* 128KB flash */
-    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  20k /* 20K sram */
+    ROM (rx) : ORIGIN = 0x08000000, LENGTH = _ROM_SIZE
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH = _RAM_SIZE
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x400;
@@ -92,10 +95,10 @@ SECTIONS
 
     .stack (NOLOAD) :
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         _sstack = .;
         . = . + _system_stack_size;
-        . = ALIGN(4);
+        . = ALIGN(8);
         _estack = .;
     } >RAM
 

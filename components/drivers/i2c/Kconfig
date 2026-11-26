@@ -339,6 +339,14 @@ if RT_USING_I2C
                         default 10
                 endif
         endif
+
+    config RT_UTEST_I2C
+        bool "I2C framework Test"
+        default n
+        depends on RT_USING_UTESTCASES
+        help
+            Run the I2C framework test with simulated buses. No I2C hardware
+            is required.
 endif
 
 if RT_USING_DM && RT_USING_I2C

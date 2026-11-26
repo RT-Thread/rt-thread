@@ -391,6 +391,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
     rt_tick_t timeout_tick = 0, delta_tick = 0;
     rt_base_t level = 0;
     uint8_t sleep_mode = PM_SLEEP_MODE_DEEP;
+    rt_uint8_t suspend_mode;
 
     level = rt_pm_enter_critical(pm->sleep_mode);
 
@@ -414,21 +415,24 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
     }
     else
     {
+        /* Tickless selection may change the mode after devices are suspended. */
+        suspend_mode = pm->sleep_mode;
+
         /* Notify app will enter sleep mode */
         if (_pm_notify.notify)
         {
-            _pm_notify.notify(RT_PM_ENTER_SLEEP, pm->sleep_mode, _pm_notify.data);
+            _pm_notify.notify(RT_PM_ENTER_SLEEP, suspend_mode, _pm_notify.data);
         }
 
         /* Suspend all peripheral device */
 #ifdef PM_ENABLE_SUSPEND_SLEEP_MODE
-        rt_err_t ret = _pm_device_suspend(pm->sleep_mode);
+        rt_err_t ret = _pm_device_suspend(suspend_mode);
         if (ret != RT_EOK)
         {
-            _pm_device_resume(pm->sleep_mode);
+            _pm_device_resume(suspend_mode);
             if (_pm_notify.notify)
             {
-                _pm_notify.notify(RT_PM_EXIT_SLEEP, pm->sleep_mode, _pm_notify.data);
+                _pm_notify.notify(RT_PM_EXIT_SLEEP, suspend_mode, _pm_notify.data);
             }
             if (pm->sleep_mode > PM_SUSPEND_SLEEP_MODE)
             {
@@ -439,7 +443,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
             return;
         }
 #else
-        _pm_device_suspend(pm->sleep_mode);
+        _pm_device_suspend(suspend_mode);
 #endif
         /* Tickless*/
         if (pm->timer_mask & (0x01 << pm->sleep_mode))
@@ -473,10 +477,10 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
         }
 
         /* resume all device */
-        _pm_device_resume(pm->sleep_mode);
+        _pm_device_resume(suspend_mode);
 
         if (_pm_notify.notify)
-            _pm_notify.notify(RT_PM_EXIT_SLEEP, pm->sleep_mode, _pm_notify.data);
+            _pm_notify.notify(RT_PM_EXIT_SLEEP, suspend_mode, _pm_notify.data);
 
         rt_pm_exit_critical(level, pm->sleep_mode);
     }
@@ -831,17 +835,34 @@ rt_err_t rt_pm_sleep_light_release(rt_uint16_t module_id)
  *
  * @param device the device with PM feature
  * @param ops the PM ops for device
+ *
+ * @note Locking: _pm.device_list is protected by rt_hw_interrupt_disable()
+ *       (mapped to rt_cpus_lock() when RT_USING_SMP is enabled).
+ *       _pm_device_suspend()/_pm_device_resume() walk the list inside
+ *       rt_pm_enter_critical(), and _pm_device_frequency_change() walks it
+ *       inside rt_hw_interrupt_disable(), so list updates here are serialized
+ *       with all PM list walkers. A BSP that overrides rt_pm_enter_critical()
+ *       must provide at least the same exclusion as rt_hw_interrupt_disable().
+ * @note Must not be called from interrupt context or from rt_device_pm_ops
+ *       callbacks.
  */
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops)
 {
+    rt_base_t level;
     struct rt_device_pm *device_pm;
 
-    device_pm = RT_KERNEL_MALLOC(sizeof(struct rt_device_pm));
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    device_pm = (struct rt_device_pm *)RT_KERNEL_MALLOC(sizeof(struct rt_device_pm));
     if (device_pm != RT_NULL)
     {
-        rt_slist_append(&_pm.device_list, &device_pm->list);
+        rt_slist_init(&device_pm->list);
         device_pm->device = device;
         device_pm->ops    = ops;
+
+        level = rt_hw_interrupt_disable();
+        rt_slist_append(&_pm.device_list, &device_pm->list);
+        rt_hw_interrupt_enable(level);
     }
 }
 
@@ -849,20 +870,39 @@ void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_o
  * Unregister device from PM manager.
  *
  * @param device the device with PM feature
+ *
+ * @note The node is removed from _pm.device_list under the same lock used by
+ *       the PM list walkers (see rt_pm_device_register()) and freed only after
+ *       the lock is released. Walkers hold the lock for the whole traversal,
+ *       so no walker can still reference the removed node.
+ * @note Must not be called from interrupt context or from rt_device_pm_ops
+ *       callbacks.
  */
 void rt_pm_device_unregister(struct rt_device *device)
 {
+    rt_base_t level;
     struct rt_device_pm *device_pm = RT_NULL;
+    struct rt_device_pm *found_pm = RT_NULL;
     rt_slist_t *node = RT_NULL;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    level = rt_hw_interrupt_disable();
     for (node = rt_slist_first(&_pm.device_list); node; node = rt_slist_next(node))
     {
         device_pm = rt_slist_entry(node, struct rt_device_pm, list);
         if (device_pm->device == device)
         {
             rt_slist_remove(&_pm.device_list, &device_pm->list);
-            RT_KERNEL_FREE(device_pm);
+            found_pm = device_pm;
             break;
         }
+    }
+    rt_hw_interrupt_enable(level);
+
+    if (found_pm != RT_NULL)
+    {
+        RT_KERNEL_FREE(found_pm);
     }
 }
 

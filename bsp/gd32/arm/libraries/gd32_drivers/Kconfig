@@ -39,5 +39,6 @@ endif
 
 config BSP_USING_GD_DBG
     bool 
+    default n if SOC_SERIES_GD32H77x_H78X
     default y
     # "Using GD32 debug module"

@@ -768,7 +768,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>D:\WorkFiles\12_RT-Thread\rt-thread\bsp\100ask\PitayaLite\board\linker_scripts\link.icf</state>
+                    <state>$PROJ_DIR$\board\linker_scripts\link.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

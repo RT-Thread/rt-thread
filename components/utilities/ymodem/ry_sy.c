@@ -111,6 +111,9 @@ static enum rym_code _rym_send_begin(
     struct stat file_buf;
     char insert_0 = '\0';
     rt_err_t err;
+    const char *fdst = RT_NULL;
+    char *allocated_fdst = RT_NULL;
+    int written;
 
     cctx->fd = open(cctx->fpath, O_RDONLY);
     if (cctx->fd < 0)
@@ -124,20 +127,37 @@ static enum rym_code _rym_send_begin(
     if (err != RT_EOK)
     {
         rt_kprintf("error open file.\n");
+        close(cctx->fd);
+        cctx->fd = -1;
         return RYM_ERR_FILE;
     }
 
-    const char *fdst = _get_path_lastname(cctx->fpath);
-    if(fdst != cctx->fpath)
+    fdst = _get_path_lastname(cctx->fpath);
+    if (fdst != cctx->fpath)
     {
-        fdst = dfs_normalize_path(RT_NULL, fdst);
-        if (fdst == RT_NULL)
+        allocated_fdst = dfs_normalize_path(RT_NULL, fdst);
+        if (allocated_fdst == RT_NULL)
         {
+            close(cctx->fd);
+            cctx->fd = -1;
             return RYM_ERR_FILE;
         }
+        fdst = allocated_fdst;
     }
 
-    rt_sprintf((char *)buf, "%s%c%ld", fdst, insert_0, file_buf.st_size);
+    written = rt_snprintf((char *)buf, len, "%s%c%ld", fdst, insert_0, (long)file_buf.st_size);
+    if (allocated_fdst != RT_NULL)
+    {
+        rt_free(allocated_fdst);
+    }
+
+    if (written < 0 || (rt_size_t)written >= len)
+    {
+        rt_kprintf("file info too long for ymodem packet.\n");
+        close(cctx->fd);
+        cctx->fd = -1;
+        return RYM_ERR_FILE;
+    }
 
     return RYM_CODE_SOH;
 }
@@ -200,18 +220,26 @@ static enum rym_code _rym_send_end(
     return RYM_CODE_SOH;
 }
 
-static rt_err_t rym_download_file(rt_device_t idev,const char *file_path)
+static rt_err_t rym_download_file(rt_device_t idev, const char *file_path)
 {
     rt_err_t res;
-    struct custom_ctx *ctx = rt_calloc(1, sizeof(*ctx));
+    struct custom_ctx *ctx;
 
+    if (!file_path || rt_strlen(file_path) >= DFS_PATH_MAX)
+    {
+        rt_kprintf("file path is too long or invalid.\n");
+        return -RT_ERROR;
+    }
+
+    ctx = rt_calloc(1, sizeof(*ctx));
     if (!ctx)
     {
         rt_kprintf("rt_malloc failed\n");
         return -RT_ENOMEM;
     }
     ctx->fd = -1;
-    rt_strncpy(ctx->fpath, file_path, DFS_PATH_MAX);
+    rt_strncpy(ctx->fpath, file_path, sizeof(ctx->fpath) - 1);
+    ctx->fpath[sizeof(ctx->fpath) - 1] = '\0';
     RT_ASSERT(idev);
     res = rym_recv_on_device(&ctx->parent, idev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                              _rym_recv_begin, _rym_recv_data, _rym_recv_end, 1000);
@@ -223,15 +251,23 @@ static rt_err_t rym_download_file(rt_device_t idev,const char *file_path)
 static rt_err_t rym_upload_file(rt_device_t idev, const char *file_path)
 {
     rt_err_t res = 0;
+    struct custom_ctx *ctx;
 
-    struct custom_ctx *ctx = rt_calloc(1, sizeof(*ctx));
+    if (!file_path || rt_strlen(file_path) >= DFS_PATH_MAX)
+    {
+        rt_kprintf("file path is too long or invalid.\n");
+        return -RT_ERROR;
+    }
+
+    ctx = rt_calloc(1, sizeof(*ctx));
     if (!ctx)
     {
         rt_kprintf("rt_malloc failed\n");
         return -RT_ENOMEM;
     }
     ctx->fd = -1;
-    rt_strncpy(ctx->fpath, file_path, DFS_PATH_MAX);
+    rt_strncpy(ctx->fpath, file_path, sizeof(ctx->fpath) - 1);
+    ctx->fpath[sizeof(ctx->fpath) - 1] = '\0';
     RT_ASSERT(idev);
     res = rym_send_on_device(&ctx->parent, idev,
                              RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX,

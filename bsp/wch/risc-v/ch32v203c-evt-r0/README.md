@@ -30,7 +30,7 @@ CH32V203C8T6-EVT-R0 是 WCH 推出的一款基于 RISC-V 内核的开发板，�
 
 1. [下载 WCH 编译工具链](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH)
 2. 下载 Env 工具 [最新版本](https://github.com/RT-Thread/env-windows/releases)
-3. 将 [CH32V20x-SDK-for-RTT](https://github.com/kaidegit/CH32V20x-SDK-for-RTT) clone 到 `packages/CH32V20x-SDK-for-RTT`
+3. 在当前 BSP 目录下执行 `pkgs --update`，下载配置中指定的 CH32V20x SDK v2.5
 4. 在当前 BSP 目录下执行 `scons --exec-path=工具链的bin目录`
 5. 编译完成之后会生成 **rtthread.bin** 文件。默认只打开 GPIO 和 UART1。
 

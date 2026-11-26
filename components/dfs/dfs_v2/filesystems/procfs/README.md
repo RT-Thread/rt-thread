@@ -6,6 +6,7 @@
 struct proc_dentry
 {
     rt_uint32_t mode;
+    rt_size_t size;
     rt_atomic_t ref_count;
 
     struct proc_dentry *parent;
@@ -164,3 +165,12 @@ void proc_remove(struct proc_dentry *dentry);
 - proc_pid
 
  创建一个 pid 目录，`proc_pid /101`
+
+## OFW 设备树导出
+
+在 DFS v2、procfs 和 OFW 均启用时，可选择 `RT_USING_DFS_PROCFS_OFW`，将启动时
+解析的 OFW 树以只读形式导出到 `/proc/device-tree`。节点映射为目录，属性映射为
+只读文件；读取保留设备树属性的原始字节，包括 NUL 结尾字符串、cell 字节序和零长度属性。
+该视图在启动时创建，不跟踪运行时树变更，也不支持属性写入。由于属性和子节点分属不同的
+命名空间，二者可能同名；此时属性优先导出，同名的子节点子树会被跳过并输出告警。导出过程
+中若发生错误，已创建的节点会被整体回滚。

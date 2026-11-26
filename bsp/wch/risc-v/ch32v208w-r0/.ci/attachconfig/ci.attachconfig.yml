@@ -10,3 +10,7 @@ devices.soft_i2c:
     - CONFIG_RT_SOFT_I2C2_SCL_PIN=32
     - CONFIG_RT_SOFT_I2C2_SDA_PIN=33
     - CONFIG_RT_SOFT_I2C2_BUS_NAME="swi2c2"
+
+devices.pm:
+  kconfig:
+    - CONFIG_BSP_USING_PM=y

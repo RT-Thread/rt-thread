@@ -60,7 +60,7 @@ scons: done building targets.
 
 编译RT-Thread for x86版本，还需要一份支持newlib的工具链，可以通过以下地址获得：
 
-* [i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2](http://117.143.63.254:9012/www/rt-smart/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2)
+* [i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2](https://download.rt-thread.org/download/rt-smart/toolchains/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2)
 * [ GCC 15.2.0 w/ Newlib 4.6.0.20260123: https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz ](https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz)
 * [ GCC 15.2.0 w/ Picolib 1.8.11: https://github.com/atxhua/i686-atxhua-picolib-elf/releases/download/15.2.0/i686-atxhua-picolib-elf-linux.tar.gz ](https://github.com/atxhua/i686-atxhua-picolib-elf/releases/download/15.2.0/i686-atxhua-picolib-elf-linux.tar.gz)
 

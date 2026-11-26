@@ -347,8 +347,11 @@ static void tty_init_termios(lwp_tty_t tp)
     t->__c_ispeed = TTYDEF_SPEED;
     t->__c_ospeed = TTYDEF_SPEED;
 
-    memcpy(&t->c_cc, tty_ctrl_charset,
-           sizeof(tty_ctrl_charset) / sizeof(tty_ctrl_charset[0]));
+    /* Keep terminal consumers usable when the host cannot report a size. */
+    tp->t_winsize.ws_row = 24;
+    tp->t_winsize.ws_col = 80;
+
+    memcpy(&t->c_cc, tty_ctrl_charset, sizeof(tty_ctrl_charset));
 
 #ifdef USING_BSD_INIT_LOCK_DEVICE
     tp->t_termios_init_out = *t;
@@ -442,7 +445,12 @@ void lwp_tty_delete(lwp_tty_t tp)
     if (tp->t_mtx == &tp->t_mtxobj)
         rt_mutex_detach(&tp->t_mtxobj);
     ttydevsw_free(tp);
-    rt_device_unregister(&tp->parent);
+    /* A tty that failed before lwp_tty_register() was never added to the
+     * device object list. Detaching such an object corrupts memory. */
+    if (rt_object_get_type(&tp->parent.parent) == RT_Object_Class_Device)
+    {
+        rt_device_unregister(&tp->parent);
+    }
     rt_free(tp);
 }
 

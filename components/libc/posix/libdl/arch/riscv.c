@@ -36,6 +36,16 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf_Rel *rel, Elf_Addr sym_val
     Elf64_Sword addend, offset;
     rt_uint64_t upper, lower, sign, j1, j2;
 
+    if (ELF64_R_TYPE(rel->r_info) == R_RISCV_NONE)
+    {
+        return 0;
+    }
+
+    if (dlmodule_check_rel_target(module, (rt_ubase_t)rel->r_offset, sizeof(Elf64_Addr)) != RT_EOK)
+    {
+        return -1;
+    }
+
     where = (Elf64_Addr *)((rt_uint8_t *)module->mem_space
                            + rel->r_offset
                            - module->vstart_addr);

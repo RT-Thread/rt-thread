@@ -38,66 +38,144 @@
 #include "utest.h"
 
 /*
- * 测试 PWM 驱动对板载 LED 的亮度控制功能
- *
- * 1. 查找名为 "pwm" 的 PWM 设备。
- * 2. 使用 pinctrl 将 GPIO52 映射为 PWM4 通道，并配置引脚属性：
- *    - 使能输出（OE）；
- *    - 禁用输入（IE）；
- *    - 禁用上下拉（PU/PD）；
- *    - 设置中等驱动能力（驱动强度为 4）。
- * 3. 设置 PWM 输出周期为 100000ns（对应频率为 10kHz）。
- * 4. 通过逐步增加 PWM 的脉冲宽度（pulse），控制板载 LED 的亮度由暗到亮：
- *    - 从 10% 占空比（10000ns）开始；
- *    - 每次增加 10%，直到 100%（全亮）；
- *    - 每次间隔 2 秒以便观察 LED 亮度变化。
- * 5. 最后禁用 PWM 输出，关闭 LED。
- *
- * 硬件说明：
- * - 本测试基于 K230-01studio 开发板；
- * - GPIO52 已通过电路连接一颗板载 LED；
- * - PWM4 通道控制该 LED 的亮灭和亮度；
- * - 测试过程中，可肉眼观察 LED 明暗变化。
- *
+ * GPIO52 is connected to the blue LED on the 01Studio CanMV K230.
+ * PWM4 is logical channel 1 of pwm1. Check both the visible output and
+ * the period/pulse readback, including a period that requires scaling.
  */
 
-#define PWM_DEV_NAME        "pwm1"    /* PWM设备名称 */
-#define PWM_DEV_CHANNEL      1        /* PWM通道 */
+#include "sysctl_clk.h"
+
+#define PWM_DEV_NAME         "pwm1"
+#define PWM_DEV_CHANNEL      1
 #define TEST_GPIO_LED        52
+#define PWM_CMP_MAX          0xFFFF
+
+struct pwm_test_point
+{
+    rt_uint32_t period;
+    rt_uint32_t pulse;
+};
+
+static rt_uint32_t pwm_readback_tolerance(rt_uint32_t period, rt_uint32_t *scale)
+{
+    rt_uint32_t clock = sysctl_clk_get_leaf_freq(SYSCTL_CLK_PWM_APB_GATE);
+    rt_uint64_t period_count = (rt_uint64_t)period * clock / NSEC_PER_SEC;
+
+    *scale = 0;
+    while ((period_count >> *scale) > PWM_CMP_MAX)
+    {
+        (*scale)++;
+    }
+
+    /* One scaled count, one unscaled truncation count, and rounding margin. */
+    return NSEC_PER_SEC / (clock >> *scale) + NSEC_PER_SEC / clock + 2;
+}
+
+static void pwm_check_readback(struct rt_device_pwm *pwm_dev,
+                               const struct pwm_test_point *point)
+{
+    struct rt_pwm_configuration configuration = { 0 };
+    rt_uint32_t period_error, pulse_error, scale, tolerance;
+    rt_err_t ret;
+
+    configuration.channel = PWM_DEV_CHANNEL;
+    ret = rt_pwm_get(pwm_dev, &configuration);
+    uassert_int_equal(ret, RT_EOK);
+    if (ret != RT_EOK)
+    {
+        return;
+    }
+
+    tolerance = pwm_readback_tolerance(point->period, &scale);
+    period_error = configuration.period > point->period ? configuration.period - point->period : point->period - configuration.period;
+    pulse_error = configuration.pulse > point->pulse ? configuration.pulse - point->pulse : point->pulse - configuration.pulse;
+
+    rt_kprintf("PWM readback: scale=%u, requested=%u/%u ns, actual=%u/%u ns, tolerance=%u ns\n",
+               scale, point->period, point->pulse,
+               configuration.period, configuration.pulse, tolerance);
+    uassert_true(period_error <= tolerance);
+    uassert_true(pulse_error <= tolerance);
+}
+
+static void pwm_check_cross_channel(struct rt_device_pwm *pwm_dev)
+{
+    struct rt_pwm_configuration configuration = { 0 };
+    rt_err_t ret;
+
+    ret = rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 100000, 25000);
+    uassert_int_equal(ret, RT_EOK);
+    if (ret != RT_EOK)
+    {
+        return;
+    }
+
+    /* This shorter shared period leaves channel 1's compare above pwmcmp0. */
+    ret = rt_pwm_set(pwm_dev, 0, 50000, 12500);
+    uassert_int_equal(ret, RT_EOK);
+    if (ret != RT_EOK)
+    {
+        return;
+    }
+
+    configuration.channel = PWM_DEV_CHANNEL;
+    ret = rt_pwm_get(pwm_dev, &configuration);
+    rt_kprintf("PWM cross-channel readback: ret=%d, actual=%u/%u ns\n",
+               ret, configuration.period, configuration.pulse);
+    uassert_int_equal(ret, RT_EOK);
+    if (ret != RT_EOK)
+    {
+        return;
+    }
+
+    uassert_int_equal(configuration.period, 50000);
+    uassert_int_equal(configuration.pulse, 0);
+}
 
 void pwm_demo(void)
 {
-    LOG_I("set gpio52 in PWM1 start.\n");
-    k230_pinctrl_set_function(TEST_GPIO_LED, IOMUX_FUNC3);
-    /* 使能输出 */
-    k230_pinctrl_set_oe(TEST_GPIO_LED, 1);
-    /* 禁止输入 */
-    k230_pinctrl_set_ie(TEST_GPIO_LED, 0);
-    /* 禁止上拉 */
-    k230_pinctrl_set_pu(TEST_GPIO_LED, 0);
-    /* 禁止下拉 */
-    k230_pinctrl_set_pd(TEST_GPIO_LED, 0);
-    /* 设置驱动能力为4（中等强度） */
-    k230_pinctrl_set_drv(TEST_GPIO_LED, 4);
-    LOG_I("pwm test start.\n");
-    struct rt_device_pwm *pwm_dev;       /* PWM设备句柄 */
-    rt_uint32_t period;                  /* 周期, 单位为纳秒ns */
-    rt_uint32_t pulse;                   /* PWM脉冲宽度值, 单位为纳秒ns */
+    static const struct pwm_test_point points[] = {
+        { 100000, 0 },
+        { 100000, 25000 },
+        { 100000, 75000 },
+        { 100000, 100000 },
+        { 10000000, 2500000 },
+    };
+    struct rt_device_pwm *pwm_dev;
     rt_err_t ret;
-    /* 查找设备 */
+    rt_size_t i;
+
+    rt_kprintf("Set GPIO52 to PWM4 (pwm1 channel 1).\n");
+    k230_pinctrl_set_function(TEST_GPIO_LED, IOMUX_FUNC3);
+    k230_pinctrl_set_oe(TEST_GPIO_LED, 1);
+    k230_pinctrl_set_ie(TEST_GPIO_LED, 0);
+    k230_pinctrl_set_pu(TEST_GPIO_LED, 0);
+    k230_pinctrl_set_pd(TEST_GPIO_LED, 0);
+    k230_pinctrl_set_drv(TEST_GPIO_LED, 4);
+
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
     uassert_not_null(pwm_dev);
-    /* 设置PWM周期和脉冲宽度 */
-    period = 100000;                     /* PWM 周期：100000ns = 100us，即 10kHz */
-    /* 逐步循环提高PWM脉冲宽度 */
-    for(pulse = 10000; pulse <= 100000; pulse+=10000)
+    if (pwm_dev == RT_NULL)
     {
-        ret = rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
+        return;
+    }
+
+    for (i = 0; i < sizeof(points) / sizeof(points[0]); i++)
+    {
+        ret = rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, points[i].period, points[i].pulse);
         uassert_int_equal(ret, RT_EOK);
+        if (ret != RT_EOK)
+        {
+            continue;
+        }
+
+        pwm_check_readback(pwm_dev, &points[i]);
         ret = rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
         uassert_int_equal(ret, RT_EOK);
-        sleep(2);
+        sleep(1);
     }
+
+    pwm_check_cross_channel(pwm_dev);
+
     ret = rt_pwm_disable(pwm_dev, PWM_DEV_CHANNEL);
     uassert_int_equal(ret, RT_EOK);
 }
@@ -117,4 +195,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(pwm_testcase, "bsp.k230.drivers.pwm", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(pwm_testcase, "bsp.k230.drivers.pwm", utest_tc_init, utest_tc_cleanup, 30);

@@ -13,7 +13,7 @@ extern "C" {
 #endif
 void init_uart_pins(UART_Type *ptr);
 void init_uart_pin_as_gpio(UART_Type *ptr);
-void init_i2c_pins(I2C_Type *ptr);
+hpm_stat_t init_i2c_pins(I2C_Type *ptr);
 void init_femc_pins(void);
 void init_ppi_pins(void);
 void init_sdm_pins(void);

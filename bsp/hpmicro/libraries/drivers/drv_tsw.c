@@ -13,9 +13,10 @@
 #ifdef BSP_USING_TSW
 #include <rtdbg.h>
 #include "drv_tsw.h"
-#include "board.h"
 
 #if defined(BSP_USING_TSW_PHY_RTL8211)
+#include "hpm_tsw_rtl8211.h"
+#include "board.h"
 #include "hpm_rtl8211.h"
 #endif
 
@@ -250,7 +251,11 @@ static void eth_rx_callback(struct eth_device* dev)
     }
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 void isr_tsw(hpm_tsw_t *obj)
+#else
+void isr_tsw(int vector, hpm_tsw_t *obj)
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 {
    static int idx = 0;
    uint8_t *prx = (uint8_t *)obj->tsw_dev->rx_buff_cfg->buffer;
@@ -262,11 +267,13 @@ void isr_tsw(hpm_tsw_t *obj)
    eth_rx_callback(obj->eth_dev);
 }
 
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 SDK_DECLARE_EXT_ISR_M(IRQn_TSW_0, isr_tsw_port_cpu)
 void isr_tsw_port_cpu(void)
 {
     isr_tsw(&tsw);
 }
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
 int rt_hw_tsw_init(void)
 {
@@ -313,6 +320,11 @@ int rt_hw_tsw_init(void)
             LOG_D("Ethernet device %d initialize unsuccessfully!\n");
             return err;
         }
+
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register TSW device to irq table */
+        rt_hw_interrupt_install(s_geths[i]->irq_num, (rt_isr_handler_t)isr_tsw, s_geths[i], s_geths[i]->name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
     }
 
     return err;

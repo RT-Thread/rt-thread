@@ -39,7 +39,7 @@ void init_uart_pin_as_gpio(UART_Type *ptr)
     }
 }
 
-void init_i2c_pins(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
 #if 1
@@ -60,8 +60,9 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PD03].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
         HPM_IOC->PAD[IOC_PAD_PD02].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
     } else {
-        ;
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
 void init_ppi_pins(void)

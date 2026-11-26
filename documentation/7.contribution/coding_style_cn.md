@@ -119,6 +119,38 @@ int rt_hw_spi_init(void)
 /* 你的英文注释 */
 ```
 
+**宏注释**：
+
+宏的注释和语句注释一样，可以写在宏的**右方**或**上方**。选择哪一种，主要看这个宏需要多少说明，其次才是行长。
+
+简单常量宏用行尾的 `/**<`，注释与宏同行，便于连续扫读一整组取值（`include/klibc/kerrno.h` 与 `include/rtdef.h` 里的错误码就是这样组织的）：
+
+```c
+#define RT_EOK                          0               /**< There is no error */
+#define RT_ERROR                        255             /**< A generic/unknown error happens */
+#define RT_ETIMEOUT                     ETIMEDOUT       /**< Timed out */
+```
+
+这类行因为保持列对齐，加上注释后往往超过 80 列（上面 `RT_ERROR` 一行是 95 列），这是可以接受的——**成组的常量宏优先保证纵向对齐，而不是单行长度**。
+
+如果这个宏需要多行说明，例如带参数的宏要描述入参含义、展开结果或使用限制，就把注释移到宏**上方**，用 `/**` 开头的块注释，并以 `@def` 标注宏名：
+
+```c
+/**
+ * @ingroup group_basic_definition
+ *
+ * @def RT_ALIGN(size, align)
+ * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
+ * would return 16.
+ * @note align Must be an integer power of 2 or the result will be incorrect
+ */
+#define RT_ALIGN(size, align)           (((size) + (align) - 1) & ~((align) - 1))
+```
+
+换句话说：**一条注释能说清就放行尾，需要一段话才能说清就放上方**。
+
+两种写法 doxygen 都能识别为宏的文档，但有一个差别值得注意：**开启 `MACRO_EXPANSION` 后，行尾的 `/**<` 是挂在宏展开点上的**，同一个宏在多个位置展开时，注释可能出现在意料之外的地方；上方块注释则始终绑定在宏的定义处。因此当一个宏会被频繁展开时，优先用上方块注释。
+
 **函数注释**：
 
 注释以 `/**` 开头，以 `  */` 结尾，中间写入函数注释，组成元素如下，每个元素描述之间空一行，且首列对齐：
@@ -290,6 +322,15 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 ## 14.格式化代码
 
 RT-Thread 现在使用 clang-format 作为统一的代码格式化工具。提交 C/C++、头文件及相关源文件前，请优先使用仓库根目录的 `.clang-format` 配置进行格式化，不要再使用与该配置不一致的手工排版或旧的 astyle 参数。
+
+统一使用 clang-format **22.1.8**，版本固定在 `tools/ci/requirements-format.txt`。本地开发、格式检查 CI 和手动格式化工作流使用同一版本，避免不同版本产生格式差异。在仓库根目录安装并确认版本：
+
+```shell
+python -m pip install -r tools/ci/requirements-format.txt
+clang-format --version
+```
+
+编辑器也应使用上述安装的 clang-format 可执行文件。
 
 常用命令如下：
 

@@ -23,6 +23,7 @@
  * 2023-12-10     xqyjlj       fix spinlock in up
  * 2024-01-25     Shell        Add rt_susp_list for IPC primitives
  * 2024-03-10     Meco Man     move std libc related functions to rtklibc
+ * 2026-11-21     meng-plus    move rt_kprintf and rt_kputs to kstdio.h
  */
 
 #ifndef __RT_THREAD_H__
@@ -778,12 +779,7 @@ void rt_components_board_init(void);
 /*
  * general kernel service
  */
-#ifndef RT_USING_CONSOLE
-#define rt_kprintf(...)
-#define rt_kputs(str)
-#else
-int rt_kprintf(const char *fmt, ...);
-void rt_kputs(const char *str);
+#ifdef RT_USING_CONSOLE
 #ifdef RT_USING_CONSOLE_OUTPUT_CTL
 void rt_console_output_set_enabled(rt_bool_t enabled);
 rt_bool_t rt_console_output_get_enabled(void);

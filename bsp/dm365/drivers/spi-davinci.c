@@ -328,6 +328,12 @@ static int davinci_spi_setup_transfer(struct rt_spi_device *spi,
     } else
         return -RT_ERROR;
 
+    /* the prescaler divides by the requested rate */
+    if (hz == 0)
+    {
+        return -RT_EINVAL;
+    }
+
     /* Set up SPIFMTn register, unique to this chipselect. */
 
     prescale = davinci_spi_get_prescale(dspi, hz);

@@ -11,11 +11,11 @@
 #include <rtthread.h>
 #include <rtlink.h>
 
-#define RT_LINK_RX_NONBLOCKING       0x1000
-#define RT_LINK_RX_BLOCKING          0x2000
-#define RT_LINK_TX_NONBLOCKING       0x4000
-#define RT_LINK_TX_BLOCKING          0x8000
-#define RT_LINK_DEVICE_MASK          0xf000
+#define RT_LINK_RX_NONBLOCKING 0x01000000
+#define RT_LINK_RX_BLOCKING    0x02000000
+#define RT_LINK_TX_NONBLOCKING 0x04000000
+#define RT_LINK_TX_BLOCKING    0x08000000
+#define RT_LINK_DEVICE_MASK    0x0f000000
 
 struct rtlink_recv_list
 {

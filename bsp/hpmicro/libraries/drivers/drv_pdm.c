@@ -121,7 +121,15 @@ static rt_err_t hpm_pdm_set_channels(uint32_t channel)
 
     bool is_enabled = i2s_is_enabled(PDM_I2S);
     if (is_enabled) {
-        dma_abort_channel(dma_resource.base, dma_resource.channel);
+        dma_mgr_abort_chn_transfer(&dma_resource);
+        pdm_stop(HPM_PDM);
+        pdm_software_reset(HPM_PDM);
+        i2s_disable(PDM_I2S);
+        i2s_disable_rx_dma_request(PDM_I2S);
+        if (status_success != i2s_reset_rx(PDM_I2S)) {
+            LOG_E("pdm_i2s reset rx failed\n");
+            return -RT_ERROR;
+        }
     }
     if (status_success != i2s_config_rx(PDM_I2S, mclk_hz, &transfer))
     {
@@ -130,7 +138,10 @@ static rt_err_t hpm_pdm_set_channels(uint32_t channel)
     }
     if (is_enabled)
     {
-        i2s_enable(PDM_I2S);
+        hpm_pdm_dma_transmit();
+        pdm_start(HPM_PDM);
+        i2s_enable_rx_dma_request(PDM_I2S);
+        i2s_start(PDM_I2S);
     }
 
     return RT_EOK;
@@ -161,6 +172,7 @@ static rt_err_t hpm_pdm_configure(struct rt_audio_device* audio, struct rt_audio
                     result = -RT_ERROR;
                     break;
             }
+            break;
         }
 
         default:
@@ -184,7 +196,10 @@ static rt_err_t hpm_pdm_init(struct rt_audio_device* audio)
 
     i2s_get_default_config(PDM_I2S, &i2s_config);
     i2s_enable_rx_dma_request(PDM_I2S);
-    i2s_init(PDM_I2S, &i2s_config);
+    if (status_success != i2s_init(PDM_I2S, &i2s_config)) {
+        LOG_E("pdm_i2s init failed\n");
+        return -RT_ERROR;
+    }
 
     i2s_get_default_transfer_config_for_pdm(&transfer);
     transfer.data_line = PDM_I2S_DATA_LINE;
@@ -232,11 +247,14 @@ static rt_err_t hpm_pdm_start(struct rt_audio_device* audio, int stream)
             return -RT_ERROR;
         }
 
-        i2s_reset_rx(PDM_I2S);
+        if (status_success != i2s_reset_rx(PDM_I2S)) {
+            LOG_E("pdm_i2s reset rx failed\n");
+            return -RT_ERROR;
+        }
+        i2s_enable_rx_line(PDM_I2S, PDM_I2S_DATA_LINE);
         if (RT_EOK != hpm_pdm_dma_transmit()) {
             return -RT_ERROR;
         }
-
         pdm_start(HPM_PDM);
         i2s_enable_rx_dma_request(PDM_I2S);
         i2s_start(PDM_I2S);
@@ -253,14 +271,14 @@ static rt_err_t hpm_pdm_stop(struct rt_audio_device* audio, int stream)
         pdm_stop(HPM_PDM);
         i2s_stop(PDM_I2S);
 
-        dma_abort_channel(dma_resource.base, dma_resource.channel);
+        dma_mgr_abort_chn_transfer(&dma_resource);
         dma_mgr_release_resource(&dma_resource);
     }
 
     return RT_EOK;
 }
 
-static rt_err_t hpm_pdm_dma_transmit()
+static rt_err_t hpm_pdm_dma_transmit(void)
 {
     dma_channel_config_t ch_config = {0};
     dma_default_channel_config(dma_resource.base, &ch_config);
@@ -273,6 +291,7 @@ static rt_err_t hpm_pdm_dma_transmit()
     ch_config.size_in_byte = PDM_FIFO_SIZE;
     ch_config.src_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
     ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
+    ch_config.interrupt_mask = DMA_INTERRUPT_MASK_ABORT;
 
     if (status_success != dma_setup_channel(dma_resource.base, dma_resource.channel, &ch_config, true)) {
         LOG_E("dma setup channel failed\n");

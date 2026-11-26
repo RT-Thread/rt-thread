@@ -112,6 +112,16 @@ SECTIONS
         . = ALIGN(8);
     } > ILM
 
+    
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
+        . = ALIGN(8);
+    } > ILM
+
     .bss(NOLOAD) : {
         . = ALIGN(8);
         __bss_start__ = .;
@@ -213,7 +223,7 @@ SECTIONS
         *(.fast)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
-    } > DLM
+    } > ILM
 
     __noncacheable_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata) + SIZEOF(.fast);
     .noncacheable.init : AT(__noncacheable_init_load_addr__) {

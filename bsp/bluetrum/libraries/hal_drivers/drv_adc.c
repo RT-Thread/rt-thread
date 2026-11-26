@@ -41,18 +41,23 @@ static struct ab32_adc ab32_adc_obj[] =
 #endif
 };
 
-static rt_err_t ab32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t ab32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     RT_ASSERT(device != RT_NULL);
+
+    if (channel < 0 || channel > 15)
+    {
+        return -RT_EINVAL;
+    }
 
     hal_adc_enable(enabled);
 
     return RT_EOK;
 }
 
-static rt_uint32_t ab32_adc_get_channel(rt_uint32_t channel)
+static rt_int32_t ab32_adc_get_channel(rt_int8_t channel)
 {
-    rt_uint32_t ab32_channel = 0;
+    rt_int32_t ab32_channel = 0;
 
     switch (channel)
     {
@@ -104,21 +109,31 @@ static rt_uint32_t ab32_adc_get_channel(rt_uint32_t channel)
     case 15:
         ab32_channel = ADC_CHANNEL_15;
         break;
+    default:
+        ab32_channel = -RT_EINVAL;
+        break;
     }
 
     return ab32_channel;
 }
 
-static rt_err_t ab32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t ab32_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     hal_sfr_t ab32_adc_handler;
+    rt_int32_t ab32_channel;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
 
+    ab32_channel = ab32_adc_get_channel(channel);
+    if (ab32_channel < 0)
+    {
+        return ab32_channel;
+    }
+
     ab32_adc_handler = device->parent.user_data;
 
-    hal_adc_start(ab32_adc_get_channel(channel));
+    hal_adc_start((rt_uint32_t)ab32_channel);
     hal_adc_poll_for_conversion(1000);
 
     *value = ab32_adc_handler[channel];

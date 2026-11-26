@@ -6,7 +6,6 @@
 /* RT-Thread pre-include file */
 
 #define D45
-#define HPM6880
 #define HPM6E80
 #define HPMSOC_HAS_HPMSDK_DMAV2
 #define RT_USING_LIBC

@@ -137,6 +137,10 @@ static inline void ehci_qh_add_head(struct ehci_qh_hw *head, struct ehci_qh_hw *
     n->hw.hlp = head->hw.hlp;
     usb_ehci_qh_qtd_flush(n);
 
+    if (n->urb->setup) {
+        usb_dcache_clean((uintptr_t)n->urb->setup, USB_ALIGN_UP(8, CONFIG_USB_ALIGN_SIZE));
+    }
+
     usb_dcache_flush((uintptr_t)n->urb->transfer_buffer, USB_ALIGN_UP(n->urb->transfer_buffer_length, CONFIG_USB_ALIGN_SIZE));
 
     head->hw.hlp = QH_HLP_QH(n);

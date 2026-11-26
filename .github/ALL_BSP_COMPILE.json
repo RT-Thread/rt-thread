@@ -331,6 +331,7 @@
         "gd32/arm/gd32470z-lckfb",
         "gd32/arm/gd32h759i-start",
         "gd32/arm/gd32h759i-eval",
+        "gd32/arm/gd32h77d-ginopi",
         "gd32/arm/gd32e503v-eval",
         "gd32/arm/gd32527I-eval",
         "gd32/arm/gd32e230-lckfb",
@@ -438,6 +439,7 @@
       "RTT_BSP": "riscv64-unknown",
       "RTT_TOOL_CHAIN": "sourcery-riscv64-unknown-elf",
       "SUB_RTT_BSP": [
+        "artinchip/d213ecv-demo-v4-0",
         "bluetrum/ab32vg1-ab-prougen",
         "qemu-virt64-riscv",
         "ultrarisc/ur_dp1000_evb"
@@ -448,6 +450,13 @@
       "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
       "SUB_RTT_BSP": [
         "k230"
+      ]
+    },
+    {
+      "RTT_BSP": "spacemit-k1",
+      "RTT_TOOL_CHAIN": "riscv64-unknown-linux-musl-",
+      "SUB_RTT_BSP": [
+        "spacemit/k1"
       ]
     },
     {
@@ -464,7 +473,8 @@
         "hpmicro/hpm6800evk",
         "hpmicro/hpm6e00evk",
         "hpmicro/hpm6p00evk",
-        "hpmicro/hpm5e00evk"
+        "hpmicro/hpm5e00evk",
+        "hpmicro/hpm5100evk"
       ]
     },
     {
@@ -496,10 +506,24 @@
       ]
     },
     {
+      "RTT_BSP": "ESP32C6",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_C6"
+      ]
+    },
+    {
       "RTT_BSP": "i386-unknown",
       "RTT_TOOL_CHAIN": "sourcery-i386-unknown-elf",
       "SUB_RTT_BSP": [
         "x86"
+      ]
+    },
+    {
+      "RTT_BSP": "rh850",
+      "RTT_TOOL_CHAIN": "sourcery-v850-elf",
+      "SUB_RTT_BSP": [
+        "renesas/rh850/qemu-rh850-u2c"
       ]
     },
     {

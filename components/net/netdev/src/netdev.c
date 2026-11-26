@@ -449,16 +449,15 @@ int netdev_getnetdev(struct msg_buf *msg, int (*cb)(struct msg_buf *m_buf, struc
     nd_num = rt_slist_len(&cur_nd_list->list) + 1;
     rt_spin_unlock(&_spinlock);
 
-    err = cb(msg, cur_nd_list, nd_num, nd.ifindex, ROUTE_IPV4_TRUE);
+    err = cb(msg, cur_nd_list, nd_num, cur_nd_list->ifindex, ROUTE_IPV4_TRUE);
     if (err < 0)
         return err;
-
 
     rt_spin_lock(&_spinlock);
     rt_slist_for_each_entry(nd_node, &(cur_nd_list->list), list)
     {
         rt_spin_unlock(&_spinlock);
-        err = cb(msg, nd_node, nd_num, nd.ifindex, ROUTE_IPV4_TRUE);
+        err = cb(msg, nd_node, nd_num, nd_node->ifindex, ROUTE_IPV4_TRUE);
         if (err < 0)
         {
             return err;
@@ -1371,8 +1370,7 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     min_time = 0xFFFFFFFF;
     for (index = 0; index < times; index++)
     {
-        int delay_tick = 0;
-        rt_tick_t start_tick = 0;
+        rt_tick_t start_tick = 0, cost_tick = 0, delay_tick = 0;
 
         rt_memset(&ping_resp, 0x00, sizeof(struct netdev_ping_resp));
         start_tick = rt_tick_get();
@@ -1390,18 +1388,24 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         }
         else
         {
+            const char *resp_addr = ip_addr_isany(&(ping_resp.ip_addr)) ? target_name : inet_ntoa(ping_resp.ip_addr);
+
             if (ping_resp.ttl == 0)
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ticks);
+                           ping_resp.data_len, resp_addr, index + 1, ping_resp.ticks);
             }
             else
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d ttl=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ttl, ping_resp.ticks);
+                           ping_resp.data_len, resp_addr, index + 1, ping_resp.ttl, ping_resp.ticks);
             }
             received += 1;
-            if (ping_resp.ticks > max_time)
+            if (received == 1)
+            {
+                max_time = min_time = ping_resp.ticks;
+            }
+            else if (ping_resp.ticks > max_time)
             {
                 max_time = ping_resp.ticks;
             }
@@ -1413,8 +1417,19 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         }
 
         /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
-        delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
-        rt_thread_delay(delay_tick);
+        cost_tick = rt_tick_get() - start_tick;
+        if (index != times - 1)
+        {
+            if (cost_tick < NETDEV_PING_DELAY)
+            {
+                delay_tick = NETDEV_PING_DELAY - cost_tick;
+            }
+        }
+
+        if (delay_tick > 0)
+        {
+            rt_thread_delay(delay_tick);
+        }
     }
 
     if (times == 0)
@@ -1425,12 +1440,13 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     /* print ping statistics */
     loss = (uint32_t)((1 - ((float)received) / index) * 100);
-    avg_time = (uint32_t)(avg_time / received);
 
-    rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(ping_resp.ip_addr));
+    rt_kprintf("\n--- %s ping statistics ---\n",
+               ip_addr_isany(&(ping_resp.ip_addr)) ? target_name : inet_ntoa(ping_resp.ip_addr));
     rt_kprintf("%d packets transmitted, %d received, %d%% packet loss\n", index, received, loss);
     if (received > 0)
     {
+        avg_time = (uint32_t)(avg_time / received);
         rt_kprintf("minimum = %dms, maximum = %dms, average = %dms\n", min_time, max_time, avg_time);
     }
 

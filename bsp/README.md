@@ -334,8 +334,8 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | ✅ | - | ✅ |
-| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | - | - | ✅ |
+| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ |
+| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ |
 
 
 #### 🟡 NRF5x
@@ -763,6 +763,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [hpm6800evk](hpmicro/hpm6800evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
 | [hpm6e00evk](hpmicro/hpm6e00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [hpm6p00evk](hpmicro/hpm6p00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [hpm5100evk](hpmicro/hpm5100evk) | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟢 K230 (RT-Smart)
 
@@ -808,6 +809,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [ch569w-evt](wch/risc-v/ch569w-evt) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | - | - | - | - |
 | [yd-ch32v307vct6](wch/risc-v/yd-ch32v307vct6) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
 
+#### 🟢 Spacemit
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI | DMA | Ethernet | Audio | Display | Crypto |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|-----|-----|----------|-------|---------|--------|
+| [k1](spacemit/k1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
 #### 🟡 Ultrarisc (RT-Smart) (SMP)
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
@@ -838,6 +845,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | Soft I2C | HWTimer | PWM | WiFi |
 |----------|------|------|-----|-----|-----|----------|---------|-----|------|
 | [ESP32_C3](ESP32_C3) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [ESP32_C6](ESP/ESP32_C6) | ✅ | ✅ | ✅ | - | - | - | - | - | - |
 
 #### 🟡 Bluetrum
 
@@ -877,6 +885,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-----|-----|-----|
 | [ri5cy](rv32m1_vega/ri5cy) | ✅ | ✅ | - | - | - | - |
 | [rv32m1_sdk_riscv](rv32m1_vega/rv32m1_sdk_riscv) | ✅ | ✅ | - | - | - | - |
+
+#### ⚪ ArtInChip
+
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
+|----------|------|------|-----|-----|-----|-----|
+| [d213ecv-demo-v4-0](artinchip/d213ecv-demo-v4-0) | - | ✅ | - | - | - | - |
 
 ---
 
@@ -928,6 +942,16 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
 | [tms320f28379d](ti/c28x/tms320f28379d) | ✅ | ✅ | ✅ | - | - | - |
+
+---
+
+### RH850 Architecture Series
+
+#### ⚪ Renesas RH850
+
+| BSP Name | UART |
+|----------|------|
+| [qemu-rh850-u2c](renesas/rh850/qemu-rh850-u2c) | ✅ |
 
 ---
 

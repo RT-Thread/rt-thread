@@ -14,6 +14,7 @@
 #include <drivers/ofw_fdt.h>
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>
+#include <drivers/misc.h>
 
 #ifdef RT_USING_MEMBLOCK
 #include <mm_memblock.h>
@@ -38,12 +39,6 @@ static rt_phandle _phandle_min;
 static rt_phandle _phandle_max;
 static rt_size_t _root_size_cells;
 static rt_size_t _root_addr_cells;
-
-#ifdef ARCH_CPU_64BIT
-#define MIN_BIT   16
-#else
-#define MIN_BIT   8
-#endif
 
 const char *rt_fdt_node_name(const char *full_name)
 {
@@ -367,11 +362,15 @@ static rt_err_t fdt_scan_memory(void)
 
             if (!err)
             {
-                LOG_I("Memory node(%d) ranges: 0x%.*lx - 0x%.*lx%s", no, MIN_BIT, base, MIN_BIT, base + size, "");
+                LOG_I("Memory node(%d) ranges: 0x%08x%08x - 0x%08x%08x", no,
+                        rt_upper_32_bits(base), rt_lower_32_bits(base),
+                        rt_upper_32_bits(base + size), rt_lower_32_bits(base + size));
             }
             else
             {
-                LOG_W("Memory node(%d) ranges: 0x%.*lx - 0x%.*lx%s", no, MIN_BIT, base, MIN_BIT, base + size, " unable to record");
+                LOG_W("Memory node(%d) ranges: 0x%08x%08x - 0x%08x%08x unable to record", no,
+                        rt_upper_32_bits(base), rt_lower_32_bits(base),
+                        rt_upper_32_bits(base + size), rt_lower_32_bits(base + size));
             }
         }
     }
@@ -875,12 +874,84 @@ static void system_node_init_flag(struct rt_ofw_node *np)
     }
 }
 
+#ifdef RT_USING_DEBUG
+static int fdt_check_depth_limit(void *fdt)
+{
+    int root_off = fdt_path_offset(fdt, "/");
+
+    if (root_off < 0)
+    {
+        return -1;
+    }
+
+    int max_depth = 0;
+    int depth = 0;
+    int node = root_off;
+    int path[OFW_NODE_MAX_DEPTH];
+
+    while (1)
+    {
+        if (depth > max_depth)
+        {
+            max_depth = depth;
+        }
+
+        if (max_depth >= OFW_NODE_MAX_DEPTH)
+        {
+            return max_depth;
+        }
+
+        int child = fdt_first_subnode(fdt, node);
+
+        if (child >= 0)
+        {
+            path[depth] = node;
+            node = child;
+            depth++;
+
+            continue;
+        }
+
+        while (1)
+        {
+            int sibling = fdt_next_subnode(fdt, node);
+
+            if (sibling >= 0)
+            {
+                node = sibling;
+                break;
+            }
+
+            if (depth == 0)
+            {
+                return max_depth;
+            }
+
+            depth--;
+            node = path[depth];
+        }
+    }
+}
+#endif
+
 rt_err_t rt_fdt_unflatten(void)
 {
     rt_err_t err = RT_EOK;
 
     if (_fdt)
     {
+#ifdef RT_USING_DEBUG
+        int max_depth = fdt_check_depth_limit(_fdt);
+
+        if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
+        {
+            LOG_E("DTB node depth exceeds limit %d, refuse to unflatten",
+                  OFW_NODE_MAX_DEPTH - 1);
+
+            while (1);
+        }
+#endif
+
         _phandle_min = OFW_PHANDLE_MAX;
         _phandle_max = OFW_PHANDLE_MIN;
 
@@ -907,6 +978,10 @@ rt_err_t rt_fdt_unflatten(void)
             }
 
             err = err ? : ofw_phandle_hash_reset(_phandle_min, _phandle_max);
+        }
+        else
+        {
+            err = -RT_ERROR;
         }
     }
     else
@@ -1010,6 +1085,13 @@ static rt_err_t fdt_unflatten_single(struct rt_ofw_node *np, int node_off)
 
             if (node_off >= 0)
             {
+                if (depth >= OFW_NODE_MAX_DEPTH)
+                {
+                    LOG_E("DTB node depth exceeds limit %d", OFW_NODE_MAX_DEPTH);
+                    err = -RT_EINVAL;
+                    break;
+                }
+
                 parent = np;
 
                 np_stack[depth++] = np;

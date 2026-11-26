@@ -4,6 +4,11 @@ menu "Drivers Configuration"
         bool "Enable KPU and AI2D"
         default n
 
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default n
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI
@@ -160,7 +165,7 @@ menu "Drivers Configuration"
 
             config BSP_SD_MNT_DEVNAME
                 string "The name of the SD-BlkDev to be mounted"
-                default "sd0p1"
+                default "sd0p0"
         endif
 
     menuconfig BSP_USING_TIMERS

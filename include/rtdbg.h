@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2016-11-12     Bernard      The first version
  * 2018-05-25     armink       Add simple API, such as LOG_D, LOG_E
+ * 2026-11-21     meng-plus    include rtklibc.h for rt_kprintf
  */
 
 /*
@@ -31,6 +32,7 @@
 #define RT_DBG_H__
 
 #include <rtconfig.h>
+#include <rtklibc.h>
 
 #ifdef __cplusplus
 extern "C" {

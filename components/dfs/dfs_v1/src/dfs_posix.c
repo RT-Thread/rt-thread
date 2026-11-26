@@ -40,7 +40,7 @@
  *         - `O_EXCL`: Ensure that `O_CREAT` creates the file exclusively.
  *         - Other platform-specific flags
  *
- * @return the non-negative integer on successful open, others for failed.
+ * @return A non-negative file descriptor on success, or -1 with errno set on failure.
  */
 int open(const char *file, int flags, ...)
 {
@@ -51,8 +51,6 @@ int open(const char *file, int flags, ...)
     fd = fd_new();
     if (fd < 0)
     {
-        rt_set_errno(-ENOMEM);
-
         return -1;
     }
     d = fd_get(fd);
@@ -63,7 +61,7 @@ int open(const char *file, int flags, ...)
         /* release the ref-count of fd */
         fd_release(fd);
 
-        rt_set_errno(result);
+        rt_set_errno(-result);
 
         return -1;
     }

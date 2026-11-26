@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Apache-2.0
+
+devices.inputcapture_tim3:
+  kconfig:
+    - CONFIG_BSP_USING_INPUT_CAPTURE=y
+    - CONFIG_BSP_USING_INPUT_CAPTURE_TIM3=y
+  # CI-only: enable the CubeMX HAL TIM module for Input Capture.
+  pre_build: |
+    sed -i 's@^/\*[[:space:]]*#define HAL_TIM_MODULE_ENABLED[[:space:]]*\*/@#define HAL_TIM_MODULE_ENABLED@' board/CubeMX_Config/Inc/stm32h7xx_hal_conf.h
+    grep -Fx '#define HAL_TIM_MODULE_ENABLED' board/CubeMX_Config/Inc/stm32h7xx_hal_conf.h
+    grep -Fx 'CONFIG_RT_USING_INPUT_CAPTURE=y' .config
+    grep -Fx 'CONFIG_BSP_USING_INPUT_CAPTURE=y' .config
+    grep -Fx 'CONFIG_BSP_USING_INPUT_CAPTURE_TIM3=y' .config
+    grep -Fx '#define RT_USING_INPUT_CAPTURE' rtconfig.h
+    grep -Fx '#define BSP_USING_INPUT_CAPTURE' rtconfig.h
+    grep -Fx '#define BSP_USING_INPUT_CAPTURE_TIM3' rtconfig.h
+    ! grep -Eq '^#define RT_USING_(HWTIMER|PWM|PULSE_ENCODER)([[:space:]]|$)' rtconfig.h
+  buildcheckresult: drv_inputcapture.o
+  post_build: |
+    test -s rt-thread.elf
+    find build -type f -name drv_inputcapture.o -print -quit | grep -q .

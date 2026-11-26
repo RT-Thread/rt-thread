@@ -1562,6 +1562,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_PWM
             menuconfig BSP_USING_PWM1
                 bool "Enable ATIM1 output PWM"
+                depends on !BSP_USING_ATIM1
                 default n
                 if BSP_USING_PWM1
                     config BSP_USING_PWM1_CH1
@@ -1583,6 +1584,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM2
                 bool "Enable ATIM2 output PWM"
+                depends on !BSP_USING_ATIM2
                 default n
                 if BSP_USING_PWM2
                     config BSP_USING_PWM2_CH1
@@ -1604,6 +1606,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM3
                 bool "Enable ATIM3 output PWM"
+                depends on !BSP_USING_ATIM3
                 default n
                 if BSP_USING_PWM3
                     config BSP_USING_PWM3_CH1
@@ -1625,6 +1628,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM4
                 bool "Enable ATIM4 output PWM"
+                depends on !BSP_USING_ATIM4
                 default n
                 if BSP_USING_PWM4
                     config BSP_USING_PWM4_CH1
@@ -1646,6 +1650,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM5
                 bool "Enable GTIMA1 output PWM"
+                depends on !BSP_USING_GTIMA1
                 default n
                 if BSP_USING_PWM5
                     config BSP_USING_PWM5_CH1
@@ -1667,6 +1672,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM6
                 bool "Enable GTIMA2 output PWM"
+                depends on !BSP_USING_GTIMA2
                 default n
                 if BSP_USING_PWM6
                     config BSP_USING_PWM6_CH1
@@ -1688,6 +1694,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM7
                 bool "Enable GTIMA3 output PWM"
+                depends on !BSP_USING_GTIMA3
                 default n
                 if BSP_USING_PWM7
                     config BSP_USING_PWM7_CH1
@@ -1709,6 +1716,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM8
                 bool "Enable GTIMA4 output PWM"
+                depends on !BSP_USING_GTIMA4
                 default n
                 if BSP_USING_PWM8
                     config BSP_USING_PWM8_CH1
@@ -1730,6 +1738,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM9
                 bool "Enable GTIMA5 output PWM"
+                depends on !BSP_USING_GTIMA5
                 default n
                 if BSP_USING_PWM9
                     config BSP_USING_PWM9_CH1
@@ -1751,6 +1760,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM10
                 bool "Enable GTIMA6 output PWM"
+                depends on !BSP_USING_GTIMA6
                 default n
                 if BSP_USING_PWM10
                     config BSP_USING_PWM10_CH1
@@ -1772,6 +1782,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM11
                 bool "Enable GTIMA7 output PWM"
+                depends on !BSP_USING_GTIMA7
                 default n
                 if BSP_USING_PWM11
                     config BSP_USING_PWM11_CH1
@@ -1793,6 +1804,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM12
                 bool "Enable GTIMB1 output PWM"
+                depends on !BSP_USING_GTIMB1
                 default n
                 if BSP_USING_PWM12
                     config BSP_USING_PWM12_CH1
@@ -1814,6 +1826,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM13
                 bool "Enable GTIMB2 output PWM"
+                depends on !BSP_USING_GTIMB2
                 default n
                 if BSP_USING_PWM13
                     config BSP_USING_PWM13_CH1
@@ -1835,6 +1848,7 @@ menu "On-chip Peripheral Drivers"
 
             menuconfig BSP_USING_PWM14
                 bool "Enable GTIMB3 output PWM"
+                depends on !BSP_USING_GTIMB3
                 default n
                 if BSP_USING_PWM14
                     config BSP_USING_PWM14_CH1
@@ -1862,65 +1876,78 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_PULSE_ENCODER
                 config BSP_USING_PULSE_ENCODER1
                     bool "Enable Pulse Encoder1"
+                    depends on !BSP_USING_ATIM1 && !BSP_USING_PWM1
                     default n
 
                 config BSP_USING_PULSE_ENCODER2
                     bool "Enable Pulse Encoder2"
+                    depends on !BSP_USING_ATIM2 && !BSP_USING_PWM2
                     default n
 
                 config BSP_USING_PULSE_ENCODER3
                     bool "Enable Pulse Encoder3"
+                    depends on !BSP_USING_ATIM3 && !BSP_USING_PWM3
                     default n
 
                 config BSP_USING_PULSE_ENCODER4
                     bool "Enable Pulse Encoder4"
+                    depends on !BSP_USING_ATIM4 && !BSP_USING_PWM4
                     default n
 
                 config BSP_USING_PULSE_ENCODER5
                     bool "Enable Pulse Encoder5"
+                    depends on !BSP_USING_GTIMA1 && !BSP_USING_PWM5
                     default n
 
                 config BSP_USING_PULSE_ENCODER6
                     bool "Enable Pulse Encoder6"
+                    depends on !BSP_USING_GTIMA2 && !BSP_USING_PWM6
                     default n
 
                 config BSP_USING_PULSE_ENCODER7
                     bool "Enable Pulse Encoder7"
+                    depends on !BSP_USING_GTIMA3 && !BSP_USING_PWM7
                     default n
 
                 config BSP_USING_PULSE_ENCODER8
                     bool "Enable Pulse Encoder8"
+                    depends on !BSP_USING_GTIMA4 && !BSP_USING_PWM8
                     default n
 
                 config BSP_USING_PULSE_ENCODER9
                     bool "Enable Pulse Encoder9"
+                    depends on !BSP_USING_GTIMA5 && !BSP_USING_PWM9
                     default n
 
                 config BSP_USING_PULSE_ENCODER10
                     bool "Enable Pulse Encoder10"
+                    depends on !BSP_USING_GTIMA6 && !BSP_USING_PWM10
                     default n
 
                 config BSP_USING_PULSE_ENCODER11
                     bool "Enable Pulse Encoder11"
+                    depends on !BSP_USING_GTIMA7 && !BSP_USING_PWM11
                     default n
 
                 config BSP_USING_PULSE_ENCODER12
                     bool "Enable Pulse Encoder12"
+                    depends on !BSP_USING_GTIMB1 && !BSP_USING_PWM12
                     default n
 
                 config BSP_USING_PULSE_ENCODER13
                     bool "Enable Pulse Encoder13"
+                    depends on !BSP_USING_GTIMB2 && !BSP_USING_PWM13
                     default n
 
                 config BSP_USING_PULSE_ENCODER14
                     bool "Enable Pulse Encoder14"
+                    depends on !BSP_USING_GTIMB3 && !BSP_USING_PWM14
                     default n
             endif
 
     menuconfig BSP_USING_LPTIM
         bool "Enable lptimer"
         default n
-        select RT_USING_LPTIMER
         select RT_USING_CLOCK_TIME
         if BSP_USING_LPTIM
             config BSP_USING_LPTIM1

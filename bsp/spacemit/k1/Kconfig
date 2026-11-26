@@ -1,0 +1,27 @@
+mainmenu "RT-Thread Project Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+SOC_DM_DIR := $BSP_DIR/../dm/
+
+source "$(SOC_DM_DIR)/Kconfig"
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+config SOC_SPACEMIT_K1
+    bool
+    select ARCH_RISCV64
+    select RT_USING_RISCV_NEW_COMMON
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    select ARCH_MM_MMU
+    select ARCH_REMAP_KERNEL if RT_USING_SMART
+    select ARCH_RISCV_FPU_D
+    select RT_USING_CPU_FFS
+    select RT_USING_STDC_ATOMIC
+    default y
