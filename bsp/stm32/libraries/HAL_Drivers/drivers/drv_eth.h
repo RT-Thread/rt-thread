@@ -112,6 +112,7 @@
 #define PHY_Status_SPEED_10M(sr)    ((sr) & PHY_10M_MASK)
 #define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
 #define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
+#define PHY_INT_MASK                0
 #endif
 
 #endif /* __DRV_ETH_H__ */
