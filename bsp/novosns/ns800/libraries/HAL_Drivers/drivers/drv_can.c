@@ -790,91 +790,6 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return status;
 }
 
-/**
- * @internal
- * @brief Low-level non-blocking send. Places message into hardware mailbox
- *        directly without waiting if the mailbox is idle.
- *
- * @param[in] can A pointer to the CAN device structure.
- * @param[in] buf A pointer to the `rt_can_msg` to be sent.
- * @param[out] mailbox Physical TX mailbox index when the frame is accepted.
- *
- * @return `RT_EOK` on success, `-RT_EBUSY` if TX mailbox is busy,
- *         or other error code on failure.
- */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                           rt_uint32_t *mailbox)
-{
-    ns800rt7_can *hcan;
-    struct rt_can_msg *pmsg;
-    FLEXCANDRV_MsgObjType fdTxMsgObj;
-    rt_uint8_t data_len;
-    /* Capture submission status before publishing the single hardware mailbox index. */
-    rt_ssize_t status;
-
-    RT_ASSERT(can);
-    RT_ASSERT(buf);
-    hcan = (ns800rt7_can *)can->parent.user_data;
-    pmsg = (struct rt_can_msg *)buf;
-
-    /* A blocking sender can still own MB0 after its hardware terminal. */
-    if ((can->status.sndchange & 1UL) != 0U)
-    {
-        return -RT_EBUSY;
-    }
-
-    /* Check if TX MB (MB0) is idle */
-    if (StateIdle != hcan->mbState[0])
-    {
-        return -RT_EBUSY;
-    }
-
-    /* Validate payload byte length */
-    if (!IS_CAN_LEN_VALID(pmsg->len))
-    {
-        return -RT_ERROR;
-    }
-
-#ifdef RT_CAN_USING_CANFD
-    if (pmsg->fd_frame && (!hcan->fd_capable || !hcan->device.config.enable_canfd))
-    {
-        return -RT_ERROR;
-    }
-
-    if (!pmsg->fd_frame && pmsg->len > 8U)
-    {
-        return -RT_ERROR;
-    }
-#endif
-
-    rt_memset(&fdTxMsgObj, 0, sizeof(fdTxMsgObj));
-    fdTxMsgObj.msgBufId = 0; /* MB0 is the dedicated TX mailbox */
-
-    /* Convert byte length to hardware DLC code */
-    data_len = pmsg->len;
-#ifdef RT_CAN_USING_CANFD
-    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);
-    fdTxMsgObj.isFd = (pmsg->fd_frame != 0 && hcan->device.config.enable_canfd) ? true : false;
-#else
-    fdTxMsgObj.dlc = pmsg->len;
-#endif
-
-    rt_memcpy(fdTxMsgObj.data, pmsg->data, data_len);
-
-    status = _can_sendBlocking(hcan, &fdTxMsgObj,
-                               pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
-#ifdef RT_CAN_USING_CANFD
-                               (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
-#else
-                               0U);
-#endif
-    if (status == RT_EOK)
-    {
-        *mailbox = 0U;
-    }
-    return status;
-}
-
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct rt_can_msg *pmsg;
@@ -943,7 +858,7 @@ static const struct rt_can_ops _can_ops = {
     .control = _can_control,
     .sendmsg = _can_sendmsg,
     .recvmsg = _can_recvmsg,
-    .sendmsg_nonblocking = _can_sendmsg_nonblocking,
+    .nonblocking_supported = RT_TRUE,
 };
 
 static uint8_t FLEXCANREG_GetMsgBufInterruptMask(FLEXCANREG_TypeDef *obj, uint32_t msgBufferIdx)

@@ -609,31 +609,6 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return RT_EOK;
 }
 
-/**
- * @brief Submit one CAN frame immediately through the single Generic STB mailbox.
- * @param[in] can CAN controller device.
- * @param[in] buf Frame to submit without software queuing.
- * @param[out] mailbox Receives logical mailbox 0 on successful submission.
- * @return RT_EOK, -RT_EBUSY when occupied, or another negative error.
- */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Result from the immediate hardware submission attempt. */
-    rt_ssize_t result;
-
-    RT_ASSERT(mailbox != RT_NULL);
-    if ((can->status.sndchange & 1UL) != 0U)
-    {
-        return -RT_EBUSY;
-    }
-    result = _can_sendmsg(can, buf, 0);
-    if (result == RT_EOK)
-    {
-        *mailbox = 0U;
-    }
-    return result;
-}
-
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     can_rxbuf_type rx_message;
@@ -680,7 +655,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    _can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can)

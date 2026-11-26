@@ -676,50 +676,6 @@ static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return RT_EOK;
 }
 
-/**
- * @brief Submit without waiting and return the selected dedicated TX mailbox.
- *
- * Generic holds its TX lock around this callback; the blocking-owner bitmap
- * excludes slots whose completion is still owned by a waiting sender.
- * Hardware pending and unreported terminal conditions are checked by sendmsg.
- *
- * @param[in] can CAN device with three dedicated TX slots.
- * @param[in] buf Frame to submit.
- * @param[out] mailbox Zero-based mailbox selected on successful submission.
- * @return RT_EOK on submission, -RT_EBUSY when all buffers are unavailable,
- *         or another negative error code on failure.
- */
-static rt_ssize_t _inline_can_sendmsg_nonblocking(struct rt_can_device *can,
-                                                  const void *buf, rt_uint32_t *mailbox)
-{
-    /* Candidate buffer index and its immediate HAL submit result. */
-    rt_uint32_t box_num;
-    rt_ssize_t result;
-
-    RT_ASSERT(can != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
-    RT_ASSERT(mailbox != RT_NULL);
-
-    for (box_num = 0; box_num < can->config.sndboxnumber; box_num++)
-    {
-        if ((can->status.sndchange & (1UL << box_num)) != 0U)
-        {
-            continue;
-        }
-        result = _inline_can_sendmsg(can, buf, box_num);
-        if (result == RT_EOK)
-        {
-            *mailbox = box_num;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-    return -RT_EBUSY;
-}
-
 static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct rt_can_msg *pmsg;
@@ -778,7 +734,7 @@ static const struct rt_can_ops _can_ops = {
     _inline_can_control,
     _inline_can_sendmsg,
     _inline_can_recvmsg,
-    _inline_can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)

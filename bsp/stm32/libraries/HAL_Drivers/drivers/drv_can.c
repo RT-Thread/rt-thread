@@ -29,8 +29,8 @@
  *
  * - sendmsg(can, frame, mailbox) performs one immediate submit to the selected
  *   hardware mailbox. Busy or terminal-pending mailboxes return -RT_EBUSY.
- * - sendmsg_nonblocking() scans hardware mailboxes once and never sleeps, retries
- *   later or enqueues a software copy.
+ * - Generic scans eligible mailboxes for both send modes; the BSP submits only
+ *   the selected mailbox and never sleeps, retries or enqueues a software copy.
  * - RQCPx is kept asserted until TX_DONE/TX_FAIL has been published through
  *   rt_hw_can_isr(); a completed mailbox is therefore not reused prematurely.
  * - bxCAN TSR mixes request bits with write-one-to-clear completion bits. RQCPx
@@ -735,50 +735,6 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     }
 }
 
-/**
- * @internal
- * @brief Low-level, hardware-specific non-blocking function to send a CAN message.
- *
- * This function performs one immediate hardware attempt and returns without
- * waiting, retrying, or placing the frame in a software queue.
- *
- * @param[in] can   A pointer to the CAN device structure.
- * @param[in] buf   A pointer to the `rt_can_msg` to be sent.
- * @param[out] mailbox_out Hardware mailbox index on RT_EOK.
- *
- * @return
- * - `RT_EOK` if the message was accepted by a hardware mailbox.
- * - `-RT_EBUSY` if no hardware mailbox is available.
- * - Other negative errors from the selected-mailbox submit path.
- */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox_out)
-{
-    rt_uint32_t mailbox;
-
-    for (mailbox = 0; mailbox < can->config.sndboxnumber && mailbox < 3U; mailbox++)
-    {
-        /* A blocking waiter may still own a completed hardware mailbox. */
-        if (can->status.sndchange & (1UL << mailbox))
-        {
-            continue;
-        }
-
-        rt_ssize_t result = _can_sendmsg(can, buf, mailbox);
-
-        if (result == RT_EOK)
-        {
-            *mailbox_out = mailbox;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-
-    return -RT_EBUSY;
-}
-
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     HAL_StatusTypeDef status;
@@ -842,7 +798,7 @@ static const struct rt_can_ops _can_ops = {
     .control = _can_control,
     .sendmsg = _can_sendmsg,
     .recvmsg = _can_recvmsg,
-    .sendmsg_nonblocking = _can_sendmsg_nonblocking,
+    .nonblocking_supported = RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

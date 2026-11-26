@@ -1345,84 +1345,6 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
 }
 
 /*==============================================================================
- * FDCAN device operations: send message (non-blocking)
- *============================================================================*/
-
-/**
- * @brief Submit a CAN frame to an unowned dedicated TX Buffer without waiting.
- * @param[inout] can RT-Thread CAN device.
- * @param[in] buf CAN message to submit.
- * @param[out] mailbox The physical TX Buffer index on successful submission only.
- * @return RT_EOK on success, -RT_EBUSY if all buffers are owned, -RT_EINVAL
- *         for a null mailbox pointer, or a negative hardware submission error.
- */
-static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                             rt_uint32_t *mailbox)
-{
-    struct n32_fdcan *p_drv;
-    struct rt_can_msg *p_msg;
-    ErrorStatus status;
-    int32_t free_buf = -1;
-
-    RT_ASSERT(can != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
-    if (mailbox == RT_NULL)
-    {
-        return -RT_EINVAL;
-    }
-
-    p_drv = (struct n32_fdcan *)can->parent.user_data;
-    RT_ASSERT(p_drv != RT_NULL);
-
-    /* Scan dedicated TX Buffers for a free one */
-    for (rt_uint32_t i = 0; i < p_drv->init_struct.TxBufferSize; i++)
-    {
-        /* Candidate physical buffer mask is also its Generic ownership bit. */
-        rt_uint32_t bit = FDCAN_TX_BUFFER0 << i;
-        if (!(p_drv->tx_pending_mask & bit) &&
-            FDCAN_CheckTxBufRequest(p_drv->fdcan_x, bit) == RESET)
-        {
-            free_buf = (int32_t)i;
-            break;
-        }
-    }
-
-    if (free_buf < 0)
-    {
-        return -RT_EBUSY;
-    }
-
-    p_msg = (struct rt_can_msg *)buf;
-
-    /* Set TX Header */
-    p_drv->tx_header.IdType = (p_msg->ide == RT_CAN_EXTID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
-    p_drv->tx_header.TxFrameType = (p_msg->rtr == RT_CAN_DTR) ? FDCAN_DATA_FRAME : FDCAN_REMOTE_FRAME;
-    p_drv->tx_header.ID = p_msg->id;
-    p_drv->tx_header.DataLength = _length_to_dlc(p_msg->len);
-
-#ifdef RT_CAN_USING_CANFD
-    p_drv->tx_header.FDFormat = (p_msg->fd_frame == 1) ? FDCAN_FD_CAN : FDCAN_CLASSIC_CAN;
-    p_drv->tx_header.BitRateSwitch = (p_msg->brs == 1) ? FDCAN_BRS_ON : FDCAN_BRS_OFF;
-#endif
-
-    /* Write message to the free dedicated TX Buffer */
-    rt_uint32_t buf_bit = FDCAN_TX_BUFFER0 << free_buf;
-    status = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
-                                    p_msg->data, buf_bit);
-    if (status != SUCCESS)
-    {
-        return -RT_EBUSY;
-    }
-
-    /* Request transmission */
-    FDCAN_EnableTxBufferRequest(p_drv->fdcan_x, buf_bit);
-    p_drv->tx_pending_mask |= buf_bit;
-    *mailbox = (rt_uint32_t)free_buf;
-
-    return RT_EOK;
-}
-
-/*==============================================================================
  * FDCAN operations table
  *============================================================================*/
 
@@ -1431,7 +1353,7 @@ static const struct rt_can_ops _fdcan_ops = {
     .control = _fdcan_control,
     .sendmsg = _fdcan_sendmsg,
     .recvmsg = _fdcan_recvmsg,
-    .sendmsg_nonblocking = _fdcan_sendmsg_nonblocking,
+    .nonblocking_supported = RT_TRUE,
 };
 
 /*==============================================================================

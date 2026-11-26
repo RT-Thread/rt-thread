@@ -1364,7 +1364,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    _can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

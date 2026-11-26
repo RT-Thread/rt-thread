@@ -390,42 +390,6 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     return (rt_ssize_t)ret;
 }
 
-/**
- * @brief Submit once through an idle FlexCAN transmit mailbox without waiting.
- *
- * @param can_dev Registered CAN device.
- * @param buf Frame to submit.
- * @param mailbox Receives the Generic-visible mailbox index on acceptance.
- * @return RT_EOK if submitted, -RT_EBUSY if no mailbox is free, otherwise a submit error.
- */
-static rt_ssize_t can_send_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Generic-visible mailbox candidate and hardware submit result. */
-    rt_uint32_t index;
-    rt_ssize_t result;
-
-    for (index = 0; index < can_dev->config.sndboxnumber; index++)
-    {
-        /* Blocking owners retain sndchange until their waiter reclaims the slot. */
-        if (can_dev->status.sndchange & (1UL << index))
-        {
-            continue;
-        }
-        result = can_send(can_dev, buf, index);
-        if (result == RT_EOK)
-        {
-            *mailbox = index;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-
-    return -RT_EBUSY;
-}
-
 static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
@@ -478,7 +442,7 @@ static struct rt_can_ops imxrt_can_ops = {
     .control = can_control,
     .sendmsg = can_send,
     .recvmsg = can_recv,
-    .sendmsg_nonblocking = can_send_nonblocking,
+    .nonblocking_supported = RT_TRUE,
 };
 
 int rt_hw_can_init(void)

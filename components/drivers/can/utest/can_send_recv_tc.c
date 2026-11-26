@@ -506,7 +506,8 @@ static rt_err_t can_receive_expected(struct can_tc_context *context,
 static rt_bool_t can_support_nonblocking_send(struct can_tc_context *context)
 {
     return context->can->ops != RT_NULL &&
-           context->can->ops->sendmsg_nonblocking != RT_NULL;
+           context->can->ops->sendmsg != RT_NULL &&
+           context->can->ops->nonblocking_supported;
 }
 
 static rt_err_t can_send_message(struct can_tc_context *context,
@@ -1392,7 +1393,7 @@ static rt_err_t can_run_external_device(void)
     {
         return result;
     }
-    LOG_I("External nonblocking frame was accepted or queued");
+    LOG_I("External nonblocking frame was accepted by hardware");
     rt_thread_mdelay(CAN_TC_EXTERNAL_TX_DRAIN_MS);
 #endif
 
