@@ -418,7 +418,7 @@ static void read_erase_cmd_4b(sfud_flash *flash)
             {
                 return;
             }
-            /* Match the 4-byte command to the eraser by its BFPT erase type index. */
+            /* Match the 4-byte command by erase type, skip unread (0x00) and unsupported (0xFF) entries. */
             for (j = 0; j < SFUD_SFDP_ERASE_TYPE_MAX_NUM; j++)
             {
                 uint8_t type_index = sfdp->eraser[j].type_index;

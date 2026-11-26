@@ -227,6 +227,7 @@ static void ospi_set_cmd_format(sfud_flash *flash, sfud_ospi_cmd_format *cmd, ui
         break;
     /* Without SFDP, the OSPI erase command comes from the static chip table. */
     case SFUD_CMD_ERASE_SECTOR_4B:
+    case SFUD_CMD_ERASE_BLOCK_32K:
     case SFUD_CMD_ERASE_BLOCK_4B:
         cmd->address_lines = 8;
         cmd->address_size = 32;

@@ -133,6 +133,10 @@ extern "C" {
 #define SFUD_CMD_ERASE_SECTOR_4B 0x21
 #endif
 
+#ifndef SFUD_CMD_ERASE_BLOCK_32K
+#define SFUD_CMD_ERASE_BLOCK_32K 0x5C
+#endif
+
 #ifndef SFUD_CMD_ERASE_BLOCK_4B
 #define SFUD_CMD_ERASE_BLOCK_4B 0xDC
 #endif
