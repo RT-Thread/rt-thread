@@ -29,6 +29,9 @@
  * - Reset the message queue and verify it is empty
  * - Detach and delete message queues, ensuring resources are released
  * - Use multiple threads to simulate concurrent send/receive operations
+ * - When message priority is enabled, verify an urgent handoff is not overtaken
+ *   by a higher priority message queued before the receiver runs, and that a
+ *   detached receiver hands an in-flight urgent handoff back to the queue
  *
  * Verification Metrics:
  * - All uassert assertions pass without failure
@@ -233,6 +236,215 @@ static void test_mq_delete(void)
 #endif /* RT_USING_HEAP */
 }
 
+static struct rt_messagequeue fifo_mq;
+static rt_uint8_t fifo_mq_buf[RT_MQ_BUF_SIZE(MSG_SIZE, MAX_MSGS)];
+static rt_uint32_t fifo_recv_val[2];
+/* Keep the receiver stack off the utest thread stack: the utest thread uses
+ * UTEST_THR_STACK_SIZE itself, so a local array of that size overflows it. */
+static rt_uint8_t fifo_recv_stack[UTEST_THR_STACK_SIZE];
+
+static struct rt_thread fifo_recv_th;
+static rt_uint32_t v1 = 111, v2 = 222;
+
+static void _fifo_recv_entry(void *param)
+{
+    rt_mq_recv(&fifo_mq, &fifo_recv_val[0], sizeof(fifo_recv_val[0]), RT_WAITING_FOREVER);
+    rt_mq_recv(&fifo_mq, &fifo_recv_val[1], sizeof(fifo_recv_val[1]), RT_WAITING_FOREVER);
+}
+
+static void test_mq_fifo_order(void)
+{
+    rt_err_t ret;
+
+    ret = rt_mq_init(&fifo_mq, "mq_fifo", fifo_mq_buf, MSG_SIZE, sizeof(fifo_mq_buf), RT_IPC_FLAG_FIFO);
+    uassert_true(ret == RT_EOK);
+
+    fifo_recv_val[0] = 0;
+    fifo_recv_val[1] = 0;
+
+    ret = rt_thread_init(&fifo_recv_th, "th_recv", _fifo_recv_entry, RT_NULL, fifo_recv_stack, sizeof(fifo_recv_stack), 24, 20);
+    uassert_true(ret == RT_EOK);
+    rt_thread_startup(&fifo_recv_th);
+
+    /* allow recv thread to block on empty mq */
+    rt_thread_mdelay(20);
+
+    /* send messages after receiver has blocked */
+    ret = rt_mq_send(&fifo_mq, &v1, sizeof(v1));
+    uassert_true(ret == RT_EOK);
+    ret = rt_mq_send(&fifo_mq, &v2, sizeof(v2));
+    uassert_true(ret == RT_EOK);
+
+    rt_thread_mdelay(20);
+
+    uassert_int_equal(fifo_recv_val[0], 111);
+    uassert_int_equal(fifo_recv_val[1], 222);
+
+    rt_mq_detach(&fifo_mq);
+}
+
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+static struct rt_messagequeue urgent_mq;
+static rt_uint8_t urgent_mq_buf[RT_MQ_BUF_SIZE(MSG_SIZE, 2)];
+static rt_uint32_t urgent_recv_val[2];
+static rt_int32_t urgent_recv_prio[2];
+static struct rt_thread urgent_recv_th;
+static rt_uint8_t urgent_recv_stack[UTEST_THR_STACK_SIZE];
+static struct rt_thread urgent_cleanup_th;
+static rt_uint8_t urgent_cleanup_stack[UTEST_THR_STACK_SIZE];
+static rt_uint32_t urgent_cleanup_val;
+
+static void _urgent_recv_entry(void *param)
+{
+    rt_mq_recv_prio(&urgent_mq, &urgent_recv_val[0], sizeof(urgent_recv_val[0]),
+                    &urgent_recv_prio[0], RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
+    rt_mq_recv_prio(&urgent_mq, &urgent_recv_val[1], sizeof(urgent_recv_val[1]),
+                    &urgent_recv_prio[1], RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
+}
+
+static void _urgent_cleanup_entry(void *param)
+{
+    rt_mq_recv(&urgent_mq, &urgent_cleanup_val, sizeof(urgent_cleanup_val),
+               RT_WAITING_FOREVER);
+}
+
+/* wait until the receiver is actually blocked on the queue */
+static rt_bool_t _wait_receiver_blocked(void)
+{
+    int wait;
+
+    for (wait = 0; wait < 200; wait++)
+    {
+        if (!rt_list_isempty(&(urgent_mq.parent.suspend_thread)))
+        {
+            return RT_TRUE;
+        }
+
+        rt_thread_mdelay(1);
+    }
+
+    return RT_FALSE;
+}
+
+static void test_mq_urgent_handoff_priority(void)
+{
+    rt_err_t ret;
+    rt_err_t urgent_ret;
+    rt_err_t normal_ret;
+    rt_base_t critical;
+    rt_ssize_t len;
+    rt_uint32_t seed = 0;
+    rt_uint32_t urgent_val = 111;
+    rt_uint32_t normal_val = 222;
+    rt_int32_t normal_prio = 7;
+    int i;
+
+    ret = rt_mq_init(&urgent_mq, "mq_urgent", urgent_mq_buf, MSG_SIZE,
+                     sizeof(urgent_mq_buf), RT_IPC_FLAG_FIFO);
+    uassert_true(ret == RT_EOK);
+    uassert_int_equal(urgent_mq.max_msgs, 2);
+
+    /* Leave a stale low priority on both message nodes: rt_mq_urgent() takes a
+     * free node without touching its priority, so that value is what a
+     * non-urgent handoff would be re-sorted with. */
+    for (i = 0; i < 2; i++)
+    {
+        ret = rt_mq_send_wait_prio(&urgent_mq, &seed, sizeof(seed), 0, 0,
+                                   RT_UNINTERRUPTIBLE);
+        uassert_true(ret == RT_EOK);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        len = rt_mq_recv_prio(&urgent_mq, &seed, sizeof(seed), RT_NULL,
+                              RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
+        uassert_true(len >= 0);
+    }
+    uassert_int_equal(urgent_mq.entry, 0);
+
+    urgent_recv_val[0] = 0;
+    urgent_recv_val[1] = 0;
+
+    ret = rt_thread_init(&urgent_recv_th, "th_urgent", _urgent_recv_entry, RT_NULL,
+                         urgent_recv_stack, sizeof(urgent_recv_stack), 24, 20);
+    uassert_true(ret == RT_EOK);
+#ifdef RT_USING_SMP
+    rt_thread_control(&urgent_recv_th, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+#endif
+    rt_thread_startup(&urgent_recv_th);
+
+    uassert_true(_wait_receiver_blocked());
+
+    /* urgent handoff first, then a higher priority normal message, both before
+     * the receiver can run: scheduling stays blocked on this CPU. */
+    critical = rt_enter_critical();
+    urgent_ret = rt_mq_urgent(&urgent_mq, &urgent_val, sizeof(urgent_val));
+    normal_ret = rt_mq_send_wait_prio(&urgent_mq, &normal_val, sizeof(normal_val),
+                                      normal_prio, 0, RT_UNINTERRUPTIBLE);
+    rt_exit_critical_safe(critical);
+
+    uassert_true(urgent_ret == RT_EOK);
+    uassert_true(normal_ret == RT_EOK);
+
+    rt_thread_mdelay(50);
+
+    /* the urgent handoff must not be overtaken by the priority message */
+    uassert_int_equal(urgent_recv_val[0], urgent_val);
+    uassert_int_equal(urgent_recv_val[1], normal_val);
+
+    rt_mq_detach(&urgent_mq);
+}
+
+static void test_mq_urgent_handoff_cleanup(void)
+{
+    rt_err_t ret;
+    rt_err_t detach_ret;
+    rt_base_t critical;
+    rt_ssize_t len;
+    rt_uint32_t urgent_val = 333;
+    rt_uint32_t recv_val = 0;
+
+    ret = rt_mq_init(&urgent_mq, "mq_uc", urgent_mq_buf, MSG_SIZE,
+                     sizeof(urgent_mq_buf), RT_IPC_FLAG_FIFO);
+    uassert_true(ret == RT_EOK);
+
+    urgent_cleanup_val = 0;
+
+    ret = rt_thread_init(&urgent_cleanup_th, "th_uc", _urgent_cleanup_entry, RT_NULL,
+                         urgent_cleanup_stack, sizeof(urgent_cleanup_stack), 24, 20);
+    uassert_true(ret == RT_EOK);
+#ifdef RT_USING_SMP
+    rt_thread_control(&urgent_cleanup_th, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+#endif
+    rt_thread_startup(&urgent_cleanup_th);
+
+    uassert_true(_wait_receiver_blocked());
+
+    /* the handoff record exists before the receiver becomes ready */
+    ret = rt_mq_urgent(&urgent_mq, &urgent_val, sizeof(urgent_val));
+    uassert_true(ret == RT_EOK);
+
+    /* detach the receiver before it ever runs: the thread cleanup must find the
+     * record and put the urgent message back at the queue head */
+    critical = rt_enter_critical();
+    detach_ret = rt_thread_detach(&urgent_cleanup_th);
+    rt_exit_critical_safe(critical);
+
+    uassert_true(detach_ret == RT_EOK);
+
+    /* let the idle thread reclaim the detached thread object */
+    rt_thread_mdelay(50);
+
+    uassert_int_equal(urgent_mq.entry, 1);
+
+    len = rt_mq_recv(&urgent_mq, &recv_val, sizeof(recv_val), RT_WAITING_FOREVER);
+    uassert_true(len >= 0);
+    uassert_int_equal(recv_val, urgent_val);
+
+    rt_mq_detach(&urgent_mq);
+}
+#endif /* RT_USING_MESSAGEQUEUE_PRIORITY */
+
 static rt_err_t utest_tc_init(void)
 {
     rt_err_t ret;
@@ -278,5 +490,10 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_mq_testcase);
     UTEST_UNIT_RUN(test_mq_detach);
     UTEST_UNIT_RUN(test_mq_delete);
+    UTEST_UNIT_RUN(test_mq_fifo_order);
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    UTEST_UNIT_RUN(test_mq_urgent_handoff_priority);
+    UTEST_UNIT_RUN(test_mq_urgent_handoff_cleanup);
+#endif
 }
 UTEST_TC_EXPORT(testcase, "core.messagequeue", utest_tc_init, utest_tc_cleanup, 1000);
