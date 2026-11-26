@@ -1263,102 +1263,6 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 #endif
 }
 
-rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
-{
-    rt_uint32_t freebox = 0;
-#if defined(SOC_SERIES_GD32H77x_H78X)
-    for (rt_uint32_t mailbox = GD32_CAN_TX_MAILBOX_FIRST; mailbox < GD32_CAN_MAILBOX_NUM; mailbox++)
-    {
-        if (can_mailbox_code_get(can_x, mailbox) == CAN_MB_TX_STATUS_INACTIVE)
-        {
-            freebox++;
-        }
-    }
-#else
-    if ((CAN_STAT(can_x) & CAN_TSTAT_TME0) != 0U)
-    {
-        freebox++;
-    }
-    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME1) != 0U)
-    {
-        freebox++;
-    }
-    if ((CAN_TSTAT(can_x) & CAN_TSTAT_TME2) != 0U)
-    {
-        freebox++;
-    }
-#endif
-    return freebox;
-}
-
-/**
- * @brief Submit a frame once to an available Generic-visible GD32 TX mailbox.
- *
- * @param can Registered CAN device.
- * @param buf Frame to submit.
- * @param mailbox Receives the selected mailbox index on hardware acceptance.
- * @return RT_EOK on acceptance, -RT_EBUSY if occupied, otherwise a submit error.
- */
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                    rt_uint32_t *mailbox)
-{
-    RT_ASSERT(can);
-    RT_ASSERT(buf);
-
-#if defined(SOC_SERIES_GD32H77x_H78X)
-    struct gd32_can_device *can_dev = (struct gd32_can_device *)can->parent.user_data;
-    const struct rt_can_msg *pmsg = (const struct rt_can_msg *)buf;
-
-    if (_can_message_validate(can_dev, pmsg) != RT_EOK)
-    {
-        return -RT_EINVAL;
-    }
-
-    for (rt_uint32_t box_num = can->config.sndboxnumber; box_num < GD32_CAN_TX_MAILBOX_NUM; box_num++)
-    {
-        rt_uint32_t mailbox = box_num + GD32_CAN_TX_MAILBOX_FIRST;
-
-        if (can_mailbox_code_get(can_dev->can_x, mailbox) == CAN_MB_TX_STATUS_INACTIVE)
-        {
-            return _can_mailbox_send(can_dev, pmsg, box_num);
-        }
-    }
-
-    return -RT_EBUSY;
-#else
-    can_trasnmit_message_struct transmit_message;
-    can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
-    rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    rt_uint32_t index;
-    rt_ssize_t result;
-
-    if (_can_get_freebox(can_x) == 0)
-    {
-        return -RT_EBUSY;
-    }
-
-    for (index = 0; index < can->config.sndboxnumber && index <= CAN_MAILBOX2; index++)
-    {
-        if (can->status.sndchange & (1UL << index))
-        {
-            continue;
-        }
-        result = _can_sendmsg(can, buf, index);
-        if (result == RT_EOK)
-        {
-            *mailbox = index;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-
-    return RT_EOK;
-#endif
-}
-
 static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
@@ -1501,64 +1405,40 @@ static void _can_ewmc_isr(struct rt_can_device *can)
 
     switch ((errtype & 0x70) >> 4)
     {
-        errtype = CAN_ERR1(can_x);
-        if ((errtype & (CAN_ERR1_STFERR | CAN_ERR1_STFFERR)) != 0U)
+    case RT_CAN_BUS_BIT_PAD_ERR:
+        can->status.bitpaderrcnt++;
+        break;
+    case RT_CAN_BUS_FORMAT_ERR:
+        can->status.formaterrcnt++;
+        break;
+    case RT_CAN_BUS_ACK_ERR:
+        can->status.ackerrcnt++;
+        /* Per-mailbox MTF flags belong to the TX interrupt, not the ACK error interrupt. */
+        if (!can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0) &&
+            !can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1) &&
+            !can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
         {
-            can->status.bitpaderrcnt++;
+            if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))
+            {
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;
+            }
+            else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
+            {
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST1;
+            }
+            else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE2))
+            {
+                CAN_TSTAT(can_x) |= CAN_TSTAT_MST2;
+            }
         }
-        if ((errtype & (CAN_ERR1_FMERR | CAN_ERR1_FMFERR)) != 0U)
-        {
-            can->status.formaterrcnt++;
-            break;
-        case RT_CAN_BUS_ACK_ERR:/* attention !!! test ack err's unit is transmit unit */
-            can->status.ackerrcnt++;
-            if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
-            {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR0))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
-            }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
-            {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR1))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
-            }
-            else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
-            {
-                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR2))
-                {
-                    rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-                }
-                can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
-            }
-            else
-            {
-                if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE0))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST0;
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE1))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST1;
-                }
-                else if (can_interrupt_flag_get(can_x, CAN_FLAG_MTE2))
-                {
-                    CAN_TSTAT(can_x) |= CAN_TSTAT_MST2;
-                }
-            }
-            break;
-        case RT_CAN_BUS_IMPLICIT_BIT_ERR:
-        case RT_CAN_BUS_EXPLICIT_BIT_ERR:
-            can->status.biterrcnt++;
-            break;
-        case RT_CAN_BUS_CRC_ERR:
-            can->status.crcerrcnt++;
-            break;
+        break;
+    case RT_CAN_BUS_IMPLICIT_BIT_ERR:
+    case RT_CAN_BUS_EXPLICIT_BIT_ERR:
+        can->status.biterrcnt++;
+        break;
+    case RT_CAN_BUS_CRC_ERR:
+        can->status.crcerrcnt++;
+        break;
     }
 
     can->status.lasterrtype = errtype & 0x70;
@@ -1573,8 +1453,6 @@ static void _can_tx_isr(struct rt_can_device *can)
 {
     RT_ASSERT(can);
     rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    /* Snapshot all mailbox terminal bits before SDK clearing can affect its peers. */
-    rt_uint32_t tx_status = CAN_TSTAT(can_x);
 
 #if defined(SOC_SERIES_GD32H77x_H78X)
     struct gd32_can_device *can_dev = (struct gd32_can_device *)can->parent.user_data;
@@ -1598,43 +1476,32 @@ static void _can_tx_isr(struct rt_can_device *can)
         }
     }
 #else
-    if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
+    /* Snapshot all mailbox terminal bits before SDK clearing can affect its peers. */
+    rt_uint32_t tx_status = CAN_TSTAT(can_x);
+
+    if (tx_status & CAN_TSTAT_MTF0)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR0))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 0 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR0) ? (RT_CAN_EVENT_TX_DONE | 0 << 8) : (RT_CAN_EVENT_TX_FAIL | 0 << 8));
+    }
+    if (tx_status & CAN_TSTAT_MTF1)
+    {
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR1) ? (RT_CAN_EVENT_TX_DONE | 1 << 8) : (RT_CAN_EVENT_TX_FAIL | 1 << 8));
+    }
+    if (tx_status & CAN_TSTAT_MTF2)
+    {
+        rt_hw_can_isr(can, (tx_status & CAN_TSTAT_MTFNERR2) ? (RT_CAN_EVENT_TX_DONE | 2 << 8) : (RT_CAN_EVENT_TX_FAIL | 2 << 8));
+    }
+
+    if (tx_status & CAN_TSTAT_MTF0)
+    {
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF0);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
+    if (tx_status & CAN_TSTAT_MTF1)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR1))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 1 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF1);
     }
-    else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
+    if (tx_status & CAN_TSTAT_MTF2)
     {
-        if (can_flag_get(can_x, CAN_FLAG_MTFNERR2))
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 2 << 8);
-        }
-        else
-        {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
-        }
-        /* Write 0 to Clear transmission status flag RQCPx */
         can_interrupt_flag_clear(can_x, CAN_INT_FLAG_MTF2);
     }
 #endif
