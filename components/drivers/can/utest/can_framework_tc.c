@@ -87,35 +87,35 @@
  * @brief Progress bit for a completed writer call (bits 2-3).
  * @param mailbox Test mailbox index, 0 or 1.
  */
-#define CAN_TC_TX_RETURNED(mailbox)  (1UL << ((mailbox) + 2U))
-#define CAN_TC_TX_EXIT               (1UL << 4) /**< Coordinator permits worker exit. */
+#define CAN_TC_TX_RETURNED(mailbox) (1UL << ((mailbox) + 2U))
+#define CAN_TC_TX_EXIT              (1UL << 4) /**< Coordinator permits worker exit. */
 /**
  * @brief Progress bit acknowledging the end of test-data access (bits 5-6).
  * @param mailbox Test mailbox index, 0 or 1.
  */
-#define CAN_TC_TX_EXITED(mailbox)    (1UL << ((mailbox) + 5U))
-#define CAN_TC_TX_WORKER_STACK       2048       /**< Test writer stack size in bytes. */
+#define CAN_TC_TX_EXITED(mailbox) (1UL << ((mailbox) + 5U))
+#define CAN_TC_TX_WORKER_STACK    2048 /**< Test writer stack size in bytes. */
 
 /** Simulated BSP state, reached through rt_device.user_data. */
 struct can_tc_sim
 {
-    rt_ssize_t sendmsg_result;    /**< Result returned by the simulated sendmsg. */
-    rt_uint32_t sendmsg_calls;    /**< Number of hardware submit attempts in both TX modes. */
-    rt_uint32_t last_mailbox;      /**< Most recent logical mailbox passed to sendmsg. */
-    rt_uint32_t rx_calls;         /**< Number of simulated recvmsg calls. */
-    rt_uint32_t start_count;      /**< Number of START(1) requests. */
-    rt_uint32_t stop_count;       /**< Number of START(0) requests. */
-    rt_uint32_t abort_count;      /**< Number of valid ABORT_TX requests. */
-    rt_event_t submit_event;      /**< Optional progress event for the concurrent TX test. */
+    rt_ssize_t sendmsg_result; /**< Result returned by the simulated sendmsg. */
+    rt_uint32_t sendmsg_calls; /**< Number of hardware submit attempts in both TX modes. */
+    rt_uint32_t last_mailbox;  /**< Most recent logical mailbox passed to sendmsg. */
+    rt_uint32_t rx_calls;      /**< Number of simulated recvmsg calls. */
+    rt_uint32_t start_count;   /**< Number of START(1) requests. */
+    rt_uint32_t stop_count;    /**< Number of START(0) requests. */
+    rt_uint32_t abort_count;   /**< Number of valid ABORT_TX requests. */
+    rt_event_t submit_event;   /**< Optional progress event for the concurrent TX test. */
 };
 
 /** Context for one private-mailbox test writer. */
 struct can_tc_priv_writer
 {
-    rt_device_t dev;       /**< Virtual CAN device owned by the coordinator. */
-    rt_event_t progress;   /**< Shared test progress and exit notifications. */
-    rt_uint32_t mailbox;   /**< Private mailbox selected by this writer. */
-    rt_ssize_t result;     /**< Return value published before the RETURNED bit. */
+    rt_device_t dev;     /**< Virtual CAN device owned by the coordinator. */
+    rt_event_t progress; /**< Shared test progress and exit notifications. */
+    rt_uint32_t mailbox; /**< Private mailbox selected by this writer. */
+    rt_ssize_t result;   /**< Return value published before the RETURNED bit. */
 };
 
 static struct rt_can_device can_tc_dev;
@@ -619,7 +619,7 @@ static void test_private_mailbox_wait(void)
     can_tc_sim.submit_event = &progress;
 
     /* Start mailbox 1 first and give it the higher priority. */
-    for (mailbox = CAN_TC_TX_MAILBOXES; mailbox > 0; )
+    for (mailbox = CAN_TC_TX_MAILBOXES; mailbox > 0;)
     {
         mailbox--;
         writers[mailbox].dev = dev;
@@ -666,7 +666,8 @@ static void test_private_mailbox_wait(void)
         {
             /* Mailbox 1 is still busy: its writer must not submit or return yet. */
             uassert_int_equal(rt_event_recv(&progress, CAN_TC_TX_SUBMITTED(1) | CAN_TC_TX_RETURNED(1),
-                                            RT_EVENT_FLAG_OR, 0, RT_NULL), -RT_ETIMEOUT);
+                                            RT_EVENT_FLAG_OR, 0, RT_NULL),
+                              -RT_ETIMEOUT);
         }
         /* Now complete the newly submitted frame for this writer. */
         rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (mailbox << 8));
@@ -713,12 +714,12 @@ static void test_nonblocking_terminal(void)
     rt_device_t dev = rt_device_find(CAN_TC_DEV_NAME);
     struct rt_can_msg msg;
     rt_uint32_t sndpkg;
-    rt_uint32_t send_count;       /* BSP call count before the next write. */
-    rt_uint32_t i;                /* Index of the synthetic terminal state. */
-    rt_base_t level;              /* IRQ state saved while setting synthetic ownership. */
-    rt_err_t result;              /* Device open result. */
+    rt_uint32_t send_count; /* BSP call count before the next write. */
+    rt_uint32_t i;          /* Index of the synthetic terminal state. */
+    rt_base_t level;        /* IRQ state saved while setting synthetic ownership. */
+    rt_err_t result;        /* Device open result. */
     /* Terminal states that retain the blocking waiter's ownership. */
-    const enum rt_can_tx_slot_state states[] = {RT_CAN_TX_SLOT_DONE, RT_CAN_TX_SLOT_FAILED};
+    const enum rt_can_tx_slot_state states[] = { RT_CAN_TX_SLOT_DONE, RT_CAN_TX_SLOT_FAILED };
 
     uassert_not_null(dev);
     if (dev == RT_NULL)

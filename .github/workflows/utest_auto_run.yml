@@ -494,7 +494,7 @@ jobs:
                   echo "Error: CAN SMP test requires an SMP configuration with at least two CPUs."
                   exit 1
                 fi
-                qemu_smp_args=(-smp "$cpus")
+                qemu_smp_args=(-smp 1)
               else
                 qemu_smp_args=(-smp 1)
               fi

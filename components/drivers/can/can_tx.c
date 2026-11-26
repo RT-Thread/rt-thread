@@ -376,12 +376,12 @@ void rt_can_tx_retire_after_stop(struct rt_can_device *can)
  * @return RT_EOK on hardware acceptance, -RT_EBUSY if unavailable, or a submit error.
  */
 static rt_ssize_t _tx_submit_locked(struct rt_can_device *can, struct rt_can_tx *tx,
-                                   const struct rt_can_msg *message, rt_uint32_t first,
-                                   rt_uint32_t last, rt_bool_t blocking, rt_uint32_t *selected)
+                                    const struct rt_can_msg *message, rt_uint32_t first,
+                                    rt_uint32_t last, rt_bool_t blocking, rt_uint32_t *selected)
 {
-    rt_uint32_t mailbox;          /* Candidate logical mailbox in the eligible range. */
-    struct rt_can_tx_slot *slot;  /* Generic ownership of the candidate mailbox. */
-    rt_ssize_t result;            /* Immediate BSP submission result. */
+    rt_uint32_t mailbox;         /* Candidate logical mailbox in the eligible range. */
+    struct rt_can_tx_slot *slot; /* Generic ownership of the candidate mailbox. */
+    rt_ssize_t result;           /* Immediate BSP submission result. */
 
     for (mailbox = first; mailbox < last; mailbox++)
     {
