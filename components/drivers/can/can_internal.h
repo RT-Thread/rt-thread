@@ -30,8 +30,8 @@
  *     -> TX_DONE/TX_FAIL retires the hardware ownership
  *
  *   non-blocking TX
- *     -> one immediate BSP sendmsg_nonblocking() attempt, reporting mailbox
- *     -> mark that mailbox slot pending; no Generic retry or software enqueue
+ *     -> scan free Generic slots once, then BSP sendmsg(mailbox)
+ *     -> mark that mailbox slot pending; no waiting or software enqueue
  *     -> TX_DONE/TX_FAIL clears ownership in that mailbox slot
  *
  *   RX IRQ
@@ -119,7 +119,7 @@ void rt_can_tx_close(struct rt_can_device *can);
  * @brief Send one or more CAN frames through the simplified TX data path.
  *
  * Blocking mode uses a fixed hardware-mailbox slot and waits for its terminal
- * completion. Non-blocking mode performs one immediate BSP submission and never
+ * completion. Non-blocking mode scans eligible slots once for immediate BSP submission and never
  * enters a Generic software queue. The buffer must contain whole rt_can_msg objects.
  *
  * @param can CAN device used for transmission.

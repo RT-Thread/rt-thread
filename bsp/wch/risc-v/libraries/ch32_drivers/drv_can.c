@@ -664,48 +664,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     return _can_send_rtmsg(drv_can_obj->can_base, ((struct rt_can_msg *)buf), box_num);
 }
 
-/**
- * @brief Submit a CAN frame to a free hardware TX mailbox without waiting.
- *
- * @param[in] can CAN device used for transmission.
- * @param[in] buf CAN frame to submit.
- * @param[out] mailbox Selected hardware mailbox when submission succeeds.
- * @return RT_EOK on acceptance, -RT_EBUSY when all usable mailboxes are busy,
- *         or another negative error code on failure.
- */
-static rt_ssize_t sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Hardware mailbox candidate and submission status. */
-    rt_uint32_t box_num;
-    rt_ssize_t result;
-
-    RT_ASSERT(can != RT_NULL);
-    RT_ASSERT(buf != RT_NULL);
-    RT_ASSERT(mailbox != RT_NULL);
-
-    for (box_num = 0; box_num < can->config.sndboxnumber && box_num < 3U; box_num++)
-    {
-        /* Do not reuse a mailbox whose blocking owner has not retired. */
-        if (can->status.sndchange & (1UL << box_num))
-        {
-            continue;
-        }
-
-        result = _can_sendmsg(can, buf, box_num);
-        if (result == RT_EOK)
-        {
-            *mailbox = box_num;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-
-    return -RT_EBUSY;
-}
-
 static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_uint32_t FIFONum)
 {
     CanRxMsg CAN_RxMessage = { 0 };
@@ -798,7 +756,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

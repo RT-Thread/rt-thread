@@ -252,7 +252,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    RT_NULL,
+    RT_FALSE,
 };
 
 int rt_hw_can_init(void)

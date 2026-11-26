@@ -564,46 +564,6 @@ static int apm32_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint
     return can_send_rtmsg(drv_can->CANx, ((struct rt_can_msg *)buf), box_num);
 }
 
-/**
- * @brief Submit one frame immediately using an available hardware TX mailbox.
- *
- * Generic holds its TX lock while this callback selects and submits to a
- * hardware mailbox. A blocking sender may still own a completed mailbox.
- *
- * @param[in] can Pointer to the CAN device.
- * @param[in] buf Pointer to the CAN frame.
- * @param[out] mailbox Hardware mailbox index selected on successful submission.
- * @return RT_EOK on submission, -RT_EBUSY when unavailable, or another error.
- */
-static rt_ssize_t apm32_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Candidate hardware mailbox number and its submission result. */
-    rt_uint32_t box_num;
-    rt_ssize_t result;
-
-    RT_ASSERT(mailbox != RT_NULL);
-
-    /* sndchange also protects blocking owners waiting to consume their terminal. */
-    for (box_num = 0; box_num < can->config.sndboxnumber && box_num <= CAN_TX_MAILBIX_2; box_num++)
-    {
-        if ((can->status.sndchange & (1UL << box_num)) != 0U)
-        {
-            continue;
-        }
-        result = apm32_can_sendmsg(can, buf, box_num);
-        if (result == RT_EOK)
-        {
-            *mailbox = box_num;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-    return -RT_EBUSY;
-}
-
 static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct apm32_can *drv_can;
@@ -675,7 +635,7 @@ static const struct rt_can_ops _can_ops = {
     apm32_can_control,
     apm32_can_sendmsg,
     apm32_can_recvmsg,
-    apm32_can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

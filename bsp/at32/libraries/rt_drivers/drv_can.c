@@ -727,41 +727,6 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return RT_EOK;
 }
 
-/**
- * @brief Submit a frame to an available dedicated hardware TX mailbox.
- * @param[in] can CAN controller device.
- * @param[in] buf Frame to submit immediately without a software queue.
- * @param[out] mailbox Receives the selected hardware mailbox on success.
- * @return RT_EOK, -RT_EBUSY if all mailboxes are busy, or another negative error.
- */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Candidate mailbox number and the result of its submit attempt. */
-    rt_uint32_t box_num;
-    rt_ssize_t result;
-
-    RT_ASSERT(mailbox != RT_NULL);
-
-    for (box_num = 0; box_num < can->config.sndboxnumber && box_num <= CAN_TX_MAILBOX2; box_num++)
-    {
-        if (can->status.sndchange & (1UL << box_num))
-        {
-            continue;
-        }
-        result = _can_sendmsg(can, buf, box_num);
-        if (result == RT_EOK)
-        {
-            *mailbox = box_num;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-    return -RT_EBUSY;
-}
-
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct can_config *hcan;
@@ -807,7 +772,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    _can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

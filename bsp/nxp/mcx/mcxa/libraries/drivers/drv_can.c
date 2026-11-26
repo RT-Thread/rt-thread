@@ -839,32 +839,12 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint
     return 0;
 }
 
-/**
- * @brief Submit a frame via the shared MB0 path for Generic nonblocking TX.
- *
- * @param can_dev RT-Thread CAN device.
- * @param buf Pointer to the frame to submit.
- * @param mailbox Receives the physical mailbox index on successful submission only.
- * @return The immediate submission status from _can_sendmsg().
- */
-static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Preserve the submission result while both TX APIs share hardware MB0. */
-    rt_ssize_t ret = _can_sendmsg(can_dev, buf, TX_MB_IDX);
-
-    if (ret == RT_EOK)
-    {
-        *mailbox = TX_MB_IDX;
-    }
-    return ret;
-}
-
 static struct rt_can_ops imxrt_can_ops = {
     .configure = _can_config,
     .control = _can_control,
     .sendmsg = _can_sendmsg,
     .recvmsg = _can_recvmsg,
-    .sendmsg_nonblocking = _can_sendmsg_nonblocking
+    .nonblocking_supported = RT_TRUE,
 };
 
 int rt_hw_can_init(void)

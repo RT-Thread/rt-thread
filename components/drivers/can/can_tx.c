@@ -23,8 +23,9 @@
  *         -> waiter releases the slot; a timeout leaves ownership until terminal
  *
  * Non-blocking frame:
- *   BSP submits once and reports the selected mailbox -> slot.pending=true
- *   -> terminal retires that mailbox only, with no retry or software queue.
+ *   write -> scan fixed mailbox slots once -> BSP sendmsg(mailbox)
+ *         -> slot NONBLOCKING + slot.pending=true -> return immediately
+ *         -> TX terminal releases that mailbox, with no retry or software queue.
  *
  * wait_event has one bit per visible mailbox. A private sender waits for its
  * mailbox bit, while ordinary senders and drain wait for eligible mailbox changes.
@@ -364,6 +365,60 @@ void rt_can_tx_retire_after_stop(struct rt_can_device *can)
 }
 
 /**
+ * @brief Scan eligible slots once and submit to the first available hardware mailbox.
+ * @param can CAN device; caller holds tx_lock with interrupts saved.
+ * @param tx Published TX runtime protected by tx_lock.
+ * @param message Frame to submit.
+ * @param first First eligible logical mailbox index.
+ * @param last Exclusive end of the eligible mailbox range.
+ * @param blocking Whether the slot retains a blocking waiter.
+ * @param selected Receives the selected mailbox only on acceptance.
+ * @return RT_EOK on hardware acceptance, -RT_EBUSY if unavailable, or a submit error.
+ */
+static rt_ssize_t _tx_submit_locked(struct rt_can_device *can, struct rt_can_tx *tx,
+                                   const struct rt_can_msg *message, rt_uint32_t first,
+                                   rt_uint32_t last, rt_bool_t blocking, rt_uint32_t *selected)
+{
+    rt_uint32_t mailbox;          /* Candidate logical mailbox in the eligible range. */
+    struct rt_can_tx_slot *slot;  /* Generic ownership of the candidate mailbox. */
+    rt_ssize_t result;            /* Immediate BSP submission result. */
+
+    for (mailbox = first; mailbox < last; mailbox++)
+    {
+        slot = &tx->slots[mailbox];
+        /* A completed blocking waiter still owns its slot until it reclaims it. */
+        if (slot->state != RT_CAN_TX_SLOT_FREE || slot->pending)
+        {
+            continue;
+        }
+
+        if (blocking)
+        {
+            rt_completion_init(&slot->completion);
+        }
+        /* Submit and publish ownership under the same lock as the terminal ISR. */
+        result = can->ops->sendmsg(can, message, mailbox);
+        if (result == RT_EOK)
+        {
+            slot->state = blocking ? RT_CAN_TX_SLOT_ACTIVE : RT_CAN_TX_SLOT_NONBLOCKING;
+            slot->pending = RT_TRUE;
+            if (blocking)
+            {
+                can->status.sndchange |= (1UL << mailbox);
+            }
+            *selected = mailbox;
+            return RT_EOK;
+        }
+        if (result != -RT_EBUSY)
+        {
+            return result;
+        }
+    }
+
+    return -RT_EBUSY;
+}
+
+/**
  * @brief Send one frame with a single hard deadline across mailbox wait and TX terminal wait.
  *
  * wait_event notifies blocking senders about changes to their eligible mailboxes.
@@ -381,22 +436,17 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
     rt_tick_t remaining;
     rt_uint32_t first;
     rt_uint32_t last;
-    rt_uint32_t mailbox;
     rt_uint32_t selected = 0;
     /* Event bits for the mailbox or mailboxes this sender is allowed to use. */
     rt_uint32_t wait_mask;
     rt_err_t wait_result;
     rt_ssize_t result;
     rt_base_t level;
-    rt_bool_t submitted;
 
     start = rt_tick_get();
 
     for (;;)
     {
-        submitted = RT_FALSE;
-        result = -RT_EBUSY;
-
         level = rt_spin_lock_irqsave(&can->tx_lock);
         tx = can->can_tx;
         if (tx == RT_NULL || !tx->accepting)
@@ -424,50 +474,20 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
             wait_mask = _tx_mailbox_mask(can);
         }
 
-        for (mailbox = first; mailbox < last; mailbox++)
-        {
-            slot = &tx->slots[mailbox];
-            if (slot->state != RT_CAN_TX_SLOT_FREE)
-            {
-                continue;
-            }
+        result = _tx_submit_locked(can, tx, message, first, last, RT_TRUE, &selected);
 
-            /*
-             * Completion reset, hardware submit and ownership publication stay in
-             * one TX critical section. The TX ISR takes the same lock, so a
-             * very fast terminal cannot retire an unpublished blocking owner.
-             */
-            rt_completion_init(&slot->completion);
-            result = can->ops->sendmsg(can, message, mailbox);
-            if (result == RT_EOK)
-            {
-                slot->state = RT_CAN_TX_SLOT_ACTIVE;
-                slot->pending = RT_TRUE;
-                can->status.sndchange |= (1UL << mailbox);
-                selected = mailbox;
-                submitted = RT_TRUE;
-                break;
-            }
-            if (result == -RT_EBUSY)
-            {
-                continue;
-            }
-
-            break;
-        }
-
-        if (!submitted && result != -RT_EBUSY)
+        if (result != RT_EOK && result != -RT_EBUSY)
         {
             can->status.dropedsndpkg++;
         }
-        else if (!submitted)
+        else if (result == -RT_EBUSY)
         {
             /* All eligible mailboxes are busy; discard only their stale notifications. */
             _tx_clear_wait_event_locked(tx, wait_mask);
         }
         rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
-        if (submitted)
+        if (result == RT_EOK)
         {
             break;
         }
@@ -541,15 +561,11 @@ static rt_ssize_t _tx_blocking_one(struct rt_can_device *can,
 }
 
 /**
- * @brief Perform one immediate hardware submission without software queueing.
- *
- * The BSP reports its chosen mailbox so Generic can track its slot independently.
- * TX submissions are serialized by callers; Generic does not reserve a mailbox
- * on behalf of BSP before this callback returns.
- *
+ * @brief Scan eligible mailboxes once without waiting or software queueing.
  * @param can CAN device used for the submission.
  * @param message Frame to submit.
- * @return RT_EOK on hardware acceptance, -RT_EBUSY when unavailable, or another error.
+ * @return RT_EOK on hardware acceptance, -RT_EBUSY when unavailable,
+ *         -RT_ENOSYS for unsupported mode/backend, or another submit error.
  */
 static rt_ssize_t _tx_nonblocking_one(struct rt_can_device *can,
                                       const struct rt_can_msg *message)
@@ -557,13 +573,14 @@ static rt_ssize_t _tx_nonblocking_one(struct rt_can_device *can,
     struct rt_can_tx *tx;
     rt_ssize_t result;
     rt_base_t level;
+    /* Selected logical mailbox; ownership is published by the shared submit path. */
     rt_uint32_t mailbox;
 
     if (can->config.privmode == RT_CAN_MODE_PRIV)
     {
         return -RT_ENOSYS;
     }
-    if (can->ops == RT_NULL || can->ops->sendmsg_nonblocking == RT_NULL)
+    if (can->ops == RT_NULL || can->ops->sendmsg == RT_NULL || !can->ops->nonblocking_supported)
     {
         return -RT_ENOSYS;
     }
@@ -576,20 +593,7 @@ static rt_ssize_t _tx_nonblocking_one(struct rt_can_device *can,
         return -RT_EBUSY;
     }
 
-    result = can->ops->sendmsg_nonblocking(can, message, &mailbox);
-    if (result == RT_EOK)
-    {
-        if (mailbox >= can->config.sndboxnumber ||
-            tx->slots[mailbox].state != RT_CAN_TX_SLOT_FREE || tx->slots[mailbox].pending)
-        {
-            result = -RT_ERROR; /* The BSP returned a mailbox that Generic still owns. */
-        }
-        else
-        {
-            tx->slots[mailbox].state = RT_CAN_TX_SLOT_NONBLOCKING;
-            tx->slots[mailbox].pending = RT_TRUE;
-        }
-    }
+    result = _tx_submit_locked(can, tx, message, 0, can->config.sndboxnumber, RT_FALSE, &mailbox);
     rt_spin_unlock_irqrestore(&can->tx_lock, level);
 
     return result;

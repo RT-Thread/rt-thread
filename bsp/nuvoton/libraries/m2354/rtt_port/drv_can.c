@@ -63,7 +63,6 @@ typedef struct nu_can *nu_can_t;
 static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure *cfg);
 static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg);
 static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
-static rt_ssize_t nu_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
 static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 static void nu_can_isr(nu_can_t can);
 
@@ -85,7 +84,7 @@ static const struct rt_can_ops nu_can_ops = {
     .configure = nu_can_configure,
     .control = nu_can_control,
     .sendmsg = nu_can_sendmsg,
-    .sendmsg_nonblocking = nu_can_sendmsg_nonblocking,
+    .nonblocking_supported = RT_TRUE,
     .recvmsg = nu_can_recvmsg,
 };
 
@@ -583,40 +582,6 @@ static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_
     }
     psNuCAN->tx_pending |= pending_bit;
     return RT_EOK;
-}
-
-/**
- * @brief Submit through an available physical message object without sleeping.
- * @param can RT-Thread CAN device.
- * @param buf CAN frame to submit.
- * @param mailbox Receives the physical message object index only on success.
- * @return RT_EOK on acceptance, -RT_EBUSY if none available, or an input error.
- */
-static rt_ssize_t nu_can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Generic reports the selected message object in TX_DONE/TX_FAIL events. */
-    rt_uint32_t boxno;
-    /* Preserve invalid input errors instead of reporting mailbox exhaustion. */
-    rt_ssize_t result;
-
-    RT_ASSERT(can);
-    RT_ASSERT(buf);
-    RT_ASSERT(mailbox);
-
-    for (boxno = 0; boxno < can->config.sndboxnumber; boxno++)
-    {
-        result = nu_can_sendmsg(can, buf, boxno);
-        if (result == RT_EOK)
-        {
-            *mailbox = boxno;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-    return -RT_EBUSY;
 }
 
 /**

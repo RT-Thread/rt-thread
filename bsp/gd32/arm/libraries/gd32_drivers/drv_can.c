@@ -673,55 +673,12 @@ rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
     return freebox;
 }
 
-/**
- * @brief Submit a frame once to an available Generic-visible GD32 TX mailbox.
- *
- * @param can Registered CAN device.
- * @param buf Frame to submit.
- * @param mailbox Receives the selected mailbox index on hardware acceptance.
- * @return RT_EOK on acceptance, -RT_EBUSY if occupied, otherwise a submit error.
- */
-rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                    rt_uint32_t *mailbox)
-{
-    RT_ASSERT(can);
-    /* Controller base and Generic-visible candidate/result. */
-    rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
-    rt_uint32_t index;
-    rt_ssize_t result;
-
-    if (_can_get_freebox(can_x) == 0)
-    {
-        return -RT_EBUSY;
-    }
-
-    for (index = 0; index < can->config.sndboxnumber && index <= CAN_MAILBOX2; index++)
-    {
-        if (can->status.sndchange & (1UL << index))
-        {
-            continue;
-        }
-        result = _can_sendmsg(can, buf, index);
-        if (result == RT_EOK)
-        {
-            *mailbox = index;
-            return RT_EOK;
-        }
-        if (result != -RT_EBUSY)
-        {
-            return result;
-        }
-    }
-
-    return -RT_EBUSY;
-}
-
 static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
-    _can_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

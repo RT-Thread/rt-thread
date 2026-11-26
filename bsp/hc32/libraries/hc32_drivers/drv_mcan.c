@@ -211,19 +211,6 @@ static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg);
 static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt_uint32_t boxno);
 
 /**
- * @brief Submit a CAN message without waiting for the physical Tx terminal.
- * @param [inout] device CAN device pointer
- * @param [in] buf CAN message buffer
- * @param [out] mailbox Set to Generic mailbox zero only on successful submission
- * @retval RT_EOK Request accepted by hardware
- * @retval -RT_EBUSY Generic mailbox or hardware FIFO still owned
- * @retval -RT_EINVAL NULL output mailbox pointer
- * @retval -RT_ERROR Hardware submission failure
- */
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
-                                           rt_uint32_t *mailbox);
-
-/**
  * @brief Receive message from CAN
  * @param [in] can CAN device pointer
  * @param [out] buf CAN receive buffer
@@ -242,7 +229,7 @@ static const struct rt_can_ops m_mcan_ops = {
     mcan_control,
     mcan_sendmsg,
     mcan_recvmsg,
-    mcan_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 /****************************************************************************************
@@ -794,24 +781,6 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
     /* The LL reports the physical FIFO buffer selected for this request. */
     driver->tx_request_mask = ll_tx_msg.u32LastTxFifoQueueRequest;
     return RT_EOK;
-}
-
-static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf,
-                                           rt_uint32_t *mailbox)
-{
-    /* Preserve the underlying submit error without publishing a failed mailbox. */
-    rt_ssize_t result;
-
-    if (mailbox == RT_NULL)
-    {
-        return -RT_EINVAL;
-    }
-    result = mcan_sendmsg(device, buf, 0U);
-    if (result == RT_EOK)
-    {
-        *mailbox = 0U;
-    }
-    return result;
 }
 
 /****************************************************************************************

@@ -34,9 +34,8 @@
  *   Generic does not auto-extend, abort, or recover a terminal that arrives later.
  *   A successful in-contract submit must generate exactly one TX_DONE or TX_FAIL
  *   terminal for that mailbox.
- * - Non-blocking TX calls sendmsg_nonblocking() once. The BSP returns the selected
- *   mailbox on successful submission; Generic records ownership in that mailbox's
- *   slot. Generic never queues or retries non-blocking frames.
+ * - Non-blocking TX scans free Generic slots once and uses the same sendmsg()
+ *   callback as blocking TX. Generic never queues or waits for non-blocking frames.
  * - A hardware mailbox is not reusable until the previous terminal has been
  *   published through rt_hw_can_isr(). This prevents an old terminal from being
  *   mis-associated with a newer blocking owner.
@@ -293,11 +292,11 @@ enum CANBAUD
  *     rt_kprintf("Attempting to send a message in NON-BLOCKING mode...\n");
  *     if (rt_device_write(can_dev, 0, &nonblocking_msg, sizeof(nonblocking_msg)) == sizeof(nonblocking_msg))
  *     {
- *         rt_kprintf("Non-blocking message was accepted (sent or enqueued).\n");
+ *         rt_kprintf("Non-blocking message was accepted by hardware.\n");
  *     }
  *     else
  *     {
- *         rt_kprintf("Non-blocking send failed (buffer was full).\n");
+ *         rt_kprintf("Non-blocking send failed.\n");
  *     }
  *
  *     return res;
@@ -760,16 +759,19 @@ struct rt_can_ops
     /**
      * @brief Perform one immediate CAN submit to a selected hardware mailbox.
      *
-     * Generic CAN owns blocking policy and completion waiting. This BSP callback
-     * must only attempt the selected mailbox and return without sleeping or waiting
-     * for bus transmission completion.
+     * Generic CAN selects an unowned logical mailbox for both TX modes and owns
+     * completion waiting. This callback must only attempt that mailbox and return
+     * without sleeping or waiting for bus transmission completion. A successful
+     * submit must later produce exactly one TX_DONE/TX_FAIL for that logical index;
+     * do not publish a terminal synchronously or reuse an unreported terminal.
+     * If nonblocking_supported is true, this callback must also be ISR-safe.
      *
      * @param[in] can   A pointer to the CAN device structure.
      * @param[in] buf   A pointer to the `rt_can_msg` to be sent.
-     * @param[in] boxno The hardware mailbox number to use for transmission.
+     * @param[in] boxno The Generic-visible logical mailbox number to submit to.
      * @return `RT_EOK` on hardware acceptance, `-RT_EBUSY` when the selected mailbox is temporarily busy,
-     *         or another negative error code on failure. Generic CAN retries only explicit `-RT_EBUSY` results;
-     *         other errors remain observable to the caller.
+     *         or another negative error code on failure. Generic CAN scans other eligible mailboxes
+     *         only after `-RT_EBUSY`; other errors remain observable to the caller.
      */
     rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
     /**
@@ -781,21 +783,11 @@ struct rt_can_ops
      */
     rt_ssize_t (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t fifo);
     /**
-     * @brief Submit a frame immediately and report its hardware TX mailbox.
-     *
-     * The BSP selects an available hardware mailbox, reports its index on RT_EOK,
-     * and returns without sleeping or waiting for TX_DONE/TX_FAIL. It must not
-     * publish a terminal synchronously. Each accepted frame must later generate
-     * exactly one terminal carrying that mailbox index. Callers serialize TX
-     * writes so a completed blocking slot is reclaimed before another submit.
-     *
-     * @param[in] can CAN device.
-     * @param[in] buf Frame to submit.
-     * @param[out] mailbox Hardware mailbox index on successful submission.
-     * @return RT_EOK on hardware acceptance, -RT_EBUSY if no hardware mailbox is
-     *         available, or another negative error code.
+     * @brief Whether sendmsg supports non-blocking TX, including ISR callers.
+     * Set RT_TRUE only for a backend that supports immediate submission in both
+     * thread and interrupt context. RT_FALSE preserves blocking-only operation.
      */
-    rt_ssize_t (*sendmsg_nonblocking)(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
+    rt_bool_t nonblocking_supported;
 };
 
 /**

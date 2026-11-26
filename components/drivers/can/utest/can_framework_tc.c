@@ -23,10 +23,11 @@
  * Test Scenarios:
  * - Register a virtual CAN device whose ops callbacks are fully simulated.
  * - Exercise open/close, including a second open and a reopen after final close.
- * - Inject controlled sendmsg/sendmsg_nonblocking errors and verify the error
+ * - Inject controlled sendmsg errors in both TX modes and verify the error
  *   is returned to the caller; never touch a CAN bus.
- * - Report a TX_DONE terminal through rt_hw_can_isr() and verify the mailbox
- *   slot is released again.
+ * - Report TX_DONE through rt_hw_can_isr() and verify each non-blocking slot is released.
+ * - Model DONE/FAILED blocking slots before waiter cleanup and verify that non-blocking
+ *   writes skip them before submitting to the BSP, or return busy without submission.
  * - Leave two private mailboxes owned after timeout; suspend one writer for
  *   each, then retire mailbox 0 while the higher-priority mailbox 1 waiter is
  *   still blocked. Complete both new submissions independently.
@@ -64,6 +65,7 @@
 #include <rtsched.h>
 #include <rtdevice.h>
 #include <drivers/dev_can.h>
+#include "../can_internal.h"
 #include "utest.h"
 
 #ifdef RT_UTEST_CAN_FRAMEWORK
@@ -98,10 +100,8 @@
 struct can_tc_sim
 {
     rt_ssize_t sendmsg_result;    /**< Result returned by the simulated sendmsg. */
-    rt_ssize_t sendmsg_nb_result; /**< Result returned by the simulated sendmsg_nonblocking. */
-    rt_uint32_t nb_mailbox;       /**< Mailbox reported by a successful non-blocking submit. */
-    rt_uint32_t sendmsg_calls;    /**< Number of blocking submits accepted by the simulation. */
-    rt_uint32_t sendmsg_nb_calls; /**< Number of non-blocking submits accepted by the simulation. */
+    rt_uint32_t sendmsg_calls;    /**< Number of hardware submit attempts in both TX modes. */
+    rt_uint32_t last_mailbox;      /**< Most recent logical mailbox passed to sendmsg. */
     rt_uint32_t rx_calls;         /**< Number of simulated recvmsg calls. */
     rt_uint32_t start_count;      /**< Number of START(1) requests. */
     rt_uint32_t stop_count;       /**< Number of START(0) requests. */
@@ -182,7 +182,7 @@ static rt_err_t can_tc_control(struct rt_can_device *can, int cmd, void *arg)
 }
 
 /**
- * @brief Simulate one blocking hardware submit with a controllable result.
+ * @brief Simulate one immediate hardware submit with a controllable result.
  */
 static rt_ssize_t can_tc_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
@@ -191,31 +191,13 @@ static rt_ssize_t can_tc_sendmsg(struct rt_can_device *can, const void *buf, rt_
     RT_UNUSED(buf);
 
     sim->sendmsg_calls++;
+    sim->last_mailbox = boxno;
     if (sim->submit_event != RT_NULL && sim->sendmsg_result == RT_EOK)
     {
         /* The coordinator injects the terminal through the same TX lock domain. */
         (void)rt_event_send(sim->submit_event, CAN_TC_TX_SUBMITTED(boxno));
     }
     return sim->sendmsg_result;
-}
-
-/**
- * @brief Simulate one non-blocking hardware submit with a controllable result.
- */
-static rt_ssize_t can_tc_sendmsg_nonblocking(struct rt_can_device *can, const void *buf,
-                                             rt_uint32_t *mailbox)
-{
-    struct can_tc_sim *sim = (struct can_tc_sim *)can->parent.user_data;
-
-    RT_UNUSED(buf);
-
-    sim->sendmsg_nb_calls++;
-    if (sim->sendmsg_nb_result == RT_EOK)
-    {
-        *mailbox = sim->nb_mailbox;
-    }
-
-    return sim->sendmsg_nb_result;
 }
 
 /**
@@ -249,7 +231,7 @@ static const struct rt_can_ops can_tc_ops = {
     can_tc_control,
     can_tc_sendmsg,
     can_tc_recvmsg,
-    can_tc_sendmsg_nonblocking,
+    RT_TRUE,
 };
 
 /**
@@ -402,8 +384,7 @@ static void test_open_direction_expansion(void)
     msg.len = CAN_TC_DLC;
     msg.nonblocking = 1;
 
-    can_tc_sim.sendmsg_nb_result = RT_EOK;
-    can_tc_sim.nb_mailbox = 0;
+    can_tc_sim.sendmsg_result = RT_EOK;
 
     uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
 
@@ -456,16 +437,19 @@ static void test_tx_admission_and_errors(void)
     uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_EIO);
     uassert_int_equal(can_tc_sim.sendmsg_calls, send_count + 1);
 
-    /* The non-blocking path reports its own BSP error. */
+    /* Both modes propagate a hard submit error without trying another mailbox. */
     msg.nonblocking = 1;
-    can_tc_sim.sendmsg_result = RT_EOK;
-    can_tc_sim.sendmsg_nb_result = -RT_EIO;
+    send_count = can_tc_sim.sendmsg_calls;
     uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_EIO);
+    uassert_int_equal(can_tc_sim.sendmsg_calls, send_count + 1);
 
-    /* A mailbox outside the Generic-visible range is rejected by the framework. */
-    can_tc_sim.sendmsg_nb_result = RT_EOK;
-    can_tc_sim.nb_mailbox = CAN_TC_TX_MAILBOXES;
-    uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_ERROR);
+    /* Busy hardware is scanned once, without waiting or publishing ownership. */
+    can_tc_sim.sendmsg_result = -RT_EBUSY;
+    send_count = can_tc_sim.sendmsg_calls;
+    uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_EBUSY);
+    uassert_int_equal(can_tc_sim.sendmsg_calls, send_count + CAN_TC_TX_MAILBOXES);
+    uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), RT_EOK);
+    can_tc_sim.sendmsg_result = RT_EOK;
 
     uassert_int_equal(rt_device_control(dev, RT_CAN_CMD_ABORT_TX, (void *)0), RT_EOK);
     uassert_int_equal(can_tc_sim.abort_count, 1);
@@ -718,33 +702,86 @@ out:
 }
 
 /**
- * @brief Check non-blocking ownership retirement through a simulated terminal.
+ * @brief Verify non-blocking ownership, backpressure and terminal retirement.
+ *
+ * Reproduce the completed-but-unreclaimed blocking slot deterministically with
+ * a synthetic slot state, not a real blocking waiter or timing-dependent sleep.
+ * Both DONE and FAILED must be excluded before the BSP submit is called.
  */
 static void test_nonblocking_terminal(void)
 {
     rt_device_t dev = rt_device_find(CAN_TC_DEV_NAME);
     struct rt_can_msg msg;
     rt_uint32_t sndpkg;
+    rt_uint32_t send_count;       /* BSP call count before the next write. */
+    rt_uint32_t i;                /* Index of the synthetic terminal state. */
+    rt_base_t level;              /* IRQ state saved while setting synthetic ownership. */
+    rt_err_t result;              /* Device open result. */
+    /* Terminal states that retain the blocking waiter's ownership. */
+    const enum rt_can_tx_slot_state states[] = {RT_CAN_TX_SLOT_DONE, RT_CAN_TX_SLOT_FAILED};
 
     uassert_not_null(dev);
-    uassert_int_equal(rt_device_open(dev, RT_DEVICE_FLAG_INT_TX), RT_EOK);
+    if (dev == RT_NULL)
+    {
+        return;
+    }
+    result = rt_device_open(dev, RT_DEVICE_FLAG_INT_TX);
+    uassert_int_equal(result, RT_EOK);
+    if (result != RT_EOK)
+    {
+        return;
+    }
 
     rt_memset(&msg, 0, sizeof(msg));
     msg.id = CAN_TC_TX_ID;
     msg.len = CAN_TC_DLC;
     msg.nonblocking = 1;
-
-    can_tc_sim.sendmsg_nb_result = RT_EOK;
-    can_tc_sim.nb_mailbox = 0;
+    can_tc_sim.sendmsg_result = RT_EOK;
     sndpkg = can_tc_dev.status.sndpkg;
 
+    /* Fill both slots: a further write must never reach hardware. */
     uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
-
-    /* The mailbox stays hardware-owned until the BSP publishes its terminal. */
+    uassert_int_equal(can_tc_sim.last_mailbox, 0);
+    uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+    uassert_int_equal(can_tc_sim.last_mailbox, 1);
+    send_count = can_tc_sim.sendmsg_calls;
+    uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_EBUSY);
+    uassert_int_equal(can_tc_sim.sendmsg_calls, send_count);
     uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), -RT_ETIMEOUT);
     rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (0 << 8));
+    uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), -RT_ETIMEOUT);
+    rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (1 << 8));
     uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), RT_EOK);
-    uassert_int_equal(can_tc_dev.status.sndpkg, sndpkg + 1);
+    uassert_int_equal(can_tc_dev.status.sndpkg, sndpkg + 2);
+
+    for (i = 0; i < sizeof(states) / sizeof(states[0]); i++)
+    {
+        /* Model the interval after terminal publication but before waiter cleanup. */
+        level = rt_spin_lock_irqsave(&can_tc_dev.tx_lock);
+        can_tc_dev.can_tx->slots[0].state = states[i];
+        can_tc_dev.can_tx->slots[0].pending = RT_FALSE;
+        can_tc_dev.status.sndchange |= 1UL;
+        rt_spin_unlock_irqrestore(&can_tc_dev.tx_lock, level);
+
+        send_count = can_tc_sim.sendmsg_calls;
+        uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+        uassert_int_equal(can_tc_sim.last_mailbox, 1);
+        uassert_int_equal(can_tc_sim.sendmsg_calls, send_count + 1);
+        uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), -RT_EBUSY);
+        uassert_int_equal(can_tc_sim.sendmsg_calls, send_count + 1);
+        rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (1 << 8));
+        uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), -RT_ETIMEOUT);
+
+        /* Emulate the blocking waiter's cleanup and prove mailbox 0 is reusable. */
+        level = rt_spin_lock_irqsave(&can_tc_dev.tx_lock);
+        can_tc_dev.can_tx->slots[0].state = RT_CAN_TX_SLOT_FREE;
+        can_tc_dev.status.sndchange &= ~1UL;
+        rt_spin_unlock_irqrestore(&can_tc_dev.tx_lock, level);
+        uassert_int_equal(rt_device_write(dev, 0, &msg, sizeof(msg)), sizeof(msg));
+        uassert_int_equal(can_tc_sim.last_mailbox, 0);
+        rt_hw_can_isr(&can_tc_dev, RT_CAN_EVENT_TX_DONE | (0 << 8));
+        uassert_int_equal(rt_can_tx_drain(&can_tc_dev, 0), RT_EOK);
+    }
 
     uassert_int_equal(rt_device_close(dev), RT_EOK);
 }

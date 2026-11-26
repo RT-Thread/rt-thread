@@ -236,8 +236,6 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg);
  * @return RT_EOK on submission, -RT_EBUSY while busy, or another error code
  */
 static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
-static rt_ssize_t hpm_mcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox);
-
 /**
  * @brief Receive CAN message
  *
@@ -485,7 +483,7 @@ static const struct rt_can_ops hpm_can_ops = {
     .control = hpm_mcan_control,     /**< Control MCAN device operations */
     .sendmsg = hpm_mcan_sendmsg,     /**< Send CAN message */
     .recvmsg = hpm_mcan_recvmsg,     /**< Receive CAN message */
-    .sendmsg_nonblocking = hpm_mcan_sendmsg_nonblocking,
+    .nonblocking_supported = RT_TRUE,
 };
 
 /* ============================================================================
@@ -1123,31 +1121,6 @@ static rt_ssize_t hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, r
     drv_can->can_tx_fifo_index = fifo_index + 1U;
 
     return RT_EOK;
-}
-
-/**
- * @brief Submit once using logical TX slot 0 without Generic software queuing.
- *
- * @param[in] can CAN device.
- * @param[in] buf Frame to submit.
- * @param[out] mailbox Logical TX slot, set to 0 on successful submission.
- * @return RT_EOK on acceptance, -RT_EBUSY while busy, or a submission error.
- */
-static rt_ssize_t hpm_mcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf, rt_uint32_t *mailbox)
-{
-    /* Immediate hardware submission result. */
-    rt_ssize_t result;
-
-    if ((can->status.sndchange & 1UL) != 0U)
-    {
-        return -RT_EBUSY;
-    }
-    result = hpm_mcan_sendmsg(can, buf, 0U);
-    if (result == RT_EOK)
-    {
-        *mailbox = 0U;
-    }
-    return result;
 }
 
 /**
