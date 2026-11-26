@@ -63,8 +63,9 @@
 	{
 		rt_err_t (*configure)(struct rt_can_device *can, struct can_configure *cfg);
 		rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
-		int (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
-		int (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
+		rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
+		rt_ssize_t (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
+		rt_bool_t nonblocking_supported;
 	};
 	struct rt_can_ops 为要实现的特定的can控制器操作。
 	rt_err_t (*configure)(struct rt_can_device *can, struct can_configure *cfg);
@@ -77,9 +78,15 @@
 		#define RT_CAN_CMD_SET_PRIV        0x16
 		#define RT_CAN_CMD_GET_STATUS      0x17
 		#define RT_CAN_CMD_SET_STATUS_IND  0x18
-	int (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
-	sendmsg向Can控制器发送数，boxno为发送通道号。
-	int (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
+	rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
+	sendmsg向CAN控制器指定的逻辑邮箱boxno立即提交一帧，不等待总线发送完成。
+	Blocking和Nonblocking共用sendmsg，框架负责选择未被占用的逻辑邮箱及管理发送完成状态。
+	仅硬件接受发送请求后返回RT_EOK；硬件邮箱暂时不可用返回-RT_EBUSY，其他错误直接返回。
+	硬件接受发送请求后必须异步上报对应逻辑邮箱的TX_DONE或TX_FAIL。
+	支持中断上下文立即提交的BSP将nonblocking_supported置为RT_TRUE；否则置为RT_FALSE。
+	不支持Nonblocking的BSP及私有邮箱模式仍返回-RT_ENOSYS。
+	业务层仍通过rt_device_write发送，使用rt_can_msg.nonblocking选择发送模式。
+	rt_ssize_t (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
 	recvmsg从Can控制器接收数据，boxno为接收通道号。
 	struct rt_can_device
 	{
@@ -104,8 +111,9 @@
 	{
 		rt_err_t (*configure)(struct rt_can_device *can, struct can_configure *cfg);
 		rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
-		int (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
-		int (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
+		rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void* buf, rt_uint32_t boxno);
+		rt_ssize_t (*recvmsg)(struct rt_can_device *can,void* buf, rt_uint32_t boxno);
+		rt_bool_t nonblocking_supported;
 	};
 	2、 rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
 	接口的

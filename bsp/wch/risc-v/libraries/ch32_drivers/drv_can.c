@@ -569,30 +569,28 @@ static int _can_send_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
     switch (mailbox_index)
     {
     case 0:
-        if ((can_base->TSTATR & CAN_TSTATR_TME0) != CAN_TSTATR_TME0)
+        if ((can_base->TSTATR & CAN_TSTATR_TME0) != CAN_TSTATR_TME0 ||
+            (can_base->TSTATR & CAN_TSTATR_RQCP0) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case 1:
-        if ((can_base->TSTATR & CAN_TSTATR_TME1) != CAN_TSTATR_TME1)
+        if ((can_base->TSTATR & CAN_TSTATR_TME1) != CAN_TSTATR_TME1 ||
+            (can_base->TSTATR & CAN_TSTATR_RQCP1) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     case 2:
-        if ((can_base->TSTATR & CAN_TSTATR_TME2) != CAN_TSTATR_TME2)
+        if ((can_base->TSTATR & CAN_TSTATR_TME2) != CAN_TSTATR_TME2 ||
+            (can_base->TSTATR & CAN_TSTATR_RQCP2) != 0U)
         {
-            /* Return function status */
-            return -RT_ERROR;
+            return -RT_EBUSY;
         }
         break;
     default:
-        RT_ASSERT(0);
-        return -RT_ERROR;
-        break;
+        return -RT_EINVAL;
     }
 
     if (RT_CAN_STDID == pmsg->ide)
@@ -758,6 +756,7 @@ static const struct rt_can_ops _can_ops = {
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    RT_TRUE,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -813,6 +812,8 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
+    /* Latched result of the mailbox request before clearing its completion bit. */
+    rt_uint32_t tx_event;
     struct ch32v307x_can_obj *drv_can_obj = &drv_can1;
 
     CAN_TypeDef *can_base = drv_can_obj->can_base;
@@ -822,49 +823,24 @@ void USB_HP_CAN1_TX_IRQHandler(void)
         if ((can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
         {
             //Request Completed Mailbox0
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK0; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0) || ((can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST0 | CAN_TSTATR_TERR0); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP0; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK0) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP0;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x00 << 8));
         }
         if ((can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
         {
             //Request Completed Mailbox1
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK1; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1) || ((can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST1 | CAN_TSTATR_TERR1); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP1; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK1) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP1;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x01 << 8));
         }
         if ((can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
         {
             //Request Completed Mailbox2
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK2; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2) || ((can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST2 | CAN_TSTATR_TERR2); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP2; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK2) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP2;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x02 << 8));
         }
-        CAN_ClearITPendingBit(can_base, CAN_IT_TME);
     }
     rt_interrupt_leave();
     FREE_INT_SP();
@@ -919,18 +895,6 @@ void CAN1_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can_obj->device.status.ackerrcnt++;
-        if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x00 << 8);
-        }
-        else if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x01 << 8);
-        }
-        else if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x02 << 8);
-        }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:
@@ -961,6 +925,8 @@ void CAN2_TX_IRQHandler(void)
 {
     GET_INT_SP();
     rt_interrupt_enter();
+    /* Latched result of the mailbox request before clearing its completion bit. */
+    rt_uint32_t tx_event;
     struct ch32v307x_can_obj *drv_can_obj = &drv_can2;
 
     CAN_TypeDef *can_base = drv_can_obj->can_base;
@@ -970,49 +936,24 @@ void CAN2_TX_IRQHandler(void)
         if ((can_base->TSTATR & CAN_TSTATR_RQCP0) == CAN_TSTATR_RQCP0)
         {
             //Request Completed Mailbox0
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK0; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x00 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST0) == CAN_TSTATR_ALST0) || ((can_base->TSTATR & CAN_TSTATR_TERR0) == CAN_TSTATR_TERR0))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST0 | CAN_TSTATR_TERR0); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x00 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP0; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK0) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP0;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x00 << 8));
         }
         if ((can_base->TSTATR & CAN_TSTATR_RQCP1) == CAN_TSTATR_RQCP1)
         {
             //Request Completed Mailbox1
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK1; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x01 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST1) == CAN_TSTATR_ALST1) || ((can_base->TSTATR & CAN_TSTATR_TERR1) == CAN_TSTATR_TERR1))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST1 | CAN_TSTATR_TERR1); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x01 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP1; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK1) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP1;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x01 << 8));
         }
         if ((can_base->TSTATR & CAN_TSTATR_RQCP2) == CAN_TSTATR_RQCP2)
         {
             //Request Completed Mailbox2
-            if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
-            {
-                can_base->TSTATR |= CAN_TSTATR_TXOK2; // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_DONE | (0x02 << 8));
-            }
-            if (((can_base->TSTATR & CAN_TSTATR_ALST2) == CAN_TSTATR_ALST2) || ((can_base->TSTATR & CAN_TSTATR_TERR2) == CAN_TSTATR_TERR2))
-            {
-                can_base->TSTATR |= (CAN_TSTATR_ALST2 | CAN_TSTATR_TERR2); // set 1 clear
-                rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | (0x02 << 8));
-            }
-            can_base->TSTATR |= CAN_TSTATR_RQCP2; // set 1 clear
+            tx_event = (can_base->TSTATR & CAN_TSTATR_TXOK2) ? RT_CAN_EVENT_TX_DONE : RT_CAN_EVENT_TX_FAIL;
+            can_base->TSTATR = CAN_TSTATR_RQCP2;
+            rt_hw_can_isr(&drv_can_obj->device, tx_event | (0x02 << 8));
         }
-        CAN_ClearITPendingBit(can_base, CAN_IT_TME);
     }
     rt_interrupt_leave();
     FREE_INT_SP();
@@ -1066,18 +1007,6 @@ void CAN2_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can_obj->device.status.ackerrcnt++;
-        if ((can_base->TSTATR & CAN_TSTATR_TXOK0) == CAN_TSTATR_TXOK0)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x00 << 8);
-        }
-        else if ((can_base->TSTATR & CAN_TSTATR_TXOK1) == CAN_TSTATR_TXOK1)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x01 << 8);
-        }
-        else if ((can_base->TSTATR & CAN_TSTATR_TXOK2) == CAN_TSTATR_TXOK2)
-        {
-            rt_hw_can_isr(&drv_can_obj->device, RT_CAN_EVENT_TX_FAIL | 0x02 << 8);
-        }
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
     case RT_CAN_BUS_EXPLICIT_BIT_ERR:

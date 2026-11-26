@@ -72,9 +72,9 @@ if RT_UTEST_CAN
         help
             Send one standard data frame with rt_can_msg.nonblocking set to 1.
             Self-loopback and dual-device tests verify the frame end to end.
-            The external-device test only verifies that the frame is accepted or
-            queued because the common CAN API has no TX-complete wait interface.
-            Enable this only when the CAN driver implements sendmsg_nonblocking.
+            The external-device test verifies immediate hardware acceptance,
+            not successful bus transmission. Enable this only when the CAN
+            driver declares nonblocking_supported.
 
     config RT_CAN_TC_TX_FRAME_ID
         hex "External Device TX Frame ID"
@@ -194,6 +194,19 @@ if RT_UTEST_CAN
         int "RX Timeout in Milliseconds"
         range 1000 60000
         default 10000
+
+endif
+
+if RT_USING_CAN
+
+    config RT_UTEST_CAN_FRAMEWORK
+        bool "CAN Framework Test (simulated ops)"
+        default n
+        help
+            Register a virtual CAN controller with simulated ops and verify the
+            Generic CAN lifecycle, TX admission and error paths, non-blocking TX
+            terminal retirement and the RX FIFO path. No CAN controller,
+            transceiver or bus is required.
 
 endif
 
