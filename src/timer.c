@@ -148,6 +148,12 @@ static void _timer_init(rt_timer_t timer,
     timer->timeout_func = timeout;
     timer->parameter = parameter;
 
+    rt_atomic_store(&timer->dispatch_ref, 0);
+    timer->closing = RT_FALSE;
+    timer->delete_pending = RT_FALSE;
+    rt_atomic_store(&timer->detach_pending, 0);
+    timer->dispatching_owner = RT_NULL;
+
     timer->timeout_tick = 0;
     timer->init_tick = time;
 
@@ -285,16 +291,34 @@ void rt_timer_init(rt_timer_t timer,
 RTM_EXPORT(rt_timer_init);
 
 /**
- * @brief This function will detach a timer from timer management.
+ * @brief Wait until a detached timer is no longer dispatched
  *
- * @param timer is the timer to be detached
+ * rt_timer_detach() cannot simply drop the timer while _timer_check() still
+ * holds a dispatch reference: the dispatcher dereferences the timer after the
+ * callback returns. The owner of the object that embeds the timer must call
+ * this before releasing that object, otherwise the dispatcher would touch
+ * freed memory in _timer_check() / _timer_dispatch_put().
  *
- * @return the status of detach
+ * @param timer the detached timer
  */
-rt_err_t rt_timer_detach(rt_timer_t timer)
+void rt_timer_detach_wait(rt_timer_t timer)
+{
+    RT_ASSERT(timer != RT_NULL);
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    while (rt_atomic_load(&timer->detach_pending) != 0 ||
+           rt_atomic_load(&timer->dispatch_ref) != 0)
+    {
+        rt_thread_mdelay(1);
+    }
+}
+RTM_EXPORT(rt_timer_detach_wait);
+
+static rt_err_t _timer_detach(rt_timer_t timer, rt_bool_t allow_wait)
 {
     rt_base_t level;
     struct rt_spinlock *spinlock;
+    rt_bool_t pending = RT_FALSE;
 
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -307,13 +331,68 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
     _timer_remove(timer);
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    /* A detached timer must never be re-armed behind the dispatch path. */
+    timer->closing = RT_TRUE;
+
+    if (rt_atomic_load(&timer->dispatch_ref) != 0)
+    {
+        /* _timer_check() is dereferencing this timer right now (the callback
+         * may even be running on another core). The object embedding the timer
+         * must stay alive until the dispatcher drops its reference, so mark it
+         * and let rt_timer_detach_wait() / _timer_dispatch_put() finish the
+         * handshake - symmetric with delete_pending on the heap path. */
+        rt_atomic_store(&timer->detach_pending, 1);
+        pending = RT_TRUE;
+    }
 
     rt_spin_unlock_irqrestore(spinlock, level);
     rt_object_detach(&(timer->parent));
 
+    /* Only block where that is legal: not in an interrupt. A soft timer
+     * callback may detach its own timer; waiting there would deadlock, so only
+     * skip the wait when this thread is positively known to be the dispatcher
+     * (an already cleared dispatching_owner means "done" and must not be taken
+     * as "this is me", otherwise the pending flag could still be cleared after
+     * the owner releases the object). */
+    if (pending && allow_wait && (rt_interrupt_get_nest() == 0))
+    {
+        if ((timer->dispatching_owner == RT_NULL) ||
+            (timer->dispatching_owner != rt_thread_self()))
+        {
+            rt_timer_detach_wait(timer);
+        }
+    }
+
     return RT_EOK;
 }
+
+/**
+ * @brief This function will detach a timer from timer management.
+ *
+ * @param timer is the timer to be detached
+ *
+ * @return the status of detach
+ */
+rt_err_t rt_timer_detach(rt_timer_t timer)
+{
+    return _timer_detach(timer, RT_TRUE);
+}
 RTM_EXPORT(rt_timer_detach);
+
+/**
+ * @brief Detach a timer without waiting for an in-flight dispatch
+ *
+ * Only for callers that cannot block (scheduler lock held, interrupt context).
+ * Such a caller must invoke rt_timer_detach_wait() before the object embedding
+ * the timer is released.
+ *
+ * @param timer the timer to be detached
+ */
+void rt_timer_detach_nowait(rt_timer_t timer)
+{
+    (void)_timer_detach(timer, RT_FALSE);
+}
+RTM_EXPORT(rt_timer_detach_nowait);
 
 #ifdef RT_USING_HEAP
 /**
@@ -374,6 +453,12 @@ RTM_EXPORT(rt_timer_create);
  * @param timer the timer to be deleted
  *
  * @return the operation status, RT_EOK on OK; -RT_ERROR on error
+ *
+ * @note A timeout function is allowed to delete its own timer. _timer_check()
+ *       still dereferences the timer after the callback returns, so such a
+ *       timer is only marked for release here and the actual rt_object_delete()
+ *       is performed by _timer_check() when it drops the last dispatch
+ *       reference.
  */
 rt_err_t rt_timer_delete(rt_timer_t timer)
 {
@@ -389,15 +474,97 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
 
     level = rt_spin_lock_irqsave(spinlock);
 
+    if (timer->delete_pending)
+    {
+        /* A previous rt_timer_delete() already handed the release over to
+         * _timer_check(): releasing here again would free the object twice. */
+        rt_spin_unlock_irqrestore(spinlock, level);
+        return RT_EOK;
+    }
+
     _timer_remove(timer);
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+
+    if (rt_atomic_load(&timer->dispatch_ref) != 0)
+    {
+        /* The timer is being dispatched right now - the callback may even be
+         * the caller of this function. _timer_check() dereferences the timer
+         * after the callback returns, so the object must stay alive until that
+         * dispatch reference is dropped. Forbid a re-arm in the meantime. */
+        timer->closing = RT_TRUE;
+        timer->delete_pending = RT_TRUE;
+        rt_spin_unlock_irqrestore(spinlock, level);
+        return RT_EOK;
+    }
+
     rt_spin_unlock_irqrestore(spinlock, level);
     rt_object_delete(&(timer->parent));
 
     return RT_EOK;
 }
 RTM_EXPORT(rt_timer_delete);
+
+/**
+ * @brief Close a timer: detach it and forbid further dispatch or re-arm
+ *
+ * The caller (LWP object reclamation) must follow this with
+ * rt_timer_dispatch_wait() and only then release the timer object, because
+ * _timer_check() keeps a pointer to the timer while a callback runs.
+ *
+ * The timeout parameter is detached (set to RT_NULL) under the timer lock, so
+ * a concurrent control path can no longer replace it while the caller waits.
+ *
+ * @param timer the timer to be closed
+ *
+ * @return The parameter that was registered when the timer was closed
+ */
+void *rt_timer_close(rt_timer_t timer)
+{
+    rt_base_t level;
+    struct rt_spinlock *spinlock;
+    void *parameter;
+
+    RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+
+    spinlock = _timerlock_idx(timer);
+    level = rt_spin_lock_irqsave(spinlock);
+
+    _timer_remove(timer);
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+    timer->closing = RT_TRUE;
+
+    /* Detach the callback parameter in the same critical section: while the
+     * owner waits for the dispatch reference to drain, no other path may swap
+     * the parameter and change what will be released. */
+    parameter = timer->parameter;
+    timer->parameter = RT_NULL;
+
+    rt_spin_unlock_irqrestore(spinlock, level);
+
+    return parameter;
+}
+RTM_EXPORT(rt_timer_close);
+
+/**
+ * @brief Wait until a closed timer is no longer dispatched
+ *
+ * Must be called from a thread context after rt_timer_close().
+ *
+ * @param timer the closed timer
+ */
+void rt_timer_dispatch_wait(rt_timer_t timer)
+{
+    RT_ASSERT(timer != RT_NULL);
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    while (rt_atomic_load(&timer->dispatch_ref) != 0)
+    {
+        rt_thread_mdelay(1);
+    }
+}
+RTM_EXPORT(rt_timer_dispatch_wait);
 #endif /* RT_USING_HEAP */
 
 /**
@@ -486,6 +653,50 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
 }
 
 /**
+ * @brief Drop the in-flight dispatch reference taken by _timer_check()
+ *
+ * Must be called with the timer list lock held; the lock state is passed in
+ * and out because the release below may temporarily drop the lock.
+ *
+ * A timer whose timeout function called rt_timer_delete() only gets marked for
+ * release there, because _timer_check() still dereferences it after the
+ * callback returns. The last dispatch reference dropped here then performs the
+ * actual rt_object_delete(), with the timer list lock dropped because that call
+ * deallocates the timer object.
+ *
+ * @param timer the dispatched timer
+ * @param lock  the timer list lock
+ * @param level in: current lock state, out: the same state after a release
+ */
+static void _timer_dispatch_put(rt_timer_t timer, struct rt_spinlock *lock, rt_base_t *level)
+{
+    rt_atomic_sub(&timer->dispatch_ref, 1);
+    timer->dispatching_owner = RT_NULL;
+
+#ifdef RT_USING_HEAP
+    if (timer->delete_pending && (rt_atomic_load(&timer->dispatch_ref) == 0))
+    {
+        /* rt_timer_delete() ran while the callback was in flight: the timer is
+         * already detached, and the dispatch path is done with it now. */
+        timer->delete_pending = RT_FALSE;
+        rt_spin_unlock_irqrestore(lock, *level);
+        rt_object_delete(&(timer->parent));
+        *level = rt_spin_lock_irqsave(lock);
+        return;
+    }
+#endif /* RT_USING_HEAP */
+
+    if ((rt_atomic_load(&timer->dispatch_ref) == 0) &&
+        (rt_atomic_load(&timer->detach_pending) != 0))
+    {
+        /* rt_timer_detach() ran while the callback was in flight: this is the
+         * last dereference of the timer on the dispatch path, so clear the
+         * flag and let rt_timer_detach_wait() proceed. */
+        rt_atomic_store(&timer->detach_pending, 0);
+    }
+}
+
+/**
  * @brief This function will check timer list, if a timeout event happens,
  *        the corresponding timeout function will be invoked.
  *
@@ -521,6 +732,15 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
         {
             RT_OBJECT_HOOK_CALL(rt_timer_enter_hook, (t));
 
+            /* Take a dispatch reference before dropping the lock: the timer is
+             * still dereferenced below after the callback returns, so its
+             * owner must wait until this reference is dropped again before it
+             * may release the timer object. */
+            rt_atomic_add(&t->dispatch_ref, 1);
+            /* Remember who dispatches it: a soft timer callback may detach its
+             * own timer and must not wait for itself. */
+            t->dispatching_owner = rt_thread_self();
+
             /* remove timer from timer list firstly */
             _timer_remove(t);
             if (!(t->parent.flag & RT_TIMER_FLAG_PERIODIC))
@@ -543,16 +763,21 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
             {
+                /* The callback may have deleted the timer itself: the object is
+                 * still alive because this dispatch reference is held, and the
+                 * last reference releases it. */
+                _timer_dispatch_put(t, lock, &level);
                 continue;
             }
             rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
-            if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
+            if (!t->closing && (t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
                 _timer_start(timer_list, t);
             }
+            _timer_dispatch_put(t, lock, &level);
         }
         else
         {
@@ -613,9 +838,17 @@ rt_err_t rt_timer_start(rt_timer_t timer)
 
     level = rt_spin_lock_irqsave(spinlock);
 
-    err = _timer_start(timer_list, timer);
-
-    rt_spin_unlock_irqrestore(spinlock, level);
+    if (timer->closing)
+    {
+        /* A closed timer is being reclaimed and must not be re-armed. */
+        rt_spin_unlock_irqrestore(spinlock, level);
+        err = -RT_ERROR;
+    }
+    else
+    {
+        err = _timer_start(timer_list, timer);
+        rt_spin_unlock_irqrestore(spinlock, level);
+    }
 
     if (is_thread_timer)
     {
@@ -684,6 +917,16 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
     spinlock = _timerlock_idx(timer);
 
     level = rt_spin_lock_irqsave(spinlock);
+    if (timer->closing &&
+        ((cmd == RT_TIMER_CTRL_SET_TIME) || (cmd == RT_TIMER_CTRL_SET_ONESHOT) ||
+         (cmd == RT_TIMER_CTRL_SET_PERIODIC) || (cmd == RT_TIMER_CTRL_SET_FUNC) ||
+         (cmd == RT_TIMER_CTRL_SET_PARM)))
+    {
+        /* A closing timer is being reclaimed: its callback and parameter are
+         * about to be released, so no mutating control may touch them. */
+        rt_spin_unlock_irqrestore(spinlock, level);
+        return -RT_ERROR;
+    }
     switch (cmd)
     {
     case RT_TIMER_CTRL_GET_TIME:
