@@ -360,6 +360,11 @@ struct rt_serial_device
 #ifdef RT_USING_POSIX_STDIO
     rt_bool_t is_posix_mode;
 #endif
+
+#ifdef RT_USING_SMART
+    /* tty registered by rt_hw_serial_register_tty(), cleared on unregister */
+    struct rt_device *ttydev;
+#endif
 };
 
 /**
