@@ -95,6 +95,7 @@ static void _workqueue_thread_entry(void *parameter)
         /* we have work to do with. */
         work = rt_list_entry(queue->work_list.next, struct rt_work, list);
         rt_list_remove(&(work->list));
+        rt_list_init(&(work->list));
         queue->work_current  = work;
         work->flags         &= ~RT_WORK_STATE_PENDING;
         work->workqueue      = RT_NULL;
@@ -112,18 +113,65 @@ static void _workqueue_thread_entry(void *parameter)
     }
 }
 
+/* Serializes ownership changes of a single work item (work->workqueue and its
+ * list node). Two threads may both observe a stale/NULL owner and would
+ * otherwise each hold only their own queue lock while unlinking the node
+ * from another queue's list. Lock order: this lock, then one queue lock. */
+RT_DEFINE_SPINLOCK(_workqueue_owner_lock);
+
+static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
+/* same as _workqueue_cancel_work() but queue->spinlock must be held */
+static rt_err_t _workqueue_cancel_work_locked(struct rt_workqueue *queue, struct rt_work *work);
+
 static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
-    rt_base_t       level;
-    rt_err_t        err = RT_EOK;
+    rt_base_t level;
+    rt_base_t owner_level;
+    rt_err_t err = RT_EOK;
     struct rt_work *work_tmp;
-    rt_list_t      *list_tmp;
+    rt_list_t *list_tmp;
+    struct rt_workqueue *owner;
 
-    level = rt_spin_lock_irqsave(&(queue->spinlock));
-    /* remove list */
+    /* Serialize the ownership change of this work item first: another thread
+     * submitting the same work to another queue must not update work->workqueue
+     * and its list node while we only hold this queue's lock. */
+    owner_level = rt_spin_lock_irqsave(&_workqueue_owner_lock);
+
+    /* Take a single snapshot of the owning queue. The owner's worker thread
+     * may dequeue this work and clear work->workqueue at any time, so a second
+     * unlocked read is not reliable. Re-check the ownership under the previous
+     * queue's lock before touching its lists; only one queue lock is held at a
+     * time, so the two queues can never deadlock on each other. */
+    for (;;)
+    {
+        owner = work->workqueue;
+        if (owner != RT_NULL && owner != queue)
+        {
+            level = rt_spin_lock_irqsave(&(owner->spinlock));
+            if (work->workqueue == owner)
+            {
+                _workqueue_cancel_work_locked(owner, work);
+            }
+            /* else: the worker thread took the work in between and already
+             * cleared work->workqueue, so there is nothing left to cancel. */
+            rt_spin_unlock_irqrestore(&(owner->spinlock), level);
+        }
+
+        level = rt_spin_lock_irqsave(&(queue->spinlock));
+        if ((work->workqueue == RT_NULL) || (work->workqueue == queue))
+        {
+            break;
+        }
+
+        /* The worker thread can only clear the owner, but retry once instead
+         * of unlinking a node that another queue still owns. */
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+    }
+    /* remove list and reset delayed state */
     rt_list_remove(&(work->list));
-    work->flags = 0;
+    rt_list_init(&(work->list));
+    work->flags &= ~RT_WORK_STATE_SUBMITTING;
 
     if (ticks == 0)
     {
@@ -162,20 +210,46 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         err = -RT_ERROR;
     }
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+    rt_spin_unlock_irqrestore(&_workqueue_owner_lock, owner_level);
+
+    return err;
+}
+
+static rt_err_t _workqueue_cancel_work_locked(struct rt_workqueue *queue, struct rt_work *work)
+{
+    rt_err_t err;
+
+    rt_list_remove(&(work->list));
+    rt_list_init(&(work->list));
+    work->flags = 0;
+    err = queue->work_current != work ? RT_EOK : -RT_EBUSY;
+    work->workqueue = RT_NULL;
     return err;
 }
 
 static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
-    rt_err_t  err;
+    rt_base_t owner_level;
+    rt_err_t err;
 
+    owner_level = rt_spin_lock_irqsave(&_workqueue_owner_lock);
     level = rt_spin_lock_irqsave(&(queue->spinlock));
-    rt_list_remove(&(work->list));
-    work->flags     = 0;
-    err             = queue->work_current != work ? RT_EOK : -RT_EBUSY;
-    work->workqueue = RT_NULL;
+
+    if ((work->workqueue != RT_NULL) && (work->workqueue != queue))
+    {
+        /* The work belongs to another queue: its list node must not be
+         * unlinked without that queue's lock. */
+        err = -RT_EBUSY;
+    }
+    else
+    {
+        err = _workqueue_cancel_work_locked(queue, work);
+    }
+
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+    rt_spin_unlock_irqrestore(&_workqueue_owner_lock, owner_level);
+
     return err;
 }
 
@@ -315,17 +389,35 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
 rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
+    rt_base_t owner_level;
+    struct rt_workqueue *owner;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
+
+    owner_level = rt_spin_lock_irqsave(&_workqueue_owner_lock);
+
+    /* Moving the node between queues is an ownership change too. */
+    owner = work->workqueue;
+    if (owner != RT_NULL && owner != queue)
+    {
+        level = rt_spin_lock_irqsave(&(owner->spinlock));
+        if (work->workqueue == owner)
+        {
+            _workqueue_cancel_work_locked(owner, work);
+        }
+        rt_spin_unlock_irqrestore(&(owner->spinlock), level);
+    }
 
     level = rt_spin_lock_irqsave(&(queue->spinlock));
     /* NOTE: the work MUST be initialized firstly */
     rt_list_remove(&(work->list));
     rt_list_insert_after(&queue->work_list, &(work->list));
+    work->workqueue = queue;
 
     rt_completion_done(&(queue->wakeup_completion));
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+    rt_spin_unlock_irqrestore(&_workqueue_owner_lock, owner_level);
 
     return RT_EOK;
 }
@@ -356,6 +448,8 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *wo
  * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
+ *         -RT_EBUSY    This work item is owned by another work queue, so it was
+ *                      not cancelled and may still run.
  */
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work)
 {
@@ -367,13 +461,16 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
         /* wait for work completion */
         rt_sem_take(&(queue->sem), RT_WAITING_FOREVER);
         /* Note that because work items are automatically deleted after execution, they do not need to be deleted again */
-    }
-    else
-    {
-        _workqueue_cancel_work(queue, work);
+        return RT_EOK;
     }
 
-    return RT_EOK;
+    /*
+     * The item may have been moved to another work queue in the meantime. In
+     * that case _workqueue_cancel_work() refuses to unlink it (-RT_EBUSY) and
+     * the caller must learn that the cancellation did not happen: the callback
+     * can still run.
+     */
+    return _workqueue_cancel_work(queue, work);
 }
 
 /**
