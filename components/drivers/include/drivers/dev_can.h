@@ -309,8 +309,8 @@ struct rt_can_filter_item
  * must never carry bits outside the identifier width of the frame type. The
  * helper macros below use these values instead of a full 32-bit mask.
  */
-#define RT_CAN_STD_ID_MASK  0x000007FFUL
-#define RT_CAN_EXT_ID_MASK  0x1FFFFFFFUL
+#define RT_CAN_STD_ID_MASK 0x000007FFUL
+#define RT_CAN_EXT_ID_MASK 0x1FFFFFFFUL
 
 #ifdef RT_CAN_USING_HDR
 /**
@@ -327,18 +327,18 @@ struct rt_can_filter_item
  */
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
       {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}
-#define RT_CAN_FILTER_STD_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,RT_CAN_STD_ID_MASK,ind,args)
-#define RT_CAN_FILTER_EXT_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,RT_CAN_EXT_ID_MASK,ind,args)
-#define RT_CAN_STD_RMT_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,RT_CAN_STD_ID_MASK,ind,args)
-#define RT_CAN_EXT_RMT_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,RT_CAN_EXT_ID_MASK,ind,args)
-#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,RT_CAN_STD_ID_MASK,ind,args)
-#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,RT_CAN_EXT_ID_MASK,ind,args)
+#define RT_CAN_FILTER_STD_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, RT_CAN_STD_ID_MASK, ind, args)
+#define RT_CAN_FILTER_EXT_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, RT_CAN_EXT_ID_MASK, ind, args)
+#define RT_CAN_STD_RMT_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 1, 0, RT_CAN_STD_ID_MASK, ind, args)
+#define RT_CAN_EXT_RMT_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 1, 0, RT_CAN_EXT_ID_MASK, ind, args)
+#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 1, RT_CAN_STD_ID_MASK, ind, args)
+#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 1, RT_CAN_EXT_ID_MASK, ind, args)
 #else
 /**
  * @def RT_CAN_FILTER_ITEM_INIT
@@ -353,17 +353,17 @@ struct rt_can_filter_item
 #define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask) \
       {(id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0 }
 #define RT_CAN_FILTER_STD_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,RT_CAN_STD_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, RT_CAN_STD_ID_MASK)
 #define RT_CAN_FILTER_EXT_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,RT_CAN_EXT_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, RT_CAN_EXT_ID_MASK)
 #define RT_CAN_STD_RMT_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,RT_CAN_STD_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 1, 0, RT_CAN_STD_ID_MASK)
 #define RT_CAN_EXT_RMT_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,RT_CAN_EXT_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 1, 0, RT_CAN_EXT_ID_MASK)
 #define RT_CAN_STD_RMT_DATA_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,RT_CAN_STD_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 1, RT_CAN_STD_ID_MASK)
 #define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,RT_CAN_EXT_ID_MASK)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 1, RT_CAN_EXT_ID_MASK)
 #endif
 
 
