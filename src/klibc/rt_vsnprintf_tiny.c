@@ -637,6 +637,10 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
         {
             num = (rt_uint32_t)va_arg(args, unsigned long);
         }
+        if (base == 16 && num == 0)
+        {
+            flags &= ~SPECIAL;
+        }
         if (precision >= 0)
         {
             flags &= ~ZEROPAD;
