@@ -68,6 +68,17 @@ extremal_unsigned_integer_values
         uassert_str_equal(expected, buffer);         \
     } while (0)
 
+/* also checks the return value */
+#define SPRINTF_CHECK_LEN(expected, buffer, format, ...)     \
+    do                                                       \
+    {                                                        \
+        int len = 0;                                         \
+        rt_memset(buffer, 0xCC, base_buffer_size);           \
+        len = rt_sprintf(buffer, format, ##__VA_ARGS__);     \
+        uassert_str_equal(expected, buffer);                 \
+        uassert_int_equal(len, (int)(sizeof(expected) - 1)); \
+    } while (0)
+
 #define SPRINTF_TEST_CASE_NAME(testname) TC_##testname
 #define SPRINTF_TEST_CASE(testname)      static void SPRINTF_TEST_CASE_NAME(testname)(void)
 
@@ -221,26 +232,18 @@ SPRINTF_TEST_CASE(minus_flag_and_non_standard_zero_modifier_for_integers)
 SPRINTF_TEST_CASE(sharp_flag)
 {
     char buffer[base_buffer_size];
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0", buffer, "%#o", 0);
     SPRINTF_CHECK("0", buffer, "%#0o", 0);
-#endif
     SPRINTF_CHECK("0", buffer, "%#.0o", 0);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0", buffer, "%#.1o", 0);
     SPRINTF_CHECK("   0", buffer, "%#4o", 0);
     SPRINTF_CHECK("0000", buffer, "%#.4o", 0);
-#endif
     SPRINTF_CHECK("01", buffer, "%#o", 1);
     SPRINTF_CHECK("01", buffer, "%#0o", 1);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("01", buffer, "%#.0o", 1);
-#endif
     SPRINTF_CHECK("01", buffer, "%#.1o", 1);
     SPRINTF_CHECK("  01", buffer, "%#4o", 1);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0001", buffer, "%#.4o", 1);
-#endif
     SPRINTF_CHECK("0x1001", buffer, "%#04x", 0x1001);
     SPRINTF_CHECK("01001", buffer, "%#04o", 01001);
 #ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
@@ -259,30 +262,44 @@ SPRINTF_TEST_CASE(sharp_flag__non_standard_format)
     SPRINTF_CHECK("0077", buffer, "%#04o", 077);
 }
 
+SPRINTF_TEST_CASE(sharp_flag_octal_for_zero_value)
+{
+    char buffer[base_buffer_size];
+    SPRINTF_CHECK_LEN("0", buffer, "%#o", 0U);
+    SPRINTF_CHECK_LEN("0", buffer, "%#0o", 0U);
+    SPRINTF_CHECK_LEN("0", buffer, "%#.0o", 0U);
+    SPRINTF_CHECK_LEN("0", buffer, "%#.1o", 0U);
+    SPRINTF_CHECK_LEN("0", buffer, "%#.*o", -1, 0U);
+    SPRINTF_CHECK_LEN("   0", buffer, "%#4o", 0U);
+    SPRINTF_CHECK_LEN("0000", buffer, "%#.4o", 0U);
+    SPRINTF_CHECK_LEN("00000", buffer, "%#05o", 0U);
+}
+
+SPRINTF_TEST_CASE(sharp_flag_octal_with_leading_zero_digit)
+{
+    char buffer[base_buffer_size];
+    SPRINTF_CHECK_LEN("010", buffer, "%#o", 8U);
+    SPRINTF_CHECK_LEN("010", buffer, "%#.*o", -1, 8U);
+    SPRINTF_CHECK_LEN("00010", buffer, "%#.5o", 8U);
+    SPRINTF_CHECK_LEN("00000000000000000777", buffer, "%#020o", 511U);
+}
+
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
 SPRINTF_TEST_CASE(sharp_flag_with_long_long)
 {
     char buffer[base_buffer_size];
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0", buffer, "%#llo", (long long)0);
     SPRINTF_CHECK("0", buffer, "%#0llo", (long long)0);
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
     SPRINTF_CHECK("0", buffer, "%#.0llo", (long long)0);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0", buffer, "%#.1llo", (long long)0);
     SPRINTF_CHECK("   0", buffer, "%#4llo", (long long)0);
     SPRINTF_CHECK("0000", buffer, "%#.4llo", (long long)0);
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
     SPRINTF_CHECK("01", buffer, "%#llo", (long long)1);
     SPRINTF_CHECK("01", buffer, "%#0llo", (long long)1);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("01", buffer, "%#.0llo", (long long)1);
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
     SPRINTF_CHECK("01", buffer, "%#.1llo", (long long)1);
     SPRINTF_CHECK("  01", buffer, "%#4llo", (long long)1);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("0001", buffer, "%#.4llo", (long long)1);
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
     SPRINTF_CHECK("0x1001", buffer, "%#04llx", (long long)0x1001);
     SPRINTF_CHECK("01001", buffer, "%#04llo", (long long)01001);
 #ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
@@ -1058,6 +1075,8 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(minus_flag_and_non_standard_zero_modifier_for_integers));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag__non_standard_format));
+    UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag_octal_for_zero_value));
+    UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag_octal_with_leading_zero_digit));
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag_with_long_long));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(sharp_flag_with_long_long__non_standard_format));

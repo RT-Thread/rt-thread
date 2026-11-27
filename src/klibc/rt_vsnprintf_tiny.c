@@ -147,16 +147,9 @@ static char *print_number(char *buf,
         }
     }
 
-    if (type & SPECIAL)
+    if ((type & SPECIAL) && (base == 2 || base == 16))
     {
-        if (base == 2 || base == 16)
-        {
-            size -= 2;
-        }
-        else if (base == 8)
-        {
-            size--;
-        }
+        size -= 2;
     }
 
     if (num == 0)
@@ -164,7 +157,7 @@ static char *print_number(char *buf,
         // check precision:
         // e.g. ("%5.0d", 0) should print "     ", not "    0"
         // e.g. ("%5.1d", 0) should print "    0", not "     "
-        if (precision != 0)
+        if (precision != 0 || ((type & SPECIAL) && base == 8))
         {
             tmp[i++] = '0';
         }
@@ -174,6 +167,11 @@ static char *print_number(char *buf,
         while (num != 0)
         {
             tmp[i++] = digits[divide(&num, base)];
+        }
+        /* Alternate octal needs at least one zero before the digits. */
+        if ((type & SPECIAL) && base == 8 && precision <= i)
+        {
+            precision = i + 1;
         }
     }
 
@@ -223,14 +221,6 @@ static char *print_number(char *buf,
             if (buf < end)
             {
                 *buf = 'b';
-            }
-            ++buf;
-        }
-        else if (base == 8)
-        {
-            if (buf < end)
-            {
-                *buf = '0';
             }
             ++buf;
         }
