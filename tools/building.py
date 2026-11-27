@@ -37,6 +37,7 @@ import rtconfig
 import platform
 import logging
 from SCons.Script import *
+from SCons.Util import adjustixes
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
@@ -682,13 +683,15 @@ def _PretreatListParameters(target_list):
 
     return True # permit to add this list to the parameter
 
+_LOCAL_GROUP_FLAG_KEYS = ('CFLAGS', 'CCFLAGS', 'CXXFLAGS', 'ASFLAGS', 'CPPPATH', 'CPPDEFINES')
+
+
 def _local_group_objects(group, objects):
-    keys = ('CFLAGS', 'CCFLAGS', 'CXXFLAGS', 'ASFLAGS', 'CPPPATH', 'CPPDEFINES')
-    if not any('LOCAL_' + key in group for key in keys):
+    if not any('LOCAL_' + key in group for key in _LOCAL_GROUP_FLAG_KEYS):
         return False
 
     flags = {}
-    for key in keys:
+    for key in _LOCAL_GROUP_FLAG_KEYS:
         local_key = 'LOCAL_' + key
         if key in ('CPPPATH', 'CPPDEFINES'):
             flags[key] = list(Env.get(key, [])) + group.get(local_key, [])
@@ -794,10 +797,20 @@ def DefineGroup(name, src, depend, **parameters):
 
     # check whether to build group library
     if 'LIBRARY' in group:
-        sources = []
-        if not _local_group_objects(group, sources):
-            sources = group['src']
-        objs = Env.Library(name, sources)
+        if any('LOCAL_' + key in group for key in _LOCAL_GROUP_FLAG_KEYS):
+            # Keep the target in this SConscript directory. Build it after all
+            # SConscript files have added their global flags to the environment.
+            library = Env.File(adjustixes(name, Env.subst('$LIBPREFIX'), Env.subst('$LIBSUFFIX')))
+
+            def build_library():
+                sources = []
+                _local_group_objects(group, sources)
+                Env.Library(library, sources)
+
+            RegisterPreBuildingAction(build_library)
+            objs = [library]
+        else:
+            objs = Env.Library(name, group['src'])
     else:
         # only add source
         objs = group['src']
