@@ -14,6 +14,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_GFXMMU
         default n
 
+    config BSP_USING_OSPI_FLASH
+        bool "Enable OctoSPI Flash (MX25LM51245GXDI00)"
+        select BSP_USING_OSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_OSPI
+        default n
+
     menu "Enable Touch"
 
         config BSP_USING_TOUCH
@@ -101,6 +108,12 @@ menu "On-chip Peripheral Drivers"
                         default 64    
                 endif
         endif
+
+    config BSP_USING_OSPI
+        bool "Enable OSPI BUS"
+        select RT_USING_OSPI
+        select RT_USING_SPI
+        default n
 
     config BSP_USING_SRAM
         bool "Enable SRAM"
