@@ -265,6 +265,11 @@ struct rt_serial_device
     struct rt_serial_bypass* bypass;
 #endif
     struct rt_device_notify rx_notify;
+
+#ifdef RT_USING_SMART
+    /* tty registered by rt_hw_serial_register_tty(), cleared on unregister */
+    struct rt_device *ttydev;
+#endif
 };
 typedef struct rt_serial_device rt_serial_t;
 

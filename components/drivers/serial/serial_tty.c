@@ -19,17 +19,28 @@
 
 #include <sys/ioctl.h>
 
-#define TTY_NAME_PREFIX "S" /* (S)erial */
+#define TTY_NAME_PREFIX            "S" /* (S)erial */
 #define LWP_TTY_WORKQUEUE_PRIORITY 3
 
 struct serial_tty_context
 {
     struct rt_serial_device *parent;
-    struct rt_device_notify backup_notify;
     struct rt_work work;
 };
 
 static struct rt_workqueue *_ttyworkq; /* system work queue */
+
+#ifdef RT_USING_COMPONENTS_INIT
+struct _tty_pending_registration
+{
+    rt_slist_t node;
+    struct rt_serial_device *serial;
+};
+
+static rt_slist_t _tty_pending_registrations =
+    RT_SLIST_OBJECT_INIT(_tty_pending_registrations);
+static rt_bool_t _tty_flush_done = RT_FALSE;
+#endif /* RT_USING_COMPONENTS_INIT */
 
 #ifndef RT_USING_DM
 static rt_atomic_t _device_id_counter = 0;
@@ -40,13 +51,21 @@ static long get_dec_digits(rt_ubase_t val)
     while (1)
     {
         if (val < 10)
+        {
             return result;
+        }
         if (val < 100)
+        {
             return result + 1;
+        }
         if (val < 1000)
+        {
             return result + 2;
+        }
         if (val < 10000)
+        {
             return result + 3;
+        }
         val /= 10000U;
         result += 4;
     }
@@ -69,13 +88,15 @@ static char *alloc_device_name(struct rt_serial_device *serial)
         return RT_NULL;
     }
 
-    long digits_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
+    long digits_len = (sizeof(TTY_NAME_PREFIX) - 1)              /* raw prefix */
                       + strlen(serial_name + sizeof("uart") - 1) /* suffix of serial device name*/
-                      + 1;  /* tailing \0 */
+                      + 1;                                       /* tailing \0 */
 
     tty_dev_name = rt_malloc(digits_len);
     if (tty_dev_name)
+    {
         rt_sprintf(tty_dev_name, "%s%s", TTY_NAME_PREFIX, serial_name + sizeof("uart") - 1);
+    }
 #else
     RT_UNUSED(serial);
     unsigned int devid = rt_atomic_add(&_device_id_counter, 1);
@@ -84,7 +105,9 @@ static char *alloc_device_name(struct rt_serial_device *serial)
 
     tty_dev_name = rt_malloc(digits_len);
     if (tty_dev_name)
+    {
         rt_sprintf(tty_dev_name, "%s%u", TTY_NAME_PREFIX, devid);
+    }
 #endif
     return tty_dev_name;
 }
@@ -115,12 +138,12 @@ int lwp_startup_debug_request(void)
 
 static void _setup_debug_rxind_hook(void)
 {
-    return ;
+    return;
 }
 
 #endif /* LWP_DEBUG_INIT */
 
-static rt_err_t _serial_ty_bypass(struct rt_serial_device* serial, char ch,void *data)
+static rt_err_t _serial_ty_bypass(struct rt_serial_device *serial, char ch, void *data)
 {
     lwp_tty_t tp;
     tp = (lwp_tty_t)data;
@@ -131,19 +154,12 @@ static rt_err_t _serial_ty_bypass(struct rt_serial_device* serial, char ch,void 
     tty_unlock(tp);
 
     return RT_EOK;
-
 }
 
-rt_inline void _setup_serial(struct rt_serial_device* serial, lwp_tty_t tp,
+rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
                              struct serial_tty_context *softc)
 {
     rt_bypass_lower_register(serial, "tty", RT_BYPASS_PROTECT_LEVEL_1, _serial_ty_bypass, (void *)tp);
-}
-
-rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
-                               struct serial_tty_context *softc)
-{
-    rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &softc->backup_notify);
 }
 
 static void _serial_tty_set_speed(struct lwp_tty *tp)
@@ -200,7 +216,7 @@ static void serial_tty_outwakeup(struct lwp_tty *tp)
 
     if (_serial_isbusy(device))
     {
-        return ;
+        return;
     }
 
     while ((len = ttydisc_getc(tp, &out_char, sizeof(out_char))) != 0)
@@ -291,12 +307,22 @@ static int serial_tty_param(struct lwp_tty *tp, struct termios *t)
     return rt_device_control(&(serial->parent), TCSETS, t);
 }
 
+static void serial_tty_free(void *softc)
+{
+    /*
+     * lwp_tty_delete() calls the destructor of the tty device switch, both for
+     * a TTY that was opened as well as for one that never was.
+     */
+    rt_free(softc);
+}
+
 static struct lwp_ttydevsw serial_ttydevsw = {
     .tsw_open = serial_tty_open,
     .tsw_close = serial_tty_close,
     .tsw_ioctl = serial_tty_ioctl,
     .tsw_param = serial_tty_param,
     .tsw_outwakeup = serial_tty_outwakeup,
+    .tsw_free = serial_tty_free,
 };
 
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
@@ -306,10 +332,43 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
     char *dev_name;
     struct serial_tty_context *softc;
 
-    if (serial->rx_notify.dev)
+    if (serial->ttydev)
     {
         return -RT_EBUSY;
     }
+
+#ifdef RT_USING_COMPONENTS_INIT
+    /*
+     * Board code can register a serial device before INIT_PREV_EXPORT creates the
+     * tty workqueue.
+     *
+     * NOTE: The pending registrations list is accessed ONLY during the early
+     * initialization phase before the scheduler starts (single-threaded context).
+     * Once _tty_pending_flush has executed (_tty_flush_done == RT_TRUE), no further
+     * registrations may be queued onto the pending list; if the workqueue is still
+     * unavailable after flush, registration returns an error immediately.
+     */
+    if (!_tty_flush_done && _ttyworkq == RT_NULL)
+    {
+        struct _tty_pending_registration *pending;
+
+        pending = rt_malloc(sizeof(*pending));
+        if (pending == RT_NULL)
+        {
+            return -RT_ENOMEM;
+        }
+
+        pending->serial = serial;
+        rt_slist_append(&_tty_pending_registrations, &pending->node);
+
+        return RT_EOK;
+    }
+    else if (_tty_flush_done && _ttyworkq == RT_NULL)
+    {
+        /* flush has completed but workqueue creation failed */
+        return -RT_ERROR;
+    }
+#endif /* RT_USING_COMPONENTS_INIT */
 
     softc = rt_malloc(sizeof(struct serial_tty_context));
     if (softc)
@@ -329,6 +388,16 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
                 {
                     rt_free(tty);
                     rt_free(softc);
+                }
+                else
+                {
+                    /*
+                     * Keep the TTY here instead of relying on rx_notify.dev: the
+                     * notify belongs to whoever uses it, so it cannot tell "no TTY
+                     * was ever created" from "the TTY exists but was never
+                     * opened".
+                     */
+                    serial->ttydev = &tty->parent;
                 }
             }
             else
@@ -357,23 +426,63 @@ rt_err_t rt_hw_serial_unregister_tty(struct rt_serial_device *serial)
 {
     rt_device_t tty_dev;
     lwp_tty_t tp;
-    struct serial_tty_context *softc;
 
-    tty_dev = serial->rx_notify.dev;
+#ifdef RT_USING_COMPONENTS_INIT
+    if (!_tty_flush_done)
+    {
+        rt_slist_t *node = _tty_pending_registrations.next;
+
+        while (node != RT_NULL)
+        {
+            struct _tty_pending_registration *pending;
+            rt_slist_t *next = node->next;
+
+            pending = rt_slist_entry(node, struct _tty_pending_registration, node);
+            if (pending->serial == serial)
+            {
+                rt_slist_remove(&_tty_pending_registrations, node);
+                rt_free(pending);
+                return RT_EOK;
+            }
+
+            node = next;
+        }
+    }
+#endif /* RT_USING_COMPONENTS_INIT */
+
+    /*
+     * Registration may never have produced a TTY: the request could still be
+     * queued and be dropped by _tty_pending_flush(), the flush could fail, or
+     * TTY creation could have failed. rt_hw_serial_register_tty() reports
+     * RT_EOK for a queued request, so only a recorded TTY proves that one was
+     * created. A TTY that exists but was never opened must still be torn down;
+     * only the absence of the pointer means there is nothing to do.
+     */
+    tty_dev = serial->ttydev;
+    if (tty_dev == RT_NULL)
+    {
+        return RT_EOK;
+    }
+    serial->ttydev = RT_NULL;
+
     tp = rt_container_of(tty_dev, struct lwp_tty, parent);
 
-    /* restore serial setting */
-    softc = tty_softc(tp);
-    serial->rx_notify = softc->backup_notify;
-
+    /*
+     * serial->rx_notify is left alone on purpose. The TTY receives through the
+     * bypass hook installed by serial_tty_open() and never installs a notify of
+     * its own, so there is nothing here to revoke. Writing back a notify saved
+     * at registration time would silently replace a callback that somebody else
+     * installed with RT_DEVICE_CTRL_NOTIFY_SET in the meantime.
+     */
     tty_lock(tp);
 
+    /*
+     * tty_rel_gone() marks the TTY as gone and releases it: it deletes the TTY
+     * (device object, queues and our context through serial_tty_free()) once the
+     * last session has left, or right away when the TTY was never opened. The
+     * TTY must not be freed here as well.
+     */
     tty_rel_gone(tp);
-
-    /* device unregister? */
-    rt_device_destroy(&tp->parent);
-    /* resource free? */
-    lwp_tty_delete(tp);
 
     return RT_EOK;
 }
@@ -381,7 +490,9 @@ rt_err_t rt_hw_serial_unregister_tty(struct rt_serial_device *serial)
 static int _tty_workqueue_init(void)
 {
     if (_ttyworkq != RT_NULL)
+    {
         return RT_EOK;
+    }
 
     _ttyworkq = rt_workqueue_create("ttyworkq", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     LWP_TTY_WORKQUEUE_PRIORITY);
@@ -393,6 +504,46 @@ static int _tty_workqueue_init(void)
 }
 INIT_PREV_EXPORT(_tty_workqueue_init);
 
+#ifdef RT_USING_COMPONENTS_INIT
+static int _tty_pending_flush(void)
+{
+    rt_slist_t *node;
+
+    _tty_flush_done = RT_TRUE;
+
+    if (_ttyworkq == RT_NULL)
+    {
+        LOG_E("tty workqueue is not available, cannot flush deferred registrations");
+        while ((node = rt_slist_pop(&_tty_pending_registrations)) != RT_NULL)
+        {
+            struct _tty_pending_registration *pending;
+
+            pending = rt_slist_entry(node, struct _tty_pending_registration, node);
+            rt_free(pending);
+        }
+        return -RT_ERROR;
+    }
+
+    while ((node = rt_slist_pop(&_tty_pending_registrations)) != RT_NULL)
+    {
+        struct _tty_pending_registration *pending;
+        rt_err_t rc;
+
+        pending = rt_slist_entry(node, struct _tty_pending_registration, node);
+        rc = rt_hw_serial_register_tty(pending->serial);
+        if (rc != RT_EOK)
+        {
+            LOG_E("deferred tty registration failed: %d", rc);
+        }
+
+        rt_free(pending);
+    }
+
+    return RT_EOK;
+}
+INIT_COMPONENT_EXPORT(_tty_pending_flush);
+#endif /* RT_USING_COMPONENTS_INIT */
+
 static rt_err_t _match_tty_iter(struct rt_object *obj, void *data)
 {
     rt_device_t target = *(rt_device_t *)data;
@@ -400,8 +551,8 @@ static rt_err_t _match_tty_iter(struct rt_object *obj, void *data)
     if (device->type == RT_Device_Class_Char)
     {
         lwp_tty_t tp;
-        if (rt_strncmp(obj->name, "tty"TTY_NAME_PREFIX,
-            sizeof("tty"TTY_NAME_PREFIX) - 1) == 0)
+        if (rt_strncmp(obj->name, "tty" TTY_NAME_PREFIX,
+                       sizeof("tty" TTY_NAME_PREFIX) - 1) == 0)
         {
             struct serial_tty_context *softc;
 
