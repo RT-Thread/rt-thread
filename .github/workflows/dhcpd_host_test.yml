@@ -1,0 +1,34 @@
+# Host-side regression test for the DHCPD lease bookkeeping.
+# It compiles components/net/lwip-dhcpd/dhcp_server_raw.c against the lwIP /
+# RT-Thread stubs in components/net/lwip-dhcpd/test/mock.
+
+name: dhcpd_host_test
+
+on:
+  push:
+    paths:
+      - 'components/net/lwip-dhcpd/**'
+      - '.github/workflows/dhcpd_host_test.yml'
+  pull_request:
+    paths:
+      - 'components/net/lwip-dhcpd/**'
+      - '.github/workflows/dhcpd_host_test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lease-test:
+    runs-on: ubuntu-22.04
+    name: DHCPD lease host test
+    if: github.repository_owner == 'RT-Thread'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build and run the DHCPD lease host test
+        working-directory: components/net/lwip-dhcpd/test
+        run: make run
