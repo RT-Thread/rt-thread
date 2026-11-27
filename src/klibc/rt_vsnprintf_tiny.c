@@ -79,7 +79,6 @@ static char *print_number(char *buf,
 #else
     char tmp[32] = { 0 };
 #endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
-    int precision_bak = precision;
     const char *digits = RT_NULL;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
@@ -148,28 +147,31 @@ static char *print_number(char *buf,
         }
     }
 
-    if (type & SPECIAL)
+    if ((type & SPECIAL) && (base == 2 || base == 16))
     {
-        if (base == 2 || base == 16)
-        {
-            size -= 2;
-        }
-        else if (base == 8)
-        {
-            size--;
-        }
+        size -= 2;
     }
 
-    i = 0;
     if (num == 0)
     {
-        tmp[i++] = '0';
+        // check precision:
+        // e.g. ("%5.0d", 0) should print "     ", not "    0"
+        // e.g. ("%5.1d", 0) should print "    0", not "     "
+        if (precision != 0 || ((type & SPECIAL) && base == 8))
+        {
+            tmp[i++] = '0';
+        }
     }
     else
     {
         while (num != 0)
         {
             tmp[i++] = digits[divide(&num, base)];
+        }
+        /* Alternate octal needs at least one zero before the digits. */
+        if ((type & SPECIAL) && base == 8 && precision <= i)
+        {
+            precision = i + 1;
         }
     }
 
@@ -222,14 +224,6 @@ static char *print_number(char *buf,
             }
             ++buf;
         }
-        else if (base == 8)
-        {
-            if (buf < end)
-            {
-                *buf = '0';
-            }
-            ++buf;
-        }
         else if (base == 16)
         {
             if (buf < end)
@@ -271,7 +265,7 @@ static char *print_number(char *buf,
     }
 
     /* put number in the temporary buffer */
-    while (i-- > 0 && (precision_bak != 0))
+    while (i-- > 0)
     {
         if (buf < end)
         {
@@ -418,8 +412,12 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 ++fmt;
                 /* it's the next argument */
                 precision = va_arg(args, int);
+                if (precision < 0)
+                {
+                    precision = -1;
+                }
             }
-            if (precision < 0)
+            else
             {
                 precision = 0;
             }
@@ -493,12 +491,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-
-            if (precision > 0 && len > precision)
-            {
-                len = precision;
-            }
+            for (len = 0; (precision < 0 || len < precision) && (s[len] != '\0'); len++);
 
             if (!(flags & LEFT))
             {
@@ -643,6 +636,14 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
         else
         {
             num = (rt_uint32_t)va_arg(args, unsigned long);
+        }
+        if (base == 16 && num == 0)
+        {
+            flags &= ~SPECIAL;
+        }
+        if (precision >= 0)
+        {
+            flags &= ~ZEROPAD;
         }
         str = print_number(str, end, num, base, qualifier, field_width, precision, flags);
     }
