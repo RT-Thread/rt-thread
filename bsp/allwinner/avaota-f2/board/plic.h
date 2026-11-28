@@ -14,7 +14,8 @@
 #include <stdint.h>
 #include <rtthread.h>
 
-#define V861_PLIC_BASE    0x10000000U
+/* V861 / T-Head c900-plic: Linux DTS and silicon use 0x30000000 (not D1's 0x10000000). */
+#define V861_PLIC_BASE    0x30000000U
 #define V861_PLIC_IRQ_NUM 128
 
 void v861_plic_init(void);

@@ -15,6 +15,19 @@
 
 extern int rt_hw_tick_init(void);
 
+/*
+ * SMP scheduler asserts rt_hw_interrupt_is_disabled() before posting a
+ * context switch. The weak stub in irq.c always returns RT_FALSE, so provide
+ * a real M-mode check (mstatus.MIE == 0 means IRQs disabled).
+ */
+rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    unsigned long mstatus;
+
+    __asm__ volatile("csrr %0, mstatus" : "=r"(mstatus));
+    return (mstatus & (1UL << 3)) == 0;
+}
+
 void rt_hw_board_init(void)
 {
     rt_hw_interrupt_init();

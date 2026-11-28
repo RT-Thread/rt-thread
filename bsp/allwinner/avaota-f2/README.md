@@ -8,16 +8,18 @@ Allwinner V861（Avaota F2）C907 最小 BSP：UART 控制台 + msh。
 |----|----|
 | 装载 | `0x40000000`（2MB DRAM 窗口，见 `link.lds`） |
 | UART0 | `0x02500000`，115200 8N1；引脚 PH9/PH10；PLIC source 2（见 `board/board.dts`） |
+| PLIC | `0x30000000`（V861 c900-plic；勿用 D1 的 `0x10000000`） |
 | 核 | C907，RV32 工具链配置（见 `rtconfig.py`） |
 
 ## 已在板子上验证
 
 - RT-Thread banner + FinSH/`msh`
 - DT 解析 UART（`uart-from-fdt`）
+- uart0 `INT_RX`：PLIC @`0x30000000`，串口可敲 `help` / `version` 并收到回显
 - 双核 SMP（可选配置；默认 `RT_CPUS_NR=2`）
 
-> 本提交把 uart0 改成 `INT_RX`（PLIC 中断收数）并改用 `board.dts` + `dtc` 生成
-> 设备树；这两项**尚未上板验证**，仅完成干净构建与静态对照。
+> `board.dts` + `dtc` 生成设备树、系统/空闲线程栈加大、以及
+> `rt_hw_interrupt_is_disabled()`（SMP 调度断言）也已随本板验证一起确认。
 
 MMC、异构 AMP、OpenAMP **不在本阶段声明为已支持**。源码中的 `drv_mmc.c` / `amp_mbox.h` 为后续工作保留，默认 `main` 不依赖它们。
 
