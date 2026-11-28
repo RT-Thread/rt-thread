@@ -1107,6 +1107,10 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
     struct rt_serial_device *serial;
     struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
     rt_size_t rx_fifo_size = 0;
+#ifdef RT_SERIAL_USING_DMA
+    rt_size_t dma_ping_offset = 0;
+    rt_uint8_t *dma_ping = RT_NULL;
+#endif
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
@@ -1135,7 +1139,9 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
 #ifdef RT_SERIAL_USING_DMA
     if (serial->config.dma_ping_bufsz < RT_SERIAL_RX_MINBUFSZ / 2)
         serial->config.dma_ping_bufsz = RT_SERIAL_RX_MINBUFSZ / 2;
-    rx_fifo_size = sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz + serial->config.dma_ping_bufsz;
+
+    dma_ping_offset = sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz;
+    rx_fifo_size = dma_ping_offset + RT_ALIGN(serial->config.dma_ping_bufsz, RT_CPU_CACHE_LINE_SZ) + RT_CPU_CACHE_LINE_SZ;
 #else
     rx_fifo_size = sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz;
 #endif
@@ -1149,8 +1155,9 @@ static rt_err_t rt_serial_rx_enable(struct rt_device *dev,
                        serial->config.rx_bufsz);
 
 #ifdef RT_SERIAL_USING_DMA
+    dma_ping = (rt_uint8_t *)RT_ALIGN((rt_ubase_t)rx_fifo + dma_ping_offset, RT_CPU_CACHE_LINE_SZ);
     rt_ringbuffer_init(&rx_fifo->dma_ping_rb,
-                       (rt_uint8_t *)rx_fifo + sizeof(struct rt_serial_rx_fifo) + serial->config.rx_bufsz,
+                       dma_ping,
                        serial->config.dma_ping_bufsz);
 #endif
 
