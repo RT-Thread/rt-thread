@@ -1,0 +1,26 @@
+mainmenu "RT-Thread Project Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+config BOARD_AVAOTA_F2_C907
+    bool
+    select ARCH_RISCV32
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_HW_ATOMIC
+    default y
+
+config RT_CPUS_NR
+    int
+    default 2
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 8192
