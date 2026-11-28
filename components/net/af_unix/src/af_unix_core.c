@@ -13,6 +13,11 @@
 #include <af_unix.h>
 #include "af_unix_internal.h"
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#endif
+
 static struct rt_mutex af_unix_core_lock;
 static struct af_unix_socket *af_unix_handles[SAL_SOCKETS_NUM];
 
@@ -900,9 +905,48 @@ static int af_unix_shutdown(int handle, int how)
     return result;
 }
 
+/* Read an int ioctl argument, translating it from user space if needed. */
+static int af_unix_ioctl_get_int(void *argument, int *value)
+{
+#ifdef RT_USING_LWP
+    if (lwp_self() != RT_NULL)
+    {
+        if (!lwp_user_accessable(argument, sizeof(*value)))
+        {
+            return -1;
+        }
+
+        return lwp_get_from_user(value, argument, sizeof(*value)) == sizeof(*value) ? 0 : -1;
+    }
+#endif
+
+    *value = *(int *)argument;
+    return 0;
+}
+
+/* Write an int ioctl argument, translating it to user space if needed. */
+static int af_unix_ioctl_put_int(void *argument, int value)
+{
+#ifdef RT_USING_LWP
+    if (lwp_self() != RT_NULL)
+    {
+        if (!lwp_user_accessable(argument, sizeof(value)))
+        {
+            return -1;
+        }
+
+        return lwp_put_to_user(argument, &value, sizeof(value)) == sizeof(value) ? 0 : -1;
+    }
+#endif
+
+    *(int *)argument = value;
+    return 0;
+}
+
 static int af_unix_ioctl(int handle, long command, void *argument)
 {
     int result = 0;
+    int value;
     struct af_unix_socket *sock;
 
     sock = af_unix_socket_get(handle);
@@ -926,7 +970,11 @@ static int af_unix_ioctl(int handle, long command, void *argument)
         {
             result = af_unix_error(EINVAL);
         }
-        else if (*(int *)argument != 0)
+        else if (af_unix_ioctl_get_int(argument, &value) != 0)
+        {
+            result = af_unix_error(EFAULT);
+        }
+        else if (value != 0)
         {
             sock->flags |= O_NONBLOCK;
         }
@@ -940,21 +988,27 @@ static int af_unix_ioctl(int handle, long command, void *argument)
         {
             result = af_unix_error(EINVAL);
         }
-        else if (sock->type == SOCK_STREAM)
-        {
-            *(int *)argument = (int)sock->stream_length;
-        }
-        else if (rt_list_isempty(&sock->message_queue))
-        {
-            *(int *)argument = 0;
-        }
         else
         {
-            struct af_unix_message *message;
+            int length = 0;
 
-            message = rt_list_entry(sock->message_queue.next,
-                                    struct af_unix_message, node);
-            *(int *)argument = (int)message->length;
+            if (sock->type == SOCK_STREAM)
+            {
+                length = (int)sock->stream_length;
+            }
+            else if (!rt_list_isempty(&sock->message_queue))
+            {
+                struct af_unix_message *message;
+
+                message = rt_list_entry(sock->message_queue.next,
+                                        struct af_unix_message, node);
+                length = (int)message->length;
+            }
+
+            if (af_unix_ioctl_put_int(argument, length) != 0)
+            {
+                result = af_unix_error(EFAULT);
+            }
         }
         break;
     default:
