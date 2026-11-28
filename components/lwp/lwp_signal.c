@@ -503,6 +503,26 @@ void lwp_signal_notify_detach(struct rt_lwp *lwp)
     }
 }
 
+void lwp_signal_thread_exit(struct rt_lwp *lwp, struct rt_thread *thread)
+{
+    int i;
+
+    if (lwp == RT_NULL || thread == RT_NULL)
+    {
+        return;
+    }
+
+    LWP_LOCK(lwp);
+    for (i = 0; i < _LWP_NSIG; i++)
+    {
+        if (lwp->signal.sig_dispatch_thr[i] == thread)
+        {
+            lwp->signal.sig_dispatch_thr[i] = RT_NULL;
+        }
+    }
+    LWP_UNLOCK(lwp);
+}
+
 rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
     rt_err_t rc = RT_EOK;
