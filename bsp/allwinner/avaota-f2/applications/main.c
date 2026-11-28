@@ -6,6 +6,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <ipc/completion.h>
 
 #include "amp_mbox.h"
 #include "drv_hw_msgbox.h"
@@ -13,7 +14,8 @@
 #include "drv_openamp.h"
 
 static uint32_t g_last_req;
-static volatile int g_smp_hart1 = -1;
+static int g_smp_hart1 = -1;
+static struct rt_completion g_smp_hart1_done;
 
 static void busy_nop(volatile uint32_t n)
 {
@@ -29,6 +31,7 @@ static void smp_hart1_entry(void *parameter)
     RT_UNUSED(parameter);
     /* No printk here — shared UART mangles dual-hart prints. */
     g_smp_hart1 = rt_hw_cpu_id();
+    rt_completion_done(&g_smp_hart1_done);
 }
 
 /* Bind main on CPU0 and a worker on CPU1; require distinct hart ids. */
@@ -36,7 +39,6 @@ static int smp_bringup_check(void)
 {
     rt_thread_t tid;
     rt_thread_t self;
-    int i;
     int cpu0;
 
     self = rt_thread_self();
@@ -46,6 +48,7 @@ static int smp_bringup_check(void)
     rt_kprintf("[C907] SMP cpus=%d main_cpu=%d\n", RT_CPUS_NR, cpu0);
 
     g_smp_hart1 = -1;
+    rt_completion_init(&g_smp_hart1_done);
     tid = rt_thread_create("smp1", smp_hart1_entry, RT_NULL, 1024, 8, 10);
     if (tid == RT_NULL)
     {
@@ -54,13 +57,12 @@ static int smp_bringup_check(void)
     }
     rt_thread_control(tid, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)1);
     rt_thread_startup(tid);
-    for (i = 0; i < 400; i++)
+
+    /* Cross-hart publish needs a completion, not a volatile poll. */
+    if (rt_completion_wait(&g_smp_hart1_done, rt_tick_from_millisecond(2000)) != RT_EOK)
     {
-        if (g_smp_hart1 >= 0)
-        {
-            break;
-        }
-        rt_thread_mdelay(5);
+        rt_kprintf("[C907] SMP-FAIL timeout hart1_seen=%d\n", g_smp_hart1);
+        return -1;
     }
 
     if (cpu0 == 0 && g_smp_hart1 == 1)

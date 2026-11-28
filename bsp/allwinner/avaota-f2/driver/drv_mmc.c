@@ -504,6 +504,7 @@ static int smhc_identify(uint32_t base, uint32_t *ocr_out, uint32_t *rca_out)
 {
     uint32_t resp[4];
     uint32_t ocr = 0;
+    uint32_t acmd41_arg = OCR_VOLTAGE | OCR_HCS;
     uint32_t i;
     int ret;
 
@@ -515,26 +516,17 @@ static int smhc_identify(uint32_t base, uint32_t *ocr_out, uint32_t *rca_out)
     }
     busy_mdelay(2);
 
+    /*
+     * CMD8 is SD 2.0+. SD 1.x cards leave it unanswered — that is not a
+     * controller fault; continue with ACMD41 without HCS (byte-addressed SDSC).
+     */
     ret = smhc_send_cmd(base, SD_CMD_SEND_IF_COND, 0x1aaU, RSP_R7, resp);
     if (ret != 0)
     {
-        rt_kprintf("DT: mmc0 CMD8 fail %d rint=0x%08x status=0x%08x\n",
-                   ret, mmio_r(base + SMHC_RINT), mmio_r(base + SMHC_STATUS));
-        rt_kprintf("DT: mmc0 dbg ntsr=0x%08x clkcr=0x%08x mclk=0x%08x pow=0x%08x/0x%08x/0x%08x\n",
-                   mmio_r(base + SMHC_NTSR), mmio_r(base + SMHC_CLKCR),
-                   mmio_r(0x02001000U + 0x830U),
-                   mmio_r(SUNXI_GPIO_BASE + PIO_POW_MODE_SEL),
-                   mmio_r(SUNXI_GPIO_BASE + PIO_POW_MODE_CTL),
-                   mmio_r(SUNXI_GPIO_BASE + PIO_POW_MODE_VAL));
-        /* PF bank: cfg0 @ +0, pull0 @ +0x24 (gpio-v2) */
-        rt_kprintf("DT: mmc0 pf cfg=0x%08x pull=0x%08x drv=0x%08x gate=0x%08x\n",
-                   mmio_r(SUNXI_GPIO_BASE + PIO_PORT_F * SUNXI_GPIO_PORT_STRIDE),
-                   mmio_r(SUNXI_GPIO_BASE + PIO_PORT_F * SUNXI_GPIO_PORT_STRIDE + 0x24U),
-                   mmio_r(SUNXI_GPIO_BASE + PIO_PORT_F * SUNXI_GPIO_PORT_STRIDE + 0x14U),
-                   mmio_r(0x02001000U + 0x84cU));
-        return -21;
+        rt_kprintf("DT: mmc0 CMD8 fail %d — try SDSC (no HCS)\n", ret);
+        acmd41_arg = OCR_VOLTAGE;
     }
-    if ((resp[0] & 0xffU) != 0xaaU)
+    else if ((resp[0] & 0xffU) != 0xaaU)
     {
         rt_kprintf("DT: mmc0 CMD8 bad pattern 0x%08x\n", resp[0]);
         return -22;
@@ -547,7 +539,7 @@ static int smhc_identify(uint32_t base, uint32_t *ocr_out, uint32_t *rca_out)
         {
             return -23;
         }
-        ret = smhc_send_cmd(base, SD_CMD_APP_OP_COND, OCR_VOLTAGE | OCR_HCS, RSP_R3, resp);
+        ret = smhc_send_cmd(base, SD_CMD_APP_OP_COND, acmd41_arg, RSP_R3, resp);
         if (ret != 0)
         {
             return -24;
