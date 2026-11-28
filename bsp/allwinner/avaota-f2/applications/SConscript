@@ -1,0 +1,9 @@
+from building import *
+
+import os
+
+cwd = GetCurrentDir()
+board_cwd = os.path.normpath(os.path.join(cwd, '..', 'board'))
+src = Glob('*.c')
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = [cwd, board_cwd])
+Return('group')

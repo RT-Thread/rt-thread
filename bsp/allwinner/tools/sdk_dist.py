@@ -32,11 +32,16 @@ def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files
     import rtconfig
 
-    print("=> copy libraries")
     library_dir = os.path.join(dist_dir, 'libraries')
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-    bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
-                   os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
+
+    # BSPs that only use the shared drivers (no vendor HAL) leave
+    # BSP_LIBRARY_TYPE unset and still need libraries/ in the dist project.
+    library_type = getattr(rtconfig, 'BSP_LIBRARY_TYPE', None)
+    if library_type:
+        print("=> copy libraries")
+        bsp_copy_files(os.path.join(library_path, library_type),
+                       os.path.join(library_dir, library_type))
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
