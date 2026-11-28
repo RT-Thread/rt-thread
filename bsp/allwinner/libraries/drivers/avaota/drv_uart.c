@@ -16,6 +16,10 @@
 #include "drv_fdt.h"
 #include "plic.h"
 
+#ifdef BOARD_AVAOTA_F2_C907
+#include "amp_mbox.h"
+#endif
+
 #define UART_RBR         0x00
 #define UART_THR         0x00
 #define UART_DLL         0x00
@@ -76,10 +80,16 @@ static void v861_apply_pin(rt_uint32_t port, rt_uint32_t pin, rt_uint32_t func)
     *(volatile rt_uint32_t *)cfg = value;
 }
 
-static void v861_uart0_hw_init(const struct v861_uart_fdt *cfg)
+static void v861_uart0_hw_init(const struct v861_uart_fdt *cfg, rt_bool_t full_hw)
 {
     rt_uint32_t divisor;
     rt_uint32_t i;
+
+    g_uart_base = cfg->reg;
+    if (!full_hw)
+    {
+        return;
+    }
 
     /* Match SyterKit/SPL: gate off, reset assert, release reset, gate on. */
     mmio_clr_bit(cfg->gate_reg, cfg->gate_bit);
@@ -96,7 +106,6 @@ static void v861_uart0_hw_init(const struct v861_uart_fdt *cfg)
         v861_apply_pin(cfg->pin_port[i], cfg->pin_num[i], cfg->pin_func[i]);
     }
 
-    g_uart_base = cfg->reg;
     divisor = cfg->clk_hz / (16U * cfg->baud);
     if (divisor == 0)
     {
@@ -208,6 +217,7 @@ static const struct rt_uart_ops uart_ops = {
 int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    rt_bool_t full_hw = RT_TRUE;
 
     if (rt_hw_fdt_load_uart(&g_uart_fdt) != 0)
     {
@@ -232,7 +242,15 @@ int rt_hw_uart_init(void)
         rt_strncpy(g_uart_fdt.stdout_path, "board.h", sizeof(g_uart_fdt.stdout_path) - 1);
     }
 
-    v861_uart0_hw_init(&g_uart_fdt);
+#ifdef BOARD_AVAOTA_F2_C907
+    amp_coherent_begin();
+    if (amp_read(AMP_SLOT_E907) == AMP_MAGIC_E907)
+    {
+        full_hw = RT_FALSE;
+    }
+#endif
+
+    v861_uart0_hw_init(&g_uart_fdt, full_hw);
     v861_plic_install_irq((int)g_uart_fdt.irq, v861_uart0_isr, RT_NULL);
     config.baud_rate = g_uart_fdt.baud;
     serial0.ops = &uart_ops;

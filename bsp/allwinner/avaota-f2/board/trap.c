@@ -19,12 +19,16 @@ extern int rt_hw_tick_isr(void);
 
 void handle_trap(rt_ubase_t mcause, rt_ubase_t mepc, rt_ubase_t *sp)
 {
-    RT_UNUSED(mepc);
     RT_UNUSED(sp);
 
     if ((mcause & MCAUSE_INT) == 0)
     {
-        return;
+        rt_kprintf("sync exception mcause=0x%x mepc=0x%x\n",
+                   (unsigned int)mcause, (unsigned int)mepc);
+        while (1)
+        {
+            __asm__ volatile("ebreak");
+        }
     }
 
     switch (mcause & 0x7fffffffUL)

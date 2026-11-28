@@ -24,3 +24,5 @@ config RT_CPUS_NR
 config __STACKSIZE__
     int "stack size for interrupt"
     default 8192
+    help
+        Must match __STACKSIZE__ in link.lds and STACK_SIZE in board/startup_gcc.S (8192).

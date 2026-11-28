@@ -1,6 +1,6 @@
 # Avaota F2 / V861 — E907（异构主核）
 
-E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最小跨核 + RPMsg 风格往返（**非** OpenAMP）。
+E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最小跨核 + AMP mailbox 风格往返（**非** OpenAMP）。
 
 ## 已在板子上证实
 
@@ -8,7 +8,7 @@ E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最�
 |----|------------|
 | E907 RTT | banner + `avaota-f2 v861 e907` + `msh >` |
 | 异构 | `[E907] HETERO-OK c907=0xc907a11c reply=0xa11c0002` |
-| RPMsg-lite | `[E907] RPMSG-OK tx=3 rx=3` |
+| AMP mailbox | `[E907] RPMSG-OK tx=3 rx=3`（关键字保留，实现为 DRAM 槽） |
 
 ## 装载
 
@@ -46,10 +46,11 @@ C907 侧在 `../avaota-f2` 同样编译（DTB 同样由 `dtc` 从 `board.dts` �
 `rtconfig.h` 由 `Kconfig` + `.config` 生成（`scons --pyconfig` / `--pyconfig-silent`），不要手改。
 
 串口：FinSH 以 `RDWR | INT_RX` 打开 `uart0`，`v861_uart0_isr()` 上报
-`RT_SERIAL_EVENT_RX_IND`，`uart_getc()` 空时返回 `-1`。
+`RT_SERIAL_EVENT_RX_IND`，`uart_getc()` 空时返回 `-1`（C907 侧已上板验证 INT_RX）。
+C907 发现 E907 已在跑时跳过 UART 全量硬件复位，避免打掉共享串口。
 
-> 本提交把 uart0 改成 `INT_RX` 并改用 `board.dts` + `dtc`，这两项**尚未上板验证**，
-> 只完成干净构建与静态对照。
+公共驱动（`drv_uart` / `drv_fdt`）在 `bsp/allwinner/libraries/drivers/avaota/`；
+板级 AMP 接口为 `drv_amp_mailbox`（不再使用 `rpmsg_lite` 命名）。
 
 ## 未宣称
 

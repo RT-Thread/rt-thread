@@ -9,7 +9,6 @@
 #include "amp_mbox.h"
 #include "board.h"
 #include "board_c907_release.h"
-#include "drv_uart.h"
 
 static void busy_delay_loops(volatile uint32_t loops)
 {
@@ -38,7 +37,6 @@ int main(void)
 {
     uint32_t i;
     uint32_t req;
-    uint32_t ver;
     int ok = 0;
 
     rt_kprintf("[E907] avaota-f2 v861 e907 hetero\n");
@@ -56,12 +54,6 @@ int main(void)
 
     rt_hw_c907_release(V861_C907_ENTRY);
     amp_write(AMP_SLOT_E907_STEP, AMP_STEP_RELEASED);
-
-    busy_delay_loops(500000U);
-    rt_hw_uart_init();
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-    amp_coherent_begin();
-    rt_kprintf("\n[E907] after C907 release, uart reinit\n");
 
     /* Short spin first; print probe then one longer wait if needed. */
     if (wait_reply(AMP_PING_REQ + 1U, 2000000U) != 0)
@@ -89,8 +81,6 @@ int main(void)
                AMP_MAGIC_C907, amp_read(AMP_SLOT_C907_REPLY));
     ok = 1;
 
-    ver = *(volatile uint32_t *)AMP_MSGBOX_VER;
-    rt_kprintf("[E907] MSGBOX ver@0x03003010=0x%08x\n", ver);
     amp_write(AMP_SLOT_E907_STEP, AMP_STEP_RPMSG);
 
     /* Three more round-trips on the same proven slots. */

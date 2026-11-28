@@ -4,10 +4,17 @@ import os
 Import('RTT_ROOT')
 
 cwd = GetCurrentDir()
-src = Split('''
-    drv_uart.c
-    drv_fdt.c
-''')
+# In-tree the shared avaota drivers sit at bsp/allwinner/libraries, two levels
+# above the BSP. A `scons --dist` project carries them at <project>/libraries
+# (see rtconfig.dist_handle), so prefer that copy when it exists.
+avaota_drv_dist = os.path.normpath(os.path.join(cwd, '..', 'libraries', 'drivers', 'avaota'))
+avaota_drv_tree = os.path.normpath(os.path.join(cwd, '..', '..', 'libraries', 'drivers', 'avaota'))
+avaota_drv = avaota_drv_dist if os.path.isdir(avaota_drv_dist) else avaota_drv_tree
+
+src = [
+    os.path.join(avaota_drv, 'drv_uart.c'),
+    os.path.join(avaota_drv, 'drv_fdt.c'),
+]
 
 # libfdt only (no full RT_USING_OFW yet); use RTT_ROOT so that a `scons --dist`
 # project (where the BSP is not four levels below the tree root) also builds.
@@ -18,6 +25,7 @@ fdt_src = [
     os.path.join(fdt_cwd, 'fdt_strerror.c'),
 ]
 
-CPPPATH = [cwd, fdt_cwd]
+board_cwd = os.path.normpath(os.path.join(cwd, '..', 'board'))
+CPPPATH = [avaota_drv, board_cwd, fdt_cwd]
 group = DefineGroup('Drivers', src + fdt_src, depend = [''], CPPPATH = CPPPATH)
 Return('group')

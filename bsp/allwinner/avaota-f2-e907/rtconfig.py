@@ -50,3 +50,10 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n' + SIZE + ' $TARGET \n'
+
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

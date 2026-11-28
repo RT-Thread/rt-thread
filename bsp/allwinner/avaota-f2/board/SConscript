@@ -7,7 +7,7 @@ cwd = GetCurrentDir()
 src = Split('''
     board.c
     board_smp.c
-    drv_rpmsg.c
+    drv_amp_mailbox.c
     clint.c
     plic.c
     tick.c

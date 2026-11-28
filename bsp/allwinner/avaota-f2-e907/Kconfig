@@ -21,6 +21,12 @@ config RT_CPUS_NR
     int
     default 1
 
+# E907 is single-hart; SMP must not be enabled from this BSP menu.
+config RT_USING_SMP
+    bool
+    default n
+    depends on !BOARD_AVAOTA_F2_E907
+
 config __STACKSIZE__
     int "stack size for interrupt"
     default 8192
