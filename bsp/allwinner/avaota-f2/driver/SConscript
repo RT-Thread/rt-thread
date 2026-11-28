@@ -1,0 +1,26 @@
+from building import *
+import os
+
+Import('RTT_ROOT')
+
+cwd = GetCurrentDir()
+src = Split('''
+    drv_uart.c
+    drv_fdt.c
+    drv_mmc.c
+    drv_nor_bb.c
+    drv_spif.c
+''')
+
+# libfdt only (no full RT_USING_OFW yet); use RTT_ROOT so that a `scons --dist`
+# project (where the BSP is not four levels below the tree root) also builds.
+fdt_cwd = os.path.join(RTT_ROOT, 'components', 'drivers', 'ofw', 'libfdt')
+fdt_src = [
+    os.path.join(fdt_cwd, 'fdt.c'),
+    os.path.join(fdt_cwd, 'fdt_ro.c'),
+    os.path.join(fdt_cwd, 'fdt_strerror.c'),
+]
+
+CPPPATH = [cwd, os.path.join(cwd, '..', 'board'), fdt_cwd]
+group = DefineGroup('Drivers', src + fdt_src, depend = [''], CPPPATH = CPPPATH)
+Return('group')
