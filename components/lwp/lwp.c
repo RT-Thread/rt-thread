@@ -238,6 +238,9 @@ void lwp_cleanup(struct rt_thread *tid)
     lwp = (struct rt_lwp *)tid->lwp;
     lwp_thread_signal_detach(&tid->signal);
 
+    /* drop dispatch cache entries before the thread control block is freed */
+    lwp_signal_thread_exit(lwp, tid);
+
     /* tty will be release in lwp_ref_dec() if ref is cleared */
     lwp_ref_dec(lwp);
     return;

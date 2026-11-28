@@ -136,6 +136,17 @@ rt_inline void lwp_thread_signal_detach(struct lwp_thread_signal *tsig)
 }
 
 /**
+ * @brief Drop dispatch cache entries that reference an exiting thread
+ *
+ * @param lwp the process the exiting thread belongs to
+ * @param thread the thread control block about to be freed
+ *
+ * @note Must be called before the thread control block is freed, otherwise
+ *       the next process-directed signal would dereference a stale pointer.
+ */
+void lwp_signal_thread_exit(struct rt_lwp *lwp, struct rt_thread *thread);
+
+/**
  * @brief send a signal to the process
  *
  * @param lwp the process to be killed
