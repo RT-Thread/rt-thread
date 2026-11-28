@@ -11,6 +11,8 @@
 #include "amp_mbox.h"
 #include "drv_hw_msgbox.h"
 #include "drv_mmc.h"
+#include "drv_nor_bb.h"
+#include "drv_spif.h"
 #include "drv_openamp.h"
 
 static uint32_t g_last_req;
@@ -137,11 +139,14 @@ int main(void)
 
     if (wait_new_req(&req, 4000000U) != 0)
     {
-        rt_kprintf("[C907] no ping (solo) — smp/mmc then msh\n");
+        rt_kprintf("[C907] no ping (solo) — mmc/nor/spif/smp then msh\n");
+        /* MMC before PC NOR/SPIF so PF/SMHC bring-up is undisturbed. */
+        (void)rt_hw_mmc0_probe_from_fdt();
+        (void)rt_hw_nor_bb_probe();
+        (void)rt_hw_spif_probe();
 #ifdef RT_USING_SMP
         (void)smp_bringup_check();
 #endif
-        (void)rt_hw_mmc0_probe_from_fdt();
         return 0;
     }
     amp_write(AMP_SLOT_C907_REPLY, req + 1U);

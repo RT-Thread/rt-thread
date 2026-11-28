@@ -8,6 +8,8 @@ src = Split('''
     drv_uart.c
     drv_fdt.c
     drv_mmc.c
+    drv_nor_bb.c
+    drv_spif.c
 ''')
 
 # libfdt only (no full RT_USING_OFW yet); use RTT_ROOT so that a `scons --dist`
@@ -19,6 +21,6 @@ fdt_src = [
     os.path.join(fdt_cwd, 'fdt_strerror.c'),
 ]
 
-CPPPATH = [cwd, fdt_cwd]
+CPPPATH = [cwd, os.path.join(cwd, '..', 'board'), fdt_cwd]
 group = DefineGroup('Drivers', src + fdt_src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
