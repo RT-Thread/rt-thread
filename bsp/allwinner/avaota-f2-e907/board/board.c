@@ -13,6 +13,14 @@
 
 extern int rt_hw_tick_init(void);
 
+rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    rt_ubase_t mstatus;
+
+    __asm__ volatile("csrr %0, mstatus" : "=r"(mstatus));
+    return (mstatus & 0x8U) == 0; /* MIE */
+}
+
 void rt_hw_board_init(void)
 {
     rt_hw_interrupt_init();

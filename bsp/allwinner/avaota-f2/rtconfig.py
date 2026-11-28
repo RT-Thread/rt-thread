@@ -50,3 +50,11 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n' + SIZE + ' $TARGET \n'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    # `scons --dist` copies only the BSP directory, while the avaota drivers are
+    # shared with the other allwinner BSPs in ../libraries/drivers/avaota. Copy
+    # them into the generated project so that dist/project still builds.
+    from mkdist import bsp_copy_files
+    bsp_copy_files(os.path.join(os.path.dirname(BSP_ROOT), 'libraries', 'drivers', 'avaota'),
+                   os.path.join(dist_dir, 'libraries', 'drivers', 'avaota'))

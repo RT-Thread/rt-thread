@@ -7,7 +7,7 @@
  */
 
 #include "amp_mbox.h"
-#include "drv_rpmsg.h"
+#include "drv_amp_mailbox.h"
 
 static int g_is_e907;
 static uint32_t g_last_req;
@@ -20,14 +20,14 @@ static void busy_nop(volatile uint32_t n)
     }
 }
 
-uint32_t rpmsg_lite_msgbox_probe(void)
+uint32_t amp_mailbox_msgbox_probe(void)
 {
     uint32_t ver = *(volatile uint32_t *)AMP_MSGBOX_VER;
     amp_write(AMP_MSGBOX_PROBE, ver);
     return ver;
 }
 
-int rpmsg_lite_init(int is_e907)
+int amp_mailbox_init(int is_e907)
 {
     g_is_e907 = is_e907;
     g_last_req = amp_read(AMP_SLOT_PING_REQ);
@@ -35,7 +35,7 @@ int rpmsg_lite_init(int is_e907)
     return 0;
 }
 
-int rpmsg_lite_send(uint32_t data)
+int amp_mailbox_send(uint32_t data)
 {
     uint32_t i;
     uint32_t expect;
@@ -61,7 +61,7 @@ int rpmsg_lite_send(uint32_t data)
     return -1;
 }
 
-int rpmsg_lite_recv(uint32_t *data, uint32_t timeout_loops)
+int amp_mailbox_recv(uint32_t *data, uint32_t timeout_loops)
 {
     uint32_t i;
     uint32_t req;
@@ -91,7 +91,7 @@ int rpmsg_lite_recv(uint32_t *data, uint32_t timeout_loops)
     return -1;
 }
 
-int rpmsg_lite_ack(uint32_t data)
+int amp_mailbox_ack(uint32_t data)
 {
     if (g_is_e907)
     {

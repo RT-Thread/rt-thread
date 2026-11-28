@@ -8,6 +8,7 @@ Allwinner V861（Avaota F2）C907 最小 BSP：UART 控制台 + msh。
 |----|----|
 | 装载 | `0x40000000`（2MB DRAM 窗口，见 `link.lds`） |
 | UART0 | `0x02500000`，115200 8N1；引脚 PH9/PH10；PLIC source 2（见 `board/board.dts`） |
+| PLIC | `0x30000000`（见 `board/plic.h` / `board.dts`） |
 | 核 | C907，RV32 工具链配置（见 `rtconfig.py`） |
 
 ## 已在板子上验证
@@ -15,11 +16,12 @@ Allwinner V861（Avaota F2）C907 最小 BSP：UART 控制台 + msh。
 - RT-Thread banner + FinSH/`msh`
 - DT 解析 UART（`uart-from-fdt`）
 - 双核 SMP（可选配置；默认 `RT_CPUS_NR=2`）
+- 异构（配合 `avaota-f2-e907`）：`[C907] HETERO-OK`（经 ping 槽）、`[C907] OPENAMP-EPT-OK echo=3`
 
 > 本提交把 uart0 改成 `INT_RX`（PLIC 中断收数）并改用 `board.dts` + `dtc` 生成
-> 设备树；这两项**尚未上板验证**，仅完成干净构建与静态对照。
+> 设备树；PLIC 基址更新为 `0x30000000`。**部分项尚未上板复测**，以 PR 实测为准。
 
-MMC、异构 AMP、OpenAMP **不在本阶段声明为已支持**。源码中的 `drv_mmc.c` / `amp_mbox.h` 为后续工作保留，默认 `main` 不依赖它们。
+共享驱动：`bsp/allwinner/libraries/drivers/avaota/`（UART/FDT），两 BSP 的 `driver/SConscript` 引用该路径。
 
 ## 配置
 
@@ -60,6 +62,7 @@ scons -j8
 - 收到数据时 UART 触发中断，`v861_uart0_isr()` 调 `rt_hw_serial_isr(..., RT_SERIAL_EVENT_RX_IND)`，
   由串口框架把 FIFO 读空；
 - `uart_getc()` 在 FIFO 空时返回 `-1`（不阻塞）。
+- 异构模式下若 E907 已上线（`AMP_SLOT_E907` magic），C907 侧 UART 跳过 gate/reset 全复位，避免打断对端控制台。
 
 ## 烧录提示
 

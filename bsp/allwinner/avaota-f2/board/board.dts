@@ -33,9 +33,9 @@
         #address-cells = <1>;
         #size-cells = <1>;
 
-        plic: interrupt-controller@10000000 {
+        plic: interrupt-controller@30000000 {
             compatible = "sifive,plic-1.0.0", "riscv,plic0";
-            reg = <0x10000000 0x04000000>;
+            reg = <0x30000000 0x04000000>;
             #interrupt-cells = <1>;
             interrupt-controller;
             riscv,ndev = <207>;

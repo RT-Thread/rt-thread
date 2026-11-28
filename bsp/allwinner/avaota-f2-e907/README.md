@@ -1,6 +1,6 @@
 # Avaota F2 / V861 — E907（异构主核）
 
-E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最小跨核 + RPMsg 风格往返（**非** OpenAMP）。
+E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最小跨核 + AMP endpoint 往返（**非** libmetal OpenAMP）。
 
 ## 已在板子上证实
 
@@ -8,7 +8,11 @@ E907 上跑 RT-Thread，按 SyterKit 风格拉起 C907，用 **DRAM 槽**做最�
 |----|------------|
 | E907 RTT | banner + `avaota-f2 v861 e907` + `msh >` |
 | 异构 | `[E907] HETERO-OK c907=0xc907a11c reply=0xa11c0002` |
-| RPMsg-lite | `[E907] RPMSG-OK tx=3 rx=3` |
+| AMP endpoint | `[E907] OPENAMP-EPT-OK name=avaota-ept tx=3 rx=3` |
+
+UART0 在 `rt_hw_board_init()` 注册一次；异构时 **E907 占用控制台 RX**，不要在 `main` 里再次 `rt_hw_uart_init()`。
+
+共享驱动：`bsp/allwinner/libraries/drivers/avaota/`（UART/FDT）。
 
 ## 装载
 
@@ -53,4 +57,4 @@ C907 侧在 `../avaota-f2` 同样编译（DTB 同样由 `dtc` 从 `board.dts` �
 
 ## 未宣称
 
-硬件 MSGBOX 门铃、完整 OpenAMP、MMC/文件系统。合入以实际 PR 为准。
+完整 virtio OpenAMP、MMC/文件系统。合入以实际 PR 为准。

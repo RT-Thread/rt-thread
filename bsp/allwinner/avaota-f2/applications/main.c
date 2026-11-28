@@ -9,7 +9,7 @@
 
 #include "amp_mbox.h"
 #include "drv_hw_msgbox.h"
-#include "drv_openamp.h"
+#include "drv_amp_endpoint.h"
 
 static uint32_t g_last_req;
 
@@ -45,6 +45,7 @@ int main(void)
     uint32_t i;
     uint32_t req;
     uint32_t tok;
+    int ept_ok = 1;
 
     rt_kprintf("[C907] avaota-f2 v861 c907 hetero\n");
 
@@ -74,7 +75,7 @@ int main(void)
     amp_write(AMP_SLOT_C907_REPLY, req + 1U);
     rt_kprintf("[C907] ping_req=0x%08x reply=0x%08x\n", req, req + 1U);
 
-    if (openamp_slave_start(8000000U) != 0)
+    if (amp_endpoint_slave_start(8000000U) != 0)
     {
         rt_kprintf("[C907] OPENAMP-EPT-FAIL link\n");
         return 0;
@@ -82,11 +83,17 @@ int main(void)
 
     for (i = 1; i <= 3; i++)
     {
-        if (openamp_echo_once(16000000U) != 0)
+        if (amp_endpoint_echo_once(16000000U) != 0)
         {
             rt_kprintf("[C907] OPENAMP-EPT-FAIL echo #%u\n", i);
+            ept_ok = 0;
             break;
         }
+    }
+
+    if (ept_ok)
+    {
+        rt_kprintf("[C907] OPENAMP-EPT-OK echo=3 name=%s\n", OA_EPT_NAME);
     }
 
     return 0;

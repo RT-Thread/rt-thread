@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <rtthread.h>
 
-#define V861_PLIC_BASE    0x10000000U
+#define V861_PLIC_BASE    0x30000000U
 #define V861_PLIC_IRQ_NUM 128
 
 void v861_plic_init(void);

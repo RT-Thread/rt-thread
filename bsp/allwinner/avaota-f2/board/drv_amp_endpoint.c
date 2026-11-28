@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- * E907 = master. SHM @ 0x41001000 + HW MSGBOX kicks.
+ * C907 uses slave path; shared source with E907. SHM @ 0x41001000 + HW MSGBOX kicks.
  */
 
 #include <rtthread.h>
@@ -11,7 +11,7 @@
 
 #include "amp_mbox.h"
 #include "drv_hw_msgbox.h"
-#include "drv_openamp.h"
+#include "drv_amp_endpoint.h"
 
 #define OA_MAGIC       0x0A11C0DEU
 #define OA_LINK_IDLE   0U
@@ -133,7 +133,7 @@ static int oa_wait_evt(uint32_t local_view, uint32_t want, uint32_t spins)
     return -1;
 }
 
-int openamp_master_start(uint32_t spins)
+int amp_endpoint_master_start(uint32_t spins)
 {
     g_is_master = 1;
     g_tx_seq = 0;
@@ -172,25 +172,14 @@ int openamp_master_start(uint32_t spins)
     return 0;
 }
 
-int openamp_slave_start(uint32_t spins)
+int amp_endpoint_slave_start(uint32_t spins)
 {
-    uint32_t tok;
     uint8_t name[16];
-    uint32_t i;
 
     g_is_master = 0;
     g_tx_seq = 0;
 
     rt_hw_msgbox_clk_enable();
-
-    /* Drain stale Phase1 doorbell tokens. */
-    for (i = 0; i < 8U; i++)
-    {
-        if (rt_hw_msgbox_wait(MSGBOX_VIEW_C907, &tok, 100U) != 0)
-        {
-            break;
-        }
-    }
 
     if (oa_wait_evt(MSGBOX_VIEW_C907, OA_EVT_LINK, spins) != 0)
     {
@@ -217,7 +206,7 @@ int openamp_slave_start(uint32_t spins)
     return 0;
 }
 
-int openamp_send(const void *data, uint32_t len, uint32_t spins)
+int amp_endpoint_send(const void *data, uint32_t len, uint32_t spins)
 {
     uint32_t seq;
     uint32_t peer;
@@ -266,7 +255,7 @@ int openamp_send(const void *data, uint32_t len, uint32_t spins)
     return 0;
 }
 
-int openamp_recv(void *data, uint32_t *len, uint32_t spins)
+int amp_endpoint_recv(void *data, uint32_t *len, uint32_t spins)
 {
     uint32_t tok;
     uint32_t seq;
@@ -292,6 +281,10 @@ int openamp_recv(void *data, uint32_t *len, uint32_t spins)
                     continue;
                 }
                 seq = oa_r32(OFF_S2M_SEQ);
+                if (seq != 0 && oa_r32(OFF_S2M_ACK) == seq)
+                {
+                    continue;
+                }
                 n = oa_r32(OFF_S2M_LEN);
                 if (n == 0 || n > OA_PAYLOAD_MAX)
                 {
@@ -319,6 +312,10 @@ int openamp_recv(void *data, uint32_t *len, uint32_t spins)
                 continue;
             }
             seq = oa_r32(OFF_M2S_SEQ);
+            if (seq != 0 && oa_r32(OFF_M2S_ACK) == seq)
+            {
+                continue;
+            }
             n = oa_r32(OFF_M2S_LEN);
             if (n == 0 || n > OA_PAYLOAD_MAX)
             {
@@ -327,7 +324,7 @@ int openamp_recv(void *data, uint32_t *len, uint32_t spins)
             oa_read_bytes(OFF_M2S_PAY, (uint8_t *)data, n);
             *len = n;
             /* Echo the payload back, then publish the ack last: the peer's
-             * openamp_send() returns as soon as it sees OFF_M2S_ACK, so the
+             * amp_endpoint_send() returns as soon as it sees OFF_M2S_ACK, so the
              * reply (len, payload, seq) must be fully written before it. */
             oa_w32(OFF_S2M_LEN, n);
             oa_write_bytes(OFF_S2M_PAY, (const uint8_t *)data, n);
@@ -358,12 +355,12 @@ int openamp_recv(void *data, uint32_t *len, uint32_t spins)
     return -3;
 }
 
-int openamp_echo_once(uint32_t spins)
+int amp_endpoint_echo_once(uint32_t spins)
 {
     uint8_t buf[OA_PAYLOAD_MAX];
     uint32_t len = 0;
 
-    if (openamp_recv(buf, &len, spins) != 0)
+    if (amp_endpoint_recv(buf, &len, spins) != 0)
     {
         return -1;
     }

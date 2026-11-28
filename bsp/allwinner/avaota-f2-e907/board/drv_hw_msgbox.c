@@ -37,7 +37,7 @@ static void fence_io(void)
  * pulses the bank resets: releasing the reset clears every pending token in
  * both banks, and it must happen before C907 is released.
  *
- * Every later caller (rt_hw_msgbox_clk_enable(), wait/kick, openamp_*_start())
+ * Every later caller (rt_hw_msgbox_clk_enable(), wait/kick, amp_endpoint_*_start())
  * must never reset the block again, otherwise a token that has already been
  * published is dropped and the receiving side only sees a timeout.
  */
